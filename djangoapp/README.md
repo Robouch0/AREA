@@ -31,3 +31,11 @@ Cependant certains points faibles du framework peut rendre compliquée son inté
 Le Django peut être un bon framework pour des petits projets mais dans le contexte d'AREA qui est un projet demandant un très gros effort sur l'architecture, la scalabilité du software ou bien la stabilité de l'application.
 
 Ainsi, je ne pense pas que Django pourrait être le Framework utilisé pour le backend dans ce projet.
+
+## Commandes pour tester
+
+```sh
+python manage.py makemigrations djangoapp
+python manage.py migrate
+python manage.py runserver
+```
