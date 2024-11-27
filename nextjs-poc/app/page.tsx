@@ -6,13 +6,14 @@ import {FaEye, FaEyeSlash} from "react-icons/fa";
 import { redirect } from 'next/navigation'
 import {FaGoogle, FaFacebook, FaApple} from 'react-icons/fa';
 
-
-function ValidatethisForm(event) {
-    console.log(event);
-}
-
 export default function Page() {
     const [showPassword, setShowPassword] = useState(false);
+
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        redirect('/services');
+    };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -23,7 +24,7 @@ export default function Page() {
             <div className="flex flex-col items-center w-full max-w-md">
                 <h1 className="font-mono text-5xl font-extrabold mb-16"> AREA </h1>
                 <h2 className="font-mono text-4xl font-black mb-12"> Log In </h2>
-                <form id="loginForm">
+                <form id="loginForm" onSubmit={handleSubmit} className="">
                     <div className="w-full mb-6">
                         <Input
                             type="email"
@@ -31,6 +32,7 @@ export default function Page() {
                             id="mail"
                             className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="Email"
+                            required
                         />
                     </div>
                     <div className="w-full mb-6 relative">
@@ -40,6 +42,7 @@ export default function Page() {
                             id="password"
                             className="!text-2xl rounded-2xl border-4 focus:border-black w-full p-4 h-16 pr-12 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 font-extrabold"
                             aria-label="Password"
+                            required
                         />
                         <Button
                             type="button"
@@ -51,20 +54,16 @@ export default function Page() {
                                 <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
                         </Button>
                     </div>
+                    <div className="">
+                        <Button
+                            type="submit"
+                            className="rounded-full mt-8 w-full h-16 text-2xl font-bold"
+                            aria-label="Log In"
+                        >
+                            Log In
+                        </Button>
+                    </div>
                 </form>
-                <div className={"w-2/3"}>
-                    <Button
-                        type="button"
-                        className="rounded-full mt-8 w-full h-16 text-2xl font-bold"
-                        onClick={() => {
-                            redirect('/services')
-                        }}
-                        aria-label="Page"
-                    >
-                    <input type='submit' hidden form="loginForm" value=""/>
-                        Log In
-                    </Button>
-                </div>
                 <div className="inline-flex items-center justify-center w-full">
                     <hr className="w-2/3 h-px my-8 bg-black border-0 dark:bg-gray-700"/>
                     <div
