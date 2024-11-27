@@ -12,11 +12,14 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"google.golang.org/grpc"
 
 	// <MOD-NAME>/<PACKAGE-NAME>
 	pb "area/greeting"
-
-	"google.golang.org/grpc"
 )
 
 type server struct {
@@ -43,7 +46,15 @@ func main() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}
+
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello World!"))
+	})
+	http.ListenAndServe(":3000", r)
 }
 
 // New service + DB
 // Try to call one service from another
+// Reaction Service is Message Broker ?
