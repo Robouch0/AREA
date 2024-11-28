@@ -1,12 +1,11 @@
 import Navbar from "@/components/ui/navbar";
-
 export default function InAppLayout({children,}: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
         <div className="min-h-screen flex flex-col">
             <header className="bg-slate-800 w-full h-24">
-                <Navbar prop={{profilePicture: undefined}}>
+                <Navbar prop={{profilePicture: String("/areaLogo.png")}}>
 
                 </Navbar>
             </header>

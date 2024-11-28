@@ -1,13 +1,14 @@
 'use client';
 import Image from 'next/image'
 import {redirect} from "next/navigation";
-export default function Navbar({prop} :{prop: any}) {
-    let img;
-    if (prop.profilePicture != undefined) {
-        img = prop.profilePicture;
-    } else {
-        img = "/default-avatar.png";
-    }
+
+export interface User {
+    profilePicture?: string;
+    age?: number;
+} // unsure is this the right away pour du TS type ?
+
+export default function Navbar({prop}: {prop:User}) {
+    const img = prop.profilePicture || "/default-avatar.png";
 
     return (
         <div className="flex flex-row">

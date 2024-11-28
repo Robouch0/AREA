@@ -10,7 +10,7 @@ export default function Page() {
     const [showPassword, setShowPassword] = useState(false);
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         redirect('/services');
     };

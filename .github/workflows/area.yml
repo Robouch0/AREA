@@ -13,9 +13,16 @@ env:
   GIT_SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
 
 jobs:
+  check-web-compilation:
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    name: Compile web page frontend
+    uses: ./.github/workflows/web.yml
+
+
   push_to_mirror:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip CI]')
     runs-on: ubuntu-latest
+    needs: [check-web-compilation]
     steps:
       - uses: actions/checkout@v4
         with:
