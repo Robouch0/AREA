@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image'
 import {redirect} from "next/navigation";
+import aboutJson from "../../public/about.json";
 
 export interface User {
     profilePicture?: string;
@@ -9,7 +10,7 @@ export interface User {
 
 export default function Navbar({prop}: {prop:User}) {
     const img = prop.profilePicture || "/default-avatar.png";
-
+    console.log(aboutJson.services);
     return (
         <div className="flex flex-row">
             <div className="p-4 ml-auto">

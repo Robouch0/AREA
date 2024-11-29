@@ -1,17 +1,28 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import '../styles/global.css'
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+
+
+const avenirNext = localFont({
+    src: [
+        {
+            path: '../public/fonts/AvenirNextLTPro-Regular.otf',
+            weight: '400',
+            style: 'normal',
+        },
+        {
+            path: '../public/fonts/AvenirNextLTPro-Bold.otf',
+            weight: '700',
+            style: 'normal',
+        },
+        // Add more variations if needed
+    ],
+    variable: '--font-avenir-next',
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,7 +37,7 @@ export default function RootLayout({
   return (
         <html className="scroll-smooth" lang="en">
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${avenirNext.variable} antialiased`}
           >
             {children}
           </body>
