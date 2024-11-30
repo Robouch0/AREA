@@ -5,8 +5,11 @@ import aboutJson from "../../public/about.json";
 
 export interface User {
     profilePicture?: string;
-    age?: number;
+    imgWidth?: number;
+    imgHeight?: number;
 } // unsure is this the right away pour du TS type ?
+
+
 
 export default function Navbar({prop}: {prop:User}) {
     const img = prop.profilePicture || "/default-avatar.png";
@@ -14,13 +17,15 @@ export default function Navbar({prop}: {prop:User}) {
     return (
         <div className="flex flex-row">
             <div className="p-4 ml-auto">
-                <button onClick={() => (redirect("/services/profile"))}>
+                <button
+                    onClick={() => (redirect("/services/profile"))}
+                >
                     <Image
-                        className="border-4 rounded-b-full rounded-t-full border-black"
+                        className="border-4 rounded-b-full rounded-t-full border-black hover:animate-pulse hover:ease-in"
                         alt="profile picture"
                         src={img}
-                        width={60}
-                        height={60}
+                        width={prop.imgWidth}
+                        height={prop.imgHeight}
                     />
                 </button>
             </div>
