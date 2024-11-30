@@ -28,7 +28,7 @@ export default function Page() {
         <div className="flex items-center justify-center min-h-screen bg-white">
             <div className="flex flex-col items-center w-full max-w-md">
                 <h1 className="font-mono text-5xl font-extrabold mb-16"> AREA </h1>
-                <h2 className="font-mono text-4xl font-black mb-12"> Log In </h2>
+                <h2 className="font-mono text-4xl font-black mb-12"> Sign up </h2>
                 <form id="loginForm" onSubmit={handleSubmit} className="">
                     <div className="w-full mb-6">
                         <Input
@@ -98,15 +98,15 @@ export default function Page() {
                     <GithubOauth
                         arial-label="Github"
                     />
-                    <div className="flex flex-row font-bold">
+                    <div className="mx-6 flex flex-row font-bold">
                         <p>
-                            Vous n'avez pas encore de compte ?
+                            Vous avez déjà un compte ?
                         </p>
                         <a
                             className="mx-2 underline-offset-1 underline font-bold hover:cursor-pointer"
-                            onClick={() => redirect('/register')}
+                            onClick={() => redirect('/')}
                         >
-                            Inscrivez-vous ICI !
+                            Connectez-vous ICI !
                         </a>
                     </div>
                 </div>
