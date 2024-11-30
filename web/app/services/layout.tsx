@@ -11,19 +11,19 @@ export default function InAppLayout({children,}: Readonly<{
         <div className="min-h-screen flex flex-col">
             <header className="bg-white w-full h-24 flex flex-row justify-end">
                 <Button
-                    className="hover:bg-transparent shadow-none bg-transparent absolute left-0 mx-6 text-black text-4xl my-6 font-bold"
+                    className="hidden sm:block sm:text-slate-800 hover:bg-transparent shadow-none bg-transparent absolute left-0 mx-6 text-4xl my-6 font-bold"
                     onClick={() => (redirect("/services/"))}
                 >
                     AREA
                 </Button>
                 <Button
-                    className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-1/2 w-1/12 hover:text-white hover:border-4 hover:border-black"
+                    className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-32 hover:text-white hover:border-4 hover:border-black"
                     onClick={() => (redirect("/services/create/"))}
                 >
                     Create
                 </Button>
                 <Button
-                    className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-1/2 w-1/12 hover:text-white hover:border-4 hover:border-black"
+                    className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-32 hover:text-white hover:border-4 hover:border-black"
                     onClick={() => (redirect("/services/"))}
                 >
                     Explore

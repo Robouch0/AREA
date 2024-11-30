@@ -39,7 +39,7 @@ export default function Page() {
         <>
             <div className="flex flex-col items-center justify-center bg-white">
                 <h1 className="my-8 text-5xl text-black font-extrabold"> Explore </h1>
-                <div className="w-1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60">
+                <div className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60">
                     <FaSearch className="text-gray-400 text-3xl" />
                     <Input
                         placeholder="Cherchez des Areas ici"

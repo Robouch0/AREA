@@ -80,30 +80,37 @@ export default function Create() {
         },
     ]
 
-    const [value, setValue] = React.useState("")
+    const [actionValue, setValue] = React.useState("")
+    const [reactionValue, setReactionValue] = React.useState("")
     const [actionId, setActionId] = React.useState(-1)
+    const [reactionId, setReactionId] = React.useState(-1)
 
     useEffect(() => {
         setActionId(-1);
-    }, [value]);
+    }, [actionValue]);
+
+    useEffect(() => {
+        setReactionId(-1);
+    }, [reactionValue]);
+
 
     return (
-        <div className="my-16 bg-white h-full w-full flex flex-col justify-center items-center p-4">
+        <div className="my-16 bg-white h-full w-full flex flex-col justify-center items-center p-8">
             <div className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl  flex flex-col justify-start items-center">
                 <h1 className="my-2 text-blue-500">
                     ACTION
                 </h1>
-                <ComboboxDemo services={services} value={value} setValue={setValue}/>
-                {(value != "" && actionId == -1) ? <h1 className="p-6 text-blue-500 text-5xl">Veuillez sélectionner une action </h1> : <div> </div>}
+                <ComboboxDemo services={services} value={actionValue} setValue={setValue}/>
+                {(actionValue != "" && actionId == -1) ? <h1 className="p-6 text-blue-500 text-5xl">Veuillez sélectionner une action </h1> : <div> </div>}
                 { actionId == -1 ?
                     <div className="flex flex-wrap py-4 justify-center items-center">
-                        {microservices.find((microservice) => microservice.key === value)?.actions.map((action) => (
+                        {microservices.find((microservice) => microservice.key === actionValue)?.actions.map((action) => (
                           <div key={action.id}
                               className="flex flex-row">
                               <MicroServiceCard
                                   id={action.id}
                                   setId={setActionId}
-                                  microServicesColor={microservices.find((ms) => ms.key === value)?.color}
+                                  microServicesColor={microservices.find((ms) => ms.key === actionValue)?.color}
                                   title={action.title}
                                   description={action.description}
                               />
@@ -113,19 +120,46 @@ export default function Create() {
                     :
                     <>
                         <div className="p-2 my-4 text-xl flex flex-wrap text-white">
-                            {microservices.find((ms) => ms.key === value)?.actions?.at(actionId)?.title}
+                            {microservices.find((ms) => ms.key === actionValue)?.actions?.at(actionId)?.title}
                         </div>
                         <div className="text-xl flex flex-wrap text-white">
-                            {microservices.find((ms) => ms.key === value)?.actions?.at(actionId)?.description}
+                            {microservices.find((ms) => ms.key === actionValue)?.actions?.at(actionId)?.description}
                         </div>
                     </>
                 }
             </div>
             <hr className="h-32 w-4 bg-gray-300"/>
-            <div className="bg-slate-800 text-6xl font-bold w-1/2 py-4 rounded-3xl h-80 flex flex-col justify-start items-center">
-                <h1 className="my-2 text-white">
+            <div className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl  flex flex-col justify-start items-center">
+                <h1 className="my-2 text-red-500">
                     REACTION
                 </h1>
+                <ComboboxDemo services={services} value={reactionValue} setValue={setReactionValue}/>
+                {(reactionValue != "" && reactionId == -1) ? <h1 className="p-6 text-red-500 text-5xl">Veuillez sélectionner une réaction </h1> : <div> </div>}
+                { reactionId == -1 ?
+                    <div className="flex flex-wrap py-4 justify-center items-center">
+                        {microservices.find((microservice) => microservice.key === reactionValue)?.actions.map((reaction) => (
+                            <div key={reaction.id}
+                                 className="flex flex-row">
+                                <MicroServiceCard
+                                    id={reaction.id}
+                                    setId={setReactionId}
+                                    microServicesColor={microservices.find((ms) => ms.key === reactionValue)?.color}
+                                    title={reaction.title}
+                                    description={reaction.description}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                    :
+                    <>
+                        <div className="p-2 my-4 text-xl flex flex-wrap text-white">
+                            {microservices.find((ms) => ms.key === reactionValue)?.actions?.at(reactionId)?.title}
+                        </div>
+                        <div className="text-xl flex flex-wrap text-white">
+                            {microservices.find((ms) => ms.key === reactionValue)?.actions?.at(reactionId)?.description}
+                        </div>
+                    </>
+                }
             </div>
         </div>
     );

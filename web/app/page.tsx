@@ -25,7 +25,7 @@ export default function Page() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-screen bg-white">
             <div className="flex flex-col items-center w-full max-w-md">
                 <h1 className="font-mono text-5xl font-extrabold mb-16"> AREA </h1>
                 <h2 className="font-mono text-4xl font-black mb-12"> Log In </h2>
