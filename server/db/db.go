@@ -21,7 +21,7 @@ var (
 )
 
 func initDB() *bun.DB {
-	dsn := "postgresql://postgres:postgres@localhost:5432/postgres?schema=public" // In environment
+	dsn := "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable" // In environment
 	hsqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	conn := bun.NewDB(hsqldb, pgdialect.New()) // Be careful to create a new db instance each time
 	return conn
