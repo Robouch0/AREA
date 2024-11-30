@@ -37,7 +37,7 @@ export default function RootLayout({
   return (
         <html className="scroll-smooth" lang="en">
           <body
-            className={`${avenirNext.variable} antialiased`}
+            className={`${avenirNext.variable} antialiased bg-slate-800`}
           >
             {children}
           </body>
