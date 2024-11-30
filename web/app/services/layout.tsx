@@ -2,6 +2,8 @@
 import Navbar, {User} from "@/components/ui/navbar";
 import {Button} from "@/components/ui/button";
 import {redirect} from "next/navigation";
+import Image from 'next/image'
+
 export default function InAppLayout({children,}: Readonly<{
     children: React.ReactNode;
 }>) {
@@ -41,7 +43,7 @@ export default function InAppLayout({children,}: Readonly<{
                 {children}
             </main>
 
-            <footer className="bg-slate-800 w-full">
+            <footer className="bg-slate-800 w-full flex flex-row items-center justify-center">
                 <div className="container mx-auto px-4 py-8">
                     <h1 className="text-amber-50 font-semibold text-xl mb-4">AREA</h1>
                     <a href="/services/contact" className="mx-4 text-amber-50 font-medium"> Nous contacter </a>

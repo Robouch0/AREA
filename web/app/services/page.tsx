@@ -3,6 +3,7 @@ import { AreaCard } from "@/components/ui/areaCard"
 import {Input} from "@/components/ui/input";
 import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
+import Image from "next/image";
 
 export default function Page() {
 
@@ -37,9 +38,36 @@ export default function Page() {
 
     return (
         <>
+            <div className="bg-white flex flex-col sm:flex-row justify-center items-center p-32">
+                <Image
+                    className="opacity-40"
+                    src="/bg.png"
+                    alt="bg Social Networks"
+                    width="350"
+                    height="350"
+                />
+                <div className="hidden flex-col sm:block sm:flex-col justify-center items-center p-4 text-2xl font-bold">
+                    <h1 className="mx-16 my-8 py-2">
+                        Le monde de l'automatisation s'ouvre pour vous
+                    </h1>
+                    <h1 className="mx-20 flex flex-row">
+                        Il est l'heure de passer à l'
+                        <h1 className="mx-1 my-1 font-bold text-blue-500 animate-bounce ease-in-out">
+                            ACTION
+                        </h1>
+                    </h1>
+                    <h1 className="mx-20 flex flex-row">
+                        Nous avons hâte de voir vos
+                        <h1 className="mx-2 font-bold text-red-500 animate-pulse">
+                            REACTIONS
+                        </h1>
+                    </h1>
+                </div>
+            </div>
             <div className="flex flex-col items-center justify-center bg-white">
                 <h1 className="my-8 text-5xl text-black font-extrabold"> Explore </h1>
-                <div className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60">
+                <div
+                    className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60">
                     <FaSearch className="text-gray-400 text-3xl" />
                     <Input
                         placeholder="Cherchez des Areas ici"
@@ -55,6 +83,9 @@ export default function Page() {
                             <AreaCard areaColor={area.areaColor} category={area.areaCategory} areaTitle={area.areaTitle} action={area.actionImage} reaction ={area.reactionImage} />
                         </div>
                     ))}
+                </div>
+                <div className="p-16">
+
                 </div>
             </div>
         </>
