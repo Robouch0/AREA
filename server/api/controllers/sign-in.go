@@ -8,6 +8,7 @@
 package controllers
 
 import (
+	"area/api/middleware"
 	"area/db"
 	"area/models"
 	"context"
@@ -15,34 +16,39 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/go-chi/jwtauth/v5"
 )
 
-type Credentials struct {
-	UserName string `bun:"user_name" json:"user_name"`
+type credentials struct {
+	Email    string `bun:"email" json:"email"`
 	Password string `bun:"password" json:"password"`
 }
 
-func SignIn(w http.ResponseWriter, r *http.Request) {
-	var cred Credentials
+func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var cred credentials
 
-	err := json.NewDecoder(r.Body).Decode(&cred)
-	if err != nil {
-		w.WriteHeader(401)
-		fmt.Printf("Error: %v\n", err)
-		return
+		err := json.NewDecoder(r.Body).Decode(&cred)
+		if err != nil {
+			w.WriteHeader(401)
+			fmt.Printf("Json Error: %v\n", err)
+			return
+		}
+		userDb := db.GetUserDb()
+
+		us := new(models.User)
+		err = userDb.Db.NewSelect().
+			Model(us).
+			Where("email = ?", cred.Email).
+			Where("password = ?", cred.Password).
+			Scan(context.Background())
+
+		if err != nil {
+			w.WriteHeader(401)
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+		w.Write([]byte(middleware.CreateToken(jwtauth, us.ID)))
 	}
-	userDb := db.GetUserDb()
-
-	us := new(models.User)
-	err = userDb.Db.NewSelect().
-		Model(us).
-		Where("first_name = ?", cred.UserName). // The check has to be better
-		Scan(context.Background())
-
-	if err != nil {
-		w.WriteHeader(401)
-		fmt.Printf("Error: %v\n", err)
-		return
-	}
-	w.Write([]byte("Login done"))
 }
