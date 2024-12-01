@@ -21,7 +21,7 @@ import (
 
 func UserRoutes() chi.Router {
 	userRouter := chi.NewRouter()
-	userDb := db.GetUserDb()
+	userDb := db.InitUserDb()
 
 	userRouter.Post("/", func(w http.ResponseWriter, r *http.Request) {
 		newUser := new(models.User)

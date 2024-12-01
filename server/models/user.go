@@ -18,6 +18,7 @@ type User struct {
 	ID            uint   `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
 	FirstName     string `bun:"first_name" json:"first_name"`
 	LastName      string `bun:"last_name" json:"last_name"`
+	Password      string `bun:"password" json:"password"`
 	Email         string `bun:"email" json:"email"`
 
 	// Useful for log and security purposes

@@ -10,7 +10,7 @@ package main
 import (
 	"net/http"
 
-	"area/routes"
+	"area/api/routes"
 )
 
 func main() {

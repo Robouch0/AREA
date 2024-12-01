@@ -8,6 +8,8 @@
 package routes
 
 import (
+	"area/api/controllers"
+
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
@@ -18,5 +20,6 @@ func InitHTTPServer() chi.Router {
 	r.Use(middleware.AllowContentType("application/json"))
 
 	r.Mount("/users/", UserRoutes())
+	r.Post("/login/", controllers.SignIn)
 	return r
 }
