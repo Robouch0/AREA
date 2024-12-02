@@ -26,6 +26,7 @@ type credentials struct {
 }
 
 func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var cred credentials
 

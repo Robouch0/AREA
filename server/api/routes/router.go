@@ -49,5 +49,6 @@ func InitHTTPServer() *ApiGateway {
 		})
 	})
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))
+	gateway.Router.Post("/sign-up/", controllers.SignUp)
 	return gateway
 }
