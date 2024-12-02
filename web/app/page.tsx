@@ -9,7 +9,8 @@ import {GithubOauth} from "@/components/ui/githubOauth";
 
 export default function Page() {
     const [showPassword, setShowPassword] = useState(false);
-
+    const [emailValue, setEmailValue] = useState('');
+    const [passwordValue, setPasswordValue] = useState('');
 
     const handleSubmit = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -37,6 +38,8 @@ export default function Page() {
                             id="mail"
                             className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="Email"
+                            value={emailValue}
+                            onChange={(e) => setEmailValue(e.target.value)}
                             required
                         />
                     </div>
@@ -47,6 +50,8 @@ export default function Page() {
                             id="password"
                             className="!text-2xl rounded-2xl border-4 focus:border-black w-full p-4 h-16 pr-12 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 font-extrabold"
                             aria-label="Password"
+                            value={passwordValue}
+                            onChange={(e) => setPasswordValue(e.target.value)}
                             required
                         />
                         <Button
