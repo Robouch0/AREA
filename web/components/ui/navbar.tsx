@@ -7,7 +7,7 @@ export interface User {
     profilePicture?: string;
     imgWidth?: number;
     imgHeight?: number;
-} // unsure is this the right away pour du TS type ?
+}
 
 
 

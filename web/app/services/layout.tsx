@@ -2,7 +2,6 @@
 import Navbar, {User} from "@/components/ui/navbar";
 import {Button} from "@/components/ui/button";
 import {redirect} from "next/navigation";
-import Image from 'next/image'
 
 export default function InAppLayout({children,}: Readonly<{
     children: React.ReactNode;

@@ -4,7 +4,7 @@ import {Input} from "@/components/ui/input";
 import {useState} from "react";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
 import { redirect } from 'next/navigation'
-import {FaGoogle, FaFacebook, FaGithub} from 'react-icons/fa';
+import {FaGoogle, FaFacebook} from 'react-icons/fa';
 import {GithubOauth} from "@/components/ui/githubOauth";
 
 export default function Page() {
@@ -105,7 +105,7 @@ export default function Page() {
                     />
                     <div className="flex flex-row font-bold">
                         <p>
-                            Vous n'avez pas encore de compte ?
+                            Vous n&#39;avez pas encore de compte ?
                         </p>
                         <a
                             className="mx-2 underline-offset-1 underline font-bold hover:cursor-pointer"

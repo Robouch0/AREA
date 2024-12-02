@@ -19,8 +19,14 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 
+interface Service {
+    value?: string;
+    label?: string;
+}
 
-export function ComboboxDemo({ services, value, setValue }) {
+
+
+export function ComboboxDemo({ services, value, setValue }: {services:Service[];  value:string, setValue:React.Dispatch<React.SetStateAction<string>>}) {
     const [open, setOpen] = React.useState(false)
 
     return (

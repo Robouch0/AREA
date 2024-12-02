@@ -1,7 +1,7 @@
 'use client';
 import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-export function MicroServiceCard({microServicesColor, title, description, setId, id }) {
+export function MicroServiceCard({microServicesColor, title, description, setId, id} : {microServicesColor:string|undefined; title:string, description:string, setId:React.Dispatch<React.SetStateAction<number>>; id:number}) {
 
     return (
         <>

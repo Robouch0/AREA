@@ -7,13 +7,6 @@ import Image from "next/image";
 
 export default function Page() {
 
-    interface Area {
-        areaCategory: string;
-        areaTitle: string;
-        actionImage: string;
-        reactionImage: string;
-    }
-
     const [searchField, setSearchField] = useState("");
 
     // exemple mockup
@@ -48,10 +41,10 @@ export default function Page() {
                 />
                 <div className="hidden flex-col sm:block sm:flex-col justify-center items-center p-4 text-2xl font-bold">
                     <h1 className="mx-16 my-8 py-2">
-                        Le monde de l'automatisation s'ouvre pour vous
+                        Le monde de l&#39;automatisation s&#39;ouvre pour vous
                     </h1>
                     <h2 className="mx-20 flex flex-row">
-                        Il est l'heure de passer à l'
+                        Il est l&#39;heure de passer à l&#39;
                         <p className="mx-1 my-1 font-bold text-blue-500 animate-bounce ease-in-out">
                             ACTION
                         </p>

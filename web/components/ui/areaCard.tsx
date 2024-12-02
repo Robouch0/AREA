@@ -3,7 +3,7 @@ import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/card
 import Image from 'next/image'
 import {Button} from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
-export  function AreaCard({areaColor, category, action, reaction, areaTitle }) {
+export  function AreaCard({areaColor, category, action, reaction, areaTitle}: {areaColor:string; category:string; action:string, reaction:string, areaTitle:string}) {
     const router = useRouter();
 
     const handleRedirection = () => {

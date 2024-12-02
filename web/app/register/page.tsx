@@ -4,7 +4,7 @@ import {Input} from "@/components/ui/input";
 import {useState} from "react";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
 import { redirect } from 'next/navigation'
-import {FaGoogle, FaFacebook, FaGithub} from 'react-icons/fa';
+import {FaGoogle, FaFacebook} from 'react-icons/fa';
 import {GithubOauth} from "@/components/ui/githubOauth";
 
 export default function Page() {
