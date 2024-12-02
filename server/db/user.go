@@ -18,7 +18,7 @@ type UserDb struct {
 	Db *bun.DB
 }
 
-func GetUserDb() *UserDb {
+func InitUserDb() *UserDb {
 	db := initDB()
 
 	db.NewCreateTable().
@@ -26,6 +26,11 @@ func GetUserDb() *UserDb {
 		IfNotExists().
 		Exec(context.Background())
 
+	return &UserDb{Db: db}
+}
+
+func GetUserDb() *UserDb {
+	db := initDB()
 	return &UserDb{Db: db}
 }
 

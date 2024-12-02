@@ -10,11 +10,11 @@ package main
 import (
 	"net/http"
 
-	"area/routes"
+	"area/api/routes"
 )
 
 func main() {
-	r := routes.InitHTTPServer()
+	apiGateway := routes.InitHTTPServer()
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3000", apiGateway.Router)
 }
