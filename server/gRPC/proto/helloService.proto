@@ -13,11 +13,3 @@ message HelloWorldRequest {}
 message HelloWorldResponse {
     string message = 1;
 }
-
-service Github {
-    rpc LaunchCronJob(HelloWorldRequest) returns (HelloWorldResponse) {}
-}
-
-service Google {
-    rpc LaunchWebHook(HelloWorldRequest) returns (HelloWorldResponse) {}
-}

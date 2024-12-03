@@ -24,7 +24,7 @@ func NewHelloServiceClient(conn *grpc.ClientConn) *HelloServiceClient {
 	return &HelloServiceClient{helloworld.NewHelloWorldServiceClient(conn)}
 }
 
-func (hello *HelloServiceClient) SendAction(_ string) (string, error) {
+func (hello *HelloServiceClient) SendAction(_ any) (string, error) {
 	r, err := hello.SayHello(context.Background(), &helloworld.HelloWorldRequest{})
 
 	if err != nil {

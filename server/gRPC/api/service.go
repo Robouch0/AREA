@@ -8,6 +8,6 @@
 package api
 
 type ClientService interface {
-	SendAction(body string) (string, error)
+	SendAction(body any) (string, error)
 	// TriggerReaction(action int, prevRes string) (int, error)
 }
