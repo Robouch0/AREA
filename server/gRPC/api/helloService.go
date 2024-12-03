@@ -11,10 +11,15 @@ import (
 	"area/db"
 	helloworld "area/protogen/gRPC/proto"
 	"context"
+	"encoding/json"
 	"log"
 
 	"google.golang.org/grpc"
 )
+
+type msg struct {
+	Msg string `json:"msg"`
+}
 
 type HelloServiceClient struct {
 	helloworld.HelloWorldServiceClient
@@ -24,8 +29,11 @@ func NewHelloServiceClient(conn *grpc.ClientConn) *HelloServiceClient {
 	return &HelloServiceClient{helloworld.NewHelloWorldServiceClient(conn)}
 }
 
-func (hello *HelloServiceClient) SendAction(_ any) (string, error) {
-	r, err := hello.SayHello(context.Background(), &helloworld.HelloWorldRequest{})
+func (hello *HelloServiceClient) SendAction(body []byte) (string, error) {
+	msg := new(msg)
+	err := json.Unmarshal([]byte(body), msg)
+
+	r, err := hello.SayHello(context.Background(), &helloworld.HelloWorldRequest{Message: msg.Msg})
 
 	if err != nil {
 		return "", err

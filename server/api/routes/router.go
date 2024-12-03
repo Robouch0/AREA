@@ -9,48 +9,17 @@ package routes
 
 import (
 	"area/api/controllers"
-	areaMiddleware "area/api/middleware"
-	"area/gRPC/api"
 	"fmt"
-	"log"
 
-	// "fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
-type ApiGateway struct {
-	Router chi.Router
-	JwtTok *jwtauth.JWTAuth
-
-	conn    *grpc.ClientConn
-	clients map[string]api.ClientService
-}
-
-func createApiGateway() (*ApiGateway, error) {
-	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	if err != nil {
-		return nil, err
-	}
-
-	m := make(map[string]api.ClientService)
-	m["hello"] = api.NewHelloServiceClient(conn)
-	return &ApiGateway{
-		Router:  chi.NewRouter(),
-		JwtTok:  areaMiddleware.GetNewJWTAuth(),
-		conn:    conn,
-		clients: m,
-	}, nil
-}
-
 func InitHTTPServer() (*ApiGateway, error) {
-	gateway, err := createApiGateway()
+	gateway, err := CreateApiGateway()
 	if err != nil {
 		return nil, err
 	}
@@ -73,9 +42,20 @@ func InitHTTPServer() (*ApiGateway, error) {
 			serviceParam := chi.URLParam(r, "service")
 
 			if service, ok := gateway.clients[serviceParam]; ok {
-				msg, err := service.SendAction(serviceParam)
+				var b []byte
+
+				_, err := r.Body.Read(b)
 				if err != nil {
-					log.Println(err)
+					if err != nil {
+						w.WriteHeader(401)
+						w.Write([]byte(err.Error()))
+						return
+					}
+				}
+				msg, err := service.SendAction(b) // Transform to string or bytes
+				if err != nil {
+					w.WriteHeader(401)
+					w.Write([]byte(err.Error()))
 					return
 				}
 				w.Write([]byte(msg))
