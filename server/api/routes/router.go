@@ -18,6 +18,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
+    "github.com/go-chi/cors"
 )
 
 type ApiGateway struct {
@@ -37,6 +38,15 @@ func InitHTTPServer() *ApiGateway {
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
 
+    gateway.Router.Use(cors.Handler(cors.Options{
+        AllowedOrigins:   []string{"https://*", "http://*"},
+        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+        ExposedHeaders:   []string{"Link"},
+        AllowCredentials: true,
+        MaxAge:           300,
+      }))
+
 	gateway.Router.Mount("/users/", UserRoutes())
 
 	gateway.Router.Group(func(r chi.Router) {
@@ -46,6 +56,7 @@ func InitHTTPServer() *ApiGateway {
 		r.Get("/admin/", func(w http.ResponseWriter, r *http.Request) {
 			_, claims, _ := jwtauth.FromContext(r.Context()) // DO NOT FORGET TO CHECK THE CLAIM
 			w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user_id"])))
+			r.Cookie("token")
 		})
 	})
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))

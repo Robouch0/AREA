@@ -6,6 +6,7 @@ import {FaEye, FaEyeSlash} from "react-icons/fa";
 import { redirect } from 'next/navigation'
 import {FaGoogle, FaFacebook} from 'react-icons/fa';
 import {GithubOauth} from "@/components/ui/githubOauth";
+import {login} from "@/api/backendCall"
 
 export default function Page() {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +15,7 @@ export default function Page() {
 
     const handleSubmit = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        login(emailValue, passwordValue);
         redirect('/services');
     };
 
