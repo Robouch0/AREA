@@ -26,3 +26,5 @@ type User struct {
 	CreatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp" json:"-"`
 	UpdatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp" json:"-"`
 }
+
+

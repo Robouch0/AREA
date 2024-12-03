@@ -10,10 +10,10 @@ package routes
 import (
 	"area/api/controllers"
 	areaMiddleware "area/api/middleware"
+	"encoding/json"
 	"fmt"
-
-	// "fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
@@ -23,6 +23,11 @@ import (
 type ApiGateway struct {
 	Router chi.Router
 	JwtTok *jwtauth.JWTAuth
+}
+
+type ClientInfo struct {
+	Host string
+	Time int64
 }
 
 func createApiGateway() *ApiGateway {
@@ -37,6 +42,8 @@ func InitHTTPServer() *ApiGateway {
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
 
+	gateway.Router.Get("/ping", PingRoute)
+	gateway.Router.Get("/about.json", AboutRoute)
 	gateway.Router.Mount("/users/", UserRoutes())
 
 	gateway.Router.Group(func(r chi.Router) {
@@ -51,4 +58,18 @@ func InitHTTPServer() *ApiGateway {
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))
 	gateway.Router.Post("/sign-up/", controllers.SignUp)
 	return gateway
+}
+
+func PingRoute(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(fmt.Sprintf("Pong")))
+}
+
+func AboutRoute(w http.ResponseWriter, r *http.Request) {
+	Clientdata := ClientInfo{
+		Host:		r.RemoteAddr,
+		Time:	time.Now().Unix(),
+	}
+	fmt.Printf(r.Header.Get("X-Real-Ip"))
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(Clientdata)
 }
