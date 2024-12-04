@@ -26,8 +26,10 @@ func LaunchServices() {
 	s := grpc.NewServer()
 
 	helloService := api.NewHelloService(nil)
+	dtService := api.NewDateTimeService(nil)
 
 	helloworld.RegisterHelloWorldServiceServer(s, &helloService)
+	helloworld.RegisterDateTimeServiceServer(s, &dtService)
 
 	log.Printf("gRPC server listening at %v", listener.Addr())
 	if err = s.Serve(listener); err != nil {

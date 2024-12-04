@@ -34,6 +34,8 @@ func CreateApiGateway() (*ApiGateway, error) {
 
 	m := make(map[string]api.ClientService)
 	m["hello"] = api.NewHelloServiceClient(conn)
+	m["dt"] = api.NewDateTimeServiceClient(conn)
+	m["react"] = api.NewReactionServiceClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),

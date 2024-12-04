@@ -9,7 +9,7 @@ package api
 
 import (
 	"area/db"
-	helloworld "area/protogen/gRPC/proto"
+	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"encoding/json"
 	"log"
@@ -22,18 +22,18 @@ type msg struct {
 }
 
 type HelloServiceClient struct {
-	helloworld.HelloWorldServiceClient
+	gRPCService.HelloWorldServiceClient
 }
 
 func NewHelloServiceClient(conn *grpc.ClientConn) *HelloServiceClient {
-	return &HelloServiceClient{helloworld.NewHelloWorldServiceClient(conn)}
+	return &HelloServiceClient{gRPCService.NewHelloWorldServiceClient(conn)}
 }
 
 func (hello *HelloServiceClient) SendAction(body []byte) (string, error) {
 	msg := new(msg)
 	err := json.Unmarshal([]byte(body), msg)
 
-	r, err := hello.SayHello(context.Background(), &helloworld.HelloWorldRequest{Message: msg.Msg})
+	r, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.Msg})
 
 	if err != nil {
 		return "", err
@@ -45,15 +45,15 @@ func (hello *HelloServiceClient) SendAction(body []byte) (string, error) {
 
 type HelloService struct {
 	db *db.UserDb
-	helloworld.UnimplementedHelloWorldServiceServer
+	gRPCService.UnimplementedHelloWorldServiceServer
 }
 
 func NewHelloService(db *db.UserDb) HelloService {
 	return HelloService{db: db}
 }
 
-func (hello *HelloService) SayHello(_ context.Context, req *helloworld.HelloWorldRequest) (*helloworld.HelloWorldResponse, error) {
+func (hello *HelloService) SayHello(_ context.Context, req *gRPCService.HelloWorldRequest) (*gRPCService.HelloWorldResponse, error) {
 	log.Println("In the service !")
 
-	return &helloworld.HelloWorldResponse{Message: "Hello !"}, nil
+	return &gRPCService.HelloWorldResponse{Message: "Hello !"}, nil
 }
