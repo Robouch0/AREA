@@ -2,7 +2,7 @@
 import Navbar, {User} from "@/components/ui/navbar";
 import {Button} from "@/components/ui/button";
 import {redirect} from "next/navigation";
-import {checkAuthentification} from "@/api/backendCall";
+import {checkAuthentification} from "@/api/authentification";
 
 export default function InAppLayout({children,}: Readonly<{
     children: React.ReactNode;

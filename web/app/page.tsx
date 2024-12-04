@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
 import { redirect } from 'next/navigation'
 import {FaGoogle, FaFacebook, FaGithub} from 'react-icons/fa';
-import {checkAuthentification, login} from "@/api/backendCall"
+import {checkAuthentification, login} from "@/api/authentification"
 
 export default function Page() {
     const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +47,7 @@ export default function Page() {
         <>
             {errorLogin ?
                 <div className="text-black bg-red-700 w-full h-24 flex flex-col justify-center items-center animate-pulse ease-in-out">
-                    <p className="font-mono md:text-4xl text-xl font-bold"> Le mot de passe et l'email ne correspondent pas </p>
+                    <p className="font-mono md:text-4xl text-xl font-bold"> Le mot de passe et l&#39;email ne correspondent pas </p>
                 </div>
             : <> </>}
             <div className="flex items-center justify-center min-h-screen bg-white">
