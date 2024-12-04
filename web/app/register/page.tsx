@@ -2,10 +2,9 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useState} from "react";
-import {FaEye, FaEyeSlash} from "react-icons/fa";
+import {FaEye, FaEyeSlash, FaGithub} from "react-icons/fa";
 import { redirect } from 'next/navigation'
 import {FaGoogle, FaFacebook} from 'react-icons/fa';
-import {GithubOauth} from "@/components/ui/githubOauth";
 
 export default function Page() {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,10 +13,6 @@ export default function Page() {
     const handleSubmit = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         redirect('/services');
-    };
-
-    const handleGoogleOauth = () => {
-
     };
 
     const togglePasswordVisibility = () => {
@@ -89,15 +84,19 @@ export default function Page() {
                         className="flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                         type="button"
                         arial-label="Google"
-                        onClick={handleGoogleOauth}
                     >
                         <FaGoogle className="w-12 h-12"/>
                         <p className=" mx-3 text-2xl font-semibold"> Continuer avec Google </p>
                     </Button>
 
-                    <GithubOauth
-                        arial-label="Github"
-                    />
+                    <Button
+                        className="flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                        type="button"
+                        arial-label="Google"
+                    >
+                        <FaGithub className="w-12 h-12"/>
+                        <p className=" mx-3 text-2xl font-semibold"> Continuer avec Gihtub </p>
+                    </Button>
                     <div className="mx-6 flex flex-row font-bold">
                         <p>
                             Vous avez déjà un compte ?

@@ -2,12 +2,16 @@
 import Navbar, {User} from "@/components/ui/navbar";
 import {Button} from "@/components/ui/button";
 import {redirect} from "next/navigation";
+import {checkAuthentification} from "@/api/backendCall";
 
 export default function InAppLayout({children,}: Readonly<{
     children: React.ReactNode;
 }>) {
     const user:User = {profilePicture: String("/areaLogo.png"), imgHeight: 60, imgWidth: 60};
 
+    if (!checkAuthentification()) {
+        redirect('/');
+    }
     return (
         <div className="min-h-screen flex flex-col">
             <header className="bg-white w-full h-24 flex flex-row justify-end">
@@ -43,9 +47,15 @@ export default function InAppLayout({children,}: Readonly<{
             </main>
 
             <footer className="bg-slate-800 w-full flex flex-row items-center justify-center">
-                <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-amber-50 font-semibold text-xl mb-4">AREA</h1>
-                    <a href="/services/contact" className="mx-4 text-amber-50 font-medium"> Nous contacter </a>
+                <div className="container mx-auto px-4 py-8 flex flex-col">
+                    <h1 className="text-amber-50 font-semibold text-xl p-2 ">AREA</h1>
+                    <a href="/services/contact" className="mx-4 text-amber-50 font-medium py-2 "> Nous contacter </a>
+                    <a className="mx-4 text-amber-50 font-medium hover:cursor-pointer"
+                       onClick={() =>  {
+                        localStorage.removeItem("token");
+                        redirect('/');
+                        }}
+                    > Se déconnecter </a>
                 </div>
             </footer>
         </div>

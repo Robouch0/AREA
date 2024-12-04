@@ -52,7 +52,6 @@ func InitHTTPServer() *ApiGateway {
         MaxAge:           300,
       }))
 
-	gateway.Router.Get("/ping", PingRoute)
 	gateway.Router.Get("/about.json", AboutRoute)
 	gateway.Router.Mount("/users/", UserRoutes())
 
@@ -64,6 +63,7 @@ func InitHTTPServer() *ApiGateway {
 			_, claims, _ := jwtauth.FromContext(r.Context()) // DO NOT FORGET TO CHECK THE CLAIM
 			w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user_id"])))
 		})
+	    r.Get("/ping", PingRoute)
 	})
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))
 	gateway.Router.Post("/sign-up/", controllers.SignUp)
@@ -71,7 +71,7 @@ func InitHTTPServer() *ApiGateway {
 }
 
 func PingRoute(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(fmt.Sprintf("Pong")))
+    w.Write([]byte(fmt.Sprintf("Pong")))
 }
 
 func AboutRoute(w http.ResponseWriter, r *http.Request) {
