@@ -31,7 +31,6 @@ func UserRoutes() chi.Router {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
-
 		res, err := userDb.CreateUser(newUser)
 
 		if err != nil {

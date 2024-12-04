@@ -9,8 +9,7 @@ import {GithubOauth} from "@/components/ui/githubOauth";
 
 export default function Page() {
     const [showPassword, setShowPassword] = useState(false);
-    const [emailValue, setEmailValue] = useState('');
-    const [passwordValue, setPasswordValue] = useState('');
+
 
     const handleSubmit = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -29,7 +28,7 @@ export default function Page() {
         <div className="flex items-center justify-center min-h-screen bg-white">
             <div className="flex flex-col items-center w-full max-w-md">
                 <h1 className="font-mono text-5xl font-extrabold mb-16"> AREA </h1>
-                <h2 className="font-mono text-4xl font-black mb-12"> Log In </h2>
+                <h2 className="font-mono text-4xl font-black mb-12"> Sign up </h2>
                 <form id="loginForm" onSubmit={handleSubmit} className="">
                     <div className="w-full mb-6">
                         <Input
@@ -38,8 +37,6 @@ export default function Page() {
                             id="mail"
                             className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="Email"
-                            value={emailValue}
-                            onChange={(e) => setEmailValue(e.target.value)}
                             required
                         />
                     </div>
@@ -50,8 +47,6 @@ export default function Page() {
                             id="password"
                             className="!text-2xl rounded-2xl border-4 focus:border-black w-full p-4 h-16 pr-12 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 font-extrabold"
                             aria-label="Password"
-                            value={passwordValue}
-                            onChange={(e) => setPasswordValue(e.target.value)}
                             required
                         />
                         <Button
@@ -103,15 +98,15 @@ export default function Page() {
                     <GithubOauth
                         arial-label="Github"
                     />
-                    <div className="flex flex-row font-bold">
+                    <div className="mx-6 flex flex-row font-bold">
                         <p>
-                            Vous n&#39;avez pas encore de compte ?
+                            Vous avez déjà un compte ?
                         </p>
                         <a
                             className="mx-2 underline-offset-1 underline font-bold hover:cursor-pointer"
-                            onClick={() => redirect('/register')}
+                            onClick={() => redirect('/')}
                         >
-                            Inscrivez-vous ICI !
+                            Connectez-vous ICI !
                         </a>
                     </div>
                 </div>

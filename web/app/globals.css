@@ -70,3 +70,8 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+
+* {
+    font-family: var(--font-avenir-next), sans-serif !important;
+}
