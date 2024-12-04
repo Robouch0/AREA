@@ -17,10 +17,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-type msg struct {
-	Msg string `json:"msg"`
-}
-
 type HelloServiceClient struct {
 	gRPCService.HelloWorldServiceClient
 }
@@ -30,12 +26,17 @@ func NewHelloServiceClient(conn *grpc.ClientConn) *HelloServiceClient {
 }
 
 func (hello *HelloServiceClient) SendAction(body []byte) (string, error) {
-	msg := new(msg)
+	msg := new(gRPCService.HelloWorldRequest)
 	err := json.Unmarshal([]byte(body), msg)
 
-	r, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.Msg})
-
 	if err != nil {
+		log.Println("Could not parse the body")
+		return "", err
+	}
+
+	r, err := hello.SayHello(context.Background(), msg)
+	if err != nil {
+		log.Println("Could not send SayHello")
 		return "", err
 	}
 	return r.GetMessage(), nil

@@ -10,8 +10,9 @@ service ReactionService {
 }
 
 message ReactionRequest {
-
+    string msg = 1;
 }
 
 message ReactionResponse {
+    string res = 1;
 }

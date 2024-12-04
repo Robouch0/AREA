@@ -5,7 +5,7 @@
 // apiGateway
 //
 
-package routes
+package api
 
 import (
 	areaMiddleware "area/api/middleware"
@@ -22,7 +22,7 @@ type ApiGateway struct {
 	JwtTok *jwtauth.JWTAuth
 
 	conn    *grpc.ClientConn
-	clients map[string]api.ClientService
+	Clients map[string]api.ClientService
 }
 
 func CreateApiGateway() (*ApiGateway, error) {
@@ -40,6 +40,6 @@ func CreateApiGateway() (*ApiGateway, error) {
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),
 		conn:    conn,
-		clients: m,
+		Clients: m,
 	}, nil
 }

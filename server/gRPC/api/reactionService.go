@@ -11,6 +11,8 @@ import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
+	"encoding/json"
+	"log"
 
 	"google.golang.org/grpc"
 )
@@ -24,14 +26,7 @@ func NewReactionServiceClient(conn *grpc.ClientConn) *ReactionServiceClient {
 }
 
 func (react *ReactionServiceClient) SendAction(body []byte) (string, error) {
-	// msg := new(msg)
-	// err := json.Unmarshal([]byte(body), msg)
-	//
-	// r, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.Msg})
-	// if err != nil {
-	// return "", err
-	// }
-	// return r.GetMessage(), nil
+	// We want here to store the action from `body`
 	react.LaunchReaction(context.Background(), &gRPCService.ReactionRequest{})
 	return "", nil
 }
@@ -41,13 +36,30 @@ func (react *ReactionServiceClient) SendAction(body []byte) (string, error) {
 type ReactionService struct {
 	db      *db.UserDb
 	clients map[string]ClientService
-	gRPCService.UnimplementedDateTimeServiceServer
+
+	gRPCService.UnimplementedReactionServiceServer
 }
 
 func NewReactionService(db *db.UserDb) ReactionService {
 	return ReactionService{db: db, clients: make(map[string]ClientService)}
 }
 
+func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
+	react.clients["dt"] = NewDateTimeServiceClient(conn)
+	react.clients["hello"] = NewHelloServiceClient(conn)
+}
+
 func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
+	log.Println("Reaction searched")
+	if service, ok := react.clients["hello"]; ok {
+		log.Println("Reaction found and action sent")
+		req := gRPCService.HelloWorldRequest{Message: req.Msg}
+		b, err := json.Marshal(&req)
+		if err != nil {
+			log.Println("Error on jsonify")
+			return nil, err
+		}
+		service.SendAction(b)
+	}
 	return &gRPCService.ReactionResponse{}, nil
 }

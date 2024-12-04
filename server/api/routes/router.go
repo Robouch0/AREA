@@ -8,6 +8,7 @@
 package routes
 
 import (
+	api "area/api"
 	"area/api/controllers"
 
 	"fmt"
@@ -18,8 +19,8 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-func InitHTTPServer() (*ApiGateway, error) {
-	gateway, err := CreateApiGateway()
+func InitHTTPServer() (*api.ApiGateway, error) {
+	gateway, err := api.CreateApiGateway()
 	if err != nil {
 		return nil, err
 	}
@@ -40,33 +41,7 @@ func InitHTTPServer() (*ApiGateway, error) {
 			w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user_id"])))
 		})
 
-		r.Post("/create/{service}", func(w http.ResponseWriter, r *http.Request) {
-			serviceParam := chi.URLParam(r, "service")
-
-			if service, ok := gateway.clients[serviceParam]; ok {
-				var b []byte
-
-				_, err := r.Body.Read(b)
-				if err != nil {
-					if err != nil {
-						w.WriteHeader(401)
-						w.Write([]byte(err.Error()))
-						return
-					}
-				}
-				msg, err := service.SendAction(b) // Transform to string or bytes
-				if err != nil {
-					w.WriteHeader(401)
-					w.Write([]byte(err.Error()))
-					return
-				}
-				w.Write([]byte(msg))
-
-			} else {
-				w.WriteHeader(401)
-				w.Write([]byte(fmt.Sprintf("No such Service: %v", serviceParam)))
-			}
-		})
+		r.Post("/create/{service}", controllers.CreateRoute(gateway))
 	})
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))
 	gateway.Router.Post("/sign-up/", controllers.SignUp)
