@@ -9,11 +9,15 @@ package grpc_routes
 
 import (
 	"area/gRPC/api"
-	helloworld "area/protogen/gRPC/proto"
+	"area/gRPC/api/dateTime"
+	"area/gRPC/api/hello"
+	services "area/protogen/gRPC/proto"
 	"log"
 	"net"
+	"sync"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func LaunchServices() {
@@ -25,12 +29,33 @@ func LaunchServices() {
 	}
 	s := grpc.NewServer()
 
-	helloService := api.NewHelloService(nil)
+	helloService := hello.NewHelloService(nil)
+	dtService := dateTime.NewDateTimeService(nil)
+	reactService := api.NewReactionService(nil)
 
-	helloworld.RegisterHelloWorldServiceServer(s, &helloService)
+	services.RegisterHelloWorldServiceServer(s, &helloService)
+	services.RegisterDateTimeServiceServer(s, &dtService)
+	services.RegisterReactionServiceServer(s, &reactService)
 
-	log.Printf("gRPC server listening at %v", listener.Addr())
-	if err = s.Serve(listener); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	var wg sync.WaitGroup
+
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+
+		log.Printf("gRPC server listening at %v", listener.Addr())
+		if err = s.Serve(listener); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+
+	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Println(err)
+		return
 	}
+
+	reactService.InitServiceClients(conn)
+	dtService.InitReactClient(conn)
+	wg.Wait()
 }

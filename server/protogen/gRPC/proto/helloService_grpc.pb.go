@@ -4,7 +4,7 @@
 // - protoc             v3.19.6
 // source: gRPC/proto/helloService.proto
 
-package helloworld
+package service
 
 import (
 	context "context"
