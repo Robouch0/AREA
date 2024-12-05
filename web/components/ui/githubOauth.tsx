@@ -1,16 +1,40 @@
+"use client"
 import {FaGithub} from "react-icons/fa";
 import {Button} from "@/components/ui/button";
+import axios from "axios";
+async function redirectToGitHub() {
+    try {
+        const response = await axios.get(`http://localhost:3000/oauth/github`);
+        console.log(response.data);
+        window.location.href = response.data;
+        return true;
+    } catch (error) {
+        throw error;
+    }
 
-export function GithubOauth() {
-    function redirectToGitHub() {
-        const client_id = "Ov23linAJPU28i6OMP8G";
-        const redirect_uri = "http://localhost:3000/services/";
-        const scope = "read:user";
+}
 
-        const authUrl = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}`;
+async function askForToken(paramValue:string) {
+    try {
+        const response = await axios.post(`http://localhost:3000/oauth/`, {
+            service : "github",
+            code : paramValue
+        });
+        console.log(response.data);
+        return true;
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-
-        window.location.href = authUrl;
+export  async function GithubOauth() {
+    if (typeof window !== 'undefined') {
+        const url = window.location.href;
+        const params = new URLSearchParams(new URL(url).search);
+        const paramValue = params.get('code');
+        if (paramValue != null) {
+            askForToken(paramValue);
+        }
     }
     return (
         <>

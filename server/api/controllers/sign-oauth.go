@@ -87,7 +87,9 @@ func OAuthRoutes() chi.Router {
 			client := &http.Client{}
 			res, err := client.Do(request)
 			if err != nil {
-				panic(err)
+				w.WriteHeader(401)
+				w.Write([]byte(err.Error()))
+				return
 			}
 
 			w.Write([]byte(body))

@@ -17,10 +17,6 @@ export default function Page() {
         redirect('/services');
     };
 
-    const handleGoogleOauth = () => {
-
-    };
-
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -94,7 +90,6 @@ export default function Page() {
                         className="flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                         type="button"
                         arial-label="Google"
-                        onClick={handleGoogleOauth}
                     >
                         <FaGoogle className="w-12 h-12"/>
                         <p className=" mx-3 text-2xl font-semibold"> Continuer avec Google </p>
