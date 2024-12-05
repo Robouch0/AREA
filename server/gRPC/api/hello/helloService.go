@@ -5,7 +5,7 @@
 // helloService
 //
 
-package api
+package hello
 
 import (
 	"area/db"

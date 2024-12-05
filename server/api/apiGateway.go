@@ -10,6 +10,8 @@ package api
 import (
 	areaMiddleware "area/api/middleware"
 	"area/gRPC/api"
+	"area/gRPC/api/dateTime"
+	"area/gRPC/api/hello"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
@@ -33,8 +35,8 @@ func CreateApiGateway() (*ApiGateway, error) {
 	}
 
 	m := make(map[string]api.ClientService)
-	m["hello"] = api.NewHelloServiceClient(conn)
-	m["dt"] = api.NewDateTimeServiceClient(conn)
+	m["hello"] = hello.NewHelloServiceClient(conn)
+	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
 	m["react"] = api.NewReactionServiceClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),

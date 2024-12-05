@@ -5,7 +5,7 @@
 // dateTimeService
 //
 
-package api
+package dateTime
 
 import (
 	"area/db"
@@ -17,39 +17,6 @@ import (
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
 )
-
-// type msg struct {
-// 	Msg string `json:"msg"`
-// }
-
-type DTServiceClient struct {
-	gRPCService.DateTimeServiceClient
-}
-
-func NewDateTimeServiceClient(conn *grpc.ClientConn) *DTServiceClient {
-	return &DTServiceClient{gRPCService.NewDateTimeServiceClient(conn)}
-}
-
-func (dt *DTServiceClient) SendAction(body []byte) (string, error) {
-	// msg := new(msg)
-	// err := json.Unmarshal([]byte(body), msg)
-	//
-	// r, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.Msg})
-	// if err != nil {
-	// return "", err
-	// }
-	// return r.GetMessage(), nil
-	dt.LaunchCronJob(context.Background(), &gRPCService.TriggerTimeRequest{
-		Minutes:  1,
-		Hours:    -1,
-		DayMonth: -1,
-		Month:    -1,
-		DayWeek:  -1,
-	})
-	return "", nil
-}
-
-////
 
 type DateTimeService struct {
 	db           *db.UserDb
@@ -70,8 +37,7 @@ func (dt *DateTimeService) InitReactClient(conn *grpc.ClientConn) {
 }
 
 func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
-	// Format this correctly
-	dt.c.AddFunc("* * * * *", func() {
+	dt.c.AddFunc("* * * * *", func() { // Format this correctly
 		log.Println("Trigger activated")
 		dt.reactService.LaunchReaction(context.Background(), &gRPCService.ReactionRequest{Msg: "Hello"})
 	})
