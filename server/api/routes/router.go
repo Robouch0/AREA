@@ -31,6 +31,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Get("/ping", controllers.PingRoute)
 	gateway.Router.Get("/about.json", controllers.AboutRoute)
 	gateway.Router.Mount("/users/", UserRoutes())
+	gateway.Router.Mount("/oauth/", controllers.OAuthRoutes())
 
 	gateway.Router.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(gateway.JwtTok))
