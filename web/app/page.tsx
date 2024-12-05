@@ -92,7 +92,7 @@ export default function Page() {
                         <div className="">
                             <Button
                                 type="submit"
-                                className="focus:border-slate-700 rounded-full mt-8 w-full h-16 text-2xl font-bold"
+                                className="focus:border-slate-500 focus:border-8 rounded-full mt-8 w-full h-16 text-2xl font-bold"
                                 aria-label="Log In"
                             >
                                 Log In
@@ -107,7 +107,7 @@ export default function Page() {
                     </div>
                     <div className="max-w-md w-full space-y-4">
                         <Button
-                            className="flex items-center justify-start px-6 bg-blue-800 hover:bg-blue-800 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                            className="focus:border-slate-500  focus:border-8 flex items-center justify-start px-6 bg-blue-800 hover:bg-blue-800 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                             type="button"
                             arial-label="Facebook"
                         >
@@ -116,7 +116,7 @@ export default function Page() {
                         </Button>
 
                         <Button
-                            className="flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                            className="focus:border-slate-500 focus:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                             type="button"
                             arial-label="Google"
                         >
@@ -125,14 +125,14 @@ export default function Page() {
                         </Button>
 
                         <Button
-                            className="flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                            className="focus:border-slate-500 focus:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                             type="button"
                             arial-label="Google"
                         >
                             <FaGithub className="w-12 h-12"/>
                             <p className=" mx-3 text-2xl font-semibold"> Continuer avec Gihtub </p>
                         </Button>
-                        <div className="flex flex-row font-bold">
+                        <div className="flex flex-row font-bold focus:border-4 focus:border-black">
                             <p>
                                 Vous n&#39;avez pas encore de compte ?
                             </p>
