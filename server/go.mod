@@ -8,6 +8,10 @@ require github.com/go-chi/chi/v5 v5.1.0
 
 require (
 	github.com/go-chi/chi v1.5.5
+<<<<<<< HEAD
+=======
+	github.com/go-chi/jwtauth/v5 v5.3.1
+>>>>>>> origin/dev
 	github.com/uptrace/bun v1.2.6
 	github.com/uptrace/bun/dialect/pgdialect v1.2.6
 	github.com/uptrace/bun/driver/pgdriver v1.2.6
@@ -34,7 +38,12 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.9-0.20240816141633-0a40785b4f41 // indirect
 	golang.org/x/crypto v0.29.0 // indirect
+	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/text v0.20.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
+	google.golang.org/grpc v1.68.0 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	mellium.im/sasl v0.3.2 // indirect
 )
