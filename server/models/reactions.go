@@ -19,4 +19,5 @@ type Reactions struct {
 
 	Ingredients map[string]interface{} `bun:"ingredients,type:jsonb" json:"ingredients,type:jsonb"`
 	PrevOutput  map[string]interface{} `bun:"prev_out,type:jsonb" json:"prev_out,type:jsonb"`
+	// Repeat always field
 }

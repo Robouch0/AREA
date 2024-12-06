@@ -14,13 +14,10 @@ import (
 
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
-	"encoding/json"
 	"log"
 
 	"google.golang.org/grpc"
 )
-
-////
 
 type ReactionService struct {
 	db      *db.UserDb
@@ -42,13 +39,12 @@ func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService
 	log.Println("Reaction searched")
 	if service, ok := react.clients["hello"]; ok {
 		log.Println("Reaction found and action sent")
-		req := gRPCService.HelloWorldRequest{Message: req.Msg} // tmp
-		b, err := json.Marshal(&req)
+		req := gRPCService.HelloWorldRequest{Message: req.Msg}
+		b := map[string]any{"msg": req.Message}
+		_, err := service.SendAction(b) // TriggerReaction normally here
 		if err != nil {
-			log.Println("Error on jsonify")
-			return nil, err
+			log.Println(err)
 		}
-		service.SendAction(b) // TriggerReaction normally here
 	}
 	return &gRPCService.ReactionResponse{}, nil
 }
