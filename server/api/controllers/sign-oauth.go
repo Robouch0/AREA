@@ -87,13 +87,14 @@ func OAuthRoutes() chi.Router {
 			TokenFidx := strings.TrimLeft(string(Tknbody), "access_token=")
 			TokenSidx := strings.Index(TokenFidx, "&scope")
 
+			if TokenSidx == -1 {
+				w.WriteHeader(401)
+				w.Write([]byte(err.Error()))
+				return
+			}
 			client := &http.Client{}
 			req, _ := http.NewRequest("GET", url[2], nil)
-			req.Header = http.Header{
-				"Accept": {"application/vnd.github+json"},
-				"Authorization": {fmt.Sprintf("Bearer %s", TokenFidx[:TokenSidx])},
-				"X-GitHub-Api-Version" : {"2022-11-28"},
-			}
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", TokenFidx[:TokenSidx]))
 			res, err := client.Do(req)
 
 			if err != nil {
@@ -109,10 +110,3 @@ func OAuthRoutes() chi.Router {
 	})
 	return OAuthRouter
 }
-/*
-		curl --request GET \
-		--url "" \
-		--header "" \
-		--header "Authorization: Bearer USER_ACCESS_TOKEN" \
-		--header ": "
-*/
