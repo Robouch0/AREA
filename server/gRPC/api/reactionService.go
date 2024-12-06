@@ -35,16 +35,17 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["hello"] = hello.NewHelloServiceClient(conn)
 }
 
-func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
+func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
 	log.Println("Reaction searched")
-	if service, ok := react.clients["hello"]; ok {
-		log.Println("Reaction found and action sent")
-		req := gRPCService.HelloWorldRequest{Message: req.Msg}
-		b := map[string]any{"msg": req.Message}
-		_, err := service.SendAction(b) // TriggerReaction normally here
-		if err != nil {
-			log.Println(err)
-		}
-	}
-	return &gRPCService.ReactionResponse{}, nil
+	log.Println(req.Action, req.Reaction, req.UserId) // Do the database here
+	// if _, ok := react.clients["hello"]; ok {
+	// 	log.Println("Reaction found and action sent")
+	// 	// req := gRPCService.HelloWorldRequest{Message: req.Msg}
+	// 	// b := map[string]any{"msg": req.Message}
+	// 	// _, err := service.SendAction(b) // TriggerReaction normally here
+	// 	// if err != nil {
+	// 	// log.Println(err)
+	// 	// }
+	// }
+	return &gRPCService.ReactionResponse{Res: "Done"}, nil
 }

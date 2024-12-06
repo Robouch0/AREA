@@ -39,7 +39,7 @@ func (dt *DateTimeService) InitReactClient(conn *grpc.ClientConn) {
 func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
 	dt.c.AddFunc("* * * * *", func() { // Format this correctly
 		log.Println("Trigger activated")
-		dt.reactService.LaunchReaction(context.Background(), &gRPCService.ReactionRequest{Msg: "Hello"})
+		// dt.reactService.LaunchReaction(context.Background(), &gRPCService.ReactionRequest{Msg: "Hello"})
 	})
 
 	fmt.Println("Starting cron job")
