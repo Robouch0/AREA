@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	"context"
 	"encoding/json"
 
 	"google.golang.org/grpc"
@@ -24,7 +25,7 @@ func NewDateTimeServiceClient(conn *grpc.ClientConn) *DTServiceClient {
 	return &DTServiceClient{gRPCService.NewDateTimeServiceClient(conn)}
 }
 
-func (dt *DTServiceClient) SendAction(body map[string]any) (*IServ.ActionResponseStatus, error) {
+func (dt *DTServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
 	jsonString, err := json.Marshal(body["action"])
 	if err != nil {
 		return nil, err
@@ -41,17 +42,11 @@ func (dt *DTServiceClient) SendAction(body map[string]any) (*IServ.ActionRespons
 		return nil, err
 	}
 
-	timeReq := gRPCService.TriggerTimeRequest{}
+	timeReq := gRPCService.TriggerTimeRequest{ActionId: int32(actionID)}
 	err = json.Unmarshal(timeReqJson, &timeReq)
 	if err != nil {
 		return nil, err
 	}
-	// dt.LaunchCronJob(context.Background(), &gRPCService.TriggerTimeRequest{
-	// Minutes:  1,
-	// Hours:    -1,
-	// DayMonth: -1,
-	// Month:    -1,
-	// DayWeek:  -1,
-	// })
+	dt.LaunchCronJob(context.Background(), &timeReq)
 	return &IServ.ActionResponseStatus{Description: "Done", ActionID: 1}, nil
 }

@@ -13,6 +13,6 @@ type ActionResponseStatus struct {
 }
 
 type ClientService interface {
-	SendAction(body map[string]any) (*ActionResponseStatus, error)
+	SendAction(body map[string]any, actionId int) (*ActionResponseStatus, error)
 	// TriggerReaction(action int, prevRes string) (int, error)
 }

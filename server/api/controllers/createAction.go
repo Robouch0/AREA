@@ -18,8 +18,12 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func sendToService(cliService gRPCapi.ClientService, body map[string]any) (*gRPCapi.ActionResponseStatus, error) {
-	msg, err := cliService.SendAction(body)
+const (
+	DEFAULT_ACTION_ID int = -1
+)
+
+func sendToService(cliService gRPCapi.ClientService, body map[string]any, actionID int) (*gRPCapi.ActionResponseStatus, error) {
+	msg, err := cliService.SendAction(body, actionID)
 	if err != nil {
 		return msg, err
 	}
@@ -38,21 +42,27 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 				w.Write([]byte(err.Error()))
 				return
 			}
-			body := map[string]any{}
-			json.Unmarshal(b, &body)
 
-			msg, err := sendToService(service, body)
+			body := map[string]any{}
+			err = json.Unmarshal(b, &body)
 			if err != nil {
 				w.WriteHeader(401)
 				w.Write([]byte(err.Error()))
 				return
 			}
-			// msg, err := sendToService(gateway.Clients["react"], body)
-			// if err != nil {
-			// 	w.WriteHeader(401)
-			// 	w.Write([]byte(err.Error()))
-			// 	return
-			// }
+
+			msg, err := sendToService(gateway.Clients["react"], body, DEFAULT_ACTION_ID) // Create the action if possible
+			if err != nil {
+				w.WriteHeader(401)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			msg, err = sendToService(service, body, msg.ActionID)
+			if err != nil {
+				w.WriteHeader(401)
+				w.Write([]byte(err.Error()))
+				return
+			}
 
 			res, err := json.Marshal(msg)
 			if err != nil {

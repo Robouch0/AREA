@@ -11,8 +11,11 @@ import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
@@ -39,6 +42,22 @@ func (dt *DateTimeService) InitReactClient(conn *grpc.ClientConn) {
 func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
 	dt.c.AddFunc("* * * * *", func() { // Format this correctly
 		log.Println("Trigger activated")
+		r, err := http.Get("https://tools.aimylogic.com/api/now?tz=Europe/Paris")
+		if err != nil {
+			return
+		}
+		fmt.Println(r)
+		b, err := io.ReadAll(r.Body)
+		if err != nil {
+			return
+		}
+		fmt.Println(b)
+		var dateData AimylogicDateTime
+		err = json.Unmarshal(b, &dateData)
+		if err != nil {
+			log.Print(err)
+		}
+		fmt.Println(dateData)
 		// dt.reactService.LaunchReaction(context.Background(), &gRPCService.ReactionRequest{Msg: "Hello"})
 	})
 

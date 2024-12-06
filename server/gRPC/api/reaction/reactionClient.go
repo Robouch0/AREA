@@ -31,7 +31,7 @@ func NewReactionServiceClient(conn *grpc.ClientConn) *ReactionServiceClient {
 	return &ReactionServiceClient{gRPCService.NewReactionServiceClient(conn)}
 }
 
-func (react *ReactionServiceClient) SendAction(body map[string]any) (*IServ.ActionResponseStatus, error) {
+func (react *ReactionServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
 	jsonString, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (react *ReactionServiceClient) SendAction(body map[string]any) (*IServ.Acti
 	}
 
 	ctx := context.Background()
-	react.RegisterAction(ctx, &gRPCService.ReactionRequest{
+	res, err := react.RegisterAction(ctx, &gRPCService.ReactionRequest{
 		UserId: int64(scenarioArea.UserId),
 		Action: &gRPCService.Action{
 			Service:      scenarioArea.Action.Service,
@@ -66,5 +66,8 @@ func (react *ReactionServiceClient) SendAction(body map[string]any) (*IServ.Acti
 			Microservice: scenarioArea.Reaction.Microservice,
 			Ingredients:  bytesReactIngredients,
 		}})
-	return &IServ.ActionResponseStatus{Description: "Action registered", ActionID: 1}, nil
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.ActionResponseStatus{Description: res.Description, ActionID: int(res.ActionId)}, nil
 }

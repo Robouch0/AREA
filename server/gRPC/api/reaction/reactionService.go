@@ -48,5 +48,5 @@ func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService
 	// 	// log.Println(err)
 	// 	// }
 	// }
-	return &gRPCService.ReactionResponse{Res: "Done"}, nil
+	return &gRPCService.ReactionResponse{Description: "Done", ActionId: 1}, nil
 }
