@@ -9,7 +9,7 @@ package controllers
 
 import (
 	api "area/api"
-	gRPCapi "area/gRPC/api"
+	gRPCapi "area/gRPC/api/serviceInterface"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,10 +18,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func sendToService(cliService gRPCapi.ClientService, body map[string]any) (string, error) {
+func sendToService(cliService gRPCapi.ClientService, body map[string]any) (*gRPCapi.ActionResponseStatus, error) {
 	msg, err := cliService.SendAction(body)
 	if err != nil {
-		return "", err
+		return msg, err
 	}
 	return msg, nil
 }
@@ -53,7 +53,14 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 			// 	w.Write([]byte(err.Error()))
 			// 	return
 			// }
-			w.Write([]byte(msg))
+
+			res, err := json.Marshal(msg)
+			if err != nil {
+				w.WriteHeader(401)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			w.Write([]byte(res))
 		} else {
 			w.WriteHeader(401)
 			w.Write([]byte(fmt.Sprintf("No such Service: %v", serviceParam)))

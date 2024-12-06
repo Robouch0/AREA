@@ -5,9 +5,10 @@
 // reactionClient
 //
 
-package api
+package reaction
 
 import (
+	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
@@ -30,26 +31,26 @@ func NewReactionServiceClient(conn *grpc.ClientConn) *ReactionServiceClient {
 	return &ReactionServiceClient{gRPCService.NewReactionServiceClient(conn)}
 }
 
-func (react *ReactionServiceClient) SendAction(body map[string]any) (string, error) {
+func (react *ReactionServiceClient) SendAction(body map[string]any) (*IServ.ActionResponseStatus, error) {
 	jsonString, err := json.Marshal(body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var scenarioArea AreaScenario
 	err = json.Unmarshal(jsonString, &scenarioArea)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	bytesActIngredients, err := json.Marshal(scenarioArea.Action.Ingredients)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	bytesReactIngredients, err := json.Marshal(scenarioArea.Reaction.Ingredients)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	ctx := context.Background()
@@ -65,5 +66,5 @@ func (react *ReactionServiceClient) SendAction(body map[string]any) (string, err
 			Microservice: scenarioArea.Reaction.Microservice,
 			Ingredients:  bytesReactIngredients,
 		}})
-	return "", nil
+	return &IServ.ActionResponseStatus{Description: "Action registered", ActionID: 1}, nil
 }

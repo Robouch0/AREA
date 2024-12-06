@@ -8,6 +8,7 @@
 package hello
 
 import (
+	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"errors"
@@ -24,14 +25,14 @@ func NewHelloServiceClient(conn *grpc.ClientConn) *HelloServiceClient {
 	return &HelloServiceClient{gRPCService.NewHelloWorldServiceClient(conn)}
 }
 
-func (hello *HelloServiceClient) SendAction(body map[string]any) (string, error) {
+func (hello *HelloServiceClient) SendAction(body map[string]any) (*IServ.ActionResponseStatus, error) {
 	if msg, ok := body["msg"]; ok {
-		r, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.(string)})
+		_, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.(string)})
 		if err != nil {
 			log.Println("Could not send SayHello")
-			return "", err
+			return nil, err
 		}
-		return r.GetMessage(), nil
+		return nil, nil
 	}
-	return "", errors.New("Incorrect body with no msg")
+	return nil, errors.New("Incorrect body with no msg")
 }

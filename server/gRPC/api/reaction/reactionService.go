@@ -5,13 +5,14 @@
 // reactionService
 //
 
-package api
+package reaction
 
 import (
 	"area/db"
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/hello"
 
+	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"log"
@@ -21,13 +22,13 @@ import (
 
 type ReactionService struct {
 	db      *db.UserDb
-	clients map[string]ClientService
+	clients map[string]IServ.ClientService
 
 	gRPCService.UnimplementedReactionServiceServer
 }
 
 func NewReactionService(db *db.UserDb) ReactionService {
-	return ReactionService{db: db, clients: make(map[string]ClientService)}
+	return ReactionService{db: db, clients: make(map[string]IServ.ClientService)}
 }
 
 func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
