@@ -1,4 +1,3 @@
-"use client"
 import {FaGithub} from "react-icons/fa";
 import {Button} from "@/components/ui/button";
 import axios from "axios";
@@ -27,7 +26,7 @@ async function askForToken(paramValue:string) {
     }
 }
 
-export  async function GithubOauth() {
+export function GithubOauth() {
     if (typeof window !== 'undefined') {
         const url = window.location.href;
         const params = new URLSearchParams(new URL(url).search);
