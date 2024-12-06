@@ -1,5 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'services/auth_service.dart';
+import 'widgets/auth_input_field.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,16 +31,44 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+
+  void _performLogin(String email, String pass) async {
+    final success = await _authService.login(email, pass);
+
+    if (success) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Success.',
+                  style: TextStyle(fontWeight: FontWeight.w800)
+              ),
+              backgroundColor: Colors.green,
+            )
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Login failed. Please double-check your password.',
+              style: TextStyle(fontWeight: FontWeight.w800)
+            ),
+            backgroundColor: Colors.red,
+          )
+        );
+      }
+    }
+  }
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tried to login...')),
-      );
+      _performLogin(_emailController.text, _passwordController.text);
     }
   }
 
@@ -95,49 +125,24 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildEmailField() {
-    return TextFormField(
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-      ),
-      onTapOutside: (event) => FocusScope.of(context).unfocus(),
+    return AuthInputField(
       controller: _emailController,
-      decoration: _inputDecoration('Email'),
-      keyboardType: TextInputType.emailAddress,
+      hintText: 'Email',
+      obscureText: false,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'You need to enter a valid email.';
         }
         return null;
-      },
+      }
     );
   }
 
   Widget _buildPasswordField() {
-    return TextFormField(
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-      ),
-      onTapOutside: (event) => FocusScope.of(context).unfocus(),
+    return AuthInputField(
       controller: _passwordController,
-      decoration: _inputDecoration(
-        'Password',
-        suffixIcon: IconButton(
-          icon: Icon(
-            _isPasswordVisible
-                ? Icons.visibility_outlined
-                : Icons.visibility_off_outlined,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            setState(() {
-              _isPasswordVisible = !_isPasswordVisible;
-            });
-          },
-        ),
-      ),
-      obscureText: !_isPasswordVisible,
+      hintText: 'Password',
+      obscureText: true,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter a password.';
@@ -147,36 +152,6 @@ class _LoginPageState extends State<LoginPage> {
         }
         return null;
       },
-    );
-  }
-
-  InputDecoration _inputDecoration(String hintText, {Widget? suffixIcon}) {
-    return InputDecoration(
-      hintText: hintText,
-      suffixIcon: suffixIcon,
-      contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-      hintStyle: TextStyle(
-        color: Colors.black.withOpacity(0.15),
-        fontWeight: FontWeight.w800,
-        fontSize: 20,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.black.withOpacity(0.07), width: 4),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.black.withOpacity(0.07), width: 4),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Colors.black, width: 4),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Colors.red, width: 4),
-      ),
-      errorStyle: const TextStyle(color: Colors.red),
     );
   }
 
