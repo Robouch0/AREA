@@ -8,12 +8,11 @@
 package routes
 
 import (
+	api "area/api"
 	"area/api/controllers"
-	areaMiddleware "area/api/middleware"
-	"encoding/json"
+
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
@@ -21,25 +20,12 @@ import (
     "github.com/go-chi/cors"
 )
 
-type ApiGateway struct {
-	Router chi.Router
-	JwtTok *jwtauth.JWTAuth
-}
-
-type ClientInfo struct {
-	Host string
-	Time int64
-}
-
-func createApiGateway() *ApiGateway {
-	return &ApiGateway{
-		Router: chi.NewRouter(),
-		JwtTok: areaMiddleware.GetNewJWTAuth(),
+func InitHTTPServer() (*api.ApiGateway, error) {
+	gateway, err := api.CreateApiGateway()
+	if err != nil {
+		return nil, err
 	}
-}
 
-func InitHTTPServer() *ApiGateway {
-	gateway := createApiGateway()
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
 
@@ -51,8 +37,9 @@ func InitHTTPServer() *ApiGateway {
         AllowCredentials: true,
         MaxAge:           300,
       }))
+	gateway.Router.Get("/ping", controllers.PingRoute)
+	gateway.Router.Get("/about.json", controllers.AboutRoute)
 
-	gateway.Router.Get("/about.json", AboutRoute)
 	gateway.Router.Mount("/users/", UserRoutes())
 
 	gateway.Router.Group(func(r chi.Router) {
@@ -63,23 +50,11 @@ func InitHTTPServer() *ApiGateway {
 			_, claims, _ := jwtauth.FromContext(r.Context()) // DO NOT FORGET TO CHECK THE CLAIM
 			w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user_id"])))
 		})
-	    r.Get("/ping", PingRoute)
+
+		r.Post("/create/{service}", controllers.CreateRoute(gateway))
+	    r.Get("/ping", controllers.PingRoute)
 	})
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))
 	gateway.Router.Post("/sign-up/", controllers.SignUp)
-	return gateway
-}
-
-func PingRoute(w http.ResponseWriter, r *http.Request) {
-    w.Write([]byte(fmt.Sprintf("Pong")))
-}
-
-func AboutRoute(w http.ResponseWriter, r *http.Request) {
-	Clientdata := ClientInfo{
-		Host:		r.RemoteAddr,
-		Time:	time.Now().Unix(),
-	}
-	fmt.Printf(r.Header.Get("X-Real-Ip"))
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Clientdata)
+	return gateway, nil
 }
