@@ -11,8 +11,9 @@ export async function login(emailValue: string, passwordValue: string) : Promise
         console.log(response);
         console.log(response.data);
         const cookiesObj = await cookies();
-        cookiesObj.set('token', response.data);
-        // cookies().set('token', response.data, {expires: 7, sameSite: 'Lax', secure: false});
+        const data =  response.data.split(',');
+        cookiesObj.set('token', data.at(0));
+        cookiesObj.set('UID', data.at(1));
         return true;
     } catch (error) {
         throw error;

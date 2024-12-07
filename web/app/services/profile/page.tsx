@@ -1,3 +1,8 @@
-export default function Profile() {
-    return <h1> MDR </h1>;
+"use server";
+import {getUserInfo} from "@/api/getUserInfos";
+import ProfilePage from "@/components/ui/profilePage";
+
+export default async function Profile() {
+     const data = await getUserInfo();
+    return <ProfilePage userData={data}/>;
 }
