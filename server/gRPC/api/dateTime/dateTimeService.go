@@ -46,12 +46,10 @@ func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.Tri
 		if err != nil {
 			return
 		}
-		fmt.Println(r)
 		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			return
 		}
-		fmt.Println(b)
 		var dateData AimylogicDateTime
 		err = json.Unmarshal(b, &dateData)
 		if err != nil {

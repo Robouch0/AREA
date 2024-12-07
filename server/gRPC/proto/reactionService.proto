@@ -5,29 +5,29 @@ package reaction;
 option go_package = "github.com/area/grpc-go/service";
 
 service ReactionService {
-    // RegisterAction
-    rpc RegisterAction(ReactionRequest) returns (ReactionResponse) {}
+  // RegisterAction
+  rpc RegisterAction(ReactionRequest) returns (ReactionResponse) {}
 }
 
 message Action {
-    string service = 1;
-    string microservice = 2;
-    bytes ingredients = 3;
+  string service = 1;
+  string microservice = 2;
+  bytes ingredients = 3;
 }
 
 message Reaction {
-    string service = 1;
-    string microservice = 2;
-    bytes ingredients = 3;
+  string service = 1;
+  string microservice = 2;
+  bytes ingredients = 3;
 }
 
 message ReactionRequest {
-    int64 user_id = 1;
-    Action action = 2;
-    Reaction reaction = 3;
+  int64 user_id = 1;
+  Action action = 2;
+  Reaction reaction = 3;
 }
 
 message ReactionResponse {
-    string description = 1;
-    int64 action_id = 2;
+  string description = 1;
+  int64 action_id = 2;
 }
