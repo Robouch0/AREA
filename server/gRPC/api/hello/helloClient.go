@@ -8,22 +8,31 @@
 package hello
 
 import (
+	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
+	"errors"
+	"log"
 
 	"google.golang.org/grpc"
 )
 
-type ReactionServiceClient struct {
-	gRPCService.ReactionServiceClient
+type HelloServiceClient struct {
+	gRPCService.HelloWorldServiceClient
 }
 
-func NewReactionServiceClient(conn *grpc.ClientConn) *ReactionServiceClient {
-	return &ReactionServiceClient{gRPCService.NewReactionServiceClient(conn)}
+func NewHelloServiceClient(conn *grpc.ClientConn) *HelloServiceClient {
+	return &HelloServiceClient{gRPCService.NewHelloWorldServiceClient(conn)}
 }
 
-func (react *ReactionServiceClient) SendAction(body []byte) (string, error) {
-	// We want here to store the action from `body`
-	react.LaunchReaction(context.Background(), &gRPCService.ReactionRequest{})
-	return "", nil
+func (hello *HelloServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
+	if msg, ok := body["msg"]; ok {
+		_, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.(string)})
+		if err != nil {
+			log.Println("Could not send SayHello")
+			return nil, err
+		}
+		return &IServ.ActionResponseStatus{Description: "Hello !", ActionID: actionID}, nil
+	}
+	return nil, errors.New("Incorrect body with no msg")
 }
