@@ -1,6 +1,5 @@
 'use server';
 
-
 import ServicesLayout from "@/components/ui/servicesLayout";
 import {cookies} from "next/headers";
 import {checkAuthentification} from "@/api/authentification";
