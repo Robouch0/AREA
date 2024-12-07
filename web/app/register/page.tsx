@@ -6,9 +6,8 @@ import {FaEye, FaEyeSlash, FaGithub} from "react-icons/fa";
 import { redirect } from 'next/navigation'
 import {FaGoogle, FaFacebook} from 'react-icons/fa';
 
-export default function Page() {
+export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
-
 
     const handleSubmit = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -23,7 +22,7 @@ export default function Page() {
         <div className="flex items-center justify-center min-h-screen bg-white">
             <div className="flex flex-col items-center w-full max-w-md">
                 <h1 className="font-mono text-5xl font-extrabold mb-16"> AREA </h1>
-                <h2 className="font-mono text-4xl font-black mb-12"> Sign up </h2>
+                <h2 className="font-mono text-4xl font-black mb-12"> Register </h2>
                 <form id="loginForm" onSubmit={handleSubmit} className="">
                     <div className="w-full mb-6">
                         <Input

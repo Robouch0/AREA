@@ -4,7 +4,7 @@
 import ServicesLayout from "@/components/ui/servicesLayout";
 import {cookies} from "next/headers";
 import {checkAuthentification} from "@/api/authentification";
-import {redirect} from "next/navigation";
+import {redirect} from 'next/navigation'
 import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export default async function InAppLayout({children,}: Readonly<{

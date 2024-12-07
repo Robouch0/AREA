@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useEffect, useState} from "react";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
-import {redirect, useRouter} from 'next/navigation'
+import {useRouter} from 'next/navigation'
 import {FaGoogle, FaFacebook, FaGithub} from 'react-icons/fa';
 import {login} from "@/api/authentification"
 
@@ -127,17 +127,19 @@ export default function Login() {
                             <FaGithub className="w-12 h-12"/>
                             <p className=" mx-3 text-2xl font-semibold"> Continuer avec Gihtub </p>
                         </Button>
-                        <div className="flex flex-row font-bold focus:border-4 focus:border-black">
+                        <div className="flex flex-row font-bold">
                             <p>
                                 Vous n&#39;avez pas encore de compte ?
                             </p>
-                            <a
-                                className="mx-2 underline-offset-1 underline font-bold hover:cursor-pointer"
-                                onClick={() => redirect('/register')}
+                            <button
+                                className="mx-2 underline-offset-1 underline font-bold hover:cursor-pointer focus:border-4 focus:border-slate-700 focus:outline-none focus:p-2 rounded-3xl"
+                                onClick={() => router.push('/register')}
+                                tabIndex={0}
                             >
                                 Inscrivez-vous ICI !
-                            </a>
+                            </button>
                         </div>
+
                     </div>
                 </div>
             </div>
