@@ -1,26 +1,33 @@
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
+import Cookies from "js-cookie";
 
 export async function login(emailValue: string, passwordValue: string) : Promise<boolean> {
-    axios.defaults.withCredentials = true;
     try {
-        const response = await axios.post(`http://localhost:3000/login/`, {
+        const response = await axiosInstance.post(`login/`, {
             email: emailValue,
             password: passwordValue
         });
-
         console.log(response);
         console.log(response.data);
-
-        localStorage.setItem('token', response.data);
+        Cookies.set('token', response.data, {expires: 7, sameSite: 'Lax', secure: false});
         return true;
     } catch (error) {
         throw error;
     }
 }
-export function checkAuthentification()  {
-    if (typeof window !== 'undefined') {
-        const token = localStorage.getItem("token");
-        console.log(token);
-        return token != null;
+
+export async function checkAuthentification(token:string|undefined) {
+    try {
+        const response = await axiosInstance.get(`ping`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        console.log(response.data);
+        return true;
+    } catch (error) {
+        console.log("Authentication check failed:", error);
+        return false;
     }
 }
