@@ -18,7 +18,7 @@ type Action struct {
 type Actions struct {
 	bun.BaseModel `bun:"table:actions,alias:cs"`
 	ID            uint `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
-	AreaID        uint `bun:"area_id" json:"area_id"`
+	AreaID        uint `json:"area_id"` // No anotation here !
 
 	Action *Action `bun:"action" json:"action"`
 }

@@ -18,7 +18,7 @@ type Reaction struct {
 type Reactions struct {
 	bun.BaseModel `bun:"table:reactions,alias:cs"`
 	ID            uint `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
-	AreaID        uint `bun:"area_id" json:"area_id"`
+	AreaID        uint `json:"area_id"` // No anotation here !
 
 	Reaction *Reaction `bun:"reaction" json:"reaction"`
 

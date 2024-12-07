@@ -56,3 +56,15 @@ func (area *AreaDB) InsertNewArea(UserID uint, OneShot bool) (*models.Area, erro
 func (area *AreaDB) GetAreaByID(AreaID uint) (*models.Area, error) {
 	return GetByID[models.Area](area.Db, AreaID)
 }
+
+func (area *AreaDB) GetAreaByActionID(ActionID uint) (*models.Area, error) {
+	data := new(models.Area)
+	err := area.Db.NewSelect().
+		Model(data).
+		Relation("Action").
+		Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}

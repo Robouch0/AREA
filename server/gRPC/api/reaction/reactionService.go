@@ -54,24 +54,46 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["hello"] = hello.NewHelloServiceClient(conn)
 }
 
-func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
-	log.Println("Reaction searched")
+func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
+	area, err := react.AreaDB.GetAreaByActionID(uint(req.ActionId))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 
+	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID)
+	for _, re := range *reactions {
+		if cliService, ok := react.clients[re.Reaction.Service]; ok {
+			log.Println("Theorically calling: ", re.Reaction.Service)
+			// cliService
+			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, req.PrevOutput)
+			if err != nil {
+				return nil, err
+			}
+			log.Println(res)
+		}
+	}
+	return &gRPCService.LaunchResponse{}, nil
+}
+
+func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
 	newArea, err := react.AreaDB.InsertNewArea(uint(req.UserId), false)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
+
+	log.Println(newArea)
+
 	var ingredientsAction map[string]any
 	var ingredientsReaction map[string]any
-	errIngAct := json.Unmarshal(req.Action.Ingredients, &ingredientsAction) // Check error here !
+	errIngAct := json.Unmarshal(req.Action.Ingredients, &ingredientsAction)
 	errIngReact := json.Unmarshal(req.Reaction.Ingredients, &ingredientsReaction)
 	if err = cmp.Or(errIngAct, errIngReact); err != nil {
-		log.Println("Here\n", err)
 		return nil, err
 	}
-	log.Println(ingredientsAction)
-	act, err := react.ActionDB.InsertNewAction(
+
+	react.ActionDB.InsertNewAction(
 		&models.Action{
 			Service:      req.Action.Service,
 			Microservice: req.Action.Microservice,
@@ -80,11 +102,10 @@ func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService
 		newArea.ID,
 	)
 	if err != nil {
-		log.Println("Here new Action: ", err)
 		return nil, err
 	}
-	log.Printf("This is the action: %v\n", act) // It works normally
-	re, err := react.ReactionDB.InsertNewReaction(
+
+	_, err = react.ReactionDB.InsertNewReaction(
 		&models.Reaction{
 			Service:      req.Reaction.Service,
 			Microservice: req.Reaction.Microservice,
@@ -93,11 +114,7 @@ func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService
 		newArea.ID,
 	)
 	if err != nil {
-		log.Println("Here new Reaction: ", err)
 		return nil, err
 	}
-	log.Printf("This is the reaction: %v\n", re)
-
-	log.Println(react.AreaDB.GetAreaByID(newArea.ID))
 	return &gRPCService.ReactionResponse{Description: "Done", ActionId: 1}, nil
 }

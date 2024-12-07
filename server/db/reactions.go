@@ -66,3 +66,16 @@ func (reaction *ReactionDb) InsertNewReaction(newReact *models.Reaction, AreaID 
 func (reaction *ReactionDb) GetReactionByID(ID uint) (*models.Reactions, error) {
 	return GetByID[models.Reactions](reaction.Db, ID)
 }
+
+func (reaction *ReactionDb) GetReactionsByAreaID(AreaID uint) (*[]models.Reactions, error) {
+	allReactions := new([]models.Reactions)
+	err := reaction.Db.NewSelect().
+		Model(allReactions).
+		Where("area_id = ?", AreaID).
+		Scan(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return allReactions, nil
+}
