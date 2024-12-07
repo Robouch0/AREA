@@ -2,22 +2,16 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useState} from "react";
-import {FaEye, FaEyeSlash} from "react-icons/fa";
+import {FaEye, FaEyeSlash, FaGithub} from "react-icons/fa";
 import { redirect } from 'next/navigation'
 import {FaGoogle, FaFacebook} from 'react-icons/fa';
-import {GithubOauth} from "@/components/ui/githubOauth";
 
-export default function Page() {
+export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
-
 
     const handleSubmit = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         redirect('/services');
-    };
-
-    const handleGoogleOauth = () => {
-
     };
 
     const togglePasswordVisibility = () => {
@@ -28,7 +22,7 @@ export default function Page() {
         <div className="flex items-center justify-center min-h-screen bg-white">
             <div className="flex flex-col items-center w-full max-w-md">
                 <h1 className="font-mono text-5xl font-extrabold mb-16"> AREA </h1>
-                <h2 className="font-mono text-4xl font-black mb-12"> Sign up </h2>
+                <h2 className="font-mono text-4xl font-black mb-12"> Register </h2>
                 <form id="loginForm" onSubmit={handleSubmit} className="">
                     <div className="w-full mb-6">
                         <Input
@@ -89,15 +83,19 @@ export default function Page() {
                         className="flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                         type="button"
                         arial-label="Google"
-                        onClick={handleGoogleOauth}
                     >
                         <FaGoogle className="w-12 h-12"/>
                         <p className=" mx-3 text-2xl font-semibold"> Continuer avec Google </p>
                     </Button>
 
-                    <GithubOauth
-                        arial-label="Github"
-                    />
+                    <Button
+                        className="flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                        type="button"
+                        arial-label="Google"
+                    >
+                        <FaGithub className="w-12 h-12"/>
+                        <p className=" mx-3 text-2xl font-semibold"> Continuer avec Gihtub </p>
+                    </Button>
                     <div className="mx-6 flex flex-row font-bold">
                         <p>
                             Vous avez déjà un compte ?
