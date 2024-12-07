@@ -1,7 +1,6 @@
 "use client";
 import Navbar, {User} from "@/components/ui/navbar";
 import {Button} from "@/components/ui/button";
-import Cookies from "js-cookie";
 import { useRouter } from 'next/navigation';
 
 export default function ServicesLayout({children,}: Readonly<{
@@ -64,7 +63,7 @@ export default function ServicesLayout({children,}: Readonly<{
                         <button
                             className="mx-4 text-amber-50 font-medium hover:cursor-pointer focus:border-slate-500 focus:border-4 rounded-full focus:outline-none focus:p-2"
                             onClick={() => {
-                                Cookies.remove("token", {path: '/'});
+                                document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                                 router.push('/');
                             }}
                         >

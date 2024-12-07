@@ -1,5 +1,6 @@
-import axiosInstance from "@/lib/axios";
-import Cookies from "js-cookie";
+"use server";
+import { cookies } from 'next/headers';
+import axiosInstance from "@/lib/axios"
 
 export async function login(emailValue: string, passwordValue: string) : Promise<boolean> {
     try {
@@ -9,7 +10,9 @@ export async function login(emailValue: string, passwordValue: string) : Promise
         });
         console.log(response);
         console.log(response.data);
-        Cookies.set('token', response.data, {expires: 7, sameSite: 'Lax', secure: false});
+        const cookiesObj = await cookies();
+        cookiesObj.set('token', response.data);
+        // cookies().set('token', response.data, {expires: 7, sameSite: 'Lax', secure: false});
         return true;
     } catch (error) {
         throw error;
