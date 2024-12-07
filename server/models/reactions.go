@@ -16,11 +16,11 @@ type Reaction struct {
 }
 
 type Reactions struct {
-	bun.BaseModel `bun:"table:user,alias:cs"`
+	bun.BaseModel `bun:"table:reactions,alias:cs"`
 	ID            uint `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
 	AreaID        uint `bun:"area_id" json:"area_id"`
 
-	Reaction Reaction `bun:"reaction" json:"reaction"`
+	Reaction *Reaction `bun:"reaction" json:"reaction"`
 
 	PrevOutput map[string]interface{} `bun:"prev_out,type:jsonb" json:"prev_out,type:jsonb"`
 	// Repeat always field

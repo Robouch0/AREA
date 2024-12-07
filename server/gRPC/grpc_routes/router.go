@@ -8,9 +8,9 @@
 package grpc_routes
 
 import (
-	"area/gRPC/api/reaction"
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/hello"
+	"area/gRPC/api/reaction"
 	services "area/protogen/gRPC/proto"
 	"log"
 	"net"
@@ -31,11 +31,15 @@ func LaunchServices() {
 
 	helloService := hello.NewHelloService(nil)
 	dtService := dateTime.NewDateTimeService(nil)
-	reactService := reaction.NewReactionService(nil)
+	reactService, err := reaction.NewReactionService()
 
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	services.RegisterHelloWorldServiceServer(s, &helloService)
 	services.RegisterDateTimeServiceServer(s, &dtService)
-	services.RegisterReactionServiceServer(s, &reactService)
+	services.RegisterReactionServiceServer(s, reactService)
 
 	var wg sync.WaitGroup
 
