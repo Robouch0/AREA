@@ -13,6 +13,7 @@ import (
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"encoding/json"
+	"errors"
 
 	"google.golang.org/grpc"
 )
@@ -29,6 +30,10 @@ type ReactionServiceClient struct {
 
 func NewReactionServiceClient(conn *grpc.ClientConn) *ReactionServiceClient {
 	return &ReactionServiceClient{gRPCService.NewReactionServiceClient(conn)}
+}
+
+func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+	return nil, errors.New("No reaction available for this service")
 }
 
 func (react *ReactionServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {

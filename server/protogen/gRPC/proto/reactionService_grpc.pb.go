@@ -20,14 +20,15 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ReactionService_RegisterAction_FullMethodName = "/reaction.ReactionService/RegisterAction"
+	ReactionService_LaunchReaction_FullMethodName = "/reaction.ReactionService/LaunchReaction"
 )
 
 // ReactionServiceClient is the client API for ReactionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReactionServiceClient interface {
-	// RegisterAction
 	RegisterAction(ctx context.Context, in *ReactionRequest, opts ...grpc.CallOption) (*ReactionResponse, error)
+	LaunchReaction(ctx context.Context, in *LaunchRequest, opts ...grpc.CallOption) (*LaunchResponse, error)
 }
 
 type reactionServiceClient struct {
@@ -48,12 +49,22 @@ func (c *reactionServiceClient) RegisterAction(ctx context.Context, in *Reaction
 	return out, nil
 }
 
+func (c *reactionServiceClient) LaunchReaction(ctx context.Context, in *LaunchRequest, opts ...grpc.CallOption) (*LaunchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LaunchResponse)
+	err := c.cc.Invoke(ctx, ReactionService_LaunchReaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReactionServiceServer is the server API for ReactionService service.
 // All implementations must embed UnimplementedReactionServiceServer
 // for forward compatibility.
 type ReactionServiceServer interface {
-	// RegisterAction
 	RegisterAction(context.Context, *ReactionRequest) (*ReactionResponse, error)
+	LaunchReaction(context.Context, *LaunchRequest) (*LaunchResponse, error)
 	mustEmbedUnimplementedReactionServiceServer()
 }
 
@@ -66,6 +77,9 @@ type UnimplementedReactionServiceServer struct{}
 
 func (UnimplementedReactionServiceServer) RegisterAction(context.Context, *ReactionRequest) (*ReactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterAction not implemented")
+}
+func (UnimplementedReactionServiceServer) LaunchReaction(context.Context, *LaunchRequest) (*LaunchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LaunchReaction not implemented")
 }
 func (UnimplementedReactionServiceServer) mustEmbedUnimplementedReactionServiceServer() {}
 func (UnimplementedReactionServiceServer) testEmbeddedByValue()                         {}
@@ -106,6 +120,24 @@ func _ReactionService_RegisterAction_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReactionService_LaunchReaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LaunchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReactionServiceServer).LaunchReaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReactionService_LaunchReaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReactionServiceServer).LaunchReaction(ctx, req.(*LaunchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReactionService_ServiceDesc is the grpc.ServiceDesc for ReactionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +148,10 @@ var ReactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterAction",
 			Handler:    _ReactionService_RegisterAction_Handler,
+		},
+		{
+			MethodName: "LaunchReaction",
+			Handler:    _ReactionService_LaunchReaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
