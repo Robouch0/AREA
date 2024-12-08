@@ -11,6 +11,9 @@ import (
 	"area/db"
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/hello"
+	huggingFace "area/gRPC/api/hugging_face"
+	"fmt"
+
 	"area/models"
 	"cmp"
 	"encoding/json"
@@ -52,22 +55,24 @@ func NewReactionService() (*ReactionService, error) {
 func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["dt"] = dateTime.NewDateTimeServiceClient(conn)
 	react.clients["hello"] = hello.NewHelloServiceClient(conn)
+	react.clients["hf"] = huggingFace.NewHuggingFaceClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
+	log.Println("ActionID Launch reaction (reactService): ", req.ActionId)
 	area, err := react.AreaDB.GetAreaByActionID(uint(req.ActionId))
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
+	log.Println("AreaID Launch: ", area.ID)
 	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID)
 	for _, re := range *reactions {
 		if cliService, ok := react.clients[re.Reaction.Service]; ok {
-			log.Println("Theorically calling: ", re.Reaction.Service)
-			// cliService
 			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, req.PrevOutput)
 			if err != nil {
+				fmt.Println("error: ", err)
 				return nil, err
 			}
 			log.Println(res)
@@ -83,8 +88,6 @@ func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService
 		return nil, err
 	}
 
-	log.Println(newArea)
-
 	var ingredientsAction map[string]any
 	var ingredientsReaction map[string]any
 	errIngAct := json.Unmarshal(req.Action.Ingredients, &ingredientsAction)
@@ -93,7 +96,7 @@ func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService
 		return nil, err
 	}
 
-	react.ActionDB.InsertNewAction(
+	act, err := react.ActionDB.InsertNewAction(
 		&models.Action{
 			Service:      req.Action.Service,
 			Microservice: req.Action.Microservice,
@@ -116,5 +119,5 @@ func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService
 	if err != nil {
 		return nil, err
 	}
-	return &gRPCService.ReactionResponse{Description: "Done", ActionId: 1}, nil
+	return &gRPCService.ReactionResponse{Description: "Done", ActionId: int64(act.ID)}, nil
 }

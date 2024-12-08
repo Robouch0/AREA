@@ -61,7 +61,9 @@ func (area *AreaDB) GetAreaByActionID(ActionID uint) (*models.Area, error) {
 	data := new(models.Area)
 	err := area.Db.NewSelect().
 		Model(data).
-		Relation("Action").
+		Relation("Action", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.Where("area_id = ?", ActionID)
+		}).
 		Scan(context.Background())
 	if err != nil {
 		return nil, err

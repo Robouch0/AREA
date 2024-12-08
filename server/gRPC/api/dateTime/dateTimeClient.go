@@ -53,5 +53,5 @@ func (dt *DTServiceClient) SendAction(body map[string]any, actionID int) (*IServ
 		return nil, err
 	}
 	dt.LaunchCronJob(context.Background(), &timeReq)
-	return &IServ.ActionResponseStatus{Description: "Done", ActionID: 1}, nil
+	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
 }

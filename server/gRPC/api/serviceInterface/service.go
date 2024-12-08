@@ -17,6 +17,8 @@ type ReactionResponseStatus struct {
 	ReactionID  int    `json:"reaction_id"`
 }
 
+type MicroserviceLauncher = map[string]func(ingredients map[string]any, prevOutput []byte) (*ReactionResponseStatus, error)
+
 type ClientService interface {
 	SendAction(body map[string]any, actionId int) (*ActionResponseStatus, error)
 	// prevOutput is an array of byte because output can be raw
