@@ -99,7 +99,7 @@ export default function ProfilePage(userData: any) {
                                         <div className="flex flex-row items-center justify-between">
                                             <div className="flex items-center">
                                                 <div className="my-3">
-                                                    <ServiceIcon tag={tag}/>
+                                                    <ServiceIcon className="text-2xl" tag={tag}/>
                                                 </div>
                                                 <div className="mx-4 lg:mx-8 text-2xl text-black font-semibold">
                                                     {tag}
