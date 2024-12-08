@@ -28,7 +28,7 @@ func NewHuggingFaceService() HuggingFaceService {
 
 func (hfServ *HuggingFaceService) LaunchTextGeneration(_ context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {
 	url := "https://api-inference.huggingface.co/models/google/gemma-2-2b-it"
-	bearerTok := "Bearer " + "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" // DO NOT DO THAT AT HOME os.Getenv("API_HUGGING_FACE")
+	bearerTok := "Bearer " + "<HF-TOKEN>" // DO NOT DO THAT AT HOME os.Getenv("API_HUGGING_FACE")
 
 	b, err := json.Marshal(req)
 	if err != nil {
