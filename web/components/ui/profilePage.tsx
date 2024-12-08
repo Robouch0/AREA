@@ -7,9 +7,9 @@ import {FaEye, FaEyeSlash} from "react-icons/fa";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {useState} from "react";
 import {ServiceIcon} from "@/components/ui/serviceIcon";
+import {userInfo} from "@/api/getUserInfos";
 
-export default function ProfilePage(userData: any) {
-    console.log(userData.userData.email);
+export default function ProfilePage({email, first_name, last_name, password} : userInfo) {
     const [showPassword, setShowPassword] = useState(false);
 
     const tags = [
@@ -25,7 +25,7 @@ export default function ProfilePage(userData: any) {
             <div className="w-full h-full flex flex-col bg-white justify-center items-center my-16">
                 <h1 className="text-6xl font-bold p-8"> Account Settings </h1>
                 <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700"/>
-                <div className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between gap-8">
+                <div className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between">
                     <div
                         className="p-6 rounded-3xl w-full lg:w-1/2 bg-slate-700 h-full flex flex-col justify-center items-center gap-4">
                         <Image
@@ -41,7 +41,7 @@ export default function ProfilePage(userData: any) {
                             id="mail"
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="Email"
-                            value={userData.userData.email}
+                            value={email}
                             disabled
                         />
                         <h2 className=" text-white text-2xl font-bold my-2"> First name </h2>
@@ -50,7 +50,7 @@ export default function ProfilePage(userData: any) {
                             id="mail"
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
-                            value={userData.userData.first_name}
+                            value={first_name}
                             disabled
                         />
                         <h2 className="p-2 text-white text-2xl font-bold"> Last name </h2>
@@ -59,7 +59,7 @@ export default function ProfilePage(userData: any) {
                             id="mail"
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
-                            value={userData.userData.last_name}
+                            value={last_name}
                             disabled
                         />
                         <h2 className="p-2 text-white text-2xl font-bold"> Password </h2>
@@ -69,7 +69,7 @@ export default function ProfilePage(userData: any) {
                                 id="password"
                                 className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 aria-label="text"
-                                value={userData.userData.password}
+                                value={password}
                                 disabled
                             />
                             <Button
@@ -82,7 +82,8 @@ export default function ProfilePage(userData: any) {
                                     <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
                             </Button>
                         </div>
-                    </div>
+                    </div>userData
+userData
 
                     <div
                         className="rounded-3xl w-full lg:w-1/2 bg-slate-700 flex flex-col justify-center items-center">

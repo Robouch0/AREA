@@ -7,6 +7,7 @@ export type FormData = {
     password: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FormFieldProps<T extends Record<string, any>> = {
     type: string;
     placeholder: string;

@@ -27,7 +27,7 @@ function RegisterForm() {
                 router.push('/services')
             }, 2300);
         }
-    }, [accountCreated]);
+    }, [accountCreated, router]);
     const [showPassword, setShowPassword] = useState(false);
 
     const onSubmit = async (data: RegisterFormData) => {

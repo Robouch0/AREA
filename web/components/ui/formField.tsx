@@ -2,6 +2,7 @@ import { FormFieldProps } from "@/lib/typeLogin";
 import {Input} from "@/components/ui/input";
 import {Path} from "react-hook-form";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function FormField<T extends Record<string, any>>({
   type,
   placeholder,

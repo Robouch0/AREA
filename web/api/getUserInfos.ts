@@ -3,7 +3,15 @@
 import { cookies } from 'next/headers';
 import axiosInstance from "@/lib/axios"
 
-export async function getUserInfo() {
+export interface userInfo {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+}
+
+export async function getUserInfo(): Promise<userInfo> {
     const cookiesObj = await cookies();
     const uid = cookiesObj.get("UID")?.value;
 

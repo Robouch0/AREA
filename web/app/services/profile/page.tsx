@@ -1,8 +1,8 @@
 "use server";
-import {getUserInfo} from "@/api/getUserInfos";
+import {getUserInfo, userInfo} from "@/api/getUserInfos";
 import ProfilePage from "@/components/ui/profilePage";
 
 export default async function Profile() {
-     const data = await getUserInfo();
-    return <ProfilePage userData={data}/>;
+     const data:userInfo = await getUserInfo();
+    return <ProfilePage {...data}/>;
 }
