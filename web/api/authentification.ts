@@ -1,6 +1,7 @@
 "use server";
 import { cookies } from 'next/headers';
 import axiosInstance from "@/lib/axios"
+import {router} from "next/client";
 
 export async function login(emailValue: string, passwordValue: string) : Promise<boolean> {
     try {
@@ -33,5 +34,21 @@ export async function checkAuthentification(token:string|undefined) {
     } catch (error) {
         console.info("Authentication check failed:", error);
         return false;
+    }
+}
+
+export async function signUp(emailValue: string, passwordValue: string, firstNameValue: string, lastNameValue: string) : Promise<boolean> {
+    try {
+        const response = await axiosInstance.post(`sign-up/`, {
+            email: emailValue,
+            password: passwordValue,
+            first_name: firstNameValue,
+            last_name: lastNameValue
+        });
+        const loginResponse = await login(emailValue, passwordValue);
+        console.log(loginResponse);
+        return true;
+    } catch (error) {
+        throw error;
     }
 }

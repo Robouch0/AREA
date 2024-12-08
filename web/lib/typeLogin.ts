@@ -7,11 +7,11 @@ export type FormData = {
     password: string;
 };
 
-export type FormFieldProps = {
+export type FormFieldProps<T extends Record<string, any>> = {
     type: string;
     placeholder: string;
-    name: ValidFieldNames;
-    register: UseFormRegister<FormData>;
+    name: keyof T;
+    register: UseFormRegister<T>;
     error: FieldError | undefined;
     valueAsNumber?: boolean;
     ariaLabel?: string;
@@ -28,5 +28,5 @@ export const UserSchema: ZodType<FormData> = z
         email: z.string().email(),
         password: z
             .string()
-            .min(4, { message: "Password is too short" })
+            .min(6, { message: "Password must be at least 6 characters long" })
     });

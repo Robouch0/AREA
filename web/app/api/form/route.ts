@@ -1,5 +1,5 @@
 "use server";
-import { UserSchema } from "@/lib/type";
+import { UserSchema } from "@/lib/typeLogin";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {

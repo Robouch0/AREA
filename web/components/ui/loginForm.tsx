@@ -1,6 +1,6 @@
 "use client";
 import {useForm} from "react-hook-form";
-import {FormData, UserSchema, ValidFieldNames} from "@/lib/type";
+import {FormData, UserSchema, ValidFieldNames} from "@/lib/typeLogin";
 import FormField from "@/components/ui/formField";
 import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -10,7 +10,7 @@ import {useEffect, useState} from "react";
 import {login} from "@/api/authentification";
 import {useRouter} from "next/navigation";
 
-function Form() {
+function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
     const [errorLogin, setErrorLogin] = useState(false);
@@ -34,7 +34,7 @@ function Form() {
     const onSubmit = async (data: FormData) => {
         try {
             // layer of security on server side front
-            const response = await axios.post("/api/form", data);
+            const response = await axios.post("/api/form", data)
             const {errors = {}} = response.data;
             setErrorLogin(false);
 
@@ -76,7 +76,7 @@ function Form() {
                         <div className="grid col-auto">
                             <div className="w-full mb-6">
 
-                                <FormField
+                                <FormField<FormData>
                                     type="email"
                                     placeholder="Email"
                                     name="email"
@@ -88,7 +88,7 @@ function Form() {
                             </div>
                                 <div className="w-full mb-6 relative">
 
-                                    <FormField
+                                    <FormField<FormData>
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Password"
                                         name="password"
@@ -170,4 +170,4 @@ function Form() {
         </>
     );
 }
-export default Form;
+export default LoginForm;
