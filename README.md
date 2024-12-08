@@ -8,6 +8,14 @@ The other main goal of the project is to make us understand the importance of or
 In order do to this project we need to implement a software suite that functions similar to [**IFTT**](https://fr.wikipedia.org/wiki/IFTTT) and/or [**Zapier**](https://en.wikipedia.org/wiki/Zapier).
 
 
+## Table of Contents
+- [Contribution guidelines](#contribution-guidelines)
+- [Comparative studies](#benchmarks--comparative-studies)
+- [Authors](#authors)
+- [Frontend web README](web/README.md)
+
+
+
 ## Contribution guidelines
 
 Feel free to try and contribute to our repository, in order to do this you need to comply with some guidelines.
@@ -179,4 +187,3 @@ rahul.chander@epitech.eu
 hugo.duchemin@epitech.eu
 
 matthieu.godme@epitech.eu
-
