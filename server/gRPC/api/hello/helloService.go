@@ -26,5 +26,5 @@ func NewHelloService(db *db.UserDb) HelloService {
 func (hello *HelloService) SayHello(_ context.Context, req *gRPCService.HelloWorldRequest) (*gRPCService.HelloWorldResponse, error) {
 	log.Println("In the service !")
 
-	return &gRPCService.HelloWorldResponse{Message: "Hello !"}, nil
+	return &gRPCService.HelloWorldResponse{Message: req.Message}, nil
 }

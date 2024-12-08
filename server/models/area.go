@@ -10,7 +10,7 @@ package models
 import "github.com/uptrace/bun"
 
 type Area struct {
-	bun.BaseModel `bun:"table:user,alias:cs"`
+	bun.BaseModel `bun:"table:areas,alias:cs"`
 	ID            uint `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
 	UserID        uint `bun:"user_id" json:"user_id"`
 

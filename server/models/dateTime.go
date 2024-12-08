@@ -10,7 +10,7 @@ package models
 import "github.com/uptrace/bun"
 
 type DateTime struct {
-	bun.BaseModel `bun:"table:user,alias:cs"`
+	bun.BaseModel `bun:"table:dateTime,alias:cs"`
 	ID            uint `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
 	ActionID      uint `bun:"action_id" json:"action_id"`
 }

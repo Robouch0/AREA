@@ -13,6 +13,7 @@ import (
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"encoding/json"
+	"errors"
 
 	"google.golang.org/grpc"
 )
@@ -23,6 +24,10 @@ type DTServiceClient struct {
 
 func NewDateTimeServiceClient(conn *grpc.ClientConn) *DTServiceClient {
 	return &DTServiceClient{gRPCService.NewDateTimeServiceClient(conn)}
+}
+
+func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+	return nil, errors.New("No reaction available for this service")
 }
 
 func (dt *DTServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
@@ -48,5 +53,5 @@ func (dt *DTServiceClient) SendAction(body map[string]any, actionID int) (*IServ
 		return nil, err
 	}
 	dt.LaunchCronJob(context.Background(), &timeReq)
-	return &IServ.ActionResponseStatus{Description: "Done", ActionID: 1}, nil
+	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
 }

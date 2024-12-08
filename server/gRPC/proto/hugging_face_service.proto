@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package huggingface;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service HuggingFaceService {
+  rpc LaunchTextGeneration(TextGenerationReq) returns (TextGenerationRes) {}
+}
+
+message TextGenerationReq {
+  string model = 1;
+  string inputs = 2;
+}
+
+message TextGenerationRes {
+  string generated_text = 1;
+}

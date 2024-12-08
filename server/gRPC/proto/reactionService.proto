@@ -5,8 +5,9 @@ package reaction;
 option go_package = "github.com/area/grpc-go/service";
 
 service ReactionService {
-  // RegisterAction
   rpc RegisterAction(ReactionRequest) returns (ReactionResponse) {}
+
+  rpc LaunchReaction(LaunchRequest) returns (LaunchResponse) {}
 }
 
 message Action {
@@ -30,4 +31,14 @@ message ReactionRequest {
 message ReactionResponse {
   string description = 1;
   int64 action_id = 2;
+}
+
+////
+
+message LaunchRequest {
+  int64 action_id = 1;
+  bytes prev_output = 2;
+}
+
+message LaunchResponse {
 }

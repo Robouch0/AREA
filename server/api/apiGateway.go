@@ -11,6 +11,7 @@ import (
 	areaMiddleware "area/api/middleware"
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/hello"
+	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
 
@@ -38,6 +39,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m := make(map[string]IServ.ClientService)
 	m["hello"] = hello.NewHelloServiceClient(conn)
 	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
+	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
