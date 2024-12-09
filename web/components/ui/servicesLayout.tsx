@@ -64,6 +64,7 @@ export default function ServicesLayout({children,}: Readonly<{
                             className="mx-4 text-amber-50 font-medium hover:cursor-pointer focus:border-slate-500 focus:border-4 rounded-full focus:outline-none focus:p-2"
                             onClick={() => {
                                 document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                                document.cookie = "UID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                                 router.push('/');
                             }}
                         >
