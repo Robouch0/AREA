@@ -9,9 +9,11 @@ package api
 
 import (
 	areaMiddleware "area/api/middleware"
-	"area/gRPC/api"
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/hello"
+	huggingFace "area/gRPC/api/hugging_face"
+	"area/gRPC/api/reaction"
+	IServ "area/gRPC/api/serviceInterface"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
@@ -24,7 +26,7 @@ type ApiGateway struct {
 	JwtTok *jwtauth.JWTAuth
 
 	conn    *grpc.ClientConn
-	Clients map[string]api.ClientService
+	Clients map[string]IServ.ClientService
 }
 
 func CreateApiGateway() (*ApiGateway, error) {
@@ -34,10 +36,11 @@ func CreateApiGateway() (*ApiGateway, error) {
 		return nil, err
 	}
 
-	m := make(map[string]api.ClientService)
+	m := make(map[string]IServ.ClientService)
 	m["hello"] = hello.NewHelloServiceClient(conn)
 	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
-	m["react"] = api.NewReactionServiceClient(conn)
+	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
+	m["react"] = reaction.NewReactionServiceClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),

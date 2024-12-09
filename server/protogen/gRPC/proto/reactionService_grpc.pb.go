@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	ReactionService_RegisterAction_FullMethodName = "/reaction.ReactionService/RegisterAction"
 	ReactionService_LaunchReaction_FullMethodName = "/reaction.ReactionService/LaunchReaction"
 )
 
@@ -26,8 +27,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReactionServiceClient interface {
-	// RegisterAction
-	LaunchReaction(ctx context.Context, in *ReactionRequest, opts ...grpc.CallOption) (*ReactionResponse, error)
+	RegisterAction(ctx context.Context, in *ReactionRequest, opts ...grpc.CallOption) (*ReactionResponse, error)
+	LaunchReaction(ctx context.Context, in *LaunchRequest, opts ...grpc.CallOption) (*LaunchResponse, error)
 }
 
 type reactionServiceClient struct {
@@ -38,9 +39,19 @@ func NewReactionServiceClient(cc grpc.ClientConnInterface) ReactionServiceClient
 	return &reactionServiceClient{cc}
 }
 
-func (c *reactionServiceClient) LaunchReaction(ctx context.Context, in *ReactionRequest, opts ...grpc.CallOption) (*ReactionResponse, error) {
+func (c *reactionServiceClient) RegisterAction(ctx context.Context, in *ReactionRequest, opts ...grpc.CallOption) (*ReactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ReactionResponse)
+	err := c.cc.Invoke(ctx, ReactionService_RegisterAction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reactionServiceClient) LaunchReaction(ctx context.Context, in *LaunchRequest, opts ...grpc.CallOption) (*LaunchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LaunchResponse)
 	err := c.cc.Invoke(ctx, ReactionService_LaunchReaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -52,8 +63,8 @@ func (c *reactionServiceClient) LaunchReaction(ctx context.Context, in *Reaction
 // All implementations must embed UnimplementedReactionServiceServer
 // for forward compatibility.
 type ReactionServiceServer interface {
-	// RegisterAction
-	LaunchReaction(context.Context, *ReactionRequest) (*ReactionResponse, error)
+	RegisterAction(context.Context, *ReactionRequest) (*ReactionResponse, error)
+	LaunchReaction(context.Context, *LaunchRequest) (*LaunchResponse, error)
 	mustEmbedUnimplementedReactionServiceServer()
 }
 
@@ -64,7 +75,10 @@ type ReactionServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedReactionServiceServer struct{}
 
-func (UnimplementedReactionServiceServer) LaunchReaction(context.Context, *ReactionRequest) (*ReactionResponse, error) {
+func (UnimplementedReactionServiceServer) RegisterAction(context.Context, *ReactionRequest) (*ReactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterAction not implemented")
+}
+func (UnimplementedReactionServiceServer) LaunchReaction(context.Context, *LaunchRequest) (*LaunchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LaunchReaction not implemented")
 }
 func (UnimplementedReactionServiceServer) mustEmbedUnimplementedReactionServiceServer() {}
@@ -88,8 +102,26 @@ func RegisterReactionServiceServer(s grpc.ServiceRegistrar, srv ReactionServiceS
 	s.RegisterService(&ReactionService_ServiceDesc, srv)
 }
 
-func _ReactionService_LaunchReaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ReactionService_RegisterAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReactionServiceServer).RegisterAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReactionService_RegisterAction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReactionServiceServer).RegisterAction(ctx, req.(*ReactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReactionService_LaunchReaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LaunchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -101,7 +133,7 @@ func _ReactionService_LaunchReaction_Handler(srv interface{}, ctx context.Contex
 		FullMethod: ReactionService_LaunchReaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReactionServiceServer).LaunchReaction(ctx, req.(*ReactionRequest))
+		return srv.(ReactionServiceServer).LaunchReaction(ctx, req.(*LaunchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -113,6 +145,10 @@ var ReactionService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "reaction.ReactionService",
 	HandlerType: (*ReactionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "RegisterAction",
+			Handler:    _ReactionService_RegisterAction_Handler,
+		},
 		{
 			MethodName: "LaunchReaction",
 			Handler:    _ReactionService_LaunchReaction_Handler,

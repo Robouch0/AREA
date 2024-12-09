@@ -17,6 +17,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
+    "github.com/go-chi/cors"
 )
 
 func InitHTTPServer() (*api.ApiGateway, error) {
@@ -28,8 +29,17 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
 
+    gateway.Router.Use(cors.Handler(cors.Options{
+        AllowedOrigins:   []string{"https://*", "http://*"},
+        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+        ExposedHeaders:   []string{"Link"},
+        AllowCredentials: true,
+        MaxAge:           300,
+      }))
 	gateway.Router.Get("/ping", controllers.PingRoute)
 	gateway.Router.Get("/about.json", controllers.AboutRoute)
+
 	gateway.Router.Mount("/users/", UserRoutes())
 
 	gateway.Router.Group(func(r chi.Router) {
@@ -42,6 +52,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 		})
 
 		r.Post("/create/{service}", controllers.CreateRoute(gateway))
+	    r.Get("/ping", controllers.PingRoute)
 	})
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))
 	gateway.Router.Post("/sign-up/", controllers.SignUp)

@@ -1,18 +1,44 @@
 syntax = "proto3";
 
-option go_package = "github.com/area/grpc-go/service";
-
 package reaction;
 
+option go_package = "github.com/area/grpc-go/service";
+
 service ReactionService {
-    // RegisterAction
-    rpc LaunchReaction(ReactionRequest) returns (ReactionResponse) {}
+  rpc RegisterAction(ReactionRequest) returns (ReactionResponse) {}
+
+  rpc LaunchReaction(LaunchRequest) returns (LaunchResponse) {}
+}
+
+message Action {
+  string service = 1;
+  string microservice = 2;
+  bytes ingredients = 3;
+}
+
+message Reaction {
+  string service = 1;
+  string microservice = 2;
+  bytes ingredients = 3;
 }
 
 message ReactionRequest {
-    string msg = 1;
+  int64 user_id = 1;
+  Action action = 2;
+  Reaction reaction = 3;
 }
 
 message ReactionResponse {
-    string res = 1;
+  string description = 1;
+  int64 action_id = 2;
+}
+
+////
+
+message LaunchRequest {
+  int64 action_id = 1;
+  bytes prev_output = 2;
+}
+
+message LaunchResponse {
 }
