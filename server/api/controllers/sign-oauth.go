@@ -8,7 +8,11 @@
 package controllers
 
 import (
+	"area/api/middleware"
+	"area/db"
+	"area/models"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -26,11 +31,14 @@ type OAuthRequest struct {
 	Code    string `json:"code"`
 }
 
-type OAuthAccess struct {
-	Token     string `json:"access_token"`
-	Scope     string `json:"scope"`
-	Tokentype string `json:"token_type"`
+type OAuthInfos struct {
+	Email string `json:"email"`
+	Primary bool `json:"primary"`
+	Verified bool `json:"verified"`
+	Visibility string `json:"visibility"`
 }
+
+type InfoList map[string]OAuthInfos
 
 func createOAuthURLS() map[string][]string {
 	m := make(map[string][]string)
@@ -63,7 +71,7 @@ func GetAccessToken(OAuthCode *OAuthRequest, url []string) (resp *http.Response,
 	return request, nil
 }
 
-func GetUserEmail(url []string, TokenStr string, idx int) (resp *http.Response, err error) {
+func GetUserEmail(url []string, TokenStr string, idx int, w http.ResponseWriter) (resp *http.Response, err error) {
 	if idx == -1 {
 		return nil, err
 	}
@@ -79,9 +87,10 @@ func GetUserEmail(url []string, TokenStr string, idx int) (resp *http.Response, 
 	return result, nil
 }
 
-func OAuthRoutes() chi.Router {
+func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 	OAuthRouter := chi.NewRouter()
 	OAuthURL := createOAuthURLS()
+	userDb := db.GetUserDb()
 
 	OAuthRouter.Get("/{service}", func(w http.ResponseWriter, r *http.Request) {
 		OAuthservice := chi.URLParam(r, "service")
@@ -112,7 +121,7 @@ func OAuthRoutes() chi.Router {
 			Tknbody, _ := io.ReadAll(request.Body)
 			TokenFidx := strings.TrimLeft(string(Tknbody), "access_token=")
 			TokenSidx := strings.Index(TokenFidx, "&scope")
-			result, err := GetUserEmail(url, TokenFidx, TokenSidx)
+			result, err := GetUserEmail(url, TokenFidx, TokenSidx, w)
 
 			if err != nil {
 				w.WriteHeader(401)
@@ -120,6 +129,35 @@ func OAuthRoutes() chi.Router {
 				return
 			}
 			defer result.Body.Close()
+			userlist := []OAuthInfos{}
+			err = json.NewDecoder(result.Body).Decode(&userlist)
+
+			if err != nil {
+				w.WriteHeader(401)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			us := new(models.User)
+			err = userDb.Db.NewSelect().
+				Model(us).
+				Where("email = ?", userlist[0].Email).
+				Scan(context.Background())
+			if err != nil {
+				var newUser models.User
+				newUser.Email = userlist[0].Email
+
+				_, err := userDb.CreateUser(&newUser)
+				if err != nil {
+					w.WriteHeader(401)
+					w.Write([]byte(err.Error()))
+					return
+				}
+				w.WriteHeader(200)
+				w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+			} else {
+				w.WriteHeader(200)
+				w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+			}
 		}
 
 	})
