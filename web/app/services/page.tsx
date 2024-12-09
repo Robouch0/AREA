@@ -11,13 +11,15 @@ export default function Explore() {
     // exemple mockup
     // a changer par un call au backend to get every default area
     let areas = [
-        {id: 0, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
-        {id: 1, reactionCategory: "Instagram", areaColor: "blue", areaCategory: "Youtube", areaTitle: "Nouvel vidéo d'inoxtag, play quoicoubébou des montagnes"},
-        {id: 2, reactionCategory: "Instagram", areaColor: "green", areaCategory: "Instagram", areaTitle: "nouvelle recette sur marmiton, tweetez le"},
-        {id: 3, reactionCategory: "Instagram", areaColor: "purple", areaCategory: "Instagram", areaTitle: "TOut les vendredis de chaque semaine récupérer mon top 10 spotify"},
-        {id: 4, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
-        {id: 5, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Outlook", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
-        {id: 6, reactionCategory: "Instagram", areaColor: "orange", areaCategory: "Tweeter", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
+        {id: 2, reactionCategory: "Github", areaColor: "green", areaCategory: "Clock", areaTitle: "Change la description et/ou le titre d'un repo github tout les X temps",
+            ingredients: {owner: "moi", repo: "area", name: "nom", description: "desc"},
+        microAction: "dateTimeTrigger", microReaction: "updateRepo"},
+        // {id: 0, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
+        // {id: 1, reactionCategory: "Instagram", areaColor: "blue", areaCategory: "Youtube", areaTitle: "Nouvel vidéo d'inoxtag, play quoicoubébou des montagnes"},
+        // {id: 3, reactionCategory: "Instagram", areaColor: "purple", areaCategory: "Instagram", areaTitle: "TOut les vendredis de chaque semaine récupérer mon top 10 spotify"},
+        // {id: 4, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
+        // {id: 5, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Outlook", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
+        // {id: 6, reactionCategory: "Instagram", areaColor: "orange", areaCategory: "Tweeter", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
     ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +32,7 @@ export default function Explore() {
 
     return (
         <>
-            <div className="bg-white flex flex-col sm:flex-row justify-center items-center p-32">
+            <div className=" flex flex-col sm:flex-row justify-center items-center p-32">
                 <Image
                     className="opacity-40"
                     src="/bg.png"
@@ -56,15 +58,15 @@ export default function Explore() {
                     </h3>
                 </div>
             </div>
-            <div className="flex flex-col items-center justify-center bg-white">
+            <div className="bg-gray-50 flex flex-col items-center justify-center">
                 <h6 className="my-8 text-5xl text-black font-extrabold"> Explore </h6>
                 <div
-                    className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60">
+                    className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus-visible:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60">
                     <FaSearch className="text-gray-400 text-3xl" />
                     <Input
                         placeholder="Cherchez des Areas ici"
                         id="Search"
-                        className="!text-2xl border-none shadow-none focus:border-none focus:!ring-0 focus:shadow-none focus:outline-none"
+                        className="!text-2xl border-none shadow-none focus-visible:border-none focus-visible:!ring-0 focus-visible:shadow-none focus-visible:outline-none"
                         aria-label="Search for area"
                         onChange={handleChange}
                     />

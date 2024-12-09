@@ -61,7 +61,7 @@ function RegisterForm() {
                                     register={register}
                                     error={errors.firstName}
                                     ariaLabel="first name inputfield"
-                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 />
                             </div>
                             <div className="w-full mb-6">
@@ -73,7 +73,7 @@ function RegisterForm() {
                                     register={register}
                                     error={errors.lastName}
                                     ariaLabel="last name inputfield"
-                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 />
                             </div>
                             <div className="w-full mb-6">
@@ -84,7 +84,7 @@ function RegisterForm() {
                                     register={register}
                                     error={errors.email}
                                     ariaLabel="email inputfield"
-                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 />
                             </div>
                             <div className="w-full mb-6 relative">
@@ -96,12 +96,12 @@ function RegisterForm() {
                                     ariaLabel="enter your password"
                                     register={register}
                                     error={errors.password}
-                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 />
                                 <Button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none outline-none focus:outline-none hover:bg-transparent ring-0 shadow-none p-2"
+                                    className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl"/> :
@@ -117,12 +117,12 @@ function RegisterForm() {
                                     ariaLabel="confirm your password"
                                     register={register}
                                     error={errors.confirmPassword}
-                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                    className="!text-2xl rounded-2xl font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 />
                                 <Button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none outline-none focus:outline-none hover:bg-transparent ring-0 shadow-none p-2"
+                                    className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl"/> :
@@ -133,7 +133,7 @@ function RegisterForm() {
                             <div className="">
                                 <Button
                                     type="submit"
-                                    className="focus:border-slate-500 focus:border-8 rounded-full mt-8 w-full h-16 text-2xl font-bold"
+                                    className="focus-visible:border-slate-500 focus-visible:border-8 rounded-full mt-8 w-full h-16 text-2xl font-bold"
                                     aria-label="Log In"
                                 >
                                     Sign up
@@ -147,7 +147,7 @@ function RegisterForm() {
                             </div>
                             <div className="max-w-md w-full space-y-4">
                                 <Button
-                                    className="focus:border-slate-500  focus:border-8 flex items-center justify-start px-6 bg-blue-800 hover:bg-blue-800 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    className="focus-visible:border-slate-500  focus-visible:border-8 flex items-center justify-start px-6 bg-blue-800 hover:bg-blue-800 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     type="button"
                                     arial-label="Facebook"
                                 >
@@ -156,7 +156,7 @@ function RegisterForm() {
                                 </Button>
 
                                 <Button
-                                    className="focus:border-slate-500 focus:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     type="button"
                                     arial-label="Google"
                                 >
@@ -165,7 +165,7 @@ function RegisterForm() {
                                 </Button>
 
                                 <Button
-                                    className="focus:border-slate-500 focus:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     type="button"
                                     arial-label="Google"
                                 >
@@ -177,7 +177,7 @@ function RegisterForm() {
                                         Vous avez déjà un compte ?
                                     </p>
                                     <button
-                                        className="mb-8 mx-2 underline-offset-1 underline font-bold hover:cursor-pointer focus:border-4 focus:border-slate-700 focus:outline-none focus:p-2 rounded-3xl"
+                                        className="mb-8 mx-2 underline-offset-1 underline font-bold hover:cursor-pointer focus-visible:border-4 focus-visible:border-slate-700 focus-visible:outline-none focus-visible:p-2 rounded-3xl"
                                         onClick={() => router.push('/')}
                                         tabIndex={0}
                                     >
