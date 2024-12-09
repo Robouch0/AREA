@@ -14,6 +14,7 @@ import (
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
 	services "area/protogen/gRPC/proto"
+	"cmp"
 	"log"
 	"net"
 	"sync"
@@ -32,17 +33,17 @@ func LaunchServices() {
 	s := grpc.NewServer()
 
 	helloService := hello.NewHelloService(nil)
-	dtService := dateTime.NewDateTimeService(nil)
-	reactService, err := reaction.NewReactionService()
+	dtService, errDt := dateTime.NewDateTimeService()
+	reactService, errReact := reaction.NewReactionService()
 	huggingFaceService := huggingFace.NewHuggingFaceService()
 	githubService := github.NewGithubService()
 
-	if err != nil {
+	if err = cmp.Or(errDt, errReact); err != nil {
 		log.Println(err)
 		return
 	}
 	services.RegisterHelloWorldServiceServer(s, &helloService)
-	services.RegisterDateTimeServiceServer(s, &dtService)
+	services.RegisterDateTimeServiceServer(s, dtService)
 	services.RegisterHuggingFaceServiceServer(s, &huggingFaceService)
 	services.RegisterGithubServiceServer(s, &githubService)
 	services.RegisterReactionServiceServer(s, reactService)
