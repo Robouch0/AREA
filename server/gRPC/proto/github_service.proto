@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package github;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service GithubService {
+  rpc UpdateRepository(UpdateRepoReq) returns(UpdateRepoReq) {}
+}
+
+message UpdateRepoReq {
+  string owner = 1;
+  string repo = 2;
+
+  string name = 3;
+  string description = 4;
+  // There is more to add
+}
+
+message UpdateRepoRes {
+  string resp = 1; // Update to a more specific response
+}

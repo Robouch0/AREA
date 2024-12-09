@@ -42,7 +42,8 @@ func (dt *DateTimeService) InitReactClient(conn *grpc.ClientConn) {
 func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
 	// Store in database the data of the trigger request
 	fmt.Println("Starting cron job")
-	dt.c.AddFunc("* * * * *", func() { // Format this correctly
+	// dt.c.AddFunc("* * * * *",
+	func() { // Format this correctly
 		log.Println("Trigger activated")
 		r, err := http.Get("https://tools.aimylogic.com/api/now?tz=Europe/Paris")
 		if err != nil {
@@ -70,7 +71,8 @@ func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.Tri
 			context.Background(),
 			&gRPCService.LaunchRequest{ActionId: int64(req.ActionId), PrevOutput: b},
 		)
-	})
+	}()
+	// )
 
 	return &gRPCService.TriggerTimeResponse{}, nil
 }
