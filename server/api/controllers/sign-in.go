@@ -50,6 +50,6 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
-		w.Write([]byte(middleware.CreateToken(jwtauth, us.ID)))
+		w.Write([]byte(fmt.Sprintf("%s,%d", middleware.CreateToken(jwtauth, us.ID), us.ID)))
 	}
 }
