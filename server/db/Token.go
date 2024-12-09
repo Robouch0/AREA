@@ -14,11 +14,11 @@ import (
 	"github.com/uptrace/bun"
 )
 
-type OAuthDb struct {
+type TokenDb struct {
 	Db *bun.DB
 }
 
-func InitOAuthDb() *OAuthDb {
+func InitTokenDb() *TokenDb {
 	db := initDB()
 
 	db.NewCreateTable().
@@ -26,28 +26,28 @@ func InitOAuthDb() *OAuthDb {
 		IfNotExists().
 		Exec(context.Background())
 
-	return &OAuthDb{Db : db}
+	return &TokenDb{Db : db}
 }
 
-func GetOAuthDb() *OAuthDb {
+func GetTokenDb() *TokenDb {
 	db := initDB()
-	return &OAuthDb{Db: db}
+	return &TokenDb{Db: db}
 }
 
-func (OAuth *OAuthDb) CreateOAuthToken(token *models.Token) (*models.Token, error) {
-	_, err := OAuth.Db.NewInsert().
-		Model(token).
+func (token *TokenDb) CreateToken(newToken *models.Token) (*models.Token, error) {
+	_, err := token.Db.NewInsert().
+		Model(newToken).
 		Exec(context.Background())
 
 	if err != nil {
 		return nil, err
 	}
-	return token, nil
+	return newToken, nil
 }
 
-func (OAuth *OAuthDb) GetOAuthTokens() (*([]models.Token), error) {
+func (Token *TokenDb) GetTokens() (*([]models.Token), error) {
 	allTokens := new([]models.Token)
-	err := OAuth.Db.NewSelect().
+	err := Token.Db.NewSelect().
 		Model(allTokens).
 		Scan(context.Background())
 
@@ -57,10 +57,10 @@ func (OAuth *OAuthDb) GetOAuthTokens() (*([]models.Token), error) {
 	return allTokens, nil
 }
 
-func (OAuth *OAuthDb) getOAuthToken(userID int64, provider string) (*models.Token, error) {
+func (Token *TokenDb) getToken(userID int64, provider string) (*models.Token, error) {
 	us := new(models.Token)
 
-	err := OAuth.Db.NewSelect().
+	err := Token.Db.NewSelect().
 	Model(us).
 	Where("user_id = ? AND provider = ?", userID, provider).
 	Scan(context.Background())

@@ -85,7 +85,7 @@ func GetUserEmail(url []string, TokenStr string, idx int, w http.ResponseWriter)
 	return result, nil
 }
 
-func createUser(w http.ResponseWriter, userlist []OAuthInfos, JwtTok *jwtauth.JWTAuth) {
+func createUser(w http.ResponseWriter, userlist []OAuthInfos, JwtTok *jwtauth.JWTAuth) (*models.User, error) {
 	userDb := db.GetUserDb()
 	us := new(models.User)
 
@@ -93,22 +93,44 @@ func createUser(w http.ResponseWriter, userlist []OAuthInfos, JwtTok *jwtauth.JW
 		Model(us).
 		Where("email = ?", userlist[0].Email).
 		Scan(context.Background())
-
-		if err != nil {
+	if err != nil {
 		var newUser models.User
 		newUser.Email = userlist[0].Email
-
 		_, err := userDb.CreateUser(&newUser)
+
+		if err != nil {
+			w.WriteHeader(401)
+			w.Write([]byte(err.Error()))
+			return nil, err
+		}
+	}
+	w.WriteHeader(200)
+	w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+	return us, nil
+}
+
+func createToken(w http.ResponseWriter, user *models.User, AccessToken string, Service string) {
+	tokenDb := db.GetTokenDb()
+	tkn := new(models.Token)
+	err := tokenDb.Db.NewSelect().
+		Model(tkn).
+		Where("user_id = ? AND provider = ? ", user.ID, Service).
+		Scan(context.Background())
+
+	if err != nil {
+		var newToken models.Token
+		newToken.Provider = Service
+		newToken.UserID = int64(user.ID)
+		newToken.AccessToken = AccessToken
+		_, err := tokenDb.CreateToken(&newToken)
+
 		if err != nil {
 			w.WriteHeader(401)
 			w.Write([]byte(err.Error()))
 			return
 		}
-		w.WriteHeader(200)
-		w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
 	} else {
-		w.WriteHeader(200)
-		w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+		tkn.AccessToken = AccessToken
 	}
 }
 
@@ -160,7 +182,10 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 				w.Write([]byte(err.Error()))
 				return
 			}
-			createUser(w, userlist, JwtTok)
+			user, err := createUser(w, userlist, JwtTok)
+			if err == nil {
+				createToken(w, user, TokenFidx[:TokenSidx], OAuthCode.Service)
+			}
 		}
 
 	})
