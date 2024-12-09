@@ -49,6 +49,36 @@ func createOAuthURLS() map[string][]string {
 	return m
 }
 
+func GetAccessToken(OAuthCode *OAuthRequest, url []string) (resp *http.Response, err error) {
+	body := fmt.Sprintf(`{ "client_id" : "%s", "client_secret" : "%s", "code" : "%s" }`,
+		os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(OAuthCode.Service))),
+		os.Getenv(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service))),
+		OAuthCode.Code)
+
+	request, err := http.Post(url[1], "application/json", bytes.NewBuffer([]byte(body)))
+
+	if err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
+func GetUserEmail(url []string, TokenStr string, idx int) (resp *http.Response, err error) {
+	if idx == -1 {
+		return nil, err
+	}
+
+	client := &http.Client{}
+	request, _ := http.NewRequest("GET", url[2], nil)
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", TokenStr[:idx]))
+	result, err := client.Do(request)
+
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func OAuthRoutes() chi.Router {
 	OAuthRouter := chi.NewRouter()
 	OAuthURL := createOAuthURLS()
@@ -71,11 +101,7 @@ func OAuthRoutes() chi.Router {
 			return
 		}
 		if url, ok := OAuthURL[OAuthCode.Service]; ok {
-			body := fmt.Sprintf(`{ "client_id" : "%s", "client_secret" : "%s", "code" : "%s" }`,
-				os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(OAuthCode.Service))),
-				os.Getenv(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service))),
-				OAuthCode.Code)
-			request, err := http.Post(url[1], "application/json", bytes.NewBuffer([]byte(body)))
+			request, err := GetAccessToken(OAuthCode, url)
 
 			if err != nil {
 				w.WriteHeader(401)
@@ -86,25 +112,14 @@ func OAuthRoutes() chi.Router {
 			Tknbody, _ := io.ReadAll(request.Body)
 			TokenFidx := strings.TrimLeft(string(Tknbody), "access_token=")
 			TokenSidx := strings.Index(TokenFidx, "&scope")
-
-			if TokenSidx == -1 {
-				w.WriteHeader(401)
-				w.Write([]byte(err.Error()))
-				return
-			}
-			client := &http.Client{}
-			req, _ := http.NewRequest("GET", url[2], nil)
-			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", TokenFidx[:TokenSidx]))
-			res, err := client.Do(req)
+			result, err := GetUserEmail(url, TokenFidx, TokenSidx)
 
 			if err != nil {
 				w.WriteHeader(401)
 				w.Write([]byte(err.Error()))
 				return
 			}
-			defer res.Body.Close()
-			UsrInf, _ := io.ReadAll(res.Body)
-			w.Write([]byte(string(UsrInf)))
+			defer result.Body.Close()
 		}
 
 	})
