@@ -10,15 +10,16 @@ service DateTimeService {
 }
 
 message TriggerTimeRequest {
-  int32 action_id = 1;
+  bool activated = 1;
+  int32 action_id = 2;
 
-  int32 minutes = 2;
-  int32 hours = 3;
+  int32 minutes = 3;
+  int32 hours = 4;
 
-  int64 day_month = 4;
-  int64 month = 5;
+  int64 day_month = 5;
+  int64 month = 6;
 
-  int64 day_week = 6;
+  int64 day_week = 7;
 }
 
 message TriggerTimeResponse {

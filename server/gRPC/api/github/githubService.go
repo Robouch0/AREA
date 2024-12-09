@@ -31,7 +31,6 @@ func NewGithubService() GithubService {
 
 func (git *GithubService) UpdateRepository(_ context.Context, req *gRPCService.UpdateRepoReq) (*gRPCService.UpdateRepoReq, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v", req.Owner, req.Repo)
-	// Github tok
 	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
 	if err != nil {
 		return nil, err
