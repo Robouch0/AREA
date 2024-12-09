@@ -15,7 +15,7 @@ export  function AreaCard({areaColor, category, action, reaction, areaTitle}: {a
     };
     return (
         <>
-            <Button className="hover:bg-transparent shadow-none bg-transparent flex flex-row my-2 w-80 h-80"
+            <Button className="hover:bg-transparent shadow-none bg-transparent flex flex-row my-2 w-80 h-80 focus:border-slate-500 focus:border-8 rounded-3xl focus:outline-none"
                     onClick={handleRedirection}
             >
                 <Card

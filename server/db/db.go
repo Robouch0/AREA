@@ -8,6 +8,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"sync"
 
@@ -19,6 +20,30 @@ import (
 var (
 	dbConnOnce sync.Once
 )
+
+func GetAll[T any](Db bun.IDB) (*[]T, error) {
+	allDatas := new([]T)
+	err := Db.NewSelect().
+		Model(allDatas).
+		Scan(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return allDatas, nil
+}
+
+func GetByID[T any](Db bun.IDB, ID uint) (*T, error) {
+	allDatas := new(T)
+	err := Db.NewSelect().
+		Model(allDatas).
+		Where("id = ?", ID).
+		Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return allDatas, nil
+}
 
 func initDB() *bun.DB {
 	dsn := "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable" // In environment

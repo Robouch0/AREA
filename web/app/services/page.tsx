@@ -5,8 +5,7 @@ import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
 import Image from "next/image";
 
-export default function Page() {
-
+export default function Explore() {
     const [searchField, setSearchField] = useState("");
 
     // exemple mockup
