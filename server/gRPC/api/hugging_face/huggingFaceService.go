@@ -9,6 +9,8 @@ package huggingFace
 
 import (
 	gRPCService "area/protogen/gRPC/proto"
+	"area/utils"
+
 	"bytes"
 	"context"
 	"encoding/json"
@@ -28,7 +30,10 @@ func NewHuggingFaceService() HuggingFaceService {
 
 func (hfServ *HuggingFaceService) LaunchTextGeneration(_ context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {
 	url := "https://api-inference.huggingface.co/models/google/gemma-2-2b-it"
-	bearerTok := "Bearer " + "<HF-TOKEN>" // DO NOT DO THAT AT HOME os.Getenv("API_HUGGING_FACE")
+	bearerTok, err := utils.GetEnvParameterToBearer("API_HUGGING_FACE")
+	if err != nil {
+		return nil, err
+	}
 
 	b, err := json.Marshal(req)
 	if err != nil {

@@ -8,6 +8,7 @@
 package db
 
 import (
+	"area/utils"
 	"context"
 	"database/sql"
 	"sync"
@@ -46,7 +47,10 @@ func GetByID[T any](Db bun.IDB, ID uint) (*T, error) {
 }
 
 func initDB() *bun.DB {
-	dsn := "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable" // In environment
+	dsn, err := utils.GetEnvParameter("DATABASE_URL")
+	if err != nil {
+		return nil
+	}
 	hsqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	conn := bun.NewDB(hsqldb, pgdialect.New()) // Be careful to create a new db instance each time
 	return conn
