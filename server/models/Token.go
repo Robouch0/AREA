@@ -2,7 +2,7 @@
 // EPITECH PROJECT, 2024
 // AREA
 // File description:
-// OAuth
+// Token
 //
 
 package models
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type OAuthToken struct {
+type Token struct {
 	ID           int64     `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
 	UserID       int64     `bun:"user_id" json:"user_id"`
 	Provider     string    `bun:"provider" json:"provider"`

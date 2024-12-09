@@ -22,7 +22,7 @@ func InitOAuthDb() *OAuthDb {
 	db := initDB()
 
 	db.NewCreateTable().
-		Model((*models.OAuthToken)(nil)).
+		Model((*models.Token)(nil)).
 		IfNotExists().
 		Exec(context.Background())
 
@@ -34,7 +34,7 @@ func GetOAuthDb() *OAuthDb {
 	return &OAuthDb{Db: db}
 }
 
-func (OAuth *OAuthDb) CreateOAuthToken(token *models.OAuthToken) (*models.OAuthToken, error) {
+func (OAuth *OAuthDb) CreateOAuthToken(token *models.Token) (*models.Token, error) {
 	_, err := OAuth.Db.NewInsert().
 		Model(token).
 		Exec(context.Background())
@@ -45,8 +45,8 @@ func (OAuth *OAuthDb) CreateOAuthToken(token *models.OAuthToken) (*models.OAuthT
 	return token, nil
 }
 
-func (OAuth *OAuthDb) GetOAuthTokens() (*([]models.OAuthToken), error) {
-	allTokens := new([]models.OAuthToken)
+func (OAuth *OAuthDb) GetOAuthTokens() (*([]models.Token), error) {
+	allTokens := new([]models.Token)
 	err := OAuth.Db.NewSelect().
 		Model(allTokens).
 		Scan(context.Background())
@@ -57,8 +57,8 @@ func (OAuth *OAuthDb) GetOAuthTokens() (*([]models.OAuthToken), error) {
 	return allTokens, nil
 }
 
-func (OAuth *OAuthDb) getOAuthToken(userID int64, provider string) (*models.OAuthToken, error) {
-	us := new(models.OAuthToken)
+func (OAuth *OAuthDb) getOAuthToken(userID int64, provider string) (*models.Token, error) {
+	us := new(models.Token)
 
 	err := OAuth.Db.NewSelect().
 	Model(us).

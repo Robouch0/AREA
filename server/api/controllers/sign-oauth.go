@@ -38,8 +38,6 @@ type OAuthInfos struct {
 	Visibility string `json:"visibility"`
 }
 
-type InfoList map[string]OAuthInfos
-
 func createOAuthURLS() map[string][]string {
 	m := make(map[string][]string)
 
@@ -87,10 +85,36 @@ func GetUserEmail(url []string, TokenStr string, idx int, w http.ResponseWriter)
 	return result, nil
 }
 
+func createUser(w http.ResponseWriter, userlist []OAuthInfos, JwtTok *jwtauth.JWTAuth) {
+	userDb := db.GetUserDb()
+	us := new(models.User)
+
+	err := userDb.Db.NewSelect().
+		Model(us).
+		Where("email = ?", userlist[0].Email).
+		Scan(context.Background())
+
+		if err != nil {
+		var newUser models.User
+		newUser.Email = userlist[0].Email
+
+		_, err := userDb.CreateUser(&newUser)
+		if err != nil {
+			w.WriteHeader(401)
+			w.Write([]byte(err.Error()))
+			return
+		}
+		w.WriteHeader(200)
+		w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+	} else {
+		w.WriteHeader(200)
+		w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+	}
+}
+
 func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 	OAuthRouter := chi.NewRouter()
 	OAuthURL := createOAuthURLS()
-	userDb := db.GetUserDb()
 
 	OAuthRouter.Get("/{service}", func(w http.ResponseWriter, r *http.Request) {
 		OAuthservice := chi.URLParam(r, "service")
@@ -128,7 +152,6 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 				w.Write([]byte(err.Error()))
 				return
 			}
-			defer result.Body.Close()
 			userlist := []OAuthInfos{}
 			err = json.NewDecoder(result.Body).Decode(&userlist)
 
@@ -137,27 +160,7 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 				w.Write([]byte(err.Error()))
 				return
 			}
-			us := new(models.User)
-			err = userDb.Db.NewSelect().
-				Model(us).
-				Where("email = ?", userlist[0].Email).
-				Scan(context.Background())
-			if err != nil {
-				var newUser models.User
-				newUser.Email = userlist[0].Email
-
-				_, err := userDb.CreateUser(&newUser)
-				if err != nil {
-					w.WriteHeader(401)
-					w.Write([]byte(err.Error()))
-					return
-				}
-				w.WriteHeader(200)
-				w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
-			} else {
-				w.WriteHeader(200)
-				w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
-			}
+			createUser(w, userlist, JwtTok)
 		}
 
 	})
