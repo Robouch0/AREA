@@ -5,9 +5,22 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:developer' as developer;
 
 class AuthService {
+  static final AuthService _instance = AuthService._internal();
+  AuthService._internal();
+  static AuthService get instance => _instance;
+
   final _storage = const FlutterSecureStorage();
   static const _tokenKey = 'auth_token';
   static const _apiUrl = 'http://10.0.2.2:3000';
+
+  bool _isLoggedIn = false;
+
+  Future<void> initializeAuth() async {
+    final token = await _storage.read(key: 'auth_token');
+    _isLoggedIn = token != null;
+  }
+
+  bool get isLoggedInSync => _isLoggedIn;
 
   Future<bool> createAccount(String email, String password) async {
     try {
@@ -52,8 +65,9 @@ class AuthService {
         final token = response.body;
 
         await _storage.write(key: _tokenKey, value: token);
+        _isLoggedIn = true;
         developer.log('Connected with token: $token', name: 'my_network_log');
-        return true;
+        return _isLoggedIn;
       }
       developer.log('Got invalid response statusCode: ${response.statusCode}');
       return false;
@@ -70,10 +84,12 @@ class AuthService {
   Future<bool> isLoggedIn() async {
     final token = await getToken();
 
-    return token != null;
+    _isLoggedIn = token != null;
+    return _isLoggedIn;
   }
 
   Future<void> logout() async {
     await _storage.delete(key: _tokenKey);
+    _isLoggedIn = false;
   }
 }
