@@ -5,7 +5,7 @@ import FormField from "@/components/ui/formField";
 import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
 import {Button} from "@/components/ui/button";
-import {FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle} from "react-icons/fa";
+import {FaEye, FaEyeSlash, FaFacebook, FaGoogle} from "react-icons/fa";
 import {useEffect, useState} from "react";
 import {login} from "@/api/authentification";
 import {useRouter} from "next/navigation";

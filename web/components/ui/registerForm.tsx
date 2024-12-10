@@ -4,7 +4,7 @@ import {RegisterFormData, RegisterUserSchema} from "@/lib/typeRegister";
 import FormField from "@/components/ui/formField";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
-import {FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle} from "react-icons/fa";
+import {FaEye, FaEyeSlash, FaFacebook, FaGoogle} from "react-icons/fa";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {signUp} from "@/api/authentification";

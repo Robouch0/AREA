@@ -13,7 +13,7 @@ async function redirectToGitHub() {
     }
 }
 
-async function askForToken(paramValue) {
+async function askForToken(paramValue:string|null) {
     try {
         const response = await axiosInstance.post(`oauth/`, {
             service: "github",
@@ -31,7 +31,7 @@ export function GithubOauth() {
     const router = useRouter();
     useEffect(() => {
         const url = new URL(window.location.href);
-        const paramValue = url.searchParams.get('code');
+        const paramValue : string|null = url.searchParams.get('code');
 
         if (paramValue) {
             askForToken(paramValue)
