@@ -7,15 +7,13 @@ export  function AreaCard({areaColor, category, action, reaction, areaTitle}: {a
     const router = useRouter();
 
     const handleRedirection = () => {
-        const textValue = "Hello world";
-
-        router.push(`/services/create?textValue=${textValue}`);
+        router.push(`/services/create?action=${action}&reaction=${reaction}&areatitle=${areaTitle}&color=${areaColor}`);
         // ici on pourrait faire passer à la fontion le nom de l'action et de la reaction associé
         // comme ça quand le garts click on le met sur le /create et on remplis create avec les arguments dans l'url si y en a
     };
     return (
         <>
-            <Button className="hover:bg-transparent shadow-none bg-transparent flex flex-row my-2 w-80 h-80 focus:border-slate-500 focus:border-8 rounded-3xl focus:outline-none"
+            <Button className="hover:bg-transparent shadow-none bg-transparent flex flex-row my-2 w-80 h-80 focus-visible:border-slate-500 focus-visible:border-8 rounded-3xl focus-visible:outline-none"
                     onClick={handleRedirection}
             >
                 <Card

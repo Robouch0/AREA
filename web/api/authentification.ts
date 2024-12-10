@@ -1,7 +1,6 @@
 "use server";
 import { cookies } from 'next/headers';
 import axiosInstance from "@/lib/axios"
-import {router} from "next/client";
 
 export async function login(emailValue: string, passwordValue: string) : Promise<boolean> {
     try {
