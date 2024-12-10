@@ -5,15 +5,8 @@ import * as React from "react";
 import {useEffect} from "react";
 import {testCreateModifyRepo} from "@/api/createArea";
 
+export type PossibleType = string | number | { [key: string]: string } | { [key: string]: PossibleType };
 
-interface area {
-    action : string,
-    reaction : string,
-    areaTitle : string,
-    color : string,
-}
-
-export type PossibleType = string | number | Record<string, PossibleType>;
 
 function checkForUrlParams(): Record<string, string>  | undefined{
     const params: Record<string, string> = {};
@@ -49,7 +42,7 @@ export default function Create() {
                 console.log("no area for this")
         }
          testCreateModifyRepo();
-    }, []);
+    }, [params?.reaction]);
 
     const services = [
         {

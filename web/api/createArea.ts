@@ -35,8 +35,8 @@ export async function testCreateModifyRepo() {
 
     action["service"] = "dateTime";
     action["microservice"] = "dateTimeTrigger";
-    ingredientsA["minutes"] = 12;
-    ingredientsA["hours"] = 12;
+    ingredientsA["minutes"] = 48;
+    ingredientsA["hours"] = 16;
     ingredientsA["day_month"] = 10;
     ingredientsA["month"] = 12;
     ingredientsA["day_week"] = 2;
@@ -48,7 +48,7 @@ export async function testCreateModifyRepo() {
     ingredientsR["repo"] = "testWhanos";
 
     ingredientsR["name"] = "tkt";
-    ingredientsR["description"] = "mdr";
+    ingredientsR["description"] = "petit tout va bien";
     reaction["ingredients"] = ingredientsR;
     createRequest["user_id"] = 1;
     createRequest["action"] = action;
