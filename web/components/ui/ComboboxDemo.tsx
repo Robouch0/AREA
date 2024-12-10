@@ -26,11 +26,11 @@ interface Service {
 
 
 
-export function ComboboxDemo({ services, value, setValue }: {services:Service[];  value:string, setValue:React.Dispatch<React.SetStateAction<string>>}) {
+export function ComboboxDemo({services, value, setValue}: {services: Service[]; value: string; setValue: React.Dispatch<React.SetStateAction<string>>})
+{
     const [open, setOpen] = React.useState(false)
 
     return (
-        <>
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild className="flex flex-row justify-between">
                 <Button
@@ -49,7 +49,7 @@ export function ComboboxDemo({ services, value, setValue }: {services:Service[];
                 <Command className="bg-slate-800">
                     <CommandInput className="focus:!opacity-100 font-bold !text-white bg-slate-800 text-xl" placeholder="Cherchez un service..." />
                     <CommandList className="border-t-2 border-slate-700">
-                    <CommandEmpty className="items-center justify-center mx-8 text-xl font-bold text-white">Aucun service trouvé.</CommandEmpty>
+                        <CommandEmpty className="items-center justify-center mx-8 text-xl font-bold text-white">Aucun service trouvé.</CommandEmpty>
                         <CommandGroup>
                             {services.map((service) => (
                                 <CommandItem
@@ -75,6 +75,5 @@ export function ComboboxDemo({ services, value, setValue }: {services:Service[];
                 </Command>
             </PopoverContent>
         </Popover>
-    </>
     )
 }
