@@ -28,6 +28,14 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
+    gateway.Router.Use(cors.Handler(cors.Options{
+        AllowedOrigins:   []string{"https://*", "http://*"},
+        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+        ExposedHeaders:   []string{"Link"},
+        AllowCredentials: true,
+        MaxAge:           300,
+      }))
 
     gateway.Router.Use(cors.Handler(cors.Options{
         AllowedOrigins:   []string{"https://*", "http://*"},
@@ -41,6 +49,8 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Get("/about.json", controllers.AboutRoute)
 
 	gateway.Router.Mount("/users/", UserRoutes())
+	gateway.Router.Mount("/oauth/", controllers.OAuthRoutes(gateway.JwtTok))
+	gateway.Router.Mount("/token/", controllers.TokenRoutes())
 
 	gateway.Router.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(gateway.JwtTok))
