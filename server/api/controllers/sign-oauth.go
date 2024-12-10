@@ -137,6 +137,7 @@ func createToken(w http.ResponseWriter, user *models.User, AccessToken string, S
 func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 	OAuthRouter := chi.NewRouter()
 	OAuthURL := createOAuthURLS()
+	db.InitTokenDb()
 
 	OAuthRouter.Get("/{service}", func(w http.ResponseWriter, r *http.Request) {
 		OAuthservice := chi.URLParam(r, "service")
