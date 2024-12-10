@@ -22,7 +22,7 @@ type User struct {
 	Email    string `bun:"email" json:"email"`
 	Password string `bun:"password" json:"password"`
 
-	Tokens []*OAuthToken `bun:"tokens,rel:has-many,join:id=user_id" json:"tokens"`
+	Tokens []*Token `bun:"tokens,rel:has-many,join:id=user_id" json:"tokens"`
 	Areas  []*Area       `bun:"areas,rel:has-many,join:id=user_id" json:"areas"`
 
 	// Useful for log and security purposes
