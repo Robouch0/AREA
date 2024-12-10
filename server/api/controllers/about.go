@@ -19,6 +19,13 @@ type ClientInfo struct {
 	Time int64
 }
 
+// AboutRoute godoc
+// @Summary      List of handled services
+// @Description  json giving the list of handled action-reaction services
+// @Tags         Utils
+// @Accept       json
+// @Produce      json
+// @Router       /about.json [get]
 func AboutRoute(w http.ResponseWriter, r *http.Request) {
 	Clientdata := ClientInfo{
 		Host: r.RemoteAddr,
@@ -26,5 +33,6 @@ func AboutRoute(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf(r.Header.Get("X-Real-Ip"))
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(Clientdata)
 }
