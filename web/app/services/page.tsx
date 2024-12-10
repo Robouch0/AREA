@@ -5,20 +5,19 @@ import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
 import Image from "next/image";
 
-export default function Page() {
-
+export default function Explore() {
     const [searchField, setSearchField] = useState("");
 
     // exemple mockup
     // a changer par un call au backend to get every default area
     let areas = [
-        {id: 0, areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com", actionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp", reactionImage: "https://assets.ifttt.com/images/channels/6/icons/monochrome_regular.webp"},
-        {id: 1, areaColor: "blue", areaCategory: "Youtube", areaTitle: "Nouvel vidéo d'inoxtag, play quoicoubébou des montagnes", actionImage: "https://assets.ifttt.com/images/channels/51464135/icons/monochrome_regular.webp", reactionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp"},
-        {id: 2, areaColor: "green", areaCategory: "Instagram", areaTitle: "nouvelle recette sur marmiton, tweetez le", actionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp", reactionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp"},
-        {id: 3, areaColor: "purple", areaCategory: "Instagram", areaTitle: "TOut les vendredis de chaque semaine récupérer mon top 10 spotify", actionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp", reactionImage: "https://assets.ifttt.com/images/channels/51464135/icons/monochrome_regular.webp"},
-        {id: 4, areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com", actionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp", reactionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp"},
-        {id: 5, areaColor: "red", areaCategory: "Outlook", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com", actionImage: "https://assets.ifttt.com/images/channels/6/icons/monochrome_regular.webp", reactionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp"},
-        {id: 6, areaColor: "orange", areaCategory: "Tweeter", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com", actionImage: "https://assets.ifttt.com/images/channels/6/icons/monochrome_regular.webp", reactionImage: "https://assets.ifttt.com/images/channels/28/icons/monochrome_regular.webp"},
+        {id: 0, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
+        {id: 1, reactionCategory: "Instagram", areaColor: "blue", areaCategory: "Youtube", areaTitle: "Nouvel vidéo d'inoxtag, play quoicoubébou des montagnes"},
+        {id: 2, reactionCategory: "Instagram", areaColor: "green", areaCategory: "Instagram", areaTitle: "nouvelle recette sur marmiton, tweetez le"},
+        {id: 3, reactionCategory: "Instagram", areaColor: "purple", areaCategory: "Instagram", areaTitle: "TOut les vendredis de chaque semaine récupérer mon top 10 spotify"},
+        {id: 4, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
+        {id: 5, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Outlook", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
+        {id: 6, reactionCategory: "Instagram", areaColor: "orange", areaCategory: "Tweeter", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
     ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +72,7 @@ export default function Page() {
                 <div className="mx-64 h-1/2 w-3/4 flex flex-wrap items-center justify-center">
                     {areas.map(area => (
                         <div key={area.id} className="">
-                            <AreaCard areaColor={area.areaColor} category={area.areaCategory} areaTitle={area.areaTitle} action={area.actionImage} reaction ={area.reactionImage} />
+                            <AreaCard areaColor={area.areaColor} category={area.areaCategory} areaTitle={area.areaTitle} action={area.areaCategory} reaction ={area.reactionCategory} />
                         </div>
                     ))}
                 </div>

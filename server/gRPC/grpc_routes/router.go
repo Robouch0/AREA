@@ -8,10 +8,13 @@
 package grpc_routes
 
 import (
-	"area/gRPC/api"
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/github"
 	"area/gRPC/api/hello"
+	huggingFace "area/gRPC/api/hugging_face"
+	"area/gRPC/api/reaction"
 	services "area/protogen/gRPC/proto"
+	"cmp"
 	"log"
 	"net"
 	"sync"
@@ -30,12 +33,20 @@ func LaunchServices() {
 	s := grpc.NewServer()
 
 	helloService := hello.NewHelloService(nil)
-	dtService := dateTime.NewDateTimeService(nil)
-	reactService := api.NewReactionService(nil)
+	dtService, errDt := dateTime.NewDateTimeService()
+	reactService, errReact := reaction.NewReactionService()
+	huggingFaceService := huggingFace.NewHuggingFaceService()
+	githubService := github.NewGithubService()
 
+	if err = cmp.Or(errDt, errReact); err != nil {
+		log.Println(err)
+		return
+	}
 	services.RegisterHelloWorldServiceServer(s, &helloService)
-	services.RegisterDateTimeServiceServer(s, &dtService)
-	services.RegisterReactionServiceServer(s, &reactService)
+	services.RegisterDateTimeServiceServer(s, dtService)
+	services.RegisterHuggingFaceServiceServer(s, &huggingFaceService)
+	services.RegisterGithubServiceServer(s, &githubService)
+	services.RegisterReactionServiceServer(s, reactService)
 
 	var wg sync.WaitGroup
 
@@ -57,5 +68,6 @@ func LaunchServices() {
 
 	reactService.InitServiceClients(conn)
 	dtService.InitReactClient(conn)
+	// Init all services with action
 	wg.Wait()
 }
