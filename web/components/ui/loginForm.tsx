@@ -9,6 +9,7 @@ import {FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle} from "react-icons/fa"
 import {useEffect, useState} from "react";
 import {login} from "@/api/authentification";
 import {useRouter} from "next/navigation";
+import {GithubOauth} from "@/components/ui/githubOauth";
 
 function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -141,14 +142,9 @@ function LoginForm() {
                                         <p className=" mx-3 text-2xl font-semibold"> Continuer avec Google </p>
                                     </Button>
 
-                                    <Button
-                                        className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                        type="button"
-                                        arial-label="Google"
-                                    >
-                                        <FaGithub className="w-12 h-12"/>
-                                        <p className=" mx-3 text-2xl font-semibold"> Continuer avec Gihtub </p>
-                                    </Button>
+                                    <GithubOauth
+                                        arial-label="Github"
+                                    />
                                     <div className="flex flex-row font-bold">
                                         <p>
                                             Vous n&#39;avez pas encore de compte ?

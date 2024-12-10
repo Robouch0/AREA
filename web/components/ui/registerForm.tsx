@@ -8,6 +8,7 @@ import {FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle} from "react-icons/fa"
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {signUp} from "@/api/authentification";
+import {GithubOauth} from "@/components/ui/githubOauth";
 
 function RegisterForm() {
     const router = useRouter();
@@ -50,7 +51,7 @@ function RegisterForm() {
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="flex flex-col items-center w-full max-w-md">
                     <h1 className="font-mono text-5xl font-extrabold mb-16 mt-8"> AREA </h1>
-                    <h2 className="font-mono text-4xl font-black mb-12"> Log in </h2>
+                    <h2 className="font-mono text-4xl font-black mb-12"> Sign up </h2>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid col-auto">
                             <div className="w-full mb-6">
@@ -164,14 +165,8 @@ function RegisterForm() {
                                     <p className=" mx-3 text-2xl font-semibold"> Continuer avec Google </p>
                                 </Button>
 
-                                <Button
-                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    type="button"
-                                    arial-label="Google"
-                                >
-                                    <FaGithub className="w-12 h-12"/>
-                                    <p className=" mx-3 text-2xl font-semibold"> Continuer avec Gihtub </p>
-                                </Button>
+                                <GithubOauth arial-label="Github"
+                                ></GithubOauth>
                                 <div className="flex flex-row font-bold">
                                     <p className="mb-8">
                                         Vous avez déjà un compte ?
