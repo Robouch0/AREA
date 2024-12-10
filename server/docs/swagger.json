@@ -1,0 +1,211 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a the document of the Backend routes of the application AREA",
+        "title": "Swagger AREA API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/ping": {
+            "get": {
+                "description": "pong",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ping"
+                ],
+                "summary": "prints pong",
+                "responses": {
+                    "200": {
+                        "description": "pong"
+                    }
+                }
+            }
+        },
+        "/sign-up/": {
+            "post": {
+                "description": "register an account by giving credentials",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Signup"
+                ],
+                "summary": "Register an account",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Action": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "microservice": {
+                    "type": "string"
+                },
+                "service": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Actions": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/models.Action"
+                },
+                "area_id": {
+                    "description": "No anotation here !",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Area": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/models.Actions"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "one_shot": {
+                    "type": "boolean"
+                },
+                "reactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Reactions"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Reaction": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "microservice": {
+                    "type": "string"
+                },
+                "service": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Reactions": {
+            "type": "object",
+            "properties": {
+                "area_id": {
+                    "description": "No anotation here !",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "prev_out": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "reaction": {
+                    "$ref": "#/definitions/models.Reaction"
+                }
+            }
+        },
+        "models.Token": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "areas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Area"
+                    }
+                },
+                "created_at": {
+                    "description": "Useful for log and security purposes",
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "tokens": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Token"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

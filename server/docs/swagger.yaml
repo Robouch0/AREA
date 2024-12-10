@@ -1,0 +1,140 @@
+definitions:
+  models.Action:
+    properties:
+      ingredients:
+        additionalProperties: {}
+        type: object
+      microservice:
+        type: string
+      service:
+        type: string
+    type: object
+  models.Actions:
+    properties:
+      action:
+        $ref: '#/definitions/models.Action'
+      area_id:
+        description: No anotation here !
+        type: integer
+      id:
+        type: integer
+    type: object
+  models.Area:
+    properties:
+      action:
+        $ref: '#/definitions/models.Actions'
+      id:
+        type: integer
+      one_shot:
+        type: boolean
+      reactions:
+        items:
+          $ref: '#/definitions/models.Reactions'
+        type: array
+      user_id:
+        type: integer
+    type: object
+  models.Reaction:
+    properties:
+      ingredients:
+        additionalProperties: {}
+        type: object
+      microservice:
+        type: string
+      service:
+        type: string
+    type: object
+  models.Reactions:
+    properties:
+      area_id:
+        description: No anotation here !
+        type: integer
+      id:
+        type: integer
+      prev_out:
+        additionalProperties: true
+        type: object
+      reaction:
+        $ref: '#/definitions/models.Reaction'
+    type: object
+  models.Token:
+    properties:
+      access_token:
+        type: string
+      id:
+        type: integer
+      provider:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      areas:
+        items:
+          $ref: '#/definitions/models.Area'
+        type: array
+      created_at:
+        description: Useful for log and security purposes
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+      tokens:
+        items:
+          $ref: '#/definitions/models.Token'
+        type: array
+      updated_at:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a the document of the Backend routes of the application AREA
+  title: Swagger AREA API
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      description: pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+      summary: prints pong
+      tags:
+      - ping
+  /sign-up/:
+    post:
+      consumes:
+      - application/json
+      description: register an account by giving credentials
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Register an account
+      tags:
+      - Signup
+swagger: "2.0"
