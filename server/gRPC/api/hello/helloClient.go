@@ -25,10 +25,28 @@ func NewHelloServiceClient(conn *grpc.ClientConn) *HelloServiceClient {
 	return &HelloServiceClient{gRPCService.NewHelloWorldServiceClient(conn)}
 }
 
-func (react *HelloServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (hello *HelloServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
+	status := &IServ.ServiceStatus{
+		Name:    "Hello Service",
+		RefName: "hello",
+
+		Microservices: []IServ.MicroserviceStatus{
+			IServ.MicroserviceStatus{
+				Name:    "Hello Microservice",
+				RefName: "hello",
+				Type:    "reaction",
+
+				Ingredients: map[string]string{"message": "string"},
+			},
+		},
+	}
+	return status, nil
+}
+
+func (hello *HelloServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
 	message, ok := ingredients["message"]
 	if ok {
-		res, err := react.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: message.(string)})
+		res, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: message.(string)})
 		if err != nil {
 			return nil, err
 		}

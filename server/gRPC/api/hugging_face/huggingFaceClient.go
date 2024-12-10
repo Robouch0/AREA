@@ -28,6 +28,27 @@ func NewHuggingFaceClient(conn *grpc.ClientConn) *HuggingFaceServiceClient {
 	return hfCli
 }
 
+func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
+	status := &IServ.ServiceStatus{
+		Name:    "Hugging Face",
+		RefName: "hf",
+
+		Microservices: []IServ.MicroserviceStatus{
+			IServ.MicroserviceStatus{
+				Name:    "Text Generation",
+				RefName: "textGen",
+				Type:    "reaction",
+
+				Ingredients: map[string]string{
+					"model":  "string",
+					"inputs": "string",
+				},
+			},
+		},
+	}
+	return status, nil
+}
+
 func (hfCli *HuggingFaceServiceClient) SendAction(body map[string]any, actionId int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
 }
