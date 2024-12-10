@@ -26,6 +26,7 @@ func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 	micros := &IServ.MicroserviceLauncher{}
 	git := &GithubClient{MicroservicesLauncher: micros, cc: gRPCService.NewGithubServiceClient(conn)}
 	(*git.MicroservicesLauncher)["updateRepo"] = git.updateRepository
+	(*git.MicroservicesLauncher)["updateFile"] = git.updateFile
 	return git
 }
 
@@ -34,7 +35,7 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput
 	if err != nil {
 		return nil, err
 	}
-	var updateReq gRPCService.UpdateRepoReq
+	var updateReq gRPCService.UpdateRepoInfos
 	err = json.Unmarshal(jsonString, &updateReq)
 	if err != nil {
 		return nil, err
@@ -46,6 +47,25 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput
 	}
 
 	return &IServ.ReactionResponseStatus{Description: res.Description}, nil
+}
+
+func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var updateReq gRPCService.UpdateRepoFile
+	err = json.Unmarshal(jsonString, &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := git.cc.UpdateFile(context.Background(), &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
 }
 
 func (git *GithubClient) SendAction(body map[string]any, actionId int) (*IServ.ActionResponseStatus, error) {
