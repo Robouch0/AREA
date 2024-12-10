@@ -1,4 +1,11 @@
 definitions:
+  controllers.credentials:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   models.Action:
     properties:
       ingredients:
@@ -31,6 +38,15 @@ definitions:
         items:
           $ref: '#/definitions/models.Reactions'
         type: array
+      user_id:
+        type: integer
+    type: object
+  models.AreaScenario:
+    properties:
+      action:
+        $ref: '#/definitions/models.Action'
+      reaction:
+        $ref: '#/definitions/models.Reaction'
       user_id:
         type: integer
     type: object
@@ -96,12 +112,83 @@ definitions:
       updated_at:
         type: string
     type: object
+  serviceinterface.ActionResponseStatus:
+    properties:
+      action_id:
+        type: integer
+      description:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a the document of the Backend routes of the application AREA
   title: Swagger AREA API
   version: "1.0"
 paths:
+  /create/{service}:
+    get:
+      consumes:
+      - application/json
+      description: Register a new Area in the application
+      parameters:
+      - description: Service Name
+        in: path
+        name: service
+        required: true
+        type: string
+      - description: Full body of an Area Scenario
+        in: body
+        name: area
+        required: true
+        schema:
+          $ref: '#/definitions/models.AreaScenario'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serviceinterface.ActionResponseStatus'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a new Area
+      tags:
+      - Area
+  /login/:
+    post:
+      consumes:
+      - application/json
+      description: Login a user if he has the correct credentials and returns the
+        tokens and the user_id
+      parameters:
+      - description: Credentials of the user who wants to connect
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Sign-In
+      tags:
+      - Account
   /ping:
     get:
       description: pong
@@ -118,6 +205,13 @@ paths:
       consumes:
       - application/json
       description: register an account by giving credentials
+      parameters:
+      - description: New User informations to sign-up to the app
+        in: body
+        name: newUser
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
       produces:
       - application/json
       responses:
@@ -125,16 +219,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.User'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
+        "401":
+          description: Unauthorized
           schema: {}
         "500":
           description: Internal Server Error
           schema: {}
-      summary: Register an account
+      summary: Sign-up a new account
       tags:
-      - Signup
+      - Account
 swagger: "2.0"

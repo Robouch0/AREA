@@ -16,12 +16,13 @@ import (
 	"net/http"
 )
 
-// SignUp godoc
+// Account godoc
 // @Summary      Sign-up a new account
 // @Description  register an account by giving credentials
-// @Tags         Signup
+// @Tags         Account
 // @Accept       json
 // @Produce      json
+// @Param 		 newUser body	models.User	true 	"New User informations to sign-up to the app"
 // @Success      200  {object}  models.User
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error

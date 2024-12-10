@@ -15,6 +15,101 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/create/{service}": {
+            "get": {
+                "description": "Register a new Area in the application",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "Create a new Area",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service Name",
+                        "name": "service",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Full body of an Area Scenario",
+                        "name": "area",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AreaScenario"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serviceinterface.ActionResponseStatus"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/login/": {
+            "post": {
+                "description": "Login a user if he has the correct credentials and returns the tokens and the user_id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Sign-In",
+                "parameters": [
+                    {
+                        "description": "Credentials of the user who wants to connect",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.credentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "pong",
@@ -42,9 +137,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Signup"
+                    "Account"
                 ],
-                "summary": "Register an account",
+                "summary": "Sign-up a new account",
+                "parameters": [
+                    {
+                        "description": "New User informations to sign-up to the app",
+                        "name": "newUser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -52,12 +158,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.User"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {}
                     },
                     "500": {
@@ -69,6 +171,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.credentials": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Action": {
             "type": "object",
             "properties": {
@@ -116,6 +229,20 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Reactions"
                     }
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.AreaScenario": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/models.Action"
+                },
+                "reaction": {
+                    "$ref": "#/definitions/models.Reaction"
                 },
                 "user_id": {
                     "type": "integer"
@@ -211,6 +338,17 @@ const docTemplate = `{
                     }
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "serviceinterface.ActionResponseStatus": {
+            "type": "object",
+            "properties": {
+                "action_id": {
+                    "type": "integer"
+                },
+                "description": {
                     "type": "string"
                 }
             }

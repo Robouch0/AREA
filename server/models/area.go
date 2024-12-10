@@ -19,3 +19,9 @@ type Area struct {
 
 	OneShot bool `bun:"one_shot" json:"one_shot"`
 }
+
+type AreaScenario struct {
+	UserId   int      `json:"user_id"`
+	Action   Action   `json:"action"`
+	Reaction Reaction `json:"reaction"`
+}
