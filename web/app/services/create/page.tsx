@@ -3,8 +3,47 @@ import { ComboboxDemo } from "@/components/ui/ComboboxDemo";
 import { MicroServiceCard } from "@/components/ui/microserviceCard";
 import * as React from "react";
 import {useEffect} from "react";
+import {testCreateModifyRepo} from "@/api/createArea";
+
+export type PossibleType = string | number | { [key: string]: string } | { [key: string]: PossibleType };
+
+
+function checkForUrlParams(): Record<string, string>  | undefined{
+    const params: Record<string, string> = {};
+    const url = window.location.href;
+    const queryString = url.split('?')[1];
+
+    if (queryString) {
+        const pairs = queryString.split('&');
+        pairs.forEach(pair => {
+            const [key, value] = pair.split('=');
+            if (key && value) {
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
+            }
+        });
+    } else {
+        return undefined;
+    }
+
+    console.log(params);
+    return params;
+}
+
 
 export default function Create() {
+    const params = checkForUrlParams();
+
+    useEffect(() => {
+        switch(params?.reaction) {
+            case "updateRepo" :
+                testCreateModifyRepo();
+                break;
+            default:
+                console.log("no area for this")
+        }
+         testCreateModifyRepo();
+    }, [params?.reaction]);
+
     const services = [
         {
             value: "instagram",

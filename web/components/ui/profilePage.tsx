@@ -39,7 +39,7 @@ export default function ProfilePage({email, first_name, last_name, password} : u
                         <Input
                             type="email"
                             id="mail"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="Email"
                             value={email}
                             disabled
@@ -48,7 +48,7 @@ export default function ProfilePage({email, first_name, last_name, password} : u
                         <Input
                             type="email"
                             id="mail"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={first_name}
                             disabled
@@ -57,7 +57,7 @@ export default function ProfilePage({email, first_name, last_name, password} : u
                         <Input
                             type="email"
                             id="mail"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={last_name}
                             disabled
@@ -67,7 +67,7 @@ export default function ProfilePage({email, first_name, last_name, password} : u
                             <Input
                                 type={showPassword ? "text" : "password"}
                                 id="password"
-                                className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 aria-label="text"
                                 value={password}
                                 disabled
@@ -75,7 +75,7 @@ export default function ProfilePage({email, first_name, last_name, password} : u
                             <Button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent border-none outline-none focus:outline-none hover:bg-transparent ring-0 shadow-none p-2"
+                                className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
                             >
                                 {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl"/> :

@@ -17,7 +17,7 @@ export default function Navbar({prop}: {prop:User}) {
         <div className="flex flex-row">
             <div className="p-4 ml-auto">
                 <button
-                    className="focus:border-slate-500 focus:border-4 rounded-3xl focus:outline-none focus:p-1"
+                    className="focus-visible:border-slate-500 focus-visible:border-4 rounded-3xl focus-visible:outline-none focus-visible:p-1"
                     onClick={() => (redirect("/services/profile"))}
                 >
                     <Image

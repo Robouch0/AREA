@@ -20,13 +20,15 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	GithubService_UpdateRepository_FullMethodName = "/github.GithubService/UpdateRepository"
+	GithubService_UpdateFile_FullMethodName       = "/github.GithubService/UpdateFile"
 )
 
 // GithubServiceClient is the client API for GithubService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GithubServiceClient interface {
-	UpdateRepository(ctx context.Context, in *UpdateRepoReq, opts ...grpc.CallOption) (*UpdateRepoReq, error)
+	UpdateRepository(ctx context.Context, in *UpdateRepoInfos, opts ...grpc.CallOption) (*UpdateRepoInfos, error)
+	UpdateFile(ctx context.Context, in *UpdateRepoFile, opts ...grpc.CallOption) (*UpdateRepoFile, error)
 }
 
 type githubServiceClient struct {
@@ -37,10 +39,20 @@ func NewGithubServiceClient(cc grpc.ClientConnInterface) GithubServiceClient {
 	return &githubServiceClient{cc}
 }
 
-func (c *githubServiceClient) UpdateRepository(ctx context.Context, in *UpdateRepoReq, opts ...grpc.CallOption) (*UpdateRepoReq, error) {
+func (c *githubServiceClient) UpdateRepository(ctx context.Context, in *UpdateRepoInfos, opts ...grpc.CallOption) (*UpdateRepoInfos, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateRepoReq)
+	out := new(UpdateRepoInfos)
 	err := c.cc.Invoke(ctx, GithubService_UpdateRepository_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *githubServiceClient) UpdateFile(ctx context.Context, in *UpdateRepoFile, opts ...grpc.CallOption) (*UpdateRepoFile, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateRepoFile)
+	err := c.cc.Invoke(ctx, GithubService_UpdateFile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +63,8 @@ func (c *githubServiceClient) UpdateRepository(ctx context.Context, in *UpdateRe
 // All implementations must embed UnimplementedGithubServiceServer
 // for forward compatibility.
 type GithubServiceServer interface {
-	UpdateRepository(context.Context, *UpdateRepoReq) (*UpdateRepoReq, error)
+	UpdateRepository(context.Context, *UpdateRepoInfos) (*UpdateRepoInfos, error)
+	UpdateFile(context.Context, *UpdateRepoFile) (*UpdateRepoFile, error)
 	mustEmbedUnimplementedGithubServiceServer()
 }
 
@@ -62,8 +75,11 @@ type GithubServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGithubServiceServer struct{}
 
-func (UnimplementedGithubServiceServer) UpdateRepository(context.Context, *UpdateRepoReq) (*UpdateRepoReq, error) {
+func (UnimplementedGithubServiceServer) UpdateRepository(context.Context, *UpdateRepoInfos) (*UpdateRepoInfos, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRepository not implemented")
+}
+func (UnimplementedGithubServiceServer) UpdateFile(context.Context, *UpdateRepoFile) (*UpdateRepoFile, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateFile not implemented")
 }
 func (UnimplementedGithubServiceServer) mustEmbedUnimplementedGithubServiceServer() {}
 func (UnimplementedGithubServiceServer) testEmbeddedByValue()                       {}
@@ -87,7 +103,7 @@ func RegisterGithubServiceServer(s grpc.ServiceRegistrar, srv GithubServiceServe
 }
 
 func _GithubService_UpdateRepository_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateRepoReq)
+	in := new(UpdateRepoInfos)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -99,7 +115,25 @@ func _GithubService_UpdateRepository_Handler(srv interface{}, ctx context.Contex
 		FullMethod: GithubService_UpdateRepository_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GithubServiceServer).UpdateRepository(ctx, req.(*UpdateRepoReq))
+		return srv.(GithubServiceServer).UpdateRepository(ctx, req.(*UpdateRepoInfos))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GithubService_UpdateFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRepoFile)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GithubServiceServer).UpdateFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GithubService_UpdateFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GithubServiceServer).UpdateFile(ctx, req.(*UpdateRepoFile))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -114,6 +148,10 @@ var GithubService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateRepository",
 			Handler:    _GithubService_UpdateRepository_Handler,
+		},
+		{
+			MethodName: "UpdateFile",
+			Handler:    _GithubService_UpdateFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
