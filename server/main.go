@@ -13,6 +13,7 @@ import (
 
 	"area/api/routes"
 	"area/gRPC/grpc_routes"
+	_ "area/docs"
 )
 
 func main() {
