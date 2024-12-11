@@ -22,8 +22,18 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   void _performLogin(String email, String pass) async {
-    final success = await _authService.login(email, pass);
+    final loginStatus = await _authService.login(email, pass);
 
+    _handleLoginStatus(loginStatus);
+  }
+
+  void _performLoginOauth(String service) async {
+    final loginStatus = await _authService.loginWithOAuth(service.toLowerCase());
+
+    _handleLoginStatus(loginStatus);
+  }
+
+  void _handleLoginStatus(bool success) async {
     if (!mounted) {
       return;
     }
@@ -40,12 +50,6 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(fontWeight: FontWeight.w800)),
         backgroundColor: Colors.red,
       ));
-    }
-  }
-
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      _performLogin(_emailController.text, _passwordController.text);
     }
   }
 
@@ -77,6 +81,8 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 25),
             _buildTextDivider('or'),
             const SizedBox(height: 15),
+            _buildOAuthButton('Github'),
+            const SizedBox(height: 10),
             _buildSignUpHereLink()
           ],
         ),
@@ -115,7 +121,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildLoginButton() {
-    return AuthButton(text: 'Log in', onPressed: _login);
+    return AuthButton(
+        text: 'Log in',
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            _performLogin(_emailController.text, _passwordController.text);
+          }
+        });
+  }
+
+  Widget _buildOAuthButton(String service) {
+    return AuthButton(
+        text: 'Continue with $service',
+        onPressed: () {
+            _performLoginOauth(service);
+        });
   }
 
   Widget _buildForgotPasswordLink() {

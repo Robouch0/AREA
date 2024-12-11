@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
-            'Welcome to the Home Page!',
+            'Welcome to the Applets Page!',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
               final authService = AuthService.instance;
               await authService.logout();
 
-              if (mounted) {
+              if (context.mounted) {
                 context.go(RouteNames.login);
               }
             },

@@ -22,31 +22,34 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
 
   void _performRegister(String email, String pass) async {
-    final success = await _authService.createAccount(email, pass);
+    final registerStatus = await _authService.createAccount(email, pass);
 
+    _handleRegisterStatus(registerStatus);
+  }
+
+  void _performRegisterOauth(String service) async {
+    final registerStatus = await _authService.loginWithOAuth(service.toLowerCase());
+
+    _handleRegisterStatus(registerStatus);
+  }
+
+  void _handleRegisterStatus(bool success) async {
     if (!mounted) {
       return;
     }
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
-            backgroundColor: Colors.green
-          )
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+        Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
       context.go(RouteNames.home);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Register failed.',
+        content: Text('Register failed. Please double-check your password.',
             style: TextStyle(fontWeight: FontWeight.w800)),
         backgroundColor: Colors.red,
       ));
-    }
-  }
-
-  void _register() {
-    if (_formKey.currentState!.validate()) {
-      _performRegister(_emailController.text, _passwordController.text);
     }
   }
 
@@ -76,6 +79,8 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(height: 25),
             _buildTextDivider('or'),
             const SizedBox(height: 15),
+            _buildOAuthButton('Github'),
+            const SizedBox(height: 10),
             _buildSignUpHereLink()
           ],
         ),
@@ -114,7 +119,21 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget _buildRegisterButton() {
-    return AuthButton(text: 'Get started', onPressed: _register);
+    return AuthButton(
+        text: 'Get started',
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            _performRegister(_emailController.text, _passwordController.text);
+          }
+        });
+  }
+
+  Widget _buildOAuthButton(String service) {
+    return AuthButton(
+        text: 'Continue with $service',
+        onPressed: () {
+          _performRegisterOauth(service);
+        });
   }
 
   Widget _buildTextDivider(String text) {
