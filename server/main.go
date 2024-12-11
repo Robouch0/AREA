@@ -8,13 +8,23 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"area/api/routes"
+	"area/gRPC/grpc_routes"
+	_ "area/docs"
 )
 
 func main() {
-	apiGateway := routes.InitHTTPServer()
+	go grpc_routes.LaunchServices()
+	apiGateway, err := routes.InitHTTPServer()
 
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Printf("API Gateway server listening at :3000")
 	http.ListenAndServe(":3000", apiGateway.Router)
 }

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package github;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service GithubService {
+  rpc UpdateRepository(UpdateRepoInfos) returns(UpdateRepoInfos) {}
+
+  rpc UpdateFile(UpdateRepoFile) returns(UpdateRepoFile) {}
+}
+
+message UpdateRepoInfos {
+  string owner = 1; /* Path parameter */
+  string repo = 2; /* Path parameter */
+
+  string name = 4;
+  string description = 5;
+  // There is more to add if needed
+}
+
+message UpdateRepoFile {
+  string owner = 1; /* Path parameter */
+  string repo = 2; /* Path parameter */
+  string path = 3; /* Path parameter */
+
+  string message = 4;
+  string content = 5; // Base64
+  string sha = 6;
+  // There is more to add if needed
+}

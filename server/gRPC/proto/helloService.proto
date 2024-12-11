@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "github.com/area/grpc-go/service";
+
+package helloworld;
+
+service HelloWorldService {
+  rpc SayHello(HelloWorldRequest) returns (HelloWorldResponse) {}
+}
+
+message HelloWorldRequest {
+  string message = 1;
+}
+
+message HelloWorldResponse {
+  string message = 1;
+}

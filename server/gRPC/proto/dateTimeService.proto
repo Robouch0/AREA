@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package dateTime;
+
+option go_package = "github.com/area/grpc-go/service";
+
+
+service DateTimeService {
+  rpc LaunchCronJob(TriggerTimeRequest) returns (TriggerTimeResponse) {}
+}
+
+message TriggerTimeRequest {
+  bool activated = 1;
+  int32 action_id = 2;
+
+  int32 minutes = 3;
+  int32 hours = 4;
+
+  int64 day_month = 5;
+  int64 month = 6;
+
+  int64 day_week = 7;
+}
+
+message TriggerTimeResponse {
+}

@@ -35,9 +35,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-        <html className="scroll-smooth" lang="en">
+        <html className="scroll-smooth bg-slate-800" lang="en">
           <body
-            className={`${avenirNext.variable} antialiased bg-slate-800`}
+            className={`${avenirNext.variable} antialiased bg-white`}
           >
             {children}
           </body>

@@ -7,12 +7,18 @@
 
 package middleware
 
-import "github.com/go-chi/jwtauth/v5"
+import (
+	"area/utils"
 
-const SECRET_KEY = "<jwt-secret-env>"
+	"github.com/go-chi/jwtauth/v5"
+)
 
 func GetNewJWTAuth() *jwtauth.JWTAuth {
-	return jwtauth.New("HS256", []byte(SECRET_KEY), nil)
+	tok, err := utils.GetEnvParameterToBearer("SECRET_KEY")
+	if err != nil {
+		return nil
+	}
+	return jwtauth.New("HS256", []byte(tok), nil)
 }
 
 func CreateToken(jwtauth *jwtauth.JWTAuth, userId uint) string {

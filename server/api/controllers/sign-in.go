@@ -25,6 +25,17 @@ type credentials struct {
 	Password string `bun:"password" json:"password"`
 }
 
+// Account godoc
+// @Summary      Sign-In
+// @Description  Login a user if he has the correct credentials and returns the tokens and the user_id
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Param 		 credentials body	credentials	true 	"Credentials of the user who wants to connect"
+// @Success      200  {object}  string
+// @Failure      401  {object}  string
+// @Failure      500  {object}  string
+// @Router       /login/ [post]
 func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +61,6 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
-		w.Write([]byte(middleware.CreateToken(jwtauth, us.ID)))
+		w.Write([]byte(fmt.Sprintf("%s,%d", middleware.CreateToken(jwtauth, us.ID), us.ID)))
 	}
 }
