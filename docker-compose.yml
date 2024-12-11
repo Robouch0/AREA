@@ -1,4 +1,15 @@
 services:
+  server:
+    build: ./server
+    env_file:
+      - .env # Create a different env file
+    networks:
+      - default
+    ports:
+      - "8080:8080"
+    # volumes:
+      # - 
+
   db:
     image: postgres:14-alpine
     restart: always
@@ -22,3 +33,4 @@ services:
 
 volumes:
   pg-db:
+  # server:
