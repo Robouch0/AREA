@@ -20,6 +20,6 @@ export const serviceIcons: { [key: string]: IconType } = {
     youtube: FaYoutube,
     tweeter: FaTwitter,
     outlook: FaMailBulk,
-    hugginFace: FaBrain,
+    hf: FaBrain,
     dt: FaClock,
 };
