@@ -18,8 +18,15 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
+
+	_ "area/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Swagger AREA API
+// @version 1.0
+// @description This is a the document of the Backend routes of the application AREA
 func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway, err := api.CreateApiGateway()
 	if err != nil {
@@ -28,6 +35,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
+
 	gateway.Router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -36,6 +44,10 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 		AllowCredentials: true,
 		MaxAge:           300,
 	}))
+
+	gateway.Router.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:3000/swagger/doc.json"),
+	))
 
 	gateway.Router.Get("/ping", controllers.PingRoute)
 	gateway.Router.Get("/about.json", controllers.AboutRoute)

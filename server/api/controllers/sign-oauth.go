@@ -134,25 +134,46 @@ func createToken(w http.ResponseWriter, user *models.User, AccessToken string, S
 	}
 }
 
-func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
-	OAuthRouter := chi.NewRouter()
-	OAuthURL := createOAuthURLS()
-	db.InitTokenDb()
-
-	OAuthRouter.Get("/{service}", func(w http.ResponseWriter, r *http.Request) {
+// Sign-up OAuth godoc
+// @Summary      get Oauth url by service
+// @Description  get the oauth redirect url for a service
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  string
+// @Failure      400  {object}  error
+// @Router       /oauth/{service} [get]
+func GetUrl(OAuthURL map[string][]string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		OAuthservice := chi.URLParam(r, "service")
 
 		if url, ok := OAuthURL[OAuthservice]; ok {
+			w.WriteHeader(200)
 			w.Write([]byte(url[0]))
+		} else {
+			w.WriteHeader(400)
+			w.Write([]byte("Service doesn't exist"))
 		}
-	})
+	}
+}
 
-	OAuthRouter.Post("/", func(w http.ResponseWriter, r *http.Request) {
+// Sign-up OAuth godoc
+// @Summary      Create account with oauth
+// @Description  Create account with code from redirect url
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  jwtauth.JWTAuth
+// @Failure      401  {object}  error
+// @Failure      500  {object}  error
+// @Router       /oauth/ [post]
+func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string][]string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		OAuthCode := new(OAuthRequest)
 		err := json.NewDecoder(r.Body).Decode(&OAuthCode)
 
 		if err != nil {
-			w.WriteHeader(401)
+			w.WriteHeader(400)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -160,7 +181,7 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 			request, err := GetAccessToken(OAuthCode, url)
 
 			if err != nil {
-				w.WriteHeader(401)
+				w.WriteHeader(500)
 				w.Write([]byte(err.Error()))
 				return
 			}
@@ -171,7 +192,7 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 			result, err := GetUserEmail(url, TokenFidx, TokenSidx, w)
 
 			if err != nil {
-				w.WriteHeader(401)
+				w.WriteHeader(500)
 				w.Write([]byte(err.Error()))
 				return
 			}
@@ -179,7 +200,7 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 			err = json.NewDecoder(result.Body).Decode(&userlist)
 
 			if err != nil {
-				w.WriteHeader(401)
+				w.WriteHeader(500)
 				w.Write([]byte(err.Error()))
 				return
 			}
@@ -188,7 +209,16 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 				createToken(w, user, TokenFidx[:TokenSidx], OAuthCode.Service)
 			}
 		}
+	}
+}
 
-	})
+func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
+	OAuthRouter := chi.NewRouter()
+	OAuthURL := createOAuthURLS()
+	db.InitTokenDb()
+
+	OAuthRouter.Get("/{service}", GetUrl(OAuthURL))
+
+	OAuthRouter.Post("/", LoginOAuth(JwtTok, OAuthURL))
 	return OAuthRouter
 }

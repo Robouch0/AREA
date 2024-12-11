@@ -30,6 +30,18 @@ func sendToService(cliService gRPCapi.ClientService, body map[string]any, action
 	return msg, nil
 }
 
+// Area godoc
+// @Summary      Create a new Area
+// @Description  Register a new Area in the application
+// @Tags         Area
+// @Accept       json
+// @Produce      json
+// @Param 		 service path	string	true 	"Service Name"
+// @Param 		 area body	models.AreaScenario	true 	"Full body of an Area Scenario"
+// @Success      200  {object}  gRPCapi.ActionResponseStatus
+// @Failure      401  {object}  error
+// @Failure      500  {object}  error
+// @Router       /create/{service} [get]
 func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -77,19 +89,3 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 		}
 	}
 }
-
-/*
-{
-    "user_id": int,
-    "action": {
-        "service": string,
-        "microservice": string,
-        "ingredients": jsonb,
-    },
-	"reaction": {
-        "service": string,
-        "microservice": string,
-        "ingredients": jsonb,
-    },
-}
-*/

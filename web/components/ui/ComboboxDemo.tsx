@@ -47,7 +47,7 @@ export function ComboboxDemo({services, value, setValue}: {services: Service[]; 
             </PopoverTrigger>
             <PopoverContent className="text-black p-0 bg-slate-800 border-2 border-white">
                 <Command className="bg-slate-800">
-                    <CommandInput className="focus:!opacity-100 font-bold !text-white bg-slate-800 text-xl" placeholder="Cherchez un service..." />
+                    <CommandInput className="focus-visible:!opacity-100 font-bold !text-white bg-slate-800 text-xl" placeholder="Cherchez un service..." />
                     <CommandList className="border-t-2 border-slate-700">
                         <CommandEmpty className="items-center justify-center mx-8 text-xl font-bold text-white">Aucun service trouvé.</CommandEmpty>
                         <CommandGroup>
