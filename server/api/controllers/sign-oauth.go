@@ -105,7 +105,7 @@ func createUser(w http.ResponseWriter, userlist []OAuthInfos, JwtTok *jwtauth.JW
 		}
 	}
 	w.WriteHeader(200)
-	w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+    w.Write([]byte(fmt.Sprintf("%s,%d", middleware.CreateToken(JwtTok, us.ID), us.ID)))
 	return us, nil
 }
 

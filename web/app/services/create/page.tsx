@@ -8,13 +8,15 @@ export default async function Create() {
     try {
         const cookieStore = await cookies();
         const token = cookieStore.get('token')?.value;
+        const uid = cookieStore.get("UID")?.value;
+
         const response = await axiosInstance.get(`create/list`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
         const dataObject = response.data;
-        return <CreatePage {...dataObject}></CreatePage>
+        return <CreatePage {...dataObject} uid></CreatePage>
     } catch (error) {
         console.log(error);
     }

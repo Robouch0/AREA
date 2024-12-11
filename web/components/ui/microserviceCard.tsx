@@ -19,7 +19,7 @@ export function MicroServiceCard({microServicesColor, title, description, setId,
                         <CardTitle className="my-2 !text-2xl break-words text-white">{title}</CardTitle>
                     </CardHeader>
                     <CardDescription className="px-6 py-4 text-black text-xl text-wrap">
-                        {/*{description}*/}
+                        {description}
                     </CardDescription>
                 </Card>
             </Button>

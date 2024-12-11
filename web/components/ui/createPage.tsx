@@ -6,10 +6,6 @@ import {useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 
-
-
-
-
 const getColorForService = (refName) => {
     const colors = {
         dt: "green",
@@ -28,10 +24,10 @@ const processResponseData = (data) => {
     const microservices = data.map(item => ({
         key: item.ref_name,
         color: getColorForService(item.ref_name),
-        actions: item.microservices.map((ms, index) => ({
+        actions: item.microservices?.map((ms, index) => ({
             id: index,
-            title: ms.name,
-            description: `Type: ${ms.type}, Ref: ${ms.ref_name}`,
+            title: ms.ref_name,
+            description: ms.name,
             type: ms.type,
             ingredients: ms.ingredients
         }))
@@ -71,7 +67,7 @@ function renderIngredientsInput(ingredients: any[], values: string[], setValues:
 }
 
 
-export default function CreatePage(response : any) {
+export default function CreatePage(response : any, uid : number) {
     const {services, microservices } = processResponseData(Object.values(response));
 
     const [actionValue, setActionValue] = React.useState("");
@@ -139,6 +135,7 @@ export default function CreatePage(response : any) {
         const reactionIngredients = Object.keys(reactionMicroservice.ingredients || {});
 
         const payload = {
+            user_id: uid,
             action: {
                 service: actionValue,
                 microservice: actionMicroservice.title,
