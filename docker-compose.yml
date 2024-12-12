@@ -1,8 +1,38 @@
 services:
+  client_web:
+    build: ./web
+    # depends_on:
+      # db:
+        # condition: service_healthy
+        # restart: true
+      ## Depend on mobile and server
+    networks:
+      - backend
+      - public
+    ports:
+      - "8081:8081"
+    volumes:
+     - .:/web
+     - /app/node_modules
+     - front:/web/front
+
+  server:
+    build: ./server
+    env_file:
+      - ./server/.env.prod
+    networks:
+      - backend
+      - public
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+
   db:
     image: postgres:14-alpine
     restart: always
-    container_name: pg-db
     env_file:
       - .env
     ports:
@@ -18,7 +48,17 @@ services:
       interval: 30s
       timeout: 60s
       retries: 5
-      start_period: 80s 
+      start_period: 80s
+    networks:
+      - backend
 
 volumes:
   pg-db:
+  front:
+
+networks:
+  public:
+    driver: bridge
+  backend:
+    internal: true
+    driver: bridge
