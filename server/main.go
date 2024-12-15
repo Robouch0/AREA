@@ -12,8 +12,8 @@ import (
 	"net/http"
 
 	"area/api/routes"
-	"area/gRPC/grpc_routes"
 	_ "area/docs"
+	"area/gRPC/grpc_routes"
 )
 
 func main() {
@@ -25,6 +25,6 @@ func main() {
 		return
 	}
 
-	log.Printf("API Gateway server listening at :3000")
-	http.ListenAndServe(":3000", apiGateway.Router)
+	log.Printf("API Gateway server listening at :8080")
+	http.ListenAndServe(":8080", apiGateway.Router)
 }

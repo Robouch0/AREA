@@ -36,15 +36,6 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
 
-	gateway.Router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: true,
-		MaxAge:           300,
-	}))
-
 	gateway.Router.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:3000/swagger/doc.json"),
 	))
