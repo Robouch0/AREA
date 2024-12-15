@@ -1,9 +1,10 @@
 import { FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { useEffect } from 'react';
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
+import { oauhLogin } from "@/api/authentification";
+
 async function redirectToGitHub() {
     try {
         const response = await axiosInstance.get(`oauth/github`);
@@ -13,14 +14,10 @@ async function redirectToGitHub() {
     }
 }
 
-async function askForToken(paramValue:string|null) {
+async function askForToken(code: string | null) {
     try {
-        const response = await axiosInstance.post(`oauth/`, {
-            service: "github",
-            code: paramValue
-        });
+        await oauhLogin({ service: "github", code: code }) // Encore à voir si c bon !
 
-        await axios.post('/api/setToken', { token: response.data });
         return true;
     } catch (error) {
         console.error(error);
@@ -31,21 +28,21 @@ export function GithubOauth() {
     const router = useRouter();
     useEffect(() => {
         const url = new URL(window.location.href);
-        const paramValue : string|null = url.searchParams.get('code');
+        const paramValue: string | null = url.searchParams.get('code');
 
         if (paramValue) {
             askForToken(paramValue)
-            .then(() => router.push("/services"))
-            .catch((error) => console.log(error));
+                .then(() => router.push("/services"))
+                .catch((error) => console.log(error));
         }
     }, [router]);
 
     return (
         <Button
-            className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-            onClick={redirectToGitHub}
+            className="focus-visible:border-slate-500focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+            onClick={() => {redirectToGitHub()}}
         >
-            <FaGithub className="w-12 h-12"/>
+            <FaGithub className="w-12 h-12" />
             <p className="mx-3 text-2xl font-semibold">Continuer avec Github</p>
         </Button>
     );

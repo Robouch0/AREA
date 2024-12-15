@@ -13,6 +13,17 @@ definitions:
       password:
         type: string
     type: object
+  controllers.userSignUp:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
   jwtauth.JWTAuth:
     type: object
   models.Action:
@@ -270,14 +281,14 @@ paths:
         name: newUser
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/controllers.userSignUp'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/controllers.userSignUp'
         "401":
           description: Unauthorized
           schema: {}

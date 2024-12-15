@@ -31,7 +31,7 @@ type userSignUp struct {
 // @Tags         Account
 // @Accept       json
 // @Produce      json
-// @Param 		 newUser body	models.User	true 	"New User informations to sign-up to the app"
+// @Param 		 newUser body	userSignUp	true 	"New User informations to sign-up to the app"
 // @Success      200  {object}  userSignUp
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error
@@ -58,7 +58,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := userDb.CreateUser(&models.User{
+	_, err = userDb.CreateUser(&models.User{
 		FirstName: newUser.FirstName,
 		LastName:  newUser.LastName,
 		Email:     newUser.Email,
@@ -70,7 +70,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, err := json.Marshal(res)
+	b, err := json.Marshal(&newUser)
 	if err != nil {
 		utils.WriteHTTPResponseErr(&w, 500, "Error while converting results to json")
 		log.Println(err)
