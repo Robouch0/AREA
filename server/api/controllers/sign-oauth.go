@@ -103,6 +103,7 @@ func createUser(w http.ResponseWriter, userlist []OAuthInfos, JwtTok *jwtauth.JW
 			utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return nil, err
 		}
+		us = &newUser
 	}
 	b, err := json.Marshal(UserLogInfos{Token: middleware.CreateToken(JwtTok, us.ID), UserID: us.ID})
 	if err != nil {
