@@ -2,7 +2,6 @@
 
 import { listAreas } from "@/api/listAreas";
 import CreatePage from "@/components/ui/createPage";
-import axiosInstance from "@/lib/axios";
 import {cookies} from "next/headers";
 
 export default async function Create() {
@@ -13,7 +12,11 @@ export default async function Create() {
 
         const services = await listAreas()
 
-        return <CreatePage {...services} uid></CreatePage>
+        if (uid == undefined) {
+            throw Error("No User ID for the current user")
+        }
+
+        return <CreatePage services={services} uid={parseInt(uid)}/>
     } catch (error) {
         console.log(error);
     }

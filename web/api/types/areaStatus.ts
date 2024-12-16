@@ -2,14 +2,6 @@
 type IngredientPossible = "string" | "int" | "bool" | "time"
 
 /**
-    Map of ingredients of the microservice:
-
-    @param key Name of the ingredient
-    @param value Type of the argument
-*/
-type Ingredients<T> = Map<string, T>
-
-/**
  *  This is a representation of an Area Microservices.
  *
  *  @interface AreaMicroservices
@@ -25,7 +17,7 @@ interface AreaMicroservices {
     /** Action or Reaction */
     type: string
 
-    ingredients: Ingredients<IngredientPossible>
+    ingredients: Map<string, IngredientPossible>
 }
 
 /**

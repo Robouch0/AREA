@@ -39,7 +39,6 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 				Ingredients: map[string]string{
 					// "activated": "bool",
-					"actionId": "int",
 					"minutes":  "int",
 					"hours":    "int",
 					"dayMonth": "int",

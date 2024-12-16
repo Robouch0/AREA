@@ -19,15 +19,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 
-interface Service {
-    value?: string;
-    label?: string;
-}
-
-
-
-export function ComboboxDemo({services, value, setValue}: {services: Service[]; value: string; setValue: React.Dispatch<React.SetStateAction<string>>})
-{
+export function ComboboxDemo({ services, serviceName, setValue }: { services: AreaServices[]; serviceName: string; setValue: React.Dispatch<React.SetStateAction<string>> }) {
     const [open, setOpen] = React.useState(false)
 
     return (
@@ -39,8 +31,8 @@ export function ComboboxDemo({services, value, setValue}: {services: Service[]; 
                     aria-expanded={open}
                     className="text-white hover:text-slate-200 bg-slate-800 border-2 hover:bg-slate-800 text-xl font-bold w-72"
                 >
-                    {value
-                        ? services.find((service) => service.value === value)?.label
+                    {serviceName !== ""
+                        ? services.find((service) => service.ref_name === serviceName)?.ref_name
                         : "Sélectionnez un service"}
                     <ChevronsUpDown className="text-white h-4 shrink-0 opacity-50" />
                 </Button>
@@ -53,21 +45,21 @@ export function ComboboxDemo({services, value, setValue}: {services: Service[]; 
                         <CommandGroup>
                             {services.map((service, i) => (
                                 <CommandItem
-                                    key={`${service.value}-${i}`}
-                                    value={service.value}
+                                    key={`${service.name}-${i}`}
+                                    value={service.ref_name}
                                     className="font-bold text-xl text-white truncate"
                                     onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue)
+                                        setValue(currentValue)
                                         setOpen(false)
                                     }}
                                 >
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === service.value ? "opacity-100" : "opacity-0"
+                                            serviceName === service.ref_name ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {service.label}
+                                    {service.ref_name}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

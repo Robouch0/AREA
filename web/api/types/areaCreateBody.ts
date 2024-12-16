@@ -1,7 +1,7 @@
 interface Service {
     service: string,
     microservice: string,
-    ingredients: Ingredients<any>,
+    ingredients: Map<string, any>,
 }
 interface AreaCreateBody {
     user_id: number,

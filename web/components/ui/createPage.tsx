@@ -2,7 +2,7 @@
 import { ComboboxDemo } from "@/components/ui/ComboboxDemo";
 import { MicroServiceCard } from "@/components/ui/microserviceCard";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { create } from "@/api/createArea";
@@ -37,15 +37,14 @@ const processResponseData = (data) => {
     return { services, microservices };
 };
 
-function renderIngredientsInput(ingredients: any[], values: string[], setValues: React.Dispatch<React.SetStateAction<string[]>>) {
-    if (values.length !== ingredients.length) {
-        const newValues = Array(ingredients.length).fill('');
-        setValues(newValues);
+function renderIngredientsInput(ingredients: Map<string, string> | undefined, values: string[], setValues: React.Dispatch<React.SetStateAction<string[]>>) {
+    if (ingredients === undefined) {
+        return <div></div>
     }
 
     return (
         <>
-            {ingredients.map((ingredient, index) => (
+            {Object.keys(ingredients).map((ingredient, index) => (
                 <div key={index} className="flex flex-col justify-center items-center">
                     <p className="p-2 left-0 text-2xl text-white">  {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)} </p>
                     <Input
@@ -67,117 +66,149 @@ function renderIngredientsInput(ingredients: any[], values: string[], setValues:
     );
 }
 
+const filterAreaByType = (services: AreaServices[], type: string) => {
+    return services.filter((service) => {
+        return service.microservices.find((micro) => {
+            return micro.type == type
+        }) != undefined
+    }).map((service) => {
+        return {
+            name: service.name,
+            ref_name: service.ref_name,
+            microservices: service.microservices.filter((micro) => {
+                return micro.type == type
+            })
+        }
+    })
+}
 
-export default function CreatePage(response : any, uid : number) {
-    const {services, microservices } = processResponseData(Object.values(response));
+const filterServiceByRefName = (services: AreaServices[], refName: string): AreaServices | undefined => {
+    return services.find((service) => service.ref_name === refName)
+}
 
-    const [actionValue, setActionValue] = React.useState("");
-    const [reactionValue, setReactionValue] = React.useState("");
-    const [actionId, setActionId] = React.useState(-1);
-    const [reactionId, setReactionId] = React.useState(-1);
+export default function CreatePage({ services, uid }: { services: AreaServices[], uid: number }) {
+    const actions: AreaServices[] = useMemo(() => {
+        return filterAreaByType(services, "action")
+    }, [services])
+
+    const [actionName, setActionName] = React.useState("");
+    const [microActionName, setMicroActionName] = React.useState("");
+
+    const actionServiceChosen = useMemo(() => {
+        return filterServiceByRefName(actions, actionName)
+    }, [actions, actionName, setActionName])
+
+    const reactions: AreaServices[] = useMemo(() => {
+        return filterAreaByType(services, "reaction")
+    }, [services])
+
+    const [reactionName, setReactionName] = React.useState(""); // Later it will be an array of strings
+    const [microReactionName, setMicroReactionName] = React.useState("");
+
+    const reactionServiceChosen = useMemo(() => {
+        // Loop here with an array of reactionServiceChosen
+        return filterServiceByRefName(reactions, reactionName)
+    }, [reactions, reactionName, setReactionName])
+
     const [ingredientValuesActions, setIngredientValuesActions] = useState<string[]>([]);
     const [ingredientValuesReactions, setIngredientValuesReactions] = useState<string[]>([]);
 
+    useEffect(() => {
+        setMicroActionName("")
+    }, [actionName])
 
     useEffect(() => {
-        setActionId(-1);
-    }, [actionValue]);
+        setMicroReactionName("")
+    }, [reactionName])
 
-    useEffect(() => {
-        setReactionId(-1);
-    }, [reactionValue]);
-
-    const renderMicroservices = (value, id, setId, type) => {
-        const filteredMicroservices = microservices
-            .find((ms) => ms.key === value)
-            ?.actions.filter((action) => action.type === type);
-
+    const renderMicroservices = (service: AreaServices | undefined, setMicroservice: (microName: string) => void) => {
+        if (service === undefined) {
+            return <div></div>
+        }
         return (
             <div className="flex flex-wrap py-4 justify-center items-center">
-                {filteredMicroservices?.map((action) => (
-                    <div key={action.id} className="flex flex-row">
+                {service.microservices.map((micro, idx) =>
+                    <div key={`${micro.name}-${micro.ref_name}`} className="flex flex-row">
                         <MicroServiceCard
-                            id={action.id}
-                            setId={setId}
-                            microServicesColor={microservices.find((ms) => ms.key === value)?.color}
-                            title={action.title}
-                            description={action.description}
-                            service={microservices
-                                .find((ms) => ms.key === value)
-                                .key
-                            }
+                            setMicroservice={() => { setMicroservice(micro.ref_name) }}
+                            microServicesColor={"red"}
+                            title={micro.name}
+                            description={`Service ${micro.ref_name}`}
+                            microserviceName={micro.ref_name}
                         />
                     </div>
-                ))}
+                )}
             </div>
-        );
-    };
+        )
+    }
 
 
     const handleSubmit = () => {
-        if (actionId === -1 || reactionId === -1) {
-            console.error("Both action and reaction must be selected");
-            return;
-        }
+    //     if (microActionName === -1 || microReactionName === -1) {
+    //         console.error("Both action and reaction must be selected");
+    //         return;
+    //     }
 
-        const actionMicroservice = microservices
-            .find(ms => ms.key === actionValue)
-            ?.actions[actionId];
-        const reactionMicroservice = microservices
-            .find(ms => ms.key === reactionValue)
-            ?.actions[reactionId];
+    //     const actionMicroservice = microservices
+    //         .find(ms => ms.key === actionName)
+    //         ?.actions[microActionName];
+    //     const reactionMicroservice = microservices
+    //         .find(ms => ms.key === reactionName)
+    //         ?.actions[microReactionName];
 
-        if (!actionMicroservice || !reactionMicroservice) {
-            console.error("Microservices not found");
-            return;
-        }
+    //     if (!actionMicroservice || !reactionMicroservice) {
+    //         console.error("Microservices not found");
+    //         return;
+    //     }
 
-        const actionIngredients = Object.keys(actionMicroservice.ingredients || {});
-        const reactionIngredients = Object.keys(reactionMicroservice.ingredients || {});
+    //     const actionIngredients = Object.keys(actionMicroservice.ingredients || {});
+    //     const reactionIngredients = Object.keys(reactionMicroservice.ingredients || {});
 
-        const payload = {
-            user_id: uid,
-            action: {
-                service: actionValue,
-                microservice: actionMicroservice.title,
-                ingredients: actionIngredients.reduce((acc, key, index) => {
-                    acc[key] = ingredientValuesActions[index];
-                    return acc;
-                }, {})
-            },
-            reaction: {
-                service: reactionValue,
-                microservice: reactionMicroservice.title,
-                ingredients: reactionIngredients.reduce((acc, key, index) => {
-                    acc[key] = ingredientValuesReactions[index];
-                    return acc;
-                }, {})
-            }
-        };
+    //     const payload = {
+    //         user_id: uid,
+    //         action: {
+    //             service: actionName,
+    //             microservice: actionMicroservice.title,
+    //             ingredients: actionIngredients.reduce((acc, key, index) => {
+    //                 acc[key] = ingredientValuesActions[index];
+    //                 return acc;
+    //             }, {})
+    //         },
+    //         reaction: {
+    //             service: reactionName,
+    //             microservice: reactionMicroservice.title,
+    //             ingredients: reactionIngredients.reduce((acc, key, index) => {
+    //                 acc[key] = ingredientValuesReactions[index];
+    //                 return acc;
+    //             }, {})
+    //         }
+    //     };
 
-        // console.log(payload);
-        // create(payload)
+    //     // console.log(payload);
+    //     // create(payload)
     };
-
 
     return (
         <div className="my-16 bg-white h-full w-full flex flex-col justify-center items-center p-8">
             <div className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center">
                 <h1 className="my-2 text-blue-500">ACTION</h1>
-                <ComboboxDemo services={services} value={actionValue} setValue={setActionValue} />
-                {actionValue !== "" && actionId === -1 && (
+                <ComboboxDemo services={actions} serviceName={actionName} setValue={setActionName} />
+                {actionName === "" && (
                     <h1 className="p-6 text-blue-500 text-5xl">Veuillez sélectionner une action</h1>
                 )}
-                {actionId === -1 ? (
-                    renderMicroservices(actionValue, actionId, setActionId, "action")
+                {microActionName === "" ? (
+                    renderMicroservices(
+                        actionServiceChosen,
+                        (microName) => { setMicroActionName(microName) }
+                    )
                 ) : (
                     <>
                         <div className="p-2 my-4 text-xl flex flex-wrap text-white">
-                            {microservices.find((ms) => ms.key === actionValue)?.actions?.at(actionId)?.title}
+                            {actionServiceChosen && actionServiceChosen.microservices.find((ms) => ms.ref_name === microActionName)?.name || microActionName}
                         </div>
                         <form>
-                            {renderIngredientsInput(
-                                Object.keys(microservices.find((ms) => ms.key === actionValue)?.actions?.at(actionId)?.ingredients || {}),
+                            {actionServiceChosen && renderIngredientsInput(
+                                actionServiceChosen.microservices.find((ms) => ms.ref_name === microActionName)?.ingredients,
                                 ingredientValuesActions,
                                 setIngredientValuesActions
                             )}
@@ -185,24 +216,24 @@ export default function CreatePage(response : any, uid : number) {
                     </>
                 )}
             </div>
-            <hr className="h-32 w-4 bg-gray-300"/>
-            <div
+            <hr className="h-32 w-4 bg-gray-300" />
+            <div // Later for multiple reactions this will be a loop
                 className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center">
                 <h1 className="my-2 text-red-500">REACTION</h1>
-                <ComboboxDemo services={services} value={reactionValue} setValue={setReactionValue} />
-                {reactionValue !== "" && reactionId === -1 && (
-                    <h1 className="p-6 text-red-500 text-5xl">Veuillez sélectionner une réaction</h1>
-                )}
-                {reactionId === -1 ? (
-                    renderMicroservices(reactionValue, reactionId, setReactionId, "reaction")
+                <ComboboxDemo services={reactions} serviceName={reactionName} setValue={setReactionName} />
+                {microReactionName === "" ? (
+                    renderMicroservices(
+                        reactionServiceChosen,
+                        (microName) => { setMicroReactionName(microName) }
+                    )
                 ) : (
                     <>
                         <div className="p-2 my-4 text-xl flex flex-wrap text-white">
-                            {microservices.find((ms) => ms.key === reactionValue)?.actions?.at(reactionId)?.title}
+                            {reactionServiceChosen && reactionServiceChosen.microservices.find((ms) => ms.ref_name === microReactionName)?.name || microReactionName}
                         </div>
                         <form>
-                            {renderIngredientsInput(
-                                Object.keys(microservices.find((ms) => ms.key === reactionValue)?.actions?.at(reactionId)?.ingredients || {}),
+                            {reactionServiceChosen && renderIngredientsInput(
+                                reactionServiceChosen.microservices.find((ms) => ms.ref_name === microReactionName)?.ingredients,
                                 ingredientValuesReactions,
                                 setIngredientValuesReactions
                             )}
@@ -210,13 +241,13 @@ export default function CreatePage(response : any, uid : number) {
                     </>
                 )}
             </div>
-                    <Button
-                        onClick={handleSubmit}
-                        className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold"
-                        disabled={actionId === -1 || reactionId === -1}
-                    >
-                        Create AREA
-                    </Button>
+            <Button
+                onClick={handleSubmit}
+                className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold"
+                disabled={microActionName === "" || microReactionName === ""}
+            >
+                Create AREA
+            </Button>
         </div>
     );
 }
