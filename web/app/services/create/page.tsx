@@ -7,7 +7,6 @@ import {cookies} from "next/headers";
 export default async function Create() {
     try {
         const cookieStore = await cookies();
-        const token = cookieStore.get('token')?.value;
         const uid = cookieStore.get("UID")?.value;
 
         const services = await listAreas()

@@ -63,6 +63,8 @@ const filterAreaByType = (services: AreaServices[], type: string) => {
     })
 }
 
+// /!\ Disabling any error check because an ingredient can be of any type /!\ 
+// eslint-disable-next-line
 const convertIngredient = (ingredient: string | undefined, type: IngredientPossible): any => {
     if (ingredient === undefined) {
         return null
@@ -93,7 +95,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
 
     const actionServiceChosen = useMemo(() => {
         return filterServiceByRefName(actions, actionName)
-    }, [actions, actionName, setActionName])
+    }, [actions, actionName])
 
     const reactions: AreaServices[] = useMemo(() => {
         return filterAreaByType(services, "reaction")
@@ -105,7 +107,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
     const reactionServiceChosen = useMemo(() => {
         // Loop here with an array of reactionServiceChosen
         return filterServiceByRefName(reactions, reactionName)
-    }, [reactions, reactionName, setReactionName])
+    }, [reactions, reactionName])
 
     const [ingredientValuesActions, setIngredientValuesActions] = useState<string[]>([]);
     const [ingredientValuesReactions, setIngredientValuesReactions] = useState<string[]>([]);
@@ -124,7 +126,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
         }
         return (
             <div className="flex flex-wrap py-4 justify-center items-center">
-                {service.microservices.map((micro, idx) =>
+                {service.microservices.map((micro) =>
                     <div key={`${micro.name}-${micro.ref_name}`} className="flex flex-row">
                         <MicroServiceCard
                             setMicroservice={() => { setMicroservice(micro.ref_name) }}
@@ -145,7 +147,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
             return;
         }
 
-        let payload: AreaCreateBody = {
+        const payload: AreaCreateBody = {
             user_id: uid,
             action: {
                 service: actionServiceChosen?.ref_name,
