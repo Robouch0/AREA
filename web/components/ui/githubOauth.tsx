@@ -39,7 +39,7 @@ export function GithubOauth() {
 
     return (
         <Button
-            className="focus-visible:border-slate-500focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+            className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
             onClick={() => {redirectToGitHub()}}
         >
             <FaGithub className="w-12 h-12" />
