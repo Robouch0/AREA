@@ -91,6 +91,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 
 func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
 	log.Println("Starting cron job")
+	log.Println(req)
 	dt.db.InsertNewDTAction(&models.DateTime{
 		ActionID:  uint(req.ActionId),
 		Activated: true,
