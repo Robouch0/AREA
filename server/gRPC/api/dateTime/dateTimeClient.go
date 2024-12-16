@@ -34,7 +34,7 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		Microservices: []IServ.MicroserviceStatus{
 			IServ.MicroserviceStatus{
 				Name:    "Trigger a reaction at a specific date and time",
-				RefName: "timeTrigger", // Later use that name if you want more microservice in this service
+				RefName: "timeTrigger",
 				Type:    "action",
 
 				Ingredients: map[string]string{
