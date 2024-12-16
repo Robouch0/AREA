@@ -11,7 +11,9 @@ import (
 	"area/api/middleware"
 	"area/db"
 	"area/models"
+	"area/utils"
 	"context"
+	"log"
 
 	"encoding/json"
 	"fmt"
@@ -20,9 +22,16 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
+// Credentials send by the client for login
 type credentials struct {
 	Email    string `bun:"email" json:"email"`
 	Password string `bun:"password" json:"password"`
+}
+
+// User logins infos send to the client as a login response
+type UserLogInfos struct {
+	Token  string `json:"token"`
+	UserID uint   `json:"user_id"`
 }
 
 // Account godoc
@@ -32,7 +41,7 @@ type credentials struct {
 // @Accept       json
 // @Produce      json
 // @Param 		 credentials body	credentials	true 	"Credentials of the user who wants to connect"
-// @Success      200  {object}  string
+// @Success      200  {object}  UserLogInfos
 // @Failure      401  {object}  string
 // @Failure      500  {object}  string
 // @Router       /login/ [post]
@@ -43,12 +52,12 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&cred)
 		if err != nil {
-			w.WriteHeader(401)
-			fmt.Printf("Json Error: %v\n", err)
+			utils.WriteHTTPResponseErr(&w, 401, "Incorrect body is sent.")
+			log.Printf("Json Error: %v\n", err)
 			return
 		}
-		userDb := db.GetUserDb()
 
+		userDb := db.GetUserDb()
 		us := new(models.User)
 		err = userDb.Db.NewSelect().
 			Model(us).
@@ -57,10 +66,16 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 			Scan(context.Background())
 
 		if err != nil {
-			w.WriteHeader(401)
-			fmt.Printf("Error: %v\n", err)
+			utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("No user known with email: %s\n", cred.Email))
+			log.Printf("Error: %v\n", err)
 			return
 		}
-		w.Write([]byte(fmt.Sprintf("%s,%d", middleware.CreateToken(jwtauth, us.ID), us.ID)))
+		b, err := json.Marshal(UserLogInfos{Token: middleware.CreateToken(jwtauth, us.ID), UserID: us.ID})
+		if err != nil {
+			utils.WriteHTTPResponseErr(&w, 401, err.Error())
+			return
+		}
+		w.WriteHeader(200)
+		w.Write(b)
 	}
 }

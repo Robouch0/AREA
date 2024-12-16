@@ -28,7 +28,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        restart: true
 
   db:
     image: postgres:14-alpine
@@ -50,6 +49,7 @@ services:
       retries: 5
       start_period: 80s
     networks:
+      - public
       - backend
 
 volumes:

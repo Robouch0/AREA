@@ -12,10 +12,10 @@ export interface userInfo {
 }
 
 export async function getUserInfo(): Promise<userInfo> {
-    const cookiesObj = await cookies();
-    const uid = cookiesObj.get("UID")?.value;
-
     try {
+        const cookiesObj = await cookies();
+        const uid = cookiesObj.get("UID")?.value;
+        console.log(uid);
         const response = await axiosInstance.get(`users/${uid}`);
         console.log(response.data);
         return response.data;
