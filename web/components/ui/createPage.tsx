@@ -2,12 +2,13 @@
 import { ComboboxDemo } from "@/components/ui/ComboboxDemo";
 import { MicroServiceCard } from "@/components/ui/microserviceCard";
 import * as React from "react";
-import {useEffect, useState} from "react";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { create } from "@/api/createArea";
 
-const getColorForService = (refName) => {
-    const colors = {
+const getColorForService = (refName: string) => {
+    const colors: { [key: string]: string; } = {
         dt: "green",
         hf: "orange",
         github: "gray"
@@ -154,7 +155,8 @@ export default function CreatePage(response : any, uid : number) {
             }
         };
 
-        console.log(payload);
+        // console.log(payload);
+        // create(payload)
     };
 
 

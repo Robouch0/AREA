@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -52,6 +53,7 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 			if err != nil {
 				w.WriteHeader(401)
 				w.Write([]byte(err.Error()))
+				log.Println(err)
 				return
 			}
 
@@ -60,6 +62,7 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 			if err != nil {
 				w.WriteHeader(401)
 				w.Write([]byte(err.Error()))
+				log.Println(err)
 				return
 			}
 
@@ -67,12 +70,14 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 			if err != nil {
 				w.WriteHeader(401)
 				w.Write([]byte(err.Error()))
+				log.Println(err)
 				return
 			}
 			msg, err = sendToService(service, body, msg.ActionID)
 			if err != nil {
 				w.WriteHeader(401)
 				w.Write([]byte(err.Error()))
+				log.Println(err)
 				return
 			}
 

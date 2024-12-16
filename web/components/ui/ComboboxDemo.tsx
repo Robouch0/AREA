@@ -51,9 +51,9 @@ export function ComboboxDemo({services, value, setValue}: {services: Service[]; 
                     <CommandList className="border-t-2 border-slate-700">
                         <CommandEmpty className="items-center justify-center mx-8 text-xl font-bold text-white">Aucun service trouvé.</CommandEmpty>
                         <CommandGroup>
-                            {services.map((service) => (
+                            {services.map((service, i) => (
                                 <CommandItem
-                                    key={service.value}
+                                    key={`${service.value}-${i}`}
                                     value={service.value}
                                     className="font-bold text-xl text-white truncate"
                                     onSelect={(currentValue) => {

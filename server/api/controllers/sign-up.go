@@ -13,6 +13,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -63,6 +64,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error while converting results to json"))
 		return
 	}
+
+	log.Println("New user: ", res)
 	w.WriteHeader(200)
 	w.Write(b)
 }

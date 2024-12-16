@@ -1,7 +1,7 @@
 "use server";
 import { cookies } from 'next/headers';
 import axiosInstance from "@/lib/axios"
-import {PossibleType} from "@/app/services/create/page";
+import { PossibleType } from '@/app/services/create/page';
 
 axiosInstance.interceptors.request.use(request => {
     console.log('Starting Request', JSON.stringify(request, null, 2))
@@ -9,8 +9,10 @@ axiosInstance.interceptors.request.use(request => {
 })
 export async function create(data: Record<string, PossibleType>) {
     try {
+        console.log("Datas: ", data)
         const cookieStore = await cookies();
         const token = cookieStore.get('token')?.value;
+        console.log("Token: ", token)
         const response = await axiosInstance.post(`create/dt`, data, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -18,9 +20,8 @@ export async function create(data: Record<string, PossibleType>) {
         });
 
 
-        console.log(response);
     } catch (error) {
-        console.log(error);
+        console.log("ERROR");
     }
 }
 

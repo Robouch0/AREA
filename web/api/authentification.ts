@@ -45,6 +45,7 @@ export async function signUp(emailValue: string, passwordValue: string, firstNam
             first_name: firstNameValue,
             last_name: lastNameValue
         });
+        console.log("HERE")
         const loginResponse = await login(emailValue, passwordValue);
         console.log(loginResponse);
         return true;
