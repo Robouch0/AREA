@@ -45,7 +45,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	}))
 
 	gateway.Router.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:3000/swagger/doc.json"),
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 
 	gateway.Router.Get("/ping", controllers.PingRoute)

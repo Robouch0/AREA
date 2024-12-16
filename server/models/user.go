@@ -23,7 +23,7 @@ type User struct {
 	Password string `bun:"password" json:"password"`
 
 	Tokens []*Token `bun:"tokens,rel:has-many,join:id=user_id" json:"tokens"`
-	Areas  []*Area       `bun:"areas,rel:has-many,join:id=user_id" json:"areas"`
+	Areas  []*Area  `bun:"areas,rel:has-many,join:id=user_id" json:"areas"`
 
 	// Useful for log and security purposes
 	CreatedAt time.Time `bun:"created_at,nullzero,notnull,default:current_timestamp" json:"created_at"`

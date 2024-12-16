@@ -11,6 +11,7 @@ import (
 	"area/api/middleware"
 	"area/db"
 	"area/models"
+	"area/utils"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -32,9 +33,9 @@ type OAuthRequest struct {
 }
 
 type OAuthInfos struct {
-	Email string `json:"email"`
-	Primary bool `json:"primary"`
-	Verified bool `json:"verified"`
+	Email      string `json:"email"`
+	Primary    bool   `json:"primary"`
+	Verified   bool   `json:"verified"`
 	Visibility string `json:"visibility"`
 }
 
@@ -47,7 +48,7 @@ func createOAuthURLS() map[string][]string {
 	}
 
 	m["github"] = []string{
-		fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email", os.Getenv("GITHUB_ID"), "http://localhost:3100/"),
+		fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email", os.Getenv("GITHUB_ID"), "http://127.0.0.1:8081/"),
 		"https://github.com/login/oauth/access_token",
 		"https://api.github.com/user/emails",
 	}
@@ -99,13 +100,18 @@ func createUser(w http.ResponseWriter, userlist []OAuthInfos, JwtTok *jwtauth.JW
 		_, err := userDb.CreateUser(&newUser)
 
 		if err != nil {
-			w.WriteHeader(401)
-			w.Write([]byte(err.Error()))
+			utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return nil, err
 		}
+		us = &newUser
+	}
+	b, err := json.Marshal(UserLogInfos{Token: middleware.CreateToken(JwtTok, us.ID), UserID: us.ID})
+	if err != nil {
+		utils.WriteHTTPResponseErr(&w, 401, err.Error())
+		return nil, err
 	}
 	w.WriteHeader(200)
-	w.Write([]byte(middleware.CreateToken(JwtTok, us.ID)))
+	w.Write(b)
 	return us, nil
 }
 

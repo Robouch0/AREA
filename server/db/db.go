@@ -11,6 +11,7 @@ import (
 	"area/utils"
 	"context"
 	"database/sql"
+	"log"
 	"sync"
 
 	"github.com/uptrace/bun"
@@ -49,6 +50,7 @@ func GetByID[T any](Db bun.IDB, ID uint) (*T, error) {
 func initDB() *bun.DB {
 	dsn, err := utils.GetEnvParameter("DATABASE_URL")
 	if err != nil {
+		log.Println("Err while loading env file: ", dsn)
 		return nil
 	}
 	hsqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
