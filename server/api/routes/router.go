@@ -16,7 +16,7 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/cors"
+    "github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
 
 	_ "area/docs"
@@ -38,11 +38,9 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: true,
 		MaxAge:           300,
 	}))
+
 
 	gateway.Router.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
@@ -65,6 +63,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 		})
 
 		r.Post("/create/{service}", controllers.CreateRoute(gateway))
+		r.Get("/create/list", controllers.ListService(gateway))
 		r.Get("/ping", controllers.PingRoute)
 	})
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))

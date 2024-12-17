@@ -26,6 +26,13 @@ func NewReactionServiceClient(conn *grpc.ClientConn) *ReactionServiceClient {
 	return &ReactionServiceClient{gRPCService.NewReactionServiceClient(conn)}
 }
 
+// ReactionService is an internal service that is not exposed to public.
+//
+// Thus it has no "Public Status"
+func (react *ReactionServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
+	return nil, nil
+}
+
 func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }

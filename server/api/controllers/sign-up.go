@@ -76,6 +76,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+
 	w.WriteHeader(200)
 	w.Write(b)
 }

@@ -26,6 +26,31 @@ func NewDateTimeServiceClient(conn *grpc.ClientConn) *DTServiceClient {
 	return &DTServiceClient{gRPCService.NewDateTimeServiceClient(conn)}
 }
 
+func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
+	status := &IServ.ServiceStatus{
+		Name:    "Date and Time API",
+		RefName: "dt",
+
+		Microservices: []IServ.MicroserviceStatus{
+			IServ.MicroserviceStatus{
+				Name:    "Trigger a reaction at a specific date and time",
+				RefName: "timeTrigger",
+				Type:    "action",
+
+				Ingredients: map[string]string{
+					// "activated": "bool",
+					"minutes":   "int",
+					"hours":     "int",
+					"day_month": "int",
+					"month":     "int",
+					"day_week":  "int",
+				},
+			},
+		},
+	}
+	return status, nil
+}
+
 func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }

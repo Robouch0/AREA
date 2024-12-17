@@ -61,13 +61,14 @@ func (dt *DateTimeService) checkTimeTrigger() {
 		log.Println(err)
 		return
 	}
+
 	var dateData AimylogicDateTime
 	err = json.Unmarshal(bytesBody, &dateData)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	bytesBody, err = json.Marshal(&dateData)
+	bytesBody, err = json.Marshal(&dateData) // Check but not really uselful
 	if err != nil {
 		log.Println(err)
 		return
@@ -90,6 +91,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 
 func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
 	log.Println("Starting cron job")
+	log.Println(req)
 	dt.db.InsertNewDTAction(&models.DateTime{
 		ActionID:  uint(req.ActionId),
 		Activated: true,
