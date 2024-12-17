@@ -39,6 +39,15 @@ type OAuthInfos struct {
 	Visibility string `json:"visibility"`
 }
 
+func createOAuthRedirect(provider string, url string, scope string) string {
+
+	if provider == "github" {
+		result := fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s", os.Getenv("GITHUB_ID"), url, scope)
+		return result
+	}
+	return ""
+}
+
 func createOAuthURLS() map[string][]string {
 	m := make(map[string][]string)
 
@@ -149,13 +158,16 @@ func createToken(w http.ResponseWriter, user *models.User, AccessToken string, S
 // @Success      200  {object}  string
 // @Failure      400  {object}  error
 // @Router       /oauth/{service} [get]
-func GetUrl(OAuthURL map[string][]string) http.HandlerFunc {
+func GetUrl() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		OAuthservice := chi.URLParam(r, "service")
+		OAuthurl := chi.URLParam(r, "redirect_url")
+		OAuthscope := chi.URLParam(r, "scope")
 
-		if url, ok := OAuthURL[OAuthservice]; ok {
+		url := createOAuthRedirect(OAuthservice, OAuthurl, OAuthscope)
+		if url != "" {
 			w.WriteHeader(200)
-			w.Write([]byte(url[0]))
+			w.Write([]byte(url))
 		} else {
 			w.WriteHeader(400)
 			w.Write([]byte("Service doesn't exist"))
@@ -223,7 +235,7 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 	OAuthURL := createOAuthURLS()
 	db.InitTokenDb()
 
-	OAuthRouter.Get("/{service}", GetUrl(OAuthURL))
+	OAuthRouter.Get("/{service}", GetUrl())
 
 	OAuthRouter.Post("/", LoginOAuth(JwtTok, OAuthURL))
 	return OAuthRouter
