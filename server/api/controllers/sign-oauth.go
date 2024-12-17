@@ -33,44 +33,52 @@ type OAuthRequest struct {
 }
 
 type OAuthInfos struct {
-	Email      string `json:"email"`
-	Primary    bool   `json:"primary"`
-	Verified   bool   `json:"verified"`
-	Visibility string `json:"visibility"`
+	Email string `json:"email"`
+
+	Primary    bool   `json:"primary,omitempty"`
+	Verified   bool   `json:"verified,omitempty"`
+	Visibility string `json:"visibility,omitempty"`
 }
 
-func createOAuthRedirect(provider string, url string, scope string) string {
-
-	if provider == "github" {
-		result := fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s", os.Getenv("GITHUB_ID"), url, scope)
-		return result
-	}
-	return ""
+type OAuthURLs struct {
+	RedirectURL     string `json:"redirect_uri"`
+	AccessTokenURL  string `json:"access_token_uri"`
+	EmailRequestURL string `json:"email_req_uri"`
 }
 
-func createOAuthURLS() map[string][]string {
-	m := make(map[string][]string)
+func createOAuthRedirect(consentURL, provider, redirectURI string) string {
+	return fmt.Sprintf(consentURL, os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(provider))), redirectURI)
+}
+
+func createOAuthURLS() map[string]OAuthURLs {
+	oauthUrls := make(map[string]OAuthURLs)
 
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	m["github"] = []string{
-		"https://github.com/login/oauth/access_token",
-		"https://api.github.com/user/emails",
+	// Mettre manuellement tous les scopes
+	oauthUrls["github"] = OAuthURLs{
+		RedirectURL:     "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email,repo,workflow", // Mettre plus de droits précis
+		AccessTokenURL:  "https://github.com/login/oauth/access_token",
+		EmailRequestURL: "https://api.github.com/user/emails",
 	}
-
-	return m
+	oauthUrls["google"] = OAuthURLs{
+		RedirectURL:     "https://accounts.google.com/o/oauth2/auth?client_id=%s&redirect_uri=%s&scope=%s&response_type=code",
+		AccessTokenURL:  "https://oauth2.googleapis.com/token", // https://accounts.google.com/o/oauth2/token
+		EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo",
+	}
+	return oauthUrls
 }
 
-func GetAccessToken(OAuthCode *OAuthRequest, url []string) (resp *http.Response, err error) {
+func GetAccessToken(OAuthCode *OAuthRequest, accessTokenURI string) (resp *http.Response, err error) {
 	body := fmt.Sprintf(`{ "client_id" : "%s", "client_secret" : "%s", "code" : "%s" }`,
 		os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(OAuthCode.Service))),
 		os.Getenv(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service))),
 		OAuthCode.Code)
 
-	request, err := http.Post(url[0], "application/json", bytes.NewBuffer([]byte(body)))
+	request, err := http.Post(accessTokenURI, "application/json", bytes.NewBuffer([]byte(body)))
 
 	if err != nil {
 		return nil, err
@@ -78,13 +86,13 @@ func GetAccessToken(OAuthCode *OAuthRequest, url []string) (resp *http.Response,
 	return request, nil
 }
 
-func GetUserEmail(url []string, TokenStr string, idx int, w http.ResponseWriter) (resp *http.Response, err error) {
+func GetUserEmail(emailRequestURL string, TokenStr string, idx int, w http.ResponseWriter) (resp *http.Response, err error) {
 	if idx == -1 {
 		return nil, err
 	}
 
 	client := &http.Client{}
-	request, _ := http.NewRequest("GET", url[1], nil)
+	request, _ := http.NewRequest("GET", emailRequestURL, nil)
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", TokenStr[:idx]))
 	result, err := client.Do(request)
 
@@ -157,19 +165,21 @@ func createToken(w http.ResponseWriter, user *models.User, AccessToken string, S
 // @Success      200  {object}  string
 // @Failure      400  {object}  error
 // @Router       /oauth/{service} [get]
-func GetUrl() http.HandlerFunc {
+func GetUrl(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		OAuthservice := chi.URLParam(r, "service")
-		OAuthurl := chi.URLParam(r, "redirect_url")
-		OAuthscope := chi.URLParam(r, "scope")
+		OAuthRedirectURI := r.URL.Query().Get("redirect_uri") // Rajouter dans le swagger les urls params
 
-		url := createOAuthRedirect(OAuthservice, OAuthurl, OAuthscope)
-		if url != "" {
-			w.WriteHeader(200)
-			w.Write([]byte(url))
-		} else {
-			w.WriteHeader(400)
-			w.Write([]byte("Service doesn't exist"))
+		if serviceUrls, ok := OAuthURLs[OAuthservice]; ok {
+			url := createOAuthRedirect(serviceUrls.RedirectURL, OAuthservice, OAuthRedirectURI)
+			log.Println("URL: ", url)
+			if url != "" {
+				w.WriteHeader(200)
+				w.Write([]byte(url))
+			} else {
+				utils.WriteHTTPResponseErr(&w, 400, "Service does not exist")
+			}
 		}
 	}
 }
@@ -184,7 +194,7 @@ func GetUrl() http.HandlerFunc {
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error
 // @Router       /oauth/ [post]
-func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string][]string) http.HandlerFunc {
+func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string]OAuthURLs) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		OAuthCode := new(OAuthRequest)
 		err := json.NewDecoder(r.Body).Decode(&OAuthCode)
@@ -194,8 +204,8 @@ func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string][]string) http.Hand
 			w.Write([]byte(err.Error()))
 			return
 		}
-		if url, ok := OAuthURL[OAuthCode.Service]; ok {
-			request, err := GetAccessToken(OAuthCode, url)
+		if urls, ok := OAuthURL[OAuthCode.Service]; ok {
+			request, err := GetAccessToken(OAuthCode, urls.AccessTokenURL)
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -206,7 +216,7 @@ func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string][]string) http.Hand
 			Tknbody, _ := io.ReadAll(request.Body)
 			TokenFidx := strings.TrimLeft(string(Tknbody), "access_token=")
 			TokenSidx := strings.Index(TokenFidx, "&scope")
-			result, err := GetUserEmail(url, TokenFidx, TokenSidx, w)
+			result, err := GetUserEmail(urls.EmailRequestURL, TokenFidx, TokenSidx, w)
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -231,11 +241,11 @@ func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string][]string) http.Hand
 
 func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 	OAuthRouter := chi.NewRouter()
-	OAuthURL := createOAuthURLS()
+	OAuthURLs := createOAuthURLS()
 	db.InitTokenDb()
 
-	OAuthRouter.Get("/{service}", GetUrl())
+	OAuthRouter.Get("/{service}", GetUrl(OAuthURLs))
 
-	OAuthRouter.Post("/", LoginOAuth(JwtTok, OAuthURL))
+	OAuthRouter.Post("/", LoginOAuth(JwtTok, OAuthURLs))
 	return OAuthRouter
 }

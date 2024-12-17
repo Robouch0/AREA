@@ -7,7 +7,11 @@ import { oauhLogin } from "@/api/authentification";
 
 async function redirectToGitHub() {
     try {
-        const response = await axiosInstance.get(`oauth/github`);
+        const response = await axiosInstance.get(`oauth/github`, {
+            params: {
+                "redirect_uri": "http://127.0.0.1:8081"
+            }
+        });
         window.location.href = response.data;
     } catch (error) {
         console.error(error);
@@ -30,6 +34,7 @@ export function GithubOauth() {
         const url = new URL(window.location.href);
         const paramValue: string | null = url.searchParams.get('code');
 
+        console.log(paramValue)
         if (paramValue) {
             askForToken(paramValue)
                 .then(() => router.push("/services"))
