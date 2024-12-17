@@ -1,13 +1,18 @@
-import { FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import { oauhLogin } from "@/api/authentification";
 
-async function redirectToGitHub() {
+interface IOAuthButton {
+    className: string,
+    service: string,
+    ServiceIcon?: React.ReactNode,
+}
+
+async function redirectToService(service: string) {
     try {
-        const response = await axiosInstance.get(`oauth/github`, {
+        const response = await axiosInstance.get(`oauth/${service}`, {
             params: {
                 "redirect_uri": "http://127.0.0.1:8081"
             }
@@ -18,9 +23,9 @@ async function redirectToGitHub() {
     }
 }
 
-async function askForToken(code: string | null) {
+async function askForToken(service: string, code: string | null) {
     try {
-        await oauhLogin({ service: "github", code: code }) // Encore à voir si c bon !
+        await oauhLogin({ service: service, code: code }) // Encore à voir si c bon !
 
         return true;
     } catch (error) {
@@ -28,15 +33,17 @@ async function askForToken(code: string | null) {
     }
 }
 
-export function GithubOauth() {
+export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
+    const serviceDisplayName = service.charAt(0).toUpperCase() + service.slice(1);
     const router = useRouter();
+
     useEffect(() => {
         const url = new URL(window.location.href);
         const paramValue: string | null = url.searchParams.get('code');
 
         console.log(paramValue)
         if (paramValue) {
-            askForToken(paramValue)
+            askForToken(service, paramValue)
                 .then(() => router.push("/services"))
                 .catch((error) => console.log(error));
         }
@@ -44,11 +51,11 @@ export function GithubOauth() {
 
     return (
         <Button
-            className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-            onClick={() => {redirectToGitHub()}}
+            className={className}
+            onClick={() => { redirectToService(service) }}
         >
-            <FaGithub className="w-12 h-12" />
-            <p className="mx-3 text-2xl font-semibold">Continuer avec Github</p>
+            {ServiceIcon}
+            <p className="mx-3 text-2xl font-semibold">Continuer avec {serviceDisplayName}</p>
         </Button>
     );
 }

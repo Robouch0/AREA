@@ -173,7 +173,6 @@ func GetUrl(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 
 		if serviceUrls, ok := OAuthURLs[OAuthservice]; ok {
 			url := createOAuthRedirect(serviceUrls.RedirectURL, OAuthservice, OAuthRedirectURI)
-			log.Println("URL: ", url)
 			if url != "" {
 				w.WriteHeader(200)
 				w.Write([]byte(url))
