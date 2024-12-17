@@ -18,7 +18,7 @@ export function renderMicroservices(service: AreaServices | undefined, setMicros
             {service.microservices.map((micro:AreaMicroservices) =>
                 <div key={`${micro.name}-${micro.ref_name}`} className="flex flex-row">
                     <MicroServiceCard
-                        setMicroservice={():void => {
+                        setMicroserviceAction={():void => {
                             setMicroservice(micro.ref_name)
                         }}
                         microServicesColor={getColorForService(service.ref_name)}

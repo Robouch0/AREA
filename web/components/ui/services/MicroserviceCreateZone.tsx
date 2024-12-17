@@ -32,7 +32,7 @@ export default function MicroserviceCreateZone({
             <div className={textColor}>
                 <h1 className="my-2">{microServiceType.toUpperCase()}</h1>
             </div>
-            <ComboboxDemo services={services} serviceName={name} setValue={setNameAction}/>
+            <ComboboxDemo services={services} serviceName={name} setValueAction={setNameAction}/>
             {
 
                 microServiceName === "" && name !== "" && (
@@ -45,7 +45,7 @@ export default function MicroserviceCreateZone({
                 microServiceName === "" ? (
                     renderMicroservices(
                         serviceChosen,
-                        (microName) => {
+                        (microName: string): void => {
                             setServiceNameAction(microName)
                         }
                     )
@@ -53,11 +53,11 @@ export default function MicroserviceCreateZone({
                     <>
                         <div className="p-2 my-4 text-xl flex flex-wrap text-white">
                             {serviceChosen && serviceChosen.microservices.find(
-                                (ms) => ms.ref_name === microServiceName)?.name || microServiceName}
+                                (ms: AreaMicroservices): boolean => ms.ref_name === microServiceName)?.name || microServiceName}
                         </div>
                         {serviceChosen && renderIngredientsInput(
                             serviceChosen.microservices.find(
-                                (ms) => ms.ref_name === microServiceName)?.ingredients,
+                                (ms: AreaMicroservices): boolean => ms.ref_name === microServiceName)?.ingredients,
                             ingredientsValues,
                             setIngredientValuesAction
                         )}

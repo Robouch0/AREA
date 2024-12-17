@@ -3,12 +3,13 @@ import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/serv
 import {Button} from "@/components/ui/utils/Button";
 import { useRouter } from 'next/navigation';
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 export  function AreaCard({areaColor, category, action, reaction, areaTitle}: {areaColor:string; category:string; action:string, reaction:string, areaTitle:string}) {
-    const router = useRouter();
+    const router: AppRouterInstance = useRouter();
 
     const handleRedirection = () => {
         router.push(`/services/create?action=${action}&reaction=${reaction}&areatitle=${areaTitle}&color=${areaColor}`);
-        // ici on pourrait faire passer à la fontion le nom de l'action et de la reaction associé
+        // ici on pourrait faire passer à la fonction le nom de l'action et de la reaction associé
         // comme ça quand le garts click on le met sur le /create et on remplis create avec les arguments dans l'url si y en a
     };
     return (

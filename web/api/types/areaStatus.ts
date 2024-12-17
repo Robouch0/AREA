@@ -27,7 +27,7 @@ interface AreaMicroservices {
  *
  *  @member {AreaMicroservices} Microservices associated with the area
  */
-interface AreaServices {
+export interface AreaServices {
     /** Name of the service */
     name: string,
     /** Name of the service server side */

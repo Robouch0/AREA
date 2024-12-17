@@ -3,12 +3,12 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/se
 import { Button } from "@/components/ui/utils/Button";
 import { ServiceIcon } from "@/components/ui/services/ServiceIcon";
 
-export function MicroServiceCard({ microServicesColor, title, description, setMicroservice, microserviceName }: { microServicesColor: string | undefined; title: string, description: string, setMicroservice: () => void, microserviceName: string }) {
+export function MicroServiceCard({ microServicesColor, title, description, setMicroserviceAction, microserviceName }: { microServicesColor: string | undefined; title: string, description: string, setMicroserviceAction: () => void, microserviceName: string }) {
     return (
         <>
             <Button
                 className="hover:bg-transparent shadow-none bg-transparent my-2 w-80 h-64"
-                onClick={() => setMicroservice()}
+                onClick={() => setMicroserviceAction()}
             >
                 <Card
                     className={"font-black text-3xl w-full h-full border-none hover:opacity-75 items-center text-left py-2 flex flex-col justify-between"}
