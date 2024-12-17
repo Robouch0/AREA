@@ -57,7 +57,6 @@ func createOAuthURLS() map[string][]string {
 	}
 
 	m["github"] = []string{
-		fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email", os.Getenv("GITHUB_ID"), "http://127.0.0.1:8081/"),
 		"https://github.com/login/oauth/access_token",
 		"https://api.github.com/user/emails",
 	}
@@ -71,7 +70,7 @@ func GetAccessToken(OAuthCode *OAuthRequest, url []string) (resp *http.Response,
 		os.Getenv(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service))),
 		OAuthCode.Code)
 
-	request, err := http.Post(url[1], "application/json", bytes.NewBuffer([]byte(body)))
+	request, err := http.Post(url[0], "application/json", bytes.NewBuffer([]byte(body)))
 
 	if err != nil {
 		return nil, err
@@ -85,7 +84,7 @@ func GetUserEmail(url []string, TokenStr string, idx int, w http.ResponseWriter)
 	}
 
 	client := &http.Client{}
-	request, _ := http.NewRequest("GET", url[2], nil)
+	request, _ := http.NewRequest("GET", url[1], nil)
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", TokenStr[:idx]))
 	result, err := client.Do(request)
 
