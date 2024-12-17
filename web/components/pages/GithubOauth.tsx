@@ -1,5 +1,5 @@
 import { FaGithub } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/utils/Button";
 import { useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";

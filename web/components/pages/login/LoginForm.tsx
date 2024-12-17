@@ -1,15 +1,15 @@
 "use client";
 import {useForm} from "react-hook-form";
 import {FormData, UserSchema, ValidFieldNames} from "@/lib/typeLogin";
-import FormField from "@/components/ui/formField";
+import FormField from "@/components/ui/utils/FormField";
 import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui/utils/Button";
 import {FaEye, FaEyeSlash, FaFacebook, FaGoogle} from "react-icons/fa";
 import {useEffect, useState} from "react";
 import {login} from "@/api/authentification";
 import {useRouter} from "next/navigation";
-import {GithubOauth} from "@/components/ui/githubOauth";
+import {GithubOauth} from "@/components/pages/GithubOauth";
 
 function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);

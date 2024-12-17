@@ -1,7 +1,7 @@
 "use server";
 
 import { listAreas } from "@/api/listAreas";
-import CreatePage from "@/components/ui/createPage";
+import CreatePage from "@/components/pages/create/CreatePage";
 import {cookies} from "next/headers";
 
 export default async function Create() {

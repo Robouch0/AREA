@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/utils/Input";
+import {Button} from "@/components/ui/utils/Button";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ScrollArea } from "@/components/ui/utils/Scroll-area"
 import {useState} from "react";
-import {ServiceIcon} from "@/components/ui/serviceIcon";
+import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
 
 export default function ProfilePage({email, first_name, last_name, password} : userInfo) {
@@ -22,7 +22,7 @@ export default function ProfilePage({email, first_name, last_name, password} : u
 
     return (
         <>
-            <div className="w-full h-full flex flex-col bg-white justify-center items-center my-16">
+            <div className="pt-10 w-full h-full flex flex-col bg-white justify-center items-center my-16">
                 <h1 className="text-6xl font-bold p-8"> Account Settings </h1>
                 <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700"/>
                 <div className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between">

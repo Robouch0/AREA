@@ -1,14 +1,14 @@
 "use client";
 import {useForm} from "react-hook-form";
 import {RegisterFormData, RegisterUserSchema} from "@/lib/typeRegister";
-import FormField from "@/components/ui/formField";
+import FormField from "@/components/ui/utils/FormField";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui/utils/Button";
 import {FaEye, FaEyeSlash, FaFacebook, FaGoogle} from "react-icons/fa";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {signUp} from "@/api/authentification";
-import {GithubOauth} from "@/components/ui/githubOauth";
+import {GithubOauth} from "@/components/pages/GithubOauth";
 
 function RegisterForm() {
     const router = useRouter();

@@ -1,6 +1,6 @@
 "use client";
-import Navbar, {User} from "@/components/ui/navbar";
-import {Button} from "@/components/ui/button";
+import Navbar, {User} from "@/components/ui/layouts/Navbar";
+import {Button} from "@/components/ui/utils/Button";
 import { useRouter } from 'next/navigation';
 
 export default function ServicesLayout({children,}: Readonly<{

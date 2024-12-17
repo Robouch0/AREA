@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { checkAuthentification } from "@/api/authentification";
 
 import { cookies } from 'next/headers';
-import LoginForm from "@/components/ui/loginForm";
+import LoginForm from "@/components/pages/login/LoginForm";
 
 export default async function LoginPage() {
     const cookieStore = await cookies();

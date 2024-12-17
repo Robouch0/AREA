@@ -1,8 +1,8 @@
 'use client';
-import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
+import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/services/Card";
+import {Button} from "@/components/ui/utils/Button";
 import { useRouter } from 'next/navigation';
-import {ServiceIcon} from "@/components/ui/serviceIcon";
+import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 export  function AreaCard({areaColor, category, action, reaction, areaTitle}: {areaColor:string; category:string; action:string, reaction:string, areaTitle:string}) {
     const router = useRouter();
 

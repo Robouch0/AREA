@@ -10,7 +10,6 @@ export interface User {
 }
 
 
-
 export default function Navbar({prop}: {prop:User}) {
     const img = prop.profilePicture || "/default-avatar.png";
     return (
