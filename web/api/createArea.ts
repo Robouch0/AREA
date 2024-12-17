@@ -2,6 +2,7 @@
 import { cookies } from 'next/headers';
 import axiosInstance from "@/lib/axios"
 import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import {AreaCreateBody} from "@/api/types/areaCreateBody";
 
 // Axios debug interceptors
 axiosInstance.interceptors.request.use(request => {

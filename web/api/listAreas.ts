@@ -3,6 +3,7 @@
 import axiosInstance from "@/lib/axios";
 import {cookies} from "next/headers";
 import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import {AreaServices} from "@/api/types/areaStatus";
 
 export const listAreas = async (): Promise<AreaServices[]> => {
     try {

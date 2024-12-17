@@ -4,6 +4,7 @@ import { listAreas } from "@/api/listAreas";
 import CreatePage from "@/components/pages/create/CreatePage";
 import {cookies} from "next/headers";
 import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import {AreaServices} from "@/api/types/areaStatus";
 
 export default async function Create() : Promise<React.JSX.Element|undefined> {
     try {
