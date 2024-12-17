@@ -72,12 +72,8 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 func getToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		TokenReq := new(TokenRequest)
-		err := json.NewDecoder(r.Body).Decode(&TokenReq)
-		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte(err.Error()))
-			return
-		}
+		TokenReq.UserID = chi.URLParam(r, "user_id")
+		TokenReq.Provider = chi.URLParam(r, "provider")
 
 		UserId, err := strconv.Atoi(TokenReq.UserID)
 		if err != nil {
@@ -148,7 +144,7 @@ func TokenRoutes() chi.Router {
 
 	TokenRouter.Get("/{user_id}", getTokens(tokenDb))
 
-	TokenRouter.Post("/", getToken(tokenDb))
+	TokenRouter.Get("/", getToken(tokenDb))
 
 	TokenRouter.Post("/create/", createTkn(tokenDb))
 
