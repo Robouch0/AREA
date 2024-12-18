@@ -17,7 +17,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip CI]')"
     name: Compile web page frontend
     uses: ./.github/workflows/web.yml
-
+#  check-mobile-compilation:
+#    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+#    name: Compile mobile page frontend
+#    uses: ./.github/workflows/mobile.yml
 
   push_to_mirror:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip CI]')

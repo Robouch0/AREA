@@ -1,0 +1,17 @@
+name: Check-Mobile-Compilation
+
+#on: [workflow_call]
+on: [push]
+
+jobs:
+  check-compilation:
+    runs-on:  ghcr.io/cirruslabs/flutter:stable
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build mobile apk
+        run: flutter build apk --release
+      - name: Display directory with builded apk
+        run: ls
+        working-directory: ./mobile
