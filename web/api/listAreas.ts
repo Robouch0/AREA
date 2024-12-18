@@ -2,12 +2,14 @@
 
 import axiosInstance from "@/lib/axios";
 import {cookies} from "next/headers";
+import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import {AreaServices} from "@/api/types/areaStatus";
 
 export const listAreas = async (): Promise<AreaServices[]> => {
     try {
-        const cookieStore = await cookies();
-        const token = cookieStore.get('token')?.value;
-        
+        const cookieStore : ReadonlyRequestCookies = await cookies();
+        const token : string | undefined = cookieStore.get('token')?.value;
+
         if (token == undefined) {
             throw Error("Token is undefined")
         }

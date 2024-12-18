@@ -1,17 +1,19 @@
 "use server";
-import { cookies } from 'next/headers';
+import {cookies} from 'next/headers';
 import axiosInstance from "@/lib/axios"
-import { AxiosResponse } from 'axios';
+import {AxiosResponse} from 'axios';
+import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export async function login(emailValue: string, passwordValue: string): Promise<boolean> {
     try {
-        const response = await axiosInstance.post<UserLogInfosBody, AxiosResponse<UserLogInfosBody, string>, UserCredentials>(`login/`, {
-            email: emailValue,
-            password: passwordValue
-        });
+        const response: AxiosResponse<UserLogInfosBody, string> = await axiosInstance.post<UserLogInfosBody, AxiosResponse<UserLogInfosBody, string>, UserCredentials>(
+            `login/`, {
+                email: emailValue,
+                password: passwordValue
+            });
 
-        const cookiesObj = await cookies();
-        const { token, user_id } = response.data
+        const cookiesObj: ReadonlyRequestCookies = await cookies();
+        const {token, user_id} = response.data
         cookiesObj.set('token', token);
         cookiesObj.set('UID', user_id.toString());
         return true;
@@ -20,12 +22,13 @@ export async function login(emailValue: string, passwordValue: string): Promise<
     }
 }
 
-export async function oauhLogin(oauthLogBody: OAuthLoginBody) {
+export async function oauhLogin(oauthLogBody: OAuthLoginBody): Promise<void> {
     try {
-        const response = await axiosInstance.post<UserLogInfosBody, AxiosResponse<UserLogInfosBody, string>>(`oauth/`, oauthLogBody);
-        
-        const cookiesObj = await cookies();
-        const { token, user_id } = response.data
+        const response: AxiosResponse<UserLogInfosBody, string> = await axiosInstance.post<UserLogInfosBody, AxiosResponse<UserLogInfosBody, string>>(
+            `oauth/`, oauthLogBody);
+
+        const cookiesObj : ReadonlyRequestCookies = await cookies();
+        const {token, user_id} = response.data
 
         cookiesObj.set('token', token);
         cookiesObj.set('UID', user_id.toString());
@@ -34,7 +37,7 @@ export async function oauhLogin(oauthLogBody: OAuthLoginBody) {
     }
 }
 
-export async function checkAuthentification(token: string | undefined) {
+export async function checkAuthentification(token: string | undefined) : Promise<boolean> {
     try {
         const response = await axiosInstance.get(`ping`, {
             headers: {
@@ -50,7 +53,8 @@ export async function checkAuthentification(token: string | undefined) {
     }
 }
 
-export async function signUp(emailValue: string, passwordValue: string, firstNameValue: string, lastNameValue: string): Promise<boolean> {
+export async function signUp(
+    emailValue: string, passwordValue: string, firstNameValue: string, lastNameValue: string): Promise<boolean> {
     try {
         await axiosInstance.post(`sign-up/`, {
             email: emailValue,
@@ -58,8 +62,7 @@ export async function signUp(emailValue: string, passwordValue: string, firstNam
             first_name: firstNameValue,
             last_name: lastNameValue
         });
-        console.log("HERE")
-        const loginResponse = await login(emailValue, passwordValue);
+        const loginResponse : boolean = await login(emailValue, passwordValue);
         console.log(loginResponse);
         return true;
     } catch (error) {
