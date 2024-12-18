@@ -23,7 +23,7 @@ export interface AreaMicroservices {
 /**
  *  This is a representation of an Area Service.
  *
- *  @interface AreaServicesk
+ *  @interface AreaServices
  *
  *  @member {AreaMicroservices} Microservices associated with the area
  */

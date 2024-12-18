@@ -5,7 +5,7 @@ import {ZodIssue} from "zod";
 
 export async function POST(request: Request) {
     const body = await request.json();
-    const result= UserSchema.safeParse(body);
+    const result = UserSchema.safeParse(body);
 
     if (result.success) {
         return NextResponse.json({success: true});
