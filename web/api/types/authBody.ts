@@ -17,5 +17,6 @@ interface UserSignUpBody {
 
 interface OAuthLoginBody {
     service: string,
-    code: string | null
+    code: string | null,
+    redirect_uri: string
 }

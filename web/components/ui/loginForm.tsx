@@ -133,12 +133,12 @@ function LoginForm() {
                                     <p className=" mx-3 text-2xl font-semibold"> Continuer avec Facebook </p>
                                 </Button>
 
-                                <OauthButton
+                                {/* <OauthButton
                                     arial-label="Google"
                                     service="google"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGoogle className="w-12 h-12"/>}
-                                />      
+                                />       */}
 
                                 <OauthButton
                                     arial-label="Github"

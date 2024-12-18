@@ -25,7 +25,7 @@ async function redirectToService(service: string) {
 
 async function askForToken(service: string, code: string | null) {
     try {
-        await oauhLogin({ service: service, code: code }) // Encore à voir si c bon !
+        await oauhLogin({ service: service, code: code, redirect_uri: "http://127.0.0.1:8081" })
 
         return true;
     } catch (error) {
@@ -39,11 +39,11 @@ export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
 
     useEffect(() => {
         const url = new URL(window.location.href);
-        const paramValue: string | null = url.searchParams.get('code');
+        const code: string | null = url.searchParams.get('code');
 
-        console.log(paramValue)
-        if (paramValue) {
-            askForToken(service, paramValue)
+        if (code) {
+            console.log(service, code)
+            askForToken(service, code)
                 .then(() => router.push("/services"))
                 .catch((error) => console.log(error));
         }

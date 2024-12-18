@@ -8,6 +8,7 @@
 package controllers
 
 import (
+	"area/api/controllers/log_types"
 	"area/api/middleware"
 	"area/db"
 	"area/models"
@@ -26,12 +27,6 @@ import (
 type credentials struct {
 	Email    string `bun:"email" json:"email"`
 	Password string `bun:"password" json:"password"`
-}
-
-// User logins infos send to the client as a login response
-type UserLogInfos struct {
-	Token  string `json:"token"`
-	UserID uint   `json:"user_id"`
 }
 
 // Account godoc
@@ -70,7 +65,7 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 			log.Printf("Error: %v\n", err)
 			return
 		}
-		b, err := json.Marshal(UserLogInfos{Token: middleware.CreateToken(jwtauth, us.ID), UserID: us.ID})
+		b, err := json.Marshal(log_types.UserLogInfos{Token: middleware.CreateToken(jwtauth, us.ID), UserID: us.ID})
 		if err != nil {
 			utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
