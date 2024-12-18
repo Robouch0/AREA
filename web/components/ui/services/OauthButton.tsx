@@ -47,7 +47,7 @@ export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
                 .then(() => router.push("/services"))
                 .catch((error) => console.log(error));
         }
-    }, [router]);
+    }, [router, service]);
 
     return (
         <Button
