@@ -1,5 +1,5 @@
 /** Type of ingredients possible. */
-type IngredientPossible = "string" | "int" | "bool" | "time"
+export type IngredientPossible = "string" | "int" | "bool" | "time"
 
 /**
  *  This is a representation of an Area Microservices.
@@ -8,7 +8,7 @@ type IngredientPossible = "string" | "int" | "bool" | "time"
  *
  *  @member {Ingredients} ingredients of the microservice
  */
-interface AreaMicroservices {
+export interface AreaMicroservices {
     /** Name of the microservice */
     name: string,
     /** Name of the microservice server side */
@@ -23,7 +23,7 @@ interface AreaMicroservices {
 /**
  *  This is a representation of an Area Service.
  *
- *  @interface AreaServices
+ *  @interface AreaServicesk
  *
  *  @member {AreaMicroservices} Microservices associated with the area
  */

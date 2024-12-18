@@ -2,6 +2,7 @@
 import {ComboboxDemo} from "@/components/ui/utils/ComboboxDemo";
 import * as React from "react";
 import {renderIngredientsInput, renderMicroservices} from "@/components/pages/create/CreatePage";
+import {AreaMicroservices, AreaServices} from "@/api/types/areaStatus";
 
 export default function MicroserviceCreateZone({
         services,

@@ -8,6 +8,8 @@ import {create} from "@/api/createArea";
 import Form from 'next/form';
 import MicroserviceCreateZone from "@/components/ui/services/MicroserviceCreateZone";
 import {getColorForService} from "@/lib/utils";
+import {AreaServices, AreaMicroservices, IngredientPossible} from "@/api/types/areaStatus";
+import {AreaCreateBody} from "@/api/types/areaCreateBody";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -180,7 +182,7 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
         create(payload).catch(error => { console.log(error)});
     };
 
-    // Create an redirect to the applets page or other
+    // Create a redirect to the applets page or other
     return (
         <Form action={handleSubmit}>
             <div className="pt-20 my-16 bg-white h-full w-full flex flex-col justify-center items-center p-8">

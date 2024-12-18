@@ -18,6 +18,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/utils/Popover"
+import {AreaServices} from "@/api/types/areaStatus";
 
 export function ComboboxDemo({services, serviceName, setValueAction}: {
     services: AreaServices[];
