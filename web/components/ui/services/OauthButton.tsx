@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import { oauhLogin } from "@/api/authentification";
+import { Button } from '@/components/ui/utils/Button';
 
 interface IOAuthButton {
     className: string,

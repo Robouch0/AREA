@@ -10,15 +10,14 @@ export interface User {
 }
 
 
-
 export default function Navbar({prop}: {prop:User}) {
-    const img = prop.profilePicture || "/default-avatar.png";
+    const img: string = prop.profilePicture || "/default-avatar.png";
     return (
         <div className="flex flex-row">
             <div className="p-4 ml-auto">
                 <button
                     className="focus-visible:border-slate-500 focus-visible:border-4 rounded-3xl focus-visible:outline-none focus-visible:p-1"
-                    onClick={() => (redirect("/services/profile"))}
+                    onClick={(): never => (redirect("/services/profile"))}
                 >
                     <Image
                         className="border-4 rounded-b-full rounded-t-full border-black hover:animate-pulse hover:ease-in "

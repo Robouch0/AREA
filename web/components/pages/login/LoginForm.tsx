@@ -1,19 +1,20 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { FormData, UserSchema, ValidFieldNames } from "@/lib/typeLogin";
-import FormField from "@/components/ui/formField";
+import FormField from "@/components/ui/utils/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 import { FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
-import { OauthButton } from "@/components/ui/OauthButton";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { OauthButton } from "@/components/ui/services/OauthButton";
+import { Button } from "@/components/ui/utils/Button";
 
 function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
-    const router = useRouter();
+    const router: AppRouterInstance = useRouter();
     const [errorLogin, setErrorLogin] = useState(false);
 
     const {
@@ -25,9 +26,9 @@ function LoginForm() {
         resolver: zodResolver(UserSchema),
     });
 
-    useEffect(() => {
+    useEffect((): void => {
         if (errorLogin) {
-            setTimeout(() => {
+            setTimeout((): void => {
                 setErrorLogin(false);
             }, 4000);
         }
@@ -43,8 +44,8 @@ function LoginForm() {
                 email: "email",
                 password: "password",
             };
-            const fieldWithError = Object.keys(fieldErrorMapping).find(
-                (field) => errors[field]
+            const fieldWithError: string | undefined = Object.keys(fieldErrorMapping).find(
+                (field: string) => errors[field]
             );
             if (fieldWithError) {
                 setError(fieldErrorMapping[fieldWithError], {
@@ -52,7 +53,7 @@ function LoginForm() {
                     message: errors[fieldWithError],
                 });
             } else {
-                const connected = await login(data.email, data.password);
+                const connected: boolean = await login(data.email, data.password);
                 console.log(connected);
                 router.push('/services');
             }
@@ -65,8 +66,11 @@ function LoginForm() {
     return (
         <>
             {errorLogin ?
-                <div className="text-black bg-red-700 w-full h-24 flex flex-col justify-center items-center animate-pulse ease-in-out">
-                    <p className="font-mono md:text-4xl text-xl font-bold"> Le mot de passe et l&#39;email ne correspondent pas </p>
+                <div
+                    className="text-black bg-red-700 w-full h-24 flex flex-col justify-center items-center animate-pulse ease-in-out"
+                >
+                    <p className="font-mono md:text-4xl text-xl font-bold"> Le mot de passe et l&#39;email ne
+                        correspondent pas </p>
                 </div>
                 : <> </>}
             <div className="flex items-center justify-center min-h-screen bg-white">
@@ -99,7 +103,7 @@ function LoginForm() {
                                 />
                                 <Button
                                     type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={(): void => setShowPassword(!showPassword)}
                                     className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
@@ -120,7 +124,8 @@ function LoginForm() {
                             <div className="inline-flex items-center justify-center w-full">
                                 <hr className="w-2/3 h-px my-8 bg-black border-0 dark:bg-gray-700" />
                                 <div
-                                    className="absolute px-3 text-gray-400 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900">or
+                                    className="absolute px-3 text-gray-400 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900"
+                                >or
                                 </div>
                             </div>
                             <div className="max-w-md w-full space-y-4">
@@ -133,19 +138,20 @@ function LoginForm() {
                                     <p className=" mx-3 text-2xl font-semibold"> Continuer avec Facebook </p>
                                 </Button>
 
-                                {/* <OauthButton
+
+                                <OauthButton
                                     arial-label="Google"
                                     service="google"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGoogle className="w-12 h-12"/>}
-                                />       */}
+                                />
 
-                                <OauthButton
+                                {/* <OauthButton
                                     arial-label="Github"
                                     service="github"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGithub className="w-12 h-12"/>}
-                                />
+                                    ServiceIcon={<FaGithub className="w-12 h-12" />}
+                                /> */}
 
                                 <div className="flex flex-row font-bold">
                                     <p>
@@ -153,7 +159,7 @@ function LoginForm() {
                                     </p>
                                     <button
                                         className="mx-2 underline-offset-1 underline font-bold hover:cursor-pointer focus-visible:border-4 focus-visible:border-slate-700 focus-visible:outline-none focus-visible:p-2 rounded-3xl"
-                                        onClick={() => router.push('/register')}
+                                        onClick={(): void => router.push('/register')}
                                         tabIndex={0}
                                     >
                                         Inscrivez-vous ICI !
@@ -168,4 +174,5 @@ function LoginForm() {
         </>
     );
 }
+
 export default LoginForm;

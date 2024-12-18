@@ -1,18 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/utils/Input";
+import {Button} from "@/components/ui/utils/Button";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
-import { ScrollArea } from "@/components/ui/scroll-area"
+import {ScrollArea} from "@/components/ui/utils/Scroll-area"
 import {useState} from "react";
-import {ServiceIcon} from "@/components/ui/serviceIcon";
+import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
 
-export default function ProfilePage({email, first_name, last_name, password} : userInfo) {
+export default function ProfilePage({email, first_name, last_name, password}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
 
-    const tags = [
+    const tags : string[] = [
         "Github",
         "Google",
         "Twitter",
@@ -22,12 +22,15 @@ export default function ProfilePage({email, first_name, last_name, password} : u
 
     return (
         <>
-            <div className="w-full h-full flex flex-col bg-white justify-center items-center my-16">
+            <div className="pt-10 w-full h-full flex flex-col bg-white justify-center items-center my-16">
                 <h1 className="text-6xl font-bold p-8"> Account Settings </h1>
                 <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700"/>
-                <div className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between">
+                <div
+                    className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between"
+                >
                     <div
-                        className="p-6 rounded-3xl w-full lg:w-1/2 bg-slate-700 h-full flex flex-col justify-center items-center gap-4">
+                        className="p-6 rounded-3xl w-full lg:w-1/2 bg-slate-700 h-full flex flex-col justify-center items-center gap-4"
+                    >
                         <Image
                             className="border-4 rounded-b-full rounded-t-full border-black my-6"
                             alt="profile picture"
@@ -74,7 +77,7 @@ export default function ProfilePage({email, first_name, last_name, password} : u
                             />
                             <Button
                                 type="button"
-                                onClick={() => setShowPassword(!showPassword)}
+                                onClick={() : void => setShowPassword(!showPassword)}
                                 className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
                             >
@@ -82,15 +85,18 @@ export default function ProfilePage({email, first_name, last_name, password} : u
                                     <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
                             </Button>
                         </div>
-                    </div>userData
-userData
+                    </div>
+                    userData
+                    userData
 
                     <div
-                        className="rounded-3xl w-full lg:w-1/2 bg-slate-700 flex flex-col justify-center items-center">
+                        className="rounded-3xl w-full lg:w-1/2 bg-slate-700 flex flex-col justify-center items-center"
+                    >
                         <h3 className="p-4 text-white text-4xl font-bold mb-20"> Linked Accounts</h3>
                         <p className="text-white text-xl text-wrap font-bold p-4"> You can manage here all your external
                             accounts linked to AREA</p>
-                        <p className="text-white text-xl text-wrap pb-4 mt-2 mb-12"> Scroll through the supported services </p>
+                        <p className="text-white text-xl text-wrap pb-4 mt-2 mb-12"> Scroll through the supported
+                            services </p>
 
                         <ScrollArea className="h-80 w-72 lg:w-96 bg-white rounded-md border opacity-90 mb-4">
                             <h4 className="mb-4 text-3xl leading-none text-black font-bold m-4"> Services </h4>

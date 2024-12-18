@@ -8,10 +8,11 @@ import { FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle } from "react-icons/f
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/api/authentification";
-import { OauthButton } from "@/components/ui/OauthButton";
+import { OauthButton } from "@/components/ui/services/OauthButton";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 function RegisterForm() {
-    const router = useRouter();
+    const router: AppRouterInstance = useRouter();
     const [accountCreated, setAccountCreated] = useState(false);
 
     const {
@@ -21,9 +22,9 @@ function RegisterForm() {
     } = useForm<RegisterFormData>({
         resolver: zodResolver(RegisterUserSchema),
     });
-    useEffect(() => {
+    useEffect(() : void => {
         if (accountCreated) {
-            setTimeout(() => {
+            setTimeout((): void => {
                 setAccountCreated(false);
                 router.push('/services')
             }, 2300);
@@ -33,7 +34,7 @@ function RegisterForm() {
 
     const onSubmit = async (data: RegisterFormData) => {
         try {
-            const connected = await signUp(data.email, data.password, data.firstName, data.lastName);
+            const connected : boolean = await signUp(data.email, data.password, data.firstName, data.lastName);
             console.log(connected);
             setAccountCreated(true);
         } catch (error) {
@@ -101,7 +102,7 @@ function RegisterForm() {
                                 />
                                 <Button
                                     type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={(): void => setShowPassword(!showPassword)}
                                     className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
@@ -122,7 +123,7 @@ function RegisterForm() {
                                 />
                                 <Button
                                     type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={() : void => setShowPassword(!showPassword)}
                                     className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
@@ -176,13 +177,12 @@ function RegisterForm() {
                                     </p>
                                     <button
                                         className="mb-8 mx-2 underline-offset-1 underline font-bold hover:cursor-pointer focus-visible:border-4 focus-visible:border-slate-700 focus-visible:outline-none focus-visible:p-2 rounded-3xl"
-                                        onClick={() => router.push('/')}
+                                        onClick={() : void => router.push('/')}
                                         tabIndex={0}
                                     >
                                         Connectez-vous ICI !
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </form>
