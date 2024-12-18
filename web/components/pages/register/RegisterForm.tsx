@@ -1,15 +1,15 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { RegisterFormData, RegisterUserSchema } from "@/lib/typeRegister";
-import FormField from "@/components/ui/formField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/api/authentification";
 import { OauthButton } from "@/components/ui/services/OauthButton";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { Button } from "@/components/ui/utils/Button";
+import FormField from "@/components/ui/utils/FormField";
 
 function RegisterForm() {
     const router: AppRouterInstance = useRouter();
