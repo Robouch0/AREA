@@ -17,6 +17,11 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip CI]')"
     name: Compile web page frontend
     uses: ./.github/workflows/web.yml
+  check-server-compilation:
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    name: Compile go server
+    uses: ./.github/workflows/server.yml
+
 
 
   push_to_mirror:
