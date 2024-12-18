@@ -31,7 +31,7 @@ type githubUser struct {
 
 type githubAccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
-	Scope       string `json:""`
+	Scope       string `json:"scope"`
 }
 
 func (git *GithubOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccessInfos, error) {
@@ -74,7 +74,10 @@ func (git *GithubOAuth) HandleUserTokens(oauthInfo OAuthAccessInfos, w *http.Res
 	}
 	var gitUserInfos []githubUser
 	err = json.NewDecoder(result.Body).Decode(&gitUserInfos)
-	log.Println(gitUserInfos)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	if len(gitUserInfos) == 0 {
 		return errors.New("No user emails given from github")
 	}

@@ -19,6 +19,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email"
+)
+
 func createOAuthRedirect(consentURL, provider, redirectURI string) string {
 	return fmt.Sprintf(consentURL, os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(provider))), redirectURI)
 }
@@ -33,17 +37,18 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 
 	oauthUrls["github"] = OAuthURLs{
 		RedirectURL: "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email,repo,workflow", // Mettre plus de droits précis
-
 		OAuth: &GithubOAuth{
 			AccessTokenURL:  "https://github.com/login/oauth/access_token",
 			EmailRequestURL: "https://api.github.com/user/emails",
 		},
 	}
 	oauthUrls["google"] = OAuthURLs{ // Look again which scope is good for google for user
-		RedirectURL:     "https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&scope=https://www.googleapis.com/auth/gmail.modify&response_type=code",
-		AccessTokenURL:  "https://oauth2.googleapis.com/token", // https://accounts.google.com/o/oauth2/token
-		AccessTokenBody: `{ "client_id" : "%s", "client_secret" : "%s", "code" : "%s", redirect_uri: "%s", grant_type: "authorization_code" }`,
-		EmailRequestURL: "hthttps://www.googleapis.com/plus/v1/people/me",
+		RedirectURL: fmt.Sprintf(
+			"https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&scope=%s&response_type=code", "%s", "%s", googleScopes),
+		OAuth: &GoogleOAuth{
+			AccessTokenURL:  "https://oauth2.googleapis.com/token",
+			EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo", // https://www.googleapis.com/plus/v1/people/me
+		},
 	}
 	return oauthUrls
 }

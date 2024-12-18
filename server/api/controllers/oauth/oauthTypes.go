@@ -23,14 +23,8 @@ type OAuthRequest struct {
 }
 
 type OAuthURLs struct {
-	RedirectURL string `json:"redirect_uri"`
-
-	OAuth OAuthProvider `json:"oauth_provider"`
-
-	AccessTokenURL  string `json:"access_token_uri"`
-	AccessTokenBody string `json:"body"`
-
-	EmailRequestURL string `json:"email_req_uri"`
+	RedirectURL string        `json:"redirect_uri"`
+	OAuth       OAuthProvider `json:"oauth_provider"`
 }
 
 type OAuthAccessInfos struct {
@@ -38,7 +32,7 @@ type OAuthAccessInfos struct {
 	Scope       string `json:"scope"`
 }
 
-type OAuthProvider interface { // Find better name :(
+type OAuthProvider interface {
 	GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccessInfos, error)
 
 	// Take the oauthInfo, the responseWritter and the JWT Token to get the informations
