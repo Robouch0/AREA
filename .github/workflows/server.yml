@@ -15,6 +15,7 @@ jobs:
 
       - name: Install dependencies
         run: go mod download
+        working-directory: ./server
 
       - name: Build project
         run: go build -v
