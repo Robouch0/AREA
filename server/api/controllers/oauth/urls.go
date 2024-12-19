@@ -50,10 +50,13 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 			EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo", // https://www.googleapis.com/plus/v1/people/me
 		},
 	}
-	// oauthUrls["discord"] = OAuthURLs{
-	// 	RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=email",
-	// 	// OAuth: ,
-	// }
+	oauthUrls["discord"] = OAuthURLs{
+		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=email,identify",
+		OAuth: &DiscordOAuth{
+			AccessTokenURL:  "https://discord.com/api/oauth2/token",
+			EmailRequestURL: "https://discord.com/api/users/@me",
+		},
+	}
 	return oauthUrls
 }
 
