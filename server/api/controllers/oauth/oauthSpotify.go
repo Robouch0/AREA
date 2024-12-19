@@ -44,22 +44,21 @@ func (spotify *SpotifyOAuth) makeHTTPTokenRequest(OAuthCode *OAuthRequest) (*htt
 	form.Set("code", OAuthCode.Code)
 	form.Set("redirect_uri", OAuthCode.RedirectURI)
 
-	req, reqError := http.NewRequest("POST", spotify.AccessTokenURL, nil)
+	req, reqError := http.NewRequest("POST", spotify.AccessTokenURL, strings.NewReader(form.Encode()))
 	if reqError != nil {
 		return nil, reqError
 	}
 
 	clientID, errID := utils.GetEnvParameter(fmt.Sprintf("%s_ID", strings.ToUpper(OAuthCode.Service)))
 	clientSecret, errSecret := utils.GetEnvParameter(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service)))
-	if err := cmp.Or(&errID, &errSecret); err != nil {
+	if err := cmp.Or(&errID, &errSecret); *err != nil {
 		return nil, *err
 	}
 
-	req.PostForm = form
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("content-type", "application/x-www-form-urlencoded")
+	req.Header.Set("Authorization", "Basic "+utils.EncodeToBase64(clientID+":"+clientSecret))
 	req.Header.Set("Accept", "application/json")
 
-	req.Header.Set("Authorization", "Basic "+utils.EncodeToBase64(clientID+":"+clientSecret))
 	return req, nil
 }
 
@@ -74,6 +73,7 @@ func (spotify *SpotifyOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAcce
 		return nil, resperr
 	}
 	if response.StatusCode != 200 {
+		log.Println(response)
 		return nil, errors.New(response.Status)
 	}
 

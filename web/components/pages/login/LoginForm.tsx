@@ -4,7 +4,7 @@ import { FormData, UserSchema, ValidFieldNames } from "@/lib/typeLogin";
 import FormField from "@/components/ui/utils/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { FaDiscord, FaEye, FaEyeSlash, FaFacebook, FaGoogle } from "react-icons/fa";
+import { FaDiscord, FaEye, FaEyeSlash, FaFacebook, FaGoogle, FaSpotify } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
@@ -147,11 +147,18 @@ function LoginForm() {
                                 /> */}
 
                                 <OauthButton
+                                    arial-label="Spotify"
+                                    service="spotify"
+                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaSpotify className="w-12 h-12" />}
+                                />
+
+                                {/* <OauthButton
                                     arial-label="Discord"
                                     service="discord"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-purple-500 hover:bg-purple-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaDiscord className="w-12 h-12" />}
-                                />
+                                /> */}
 
                                 {/* <OauthButton
                                     arial-label="Github"
