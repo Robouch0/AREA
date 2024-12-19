@@ -71,7 +71,6 @@ func (git *GithubService) UpdateRepository(_ context.Context, req *gRPCService.U
 		return nil, errors.New("Some required parameters are empty")
 	}
 
-	url := fmt.Sprintf("https://api.github.com/repos/%v/%v", req.Owner, req.Repo)
 	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
 	if err != nil {
 		return nil, err
@@ -81,6 +80,7 @@ func (git *GithubService) UpdateRepository(_ context.Context, req *gRPCService.U
 	if err != nil {
 		return nil, err
 	}
+	url := fmt.Sprintf("https://api.github.com/repos/%v/%v", req.Owner, req.Repo)
 	pathRequest, err := http.NewRequest("PATCH", url, bytes.NewBuffer(b))
 	pathRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
 	pathRequest.Header.Add("Accept", "application/vnd.github+json")

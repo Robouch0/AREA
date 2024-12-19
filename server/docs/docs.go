@@ -108,7 +108,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserLogInfos"
+                            "$ref": "#/definitions/log_types.UserLogInfos"
                         }
                     },
                     "401": {
@@ -143,11 +143,15 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jwtauth.JWTAuth"
+                            "$ref": "#/definitions/log_types.UserLogInfos"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {}
                     },
                     "500": {
@@ -170,6 +174,22 @@ const docTemplate = `{
                     "Account"
                 ],
                 "summary": "get Oauth url by service",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Redirect URL for the oauth",
+                        "name": "redirect_uri",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Name of the service to use oauth with",
+                        "name": "service",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -179,6 +199,10 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {}
                     }
                 }
@@ -341,17 +365,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controllers.UserLogInfos": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "controllers.credentials": {
             "type": "object",
             "properties": {
@@ -380,8 +393,16 @@ const docTemplate = `{
                 }
             }
         },
-        "jwtauth.JWTAuth": {
-            "type": "object"
+        "log_types.UserLogInfos": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
         },
         "models.Action": {
             "type": "object",
