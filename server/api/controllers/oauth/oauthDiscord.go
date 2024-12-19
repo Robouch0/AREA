@@ -43,6 +43,7 @@ func (discord *DiscordOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAcce
 	values.Set("client_secret", os.Getenv(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service))))
 	values.Set("code", OAuthCode.Code)
 	values.Set("redirect_uri", OAuthCode.RedirectURI)
+
 	response, resperr := http.PostForm(discord.AccessTokenURL, values)
 
 	if resperr != nil {
@@ -72,10 +73,10 @@ func (discord *DiscordOAuth) HandleUserTokens(oauthInfo OAuthAccessInfos, w *htt
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", oauthInfo.AccessToken))
 
 	result, err := client.Do(request)
-
 	if err != nil {
 		return err
 	}
+
 	var discordUserInfo discordUser // Maybe later fetch username and other
 	err = json.NewDecoder(result.Body).Decode(&discordUserInfo)
 	if err != nil {

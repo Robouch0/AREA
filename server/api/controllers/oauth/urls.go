@@ -57,6 +57,14 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 			EmailRequestURL: "https://discord.com/api/users/@me",
 		},
 	}
+	oauthUrls["spotify"] = OAuthURLs{
+		RedirectURL: `https://accounts.spotify.com/authorize?
+			client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private user-read-email`, // Maybe add state later
+		OAuth: &SpotifyOAuth{
+			AccessTokenURL:  "https://accounts.spotify.com/api/token",
+			EmailRequestURL: "https://api.spotify.com/v1/me",
+		},
+	}
 	return oauthUrls
 }
 

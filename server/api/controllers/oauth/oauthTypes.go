@@ -65,7 +65,6 @@ func AccessTokenPost(
 	req.Header = header
 	req.Header.Set("Accept", "application/json")
 
-	log.Println(req)
 	response, resperr := http.DefaultClient.Do(req)
 	if resperr != nil {
 		return nil, resperr
