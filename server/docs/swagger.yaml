@@ -1,11 +1,4 @@
 definitions:
-  controllers.UserLogInfos:
-    properties:
-      token:
-        type: string
-      user_id:
-        type: integer
-    type: object
   controllers.credentials:
     properties:
       email:
@@ -24,7 +17,12 @@ definitions:
       password:
         type: string
     type: object
-  jwtauth.JWTAuth:
+  log_types.UserLogInfos:
+    properties:
+      token:
+        type: string
+      user_id:
+        type: integer
     type: object
   models.Action:
     properties:
@@ -208,7 +206,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.UserLogInfos'
+            $ref: '#/definitions/log_types.UserLogInfos'
         "401":
           description: Unauthorized
           schema:
@@ -231,9 +229,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jwtauth.JWTAuth'
+            $ref: '#/definitions/log_types.UserLogInfos'
         "401":
           description: Unauthorized
+          schema: {}
+        "404":
+          description: Not Found
           schema: {}
         "500":
           description: Internal Server Error
@@ -246,6 +247,17 @@ paths:
       consumes:
       - application/json
       description: get the oauth redirect url for a service
+      parameters:
+      - description: Redirect URL for the oauth
+        in: query
+        name: redirect_uri
+        required: true
+        type: string
+      - description: Name of the service to use oauth with
+        in: path
+        name: service
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -255,6 +267,9 @@ paths:
             type: string
         "400":
           description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
           schema: {}
       summary: get Oauth url by service
       tags:
