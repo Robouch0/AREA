@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -40,7 +41,18 @@ type OAuthProvider interface {
 	HandleUserTokens(oauthInfo OAuthAccessInfos, w *http.ResponseWriter, JwtTok *jwtauth.JWTAuth) error
 }
 
-func AccessTokenPost(OAuthCode *OAuthRequest, accessTokenURI string, requestBodyMap map[string]string) (*http.Response, error) {
+func NewContentTypeHeader(contentType string) http.Header {
+	h := http.Header{}
+	h.Set("Content-Type", contentType)
+	return h
+}
+
+func AccessTokenPost(
+	OAuthCode *OAuthRequest,
+	accessTokenURI string,
+	requestBodyMap map[string]string,
+	header http.Header,
+) (*http.Response, error) {
 	requestJSON, err := json.Marshal(requestBodyMap)
 	if err != nil {
 		return nil, err
@@ -50,14 +62,16 @@ func AccessTokenPost(OAuthCode *OAuthRequest, accessTokenURI string, requestBody
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/json")
+	req.Header = header
 	req.Header.Set("Accept", "application/json")
 
+	log.Println(req)
 	response, resperr := http.DefaultClient.Do(req)
 	if resperr != nil {
 		return nil, resperr
 	}
-	if response.Status != "200 OK" {
+	if response.StatusCode != 200 {
+		log.Println("RES: ", response)
 		return nil, errors.New("Invalid status")
 	}
 	return response, nil

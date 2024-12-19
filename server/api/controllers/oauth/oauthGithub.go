@@ -25,13 +25,13 @@ type GithubOAuth struct {
 	EmailRequestURL string
 }
 
-type githubUser struct {
-	Email string `json:"email"`
-}
-
 type githubAccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	Scope       string `json:"scope"`
+}
+
+type githubUser struct {
+	Email string `json:"email"`
 }
 
 func (git *GithubOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccessInfos, error) {
@@ -42,7 +42,7 @@ func (git *GithubOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccessInf
 		"redirect_uri":  OAuthCode.RedirectURI,
 	}
 
-	resp, err := AccessTokenPost(OAuthCode, git.AccessTokenURL, requestBodyMap)
+	resp, err := AccessTokenPost(OAuthCode, git.AccessTokenURL, requestBodyMap, NewContentTypeHeader("application/json"))
 	if err != nil {
 		return nil, err
 	}
