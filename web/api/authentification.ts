@@ -48,7 +48,7 @@ export async function checkAuthentification(token: string | undefined) : Promise
         console.log(response.data);
         return true;
     } catch (error) {
-        console.info("Authentication check failed:", error);
+        // console.info("Authentication check failed:", error);
         return false;
     }
 }
