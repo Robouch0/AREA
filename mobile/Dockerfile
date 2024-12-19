@@ -8,6 +8,10 @@ RUN flutter pub get
 
 COPY . .
 
+# Modify the env to the prod one
+# Later do a more suitable switch from dev to prod (vice versa)
+RUN mv .env.prod .env
+
 RUN flutter clean
 RUN flutter pub get
 
