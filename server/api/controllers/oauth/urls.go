@@ -50,10 +50,21 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 			EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo", // https://www.googleapis.com/plus/v1/people/me
 		},
 	}
-	// oauthUrls["discord"] = OAuthURLs{
-	// 	RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=email",
-	// 	// OAuth: ,
-	// }
+	oauthUrls["discord"] = OAuthURLs{
+		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email",
+		OAuth: &DiscordOAuth{
+			AccessTokenURL:  "https://discord.com/api/oauth2/token",
+			EmailRequestURL: "https://discord.com/api/users/@me",
+		},
+	}
+	oauthUrls["spotify"] = OAuthURLs{
+		RedirectURL: `https://accounts.spotify.com/authorize?
+			client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private user-read-email`, // Maybe add state later
+		OAuth: &SpotifyOAuth{
+			AccessTokenURL:  "https://accounts.spotify.com/api/token",
+			EmailRequestURL: "https://api.spotify.com/v1/me",
+		},
+	}
 	return oauthUrls
 }
 

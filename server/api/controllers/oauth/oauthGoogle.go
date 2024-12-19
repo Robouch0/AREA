@@ -25,13 +25,13 @@ type GoogleOAuth struct {
 	EmailRequestURL string
 }
 
-type googleUserInfo struct {
-	Email string `json:"email"`
-}
-
 type googleAccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	Scope       string `json:"scope"`
+}
+
+type googleUserInfo struct {
+	Email string `json:"email"`
 }
 
 // AccessTokenBody: `{ "client_id" : "%s", "client_secret" : "%s", "code" : "%s", redirect_uri: "%s", grant_type: "authorization_code" }`,
@@ -45,7 +45,7 @@ func (google *GoogleOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccess
 		"grant_type":    "authorization_code",
 	}
 
-	resp, err := AccessTokenPost(OAuthCode, google.AccessTokenURL, requestBodyMap)
+	resp, err := AccessTokenPost(OAuthCode, google.AccessTokenURL, requestBodyMap, NewContentTypeHeader("application/json"))
 	if err != nil {
 		return nil, err
 	}
