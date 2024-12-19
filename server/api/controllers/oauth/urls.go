@@ -50,17 +50,25 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 			EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo", // https://www.googleapis.com/plus/v1/people/me
 		},
 	}
+	// oauthUrls["discord"] = OAuthURLs{
+	// 	RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=email",
+	// 	// OAuth: ,
+	// }
 	return oauthUrls
 }
 
 // Sign-up OAuth godoc
+//
 // @Summary      get Oauth url by service
 // @Description  get the oauth redirect url for a service
 // @Tags         Account
 // @Accept       json
 // @Produce      json
+// @Param redirect_uri query string true "Redirect URL for the oauth"
+// @Param service path string true "Name of the service to use oauth with"
 // @Success      200  {object}  string
 // @Failure      400  {object}  error
+// @Failure      404  {object}  error
 // @Router       /oauth/{service} [get]
 func GetUrl(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 
@@ -78,6 +86,8 @@ func GetUrl(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 			} else {
 				utils.WriteHTTPResponseErr(&w, 400, "Service does not exist")
 			}
+			return
 		}
+		utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthservice))
 	}
 }

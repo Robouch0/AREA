@@ -36,7 +36,7 @@ type credentials struct {
 // @Accept       json
 // @Produce      json
 // @Param 		 credentials body	credentials	true 	"Credentials of the user who wants to connect"
-// @Success      200  {object}  UserLogInfos
+// @Success      200  {object}  log_types.UserLogInfos
 // @Failure      401  {object}  string
 // @Failure      500  {object}  string
 // @Router       /login/ [post]

@@ -10,10 +10,13 @@ package oauth
 import (
 	"area/utils"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
+
+	_ "area/api/controllers/log_types"
 )
 
 // Sign-up OAuth godoc
@@ -22,9 +25,10 @@ import (
 // @Tags         Account
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  jwtauth.JWTAuth
+// @Success      200  {object}  log_types.UserLogInfos
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error
+// @Failure      404  {object}  error
 // @Router       /oauth/ [post]
 func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string]OAuthURLs) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -48,6 +52,8 @@ func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string]OAuthURLs) http.Han
 				utils.WriteHTTPResponseErr(&w, 500, err.Error())
 				return
 			}
+			return
 		}
+		utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthCode.Service))
 	}
 }
