@@ -47,6 +47,7 @@ func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string]OAuthURLs) http.Han
 				utils.WriteHTTPResponseErr(&w, 500, err.Error())
 				return
 			}
+			log.Println("Token: ", toks.AccessToken)
 			if err = oauth.OAuth.HandleUserTokens(*toks, &w, JwtTok); err != nil {
 				log.Println(err)
 				utils.WriteHTTPResponseErr(&w, 500, err.Error())

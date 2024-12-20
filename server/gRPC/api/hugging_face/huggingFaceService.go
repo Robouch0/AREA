@@ -8,6 +8,7 @@
 package huggingFace
 
 import (
+	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
 
@@ -18,19 +19,33 @@ import (
 	"net/http"
 )
 
+const (
+	googleModelURL = "https://api-inference.huggingface.co/models/google/gemma-2-2b-it"
+)
+
 type HuggingFaceService struct {
+	tokenDb      *db.TokenDb
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedHuggingFaceServiceServer
 }
 
-func NewHuggingFaceService() HuggingFaceService {
-	return HuggingFaceService{reactService: nil}
+func NewHuggingFaceService() (*HuggingFaceService, error) {
+	tokenDb, err := db.InitTokenDb()
+	if err != nil {
+		return nil, err
+	}
+
+	return &HuggingFaceService{tokenDb: tokenDb, reactService: nil}, nil
 }
 
-func (hfServ *HuggingFaceService) LaunchTextGeneration(_ context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {
-	url := "https://api-inference.huggingface.co/models/google/gemma-2-2b-it"
-	bearerTok, err := utils.GetEnvParameterToBearer("API_HUGGING_FACE")
+func (hfServ *HuggingFaceService) LaunchTextGeneration(ctx context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "HFService")
+	if errClaim != nil {
+		return nil, errClaim
+	}
+
+	tokenInfo, err := hfServ.tokenDb.GetUserTokenByProvider(int64(userID), "hf")
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +54,8 @@ func (hfServ *HuggingFaceService) LaunchTextGeneration(_ context.Context, req *g
 	if err != nil {
 		return nil, err
 	}
-	postRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
-	postRequest.Header.Set("Authorization", bearerTok)
+	postRequest, err := http.NewRequest("POST", googleModelURL, bytes.NewBuffer(b))
+	postRequest.Header.Set("Authorization", tokenInfo.AccessToken)
 	postRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
 	postRequest.Header.Add("Accept", "application/json")
 

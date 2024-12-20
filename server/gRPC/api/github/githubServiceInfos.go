@@ -30,7 +30,7 @@ type RepoFileInfo struct {
 	Path  string `json:"path"`
 }
 
-func (git *GithubService) createFileInfos(Owner string, Repo string, Path string) (*RepoFileInfo) {
+func (git *GithubService) createFileInfos(Owner string, Repo string, Path string) *RepoFileInfo {
 	file := new(RepoFileInfo)
 
 	file.Owner = Owner
@@ -39,10 +39,11 @@ func (git *GithubService) createFileInfos(Owner string, Repo string, Path string
 	return file
 }
 
-func (git *GithubService) getRepositoryFileInfos(bearerTok string, req *RepoFileInfo) (*FileInfos, error) {
+// Acccess Token must not be a bearer token.
+func (git *GithubService) getRepositoryFileInfos(accessToken string, req *RepoFileInfo) (*FileInfos, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
 	postRequest, err := http.NewRequest("GET", url, nil)
-	postRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	postRequest.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
 	postRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}

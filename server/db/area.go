@@ -70,3 +70,18 @@ func (area *AreaDB) GetAreaByActionID(ActionID uint) (*models.Area, error) {
 	}
 	return data, nil
 }
+
+func (area *AreaDB) GetUserAreaByActionID(UserId, ActionID uint) (*models.Area, error) {
+	data := new(models.Area)
+	err := area.Db.NewSelect().
+		Model(data).
+		Relation("Action", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.Where("area_id = ?", ActionID)
+		}).
+		Where("user_id = ?", UserId).
+		Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}

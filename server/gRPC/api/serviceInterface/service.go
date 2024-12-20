@@ -7,6 +7,8 @@
 
 package serviceinterface
 
+import "area/models"
+
 type ActionResponseStatus struct {
 	Description string `json:"description"`
 	ActionID    int    `json:"action_id"`
@@ -17,7 +19,7 @@ type ReactionResponseStatus struct {
 	ReactionID  int    `json:"reaction_id"`
 }
 
-type MicroserviceLauncher = map[string]func(ingredients map[string]any, prevOutput []byte) (*ReactionResponseStatus, error)
+type MicroserviceLauncher = map[string]func(ingredients map[string]any, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
 
 // Map with the ingredient name mapped with his possible value type (named as a string)
 //
@@ -46,7 +48,8 @@ type ServiceStatus struct {
 type ClientService interface {
 	ListServiceStatus() (*ServiceStatus, error)
 
-	SendAction(body map[string]any, actionId int) (*ActionResponseStatus, error)
+	SendAction(body models.AreaScenario, actionId, userID int) (*ActionResponseStatus, error)
+
 	// prevOutput is an array of byte because output can be raw
-	TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*ReactionResponseStatus, error)
+	TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
 }
