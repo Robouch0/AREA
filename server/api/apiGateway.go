@@ -12,6 +12,7 @@ import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/github"
 	"area/gRPC/api/hello"
+	"area/gRPC/api/spotify"
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
@@ -43,6 +44,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	m["github"] = github.NewGithubClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
+	m["spotify"] = spotify.NewSpotifyClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),

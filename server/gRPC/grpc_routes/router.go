@@ -11,6 +11,7 @@ import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/github"
 	"area/gRPC/api/hello"
+	"area/gRPC/api/spotify"
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
 	services "area/protogen/gRPC/proto"
@@ -37,6 +38,7 @@ func LaunchServices() {
 	reactService, errReact := reaction.NewReactionService()
 	huggingFaceService := huggingFace.NewHuggingFaceService()
 	githubService := github.NewGithubService()
+    spotifyService := spotify.NewSpotifyService()
 
 	if err = cmp.Or(errDt, errReact); err != nil {
 		log.Println(err)
@@ -46,6 +48,7 @@ func LaunchServices() {
 	services.RegisterDateTimeServiceServer(s, dtService)
 	services.RegisterHuggingFaceServiceServer(s, &huggingFaceService)
 	services.RegisterGithubServiceServer(s, &githubService)
+	services.RegisterSpotifyServiceServer(s, &spotifyService)
 	services.RegisterReactionServiceServer(s, reactService)
 
 	var wg sync.WaitGroup
