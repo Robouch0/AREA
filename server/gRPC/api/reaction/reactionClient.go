@@ -37,39 +37,28 @@ func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, 
 	return nil, errors.New("No reaction available for this service")
 }
 
-func (react *ReactionServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
-	jsonString, err := json.Marshal(body)
+func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, actionID int) (*IServ.ActionResponseStatus, error) {
+	bytesActIngredients, err := json.Marshal(scenario.Action.Ingredients)
 	if err != nil {
 		return nil, err
 	}
 
-	var scenarioArea models.AreaScenario
-	err = json.Unmarshal(jsonString, &scenarioArea)
-	if err != nil {
-		return nil, err
-	}
-
-	bytesActIngredients, err := json.Marshal(scenarioArea.Action.Ingredients)
-	if err != nil {
-		return nil, err
-	}
-
-	bytesReactIngredients, err := json.Marshal(scenarioArea.Reaction.Ingredients)
+	bytesReactIngredients, err := json.Marshal(scenario.Reaction.Ingredients)
 	if err != nil {
 		return nil, err
 	}
 
 	ctx := context.Background()
 	res, err := react.RegisterAction(ctx, &gRPCService.ReactionRequest{
-		UserId: int64(scenarioArea.UserId),
+		UserId: int64(scenario.UserId),
 		Action: &gRPCService.Action{
-			Service:      scenarioArea.Action.Service,
-			Microservice: scenarioArea.Action.Microservice,
+			Service:      scenario.Action.Service,
+			Microservice: scenario.Action.Microservice,
 			Ingredients:  bytesActIngredients,
 		},
 		Reaction: &gRPCService.Reaction{
-			Service:      scenarioArea.Reaction.Service,
-			Microservice: scenarioArea.Reaction.Microservice,
+			Service:      scenario.Reaction.Service,
+			Microservice: scenario.Reaction.Microservice,
 			Ingredients:  bytesReactIngredients,
 		}})
 	if err != nil {

@@ -26,7 +26,7 @@ const (
 )
 
 type DateTimeService struct {
-	db           *db.DateTimeDB
+	dtDb         *db.DateTimeDB
 	c            *cron.Cron
 	reactService gRPCService.ReactionServiceClient
 
@@ -41,7 +41,7 @@ func NewDateTimeService() (*DateTimeService, error) {
 	if err != nil {
 		return nil, err
 	}
-	dt := &DateTimeService{db: DtDb, c: scheduler, reactService: nil}
+	dt := &DateTimeService{dtDb: DtDb, c: scheduler, reactService: nil}
 	dt.c.AddFunc("* * * * *", dt.checkTimeTrigger)
 	return dt, nil
 }
@@ -73,7 +73,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 		log.Println(err)
 		return
 	}
-	allDTActions, err := dt.db.GetAllDTActionsActivated()
+	allDTActions, err := dt.dtDb.GetAllDTActionsActivated()
 
 	if err != nil {
 		log.Println(err)
@@ -92,7 +92,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
 	log.Println("Starting cron job")
 	log.Println(req)
-	dt.db.InsertNewDTAction(&models.DateTime{
+	dt.dtDb.InsertNewDTAction(&models.DateTime{
 		ActionID:  uint(req.ActionId),
 		Activated: true,
 		Minutes:   req.Minutes,

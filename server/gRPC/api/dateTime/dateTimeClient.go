@@ -55,19 +55,8 @@ func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, micros
 	return nil, errors.New("No reaction available for this service")
 }
 
-func (dt *DTServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
-	jsonString, err := json.Marshal(body["action"])
-	if err != nil {
-		return nil, err
-	}
-
-	action := models.Action{}
-	err = json.Unmarshal(jsonString, &action)
-	if err != nil {
-		return nil, err
-	}
-
-	timeReqJson, err := json.Marshal(action.Ingredients)
+func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID int) (*IServ.ActionResponseStatus, error) {
+	timeReqJson, err := json.Marshal(scenario.Action.Ingredients)
 	if err != nil {
 		return nil, err
 	}

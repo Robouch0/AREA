@@ -9,6 +9,7 @@ package github
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"encoding/json"
@@ -105,7 +106,7 @@ func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byt
 	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
 }
 
-func (git *GithubClient) SendAction(body map[string]any, actionId int) (*IServ.ActionResponseStatus, error) {
+func (git *GithubClient) SendAction(scenario models.AreaScenario, actionId int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
 }
 

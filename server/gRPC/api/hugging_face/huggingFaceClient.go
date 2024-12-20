@@ -9,6 +9,7 @@ package huggingFace
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"errors"
@@ -49,7 +50,7 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 	return status, nil
 }
 
-func (hfCli *HuggingFaceServiceClient) SendAction(body map[string]any, actionId int) (*IServ.ActionResponseStatus, error) {
+func (hfCli *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, actionId int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
 }
 

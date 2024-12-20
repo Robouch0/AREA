@@ -9,6 +9,7 @@ package hello
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"context"
 	"errors"
@@ -55,8 +56,8 @@ func (hello *HelloServiceClient) TriggerReaction(ingredients map[string]any, mic
 	return nil, errors.New("Invalid ingredients")
 }
 
-func (hello *HelloServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
-	if msg, ok := body["msg"]; ok {
+func (hello *HelloServiceClient) SendAction(scenario models.AreaScenario, actionID int) (*IServ.ActionResponseStatus, error) {
+	if msg, ok := scenario.Action.Ingredients["msg"]; ok {
 		_, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.(string)})
 		if err != nil {
 			log.Println("Could not send SayHello")

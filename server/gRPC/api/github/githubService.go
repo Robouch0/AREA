@@ -8,6 +8,7 @@
 package github
 
 import (
+	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
 	"bytes"
@@ -20,26 +21,30 @@ import (
 )
 
 type GithubService struct {
+	tokenDb      *db.TokenDb
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedGithubServiceServer
 }
 
-func NewGithubService() GithubService {
-	return GithubService{reactService: nil}
+func NewGithubService() (*GithubService, error) {
+	tokenDb, err := db.InitTokenDb()
+
+	return &GithubService{tokenDb: tokenDb, reactService: nil}, err
 }
 
 // Update a repository content
-func (git *GithubService) UpdateFile(_ context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {
+func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {
 	if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	// bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(2, "github") // Get UserID here
 	if err != nil {
 		return nil, err
 	}
 
-	fileInfos, err := git.getRepositoryFileInfos(bearerTok, req)
+	fileInfos, err := git.getRepositoryFileInfos(tokenInfo.AccessToken, req)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +56,7 @@ func (git *GithubService) UpdateFile(_ context.Context, req *gRPCService.UpdateR
 	}
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
 	putRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	putRequest.Header = utils.GetDefaultHTTPHeader(tokenInfo.AccessToken)
 	putRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}

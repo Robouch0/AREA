@@ -18,15 +18,18 @@ type TokenDb struct {
 	Db *bun.DB
 }
 
-func InitTokenDb() *TokenDb {
+func InitTokenDb() (*TokenDb, error) {
 	db := initDB()
 
-	db.NewCreateTable().
+	_, err := db.NewCreateTable().
 		Model((*models.Token)(nil)).
 		IfNotExists().
 		Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
 
-	return &TokenDb{Db: db}
+	return &TokenDb{Db: db}, nil
 }
 
 func GetTokenDb() *TokenDb {
