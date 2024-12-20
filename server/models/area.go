@@ -21,7 +21,6 @@ type Area struct {
 }
 
 type AreaScenario struct {
-	UserId   int      `json:"user_id"`
 	Action   Action   `json:"action"`
 	Reaction Reaction `json:"reaction"`
 }

@@ -11,6 +11,7 @@ import (
 	"area/db"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	"area/utils"
 	"context"
 	"encoding/json"
 	"io"
@@ -89,11 +90,17 @@ func (dt *DateTimeService) checkTimeTrigger() {
 	}
 }
 
-func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
+func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	if errClaim != nil {
+		log.Println(ctx)
+		return nil, errClaim
+	}
 	log.Println("Starting cron job")
-	log.Println(req)
 	dt.dtDb.InsertNewDTAction(&models.DateTime{
-		ActionID:  uint(req.ActionId),
+		ActionID: uint(req.ActionId),
+		UserID:   userID,
+
 		Activated: true,
 		Minutes:   req.Minutes,
 		Hours:     req.Hours,

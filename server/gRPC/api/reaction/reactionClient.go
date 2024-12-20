@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"context"
+	"area/utils"
 	"encoding/json"
 	"errors"
 
@@ -33,11 +33,11 @@ func (react *ReactionServiceClient) ListServiceStatus() (*IServ.ServiceStatus, e
 	return nil, nil
 }
 
-func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }
 
-func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, actionID int) (*IServ.ActionResponseStatus, error) {
+func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
 	bytesActIngredients, err := json.Marshal(scenario.Action.Ingredients)
 	if err != nil {
 		return nil, err
@@ -48,19 +48,22 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 		return nil, err
 	}
 
-	ctx := context.Background()
-	res, err := react.RegisterAction(ctx, &gRPCService.ReactionRequest{
-		UserId: int64(scenario.UserId),
-		Action: &gRPCService.Action{
-			Service:      scenario.Action.Service,
-			Microservice: scenario.Action.Microservice,
-			Ingredients:  bytesActIngredients,
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := react.RegisterAction(
+		ctx,
+		&gRPCService.ReactionRequest{
+			Action: &gRPCService.Action{
+				Service:      scenario.Action.Service,
+				Microservice: scenario.Action.Microservice,
+				Ingredients:  bytesActIngredients,
+			},
+			Reaction: &gRPCService.Reaction{
+				Service:      scenario.Reaction.Service,
+				Microservice: scenario.Reaction.Microservice,
+				Ingredients:  bytesReactIngredients,
+			},
 		},
-		Reaction: &gRPCService.Reaction{
-			Service:      scenario.Reaction.Service,
-			Microservice: scenario.Reaction.Microservice,
-			Ingredients:  bytesReactIngredients,
-		}})
+	)
 	if err != nil {
 		return nil, err
 	}

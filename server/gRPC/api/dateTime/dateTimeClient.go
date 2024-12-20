@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"context"
+	"area/utils"
 	"encoding/json"
 	"errors"
 
@@ -51,11 +51,11 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 	return status, nil
 }
 
-func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }
 
-func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID int) (*IServ.ActionResponseStatus, error) {
+func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
 	timeReqJson, err := json.Marshal(scenario.Action.Ingredients)
 	if err != nil {
 		return nil, err
@@ -66,6 +66,7 @@ func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID int
 	if err != nil {
 		return nil, err
 	}
-	dt.LaunchCronJob(context.Background(), &timeReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	dt.LaunchCronJob(ctx, &timeReq)
 	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
 }

@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"context"
+	"area/utils"
 	"errors"
 
 	"google.golang.org/grpc"
@@ -50,12 +50,13 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 	return status, nil
 }
 
-func (hfCli *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, actionId int) (*IServ.ActionResponseStatus, error) {
+func (hfCli *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
 }
 
-func (hfCli *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
-	res, err := hfCli.cc.LaunchTextGeneration(context.Background(), &gRPCService.TextGenerationReq{Inputs: ingredients["inputs"].(string)})
+func (hfCli *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := hfCli.cc.LaunchTextGeneration(ctx, &gRPCService.TextGenerationReq{Inputs: ingredients["inputs"].(string)})
 	if err != nil {
 		return nil, err
 	}
@@ -63,9 +64,9 @@ func (hfCli *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients ma
 	return &IServ.ReactionResponseStatus{Description: res.GeneratedText}, nil
 }
 
-func (hfCli *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (hfCli *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*hfCli.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput)
+		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
 }

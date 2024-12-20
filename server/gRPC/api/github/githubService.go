@@ -35,11 +35,15 @@ func NewGithubService() (*GithubService, error) {
 
 // Update a repository content
 func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	if errClaim != nil {
+		return nil, errClaim
+	}
+
 	if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	// bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
-	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(2, "github") // Get UserID here
+	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "github")
 	if err != nil {
 		return nil, err
 	}
@@ -71,12 +75,17 @@ func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.Updat
 	return req, nil
 }
 
-func (git *GithubService) UpdateRepository(_ context.Context, req *gRPCService.UpdateRepoInfos) (*gRPCService.UpdateRepoInfos, error) {
+func (git *GithubService) UpdateRepository(ctx context.Context, req *gRPCService.UpdateRepoInfos) (*gRPCService.UpdateRepoInfos, error) {
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	if errClaim != nil {
+		return nil, errClaim
+	}
+
 	if req.Owner == "" || req.Repo == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
 
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "github")
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +96,7 @@ func (git *GithubService) UpdateRepository(_ context.Context, req *gRPCService.U
 	}
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v", req.Owner, req.Repo)
 	pathRequest, err := http.NewRequest("PATCH", url, bytes.NewBuffer(b))
-	pathRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	pathRequest.Header = utils.GetDefaultHTTPHeader(tokenInfo.AccessToken)
 	pathRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}

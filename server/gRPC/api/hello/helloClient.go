@@ -44,7 +44,7 @@ func (hello *HelloServiceClient) ListServiceStatus() (*IServ.ServiceStatus, erro
 	return status, nil
 }
 
-func (hello *HelloServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (hello *HelloServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	message, ok := ingredients["message"]
 	if ok {
 		res, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: message.(string)})
@@ -56,7 +56,7 @@ func (hello *HelloServiceClient) TriggerReaction(ingredients map[string]any, mic
 	return nil, errors.New("Invalid ingredients")
 }
 
-func (hello *HelloServiceClient) SendAction(scenario models.AreaScenario, actionID int) (*IServ.ActionResponseStatus, error) {
+func (hello *HelloServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
 	if msg, ok := scenario.Action.Ingredients["msg"]; ok {
 		_, err := hello.SayHello(context.Background(), &gRPCService.HelloWorldRequest{Message: msg.(string)})
 		if err != nil {
