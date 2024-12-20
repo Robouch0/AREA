@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package google;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service GoogleService {
+  rpc TestCall (TestRequest) returns (TestRequest) {}
+}
+
+message TestRequest {
+  string user_name = 1;
+  int32 user_id = 2;
+}
