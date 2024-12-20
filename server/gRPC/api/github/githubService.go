@@ -39,7 +39,7 @@ func (git *GithubService) UpdateFile(_ context.Context, req *gRPCService.UpdateR
 		return nil, err
 	}
 
-	fileInfos, err := git.getRepositoryFileInfos(bearerTok, req)
+	fileInfos, err := git.getRepositoryFileInfos(bearerTok, git.createFileInfos(req.Owner, req.Repo, req.Path))
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func (git *GithubService) UpdateRepository(_ context.Context, req *gRPCService.U
 }
 
 func (git *GithubService) DeleteFile(_ context.Context, req *gRPCService.DeleteRepoFile) (*gRPCService.DeleteRepoFile, error) {
-	if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" || req.Sha == "" {
+	if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
 
@@ -108,6 +108,12 @@ func (git *GithubService) DeleteFile(_ context.Context, req *gRPCService.DeleteR
 		return nil, err
 	}
 
+	fileInfos, err := git.getRepositoryFileInfos(bearerTok, git.createFileInfos(req.Owner, req.Repo, req.Path))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Sha = fileInfos.Sha
 	b, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
@@ -128,12 +134,3 @@ func (git *GithubService) DeleteFile(_ context.Context, req *gRPCService.DeleteR
 	log.Println(resp.Body)
 	return req, nil
 }
-
-
-
-	/*  string owner = 1;
-  string repo = 2;
-  string path = 3;
-
-  string message = 4;
-  string sha = 5;*/

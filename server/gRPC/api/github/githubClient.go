@@ -27,6 +27,7 @@ func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 	git := &GithubClient{MicroservicesLauncher: micros, cc: gRPCService.NewGithubServiceClient(conn)}
 	(*git.MicroservicesLauncher)["updateRepo"] = git.updateRepository
 	(*git.MicroservicesLauncher)["updateFile"] = git.updateFile
+	(*git.MicroservicesLauncher)["deleteFile"] = git.deleteFile
 	return git
 }
 
@@ -59,7 +60,18 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					"path":    "string",
 					"message": "string",
 					"content": "string",
-					"sha":     "string",
+				},
+			},
+			IServ.MicroserviceStatus{
+				Name:    "Delete Repository File",
+				RefName: "deleteFile",
+				Type:    "reaction",
+
+				Ingredients: map[string]string{
+					"owner":   "string",
+					"repo":    "string",
+					"path":    "string",
+					"message": "string",
 				},
 			},
 		},
@@ -98,6 +110,25 @@ func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byt
 	}
 
 	res, err := git.cc.UpdateFile(context.Background(), &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
+}
+
+func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var updateReq gRPCService.DeleteRepoFile
+	err = json.Unmarshal(jsonString, &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := git.cc.DeleteFile(context.Background(), &updateReq)
 	if err != nil {
 		return nil, err
 	}
