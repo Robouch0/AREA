@@ -6,7 +6,13 @@ option go_package = "github.com/area/grpc-go/service";
 
 service SpotifyService {
   rpc StopSong(SpotifyStopInfo) returns(SpotifyStopInfo) {}
+  rpc CreatePlaylist(SpotifyCreatePlaylist) returns(SpotifyCreatePlaylist) {}
 }
 
 message SpotifyStopInfo {
+}
+message SpotifyCreatePlaylist {
+  string playlistName = 1;
+  string playlistDescription = 2;
+  string public = 3;
 }

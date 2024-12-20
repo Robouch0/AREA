@@ -2,7 +2,7 @@
 // EPITECH PROJECT, 2024
 // AREA
 // File description:
-// githubClient
+// spotifyClient
 //
 
 package spotify
@@ -27,6 +27,7 @@ func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	micros := &IServ.MicroserviceLauncher{}
 	spotify := &SpotifyClient{MicroservicesLauncher: micros, cc: gRPCService.NewSpotifyServiceClient(conn)}
 	(*spotify.MicroservicesLauncher)["stopSong"] = spotify.stopSong
+	(*spotify.MicroservicesLauncher)["createPlaylist"] = spotify.createPlaylist
 	return spotify
 }
 
@@ -44,6 +45,17 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Ingredients: map[string]string{
 				},
 			},
+            IServ.MicroserviceStatus{
+                Name:    "Create a spotify playlist",
+                RefName: "createPlaylist",
+                Type:    "reaction",
+
+                Ingredients: map[string]string{
+                    "playlistName":    "string",
+                    "playlistDescription":    "string",
+                    "public": "string",
+                },
+            },
 		},
 	}
 	return status, nil
@@ -69,6 +81,26 @@ func (spot *SpotifyClient) stopSong(ingredients map[string]any, prevOutput []byt
 
 	return &IServ.ReactionResponseStatus{Description: "Song stopped"}, nil
 }
+
+func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var createReq gRPCService.SpotifyCreatePlaylist
+	err = json.Unmarshal(jsonString, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = spot.cc.CreatePlaylist(context.Background(), &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Playlist created"}, nil
+}
+
 
 func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*spot.MicroservicesLauncher)[microservice]; ok {

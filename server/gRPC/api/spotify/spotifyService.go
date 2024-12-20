@@ -14,6 +14,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"bytes"
 	"net/http"
 )
 
@@ -29,6 +30,7 @@ func NewSpotifyService() SpotifyService {
 
 func (spot *SpotifyService) StopSong(_ context.Context, req *gRPCService.SpotifyStopInfo) (*gRPCService.SpotifyStopInfo, error) {
 	bearerTok, err := utils.GetEnvParameterToBearer("API_SPOTIFY")
+	log.Println(bearerTok)
     if err != nil {
         log.Println("No api bearer SPOTIFY : ", err)
         return nil, err
@@ -39,7 +41,10 @@ func (spot *SpotifyService) StopSong(_ context.Context, req *gRPCService.Spotify
         log.Println("Error when creating api call to spotify", err)
         return nil, err
     }
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	putRequest.Header = http.Header{}
+    putRequest.Header.Set("Authorization", bearerTok)
+    putRequest.Header.Set("Content-Type", "application/json")
+
     cli := &http.Client{}
     resp, err := cli.Do(putRequest)
     if err != nil {
@@ -47,9 +52,58 @@ func (spot *SpotifyService) StopSong(_ context.Context, req *gRPCService.Spotify
         return nil, err
     }
 
-	if resp.Status != "200 OK" {
+	if resp.StatusCode != 200 {
+	    log.Println("here", resp.Status)
 		return nil, errors.New(resp.Status)
 	}
-	log.Println("Here: ", resp.Body) // Do something with it
+	log.Println("Here: ", resp.Body)
+	return req, nil
+}
+
+
+func (spot *SpotifyService) CreatePlaylist(_ context.Context, req *gRPCService.SpotifyCreatePlaylist) (*gRPCService.SpotifyCreatePlaylist, error) {
+	if req.PlaylistName == "" || req.PlaylistDescription == "" || req.Public == "" {
+		return nil, errors.New("Some required parameters are empty")
+	}
+
+	bearerTok, err := utils.GetEnvParameterToBearer("API_SPOTIFY")
+	if err != nil {
+		log.Println("No api bearer SPOTIFY: ", err)
+		return nil, err
+	}
+
+	id, err := spot.GetUserID(bearerTok)
+	if err != nil {
+		log.Println("Error getting user ID: ", err)
+		return nil, err
+	}
+
+	url := fmt.Sprintf("https://api.spotify.com/v1/users/%s/playlists", id)
+
+	postRequestBody := fmt.Sprintf(`{"name": "%s", "description": "%s", "public": "%s"}`, req.PlaylistName, req.PlaylistDescription, req.Public)
+	postRequest, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(postRequestBody)))
+	if err != nil {
+		log.Println("Error when creating API call to Spotify", err)
+		return nil, err
+	}
+
+	postRequest.Header = http.Header{}
+	postRequest.Header.Set("Authorization", bearerTok)
+	postRequest.Header.Set("Content-Type", "application/json")
+
+	cli := &http.Client{}
+	resp, err := cli.Do(postRequest)
+	if err != nil {
+		log.Println("Error when sending API call to Spotify", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		log.Println("Error creating playlist:", resp.Status)
+		return nil, errors.New(resp.Status)
+	}
+
+	log.Println("Playlist created")
 	return req, nil
 }

@@ -18,6 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SpotifyServiceClient interface {
 	StopSong(ctx context.Context, in *SpotifyStopInfo, opts ...grpc.CallOption) (*SpotifyStopInfo, error)
+	CreatePlaylist(ctx context.Context, in *SpotifyCreatePlaylist, opts ...grpc.CallOption) (*SpotifyCreatePlaylist, error)
 }
 
 type spotifyServiceClient struct {
@@ -37,11 +38,21 @@ func (c *spotifyServiceClient) StopSong(ctx context.Context, in *SpotifyStopInfo
 	return out, nil
 }
 
+func (c *spotifyServiceClient) CreatePlaylist(ctx context.Context, in *SpotifyCreatePlaylist, opts ...grpc.CallOption) (*SpotifyCreatePlaylist, error) {
+	out := new(SpotifyCreatePlaylist)
+	err := c.cc.Invoke(ctx, "/spotify.SpotifyService/CreatePlaylist", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SpotifyServiceServer is the server API for SpotifyService service.
 // All implementations must embed UnimplementedSpotifyServiceServer
 // for forward compatibility
 type SpotifyServiceServer interface {
 	StopSong(context.Context, *SpotifyStopInfo) (*SpotifyStopInfo, error)
+	CreatePlaylist(context.Context, *SpotifyCreatePlaylist) (*SpotifyCreatePlaylist, error)
 	mustEmbedUnimplementedSpotifyServiceServer()
 }
 
@@ -51,6 +62,9 @@ type UnimplementedSpotifyServiceServer struct {
 
 func (UnimplementedSpotifyServiceServer) StopSong(context.Context, *SpotifyStopInfo) (*SpotifyStopInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopSong not implemented")
+}
+func (UnimplementedSpotifyServiceServer) CreatePlaylist(context.Context, *SpotifyCreatePlaylist) (*SpotifyCreatePlaylist, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePlaylist not implemented")
 }
 func (UnimplementedSpotifyServiceServer) mustEmbedUnimplementedSpotifyServiceServer() {}
 
@@ -83,6 +97,24 @@ func _SpotifyService_StopSong_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SpotifyService_CreatePlaylist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SpotifyCreatePlaylist)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SpotifyServiceServer).CreatePlaylist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spotify.SpotifyService/CreatePlaylist",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SpotifyServiceServer).CreatePlaylist(ctx, req.(*SpotifyCreatePlaylist))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SpotifyService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "spotify.SpotifyService",
 	HandlerType: (*SpotifyServiceServer)(nil),
@@ -90,6 +122,10 @@ var _SpotifyService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StopSong",
 			Handler:    _SpotifyService_StopSong_Handler,
+		},
+		{
+			MethodName: "CreatePlaylist",
+			Handler:    _SpotifyService_CreatePlaylist_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
