@@ -39,6 +39,7 @@ func (git *GithubService) createFileInfos(Owner string, Repo string, Path string
 	return file
 }
 
+// Acccess Token must not be a bearer token.
 func (git *GithubService) getRepositoryFileInfos(accessToken string, req *RepoFileInfo) (*FileInfos, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
 	postRequest, err := http.NewRequest("GET", url, nil)

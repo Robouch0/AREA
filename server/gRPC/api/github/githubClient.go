@@ -12,7 +12,6 @@ import (
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
-	"context"
 	"encoding/json"
 	"errors"
 
@@ -132,7 +131,8 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	res, err := git.cc.DeleteFile(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := git.cc.DeleteFile(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}

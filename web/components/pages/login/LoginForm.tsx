@@ -4,7 +4,7 @@ import { FormData, UserSchema, ValidFieldNames } from "@/lib/typeLogin";
 import FormField from "@/components/ui/utils/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { FaEye, FaEyeSlash, FaFacebook, FaGithub, FaSpotify } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaFacebook, FaGithub } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
