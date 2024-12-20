@@ -49,7 +49,7 @@ func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.Updat
 		return nil, err
 	}
 
-	fileInfos, err := git.getRepositoryFileInfos(tokenInfo.AccessToken, req)
+	fileInfos, err := git.getRepositoryFileInfos(tokenInfo.AccessToken, git.createFileInfos(req.Owner, req.Repo, req.Path))
 	if err != nil {
 		return nil, err
 	}
@@ -116,5 +116,43 @@ func (git *GithubService) UpdateRepository(ctx context.Context, req *gRPCService
 		return nil, errors.New(resp.Status)
 	}
 	log.Println(resp.Body) // Do something with it
+	return req, nil
+}
+
+func (git *GithubService) DeleteFile(_ context.Context, req *gRPCService.DeleteRepoFile) (*gRPCService.DeleteRepoFile, error) {
+	if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" {
+		return nil, errors.New("Some required parameters are empty")
+	}
+
+	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
+	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	if err != nil {
+		return nil, err
+	}
+
+	fileInfos, err := git.getRepositoryFileInfos(bearerTok, git.createFileInfos(req.Owner, req.Repo, req.Path))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Sha = fileInfos.Sha
+	b, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+	pathRequest, err := http.NewRequest("DELETE", url, bytes.NewBuffer(b))
+	pathRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	pathRequest.Header.Add("Accept", "application/vnd.github+json")
+
+	cli := &http.Client{}
+	resp, err := cli.Do(pathRequest)
+	if err != nil {
+		return nil, err
+	}
+	if resp.Status != "200 OK" {
+		return nil, errors.New(resp.Status)
+	}
+
+	log.Println(resp.Body)
 	return req, nil
 }

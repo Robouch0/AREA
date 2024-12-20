@@ -8,7 +8,6 @@
 package github
 
 import (
-	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
 	"encoding/json"
 	"errors"
@@ -25,10 +24,25 @@ type FileInfos struct {
 	Sha      string `json:"sha"`
 }
 
-func (git *GithubService) getRepositoryFileInfos(bearerTok string, req *gRPCService.UpdateRepoFile) (*FileInfos, error) {
+type RepoFileInfo struct {
+	Owner string `json:"owner"`
+	Repo  string `json:"repo"`
+	Path  string `json:"path"`
+}
+
+func (git *GithubService) createFileInfos(Owner string, Repo string, Path string) *RepoFileInfo {
+	file := new(RepoFileInfo)
+
+	file.Owner = Owner
+	file.Repo = Repo
+	file.Path = Path
+	return file
+}
+
+func (git *GithubService) getRepositoryFileInfos(accessToken string, req *RepoFileInfo) (*FileInfos, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
 	postRequest, err := http.NewRequest("GET", url, nil)
-	postRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	postRequest.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
 	postRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}
