@@ -8,6 +8,8 @@ service GithubService {
   rpc UpdateRepository(UpdateRepoInfos) returns(UpdateRepoInfos) {}
 
   rpc UpdateFile(UpdateRepoFile) returns(UpdateRepoFile) {}
+
+  rpc DeleteFile(DeleteRepoFile) returns(DeleteRepoFile) {}
 }
 
 message UpdateRepoInfos {
@@ -27,5 +29,15 @@ message UpdateRepoFile {
   string message = 4;
   string content = 5; // Base64
   string sha = 6;
+  // There is more to add if needed
+}
+
+message DeleteRepoFile {
+  string owner = 1;
+  string repo = 2;
+  string path = 3;
+
+  string message = 4;
+  string sha = 5;
   // There is more to add if needed
 }

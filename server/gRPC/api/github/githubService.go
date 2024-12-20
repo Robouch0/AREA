@@ -96,3 +96,44 @@ func (git *GithubService) UpdateRepository(_ context.Context, req *gRPCService.U
 	log.Println(resp.Body) // Do something with it
 	return req, nil
 }
+
+func (git *GithubService) DeleteFile(_ context.Context, req *gRPCService.DeleteRepoFile) (*gRPCService.DeleteRepoFile, error) {
+	if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" || req.Sha == "" {
+		return nil, errors.New("Some required parameters are empty")
+	}
+
+	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
+	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+	pathRequest, err := http.NewRequest("DELETE", url, bytes.NewBuffer(b))
+	pathRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	pathRequest.Header.Add("Accept", "application/vnd.github+json")
+
+	cli := &http.Client{}
+	resp, err := cli.Do(pathRequest)
+	if err != nil {
+		return nil, err
+	}
+	if resp.Status != "200 OK" {
+		return nil, errors.New(resp.Status)
+	}
+
+	log.Println(resp.Body)
+	return req, nil
+}
+
+
+
+	/*  string owner = 1;
+  string repo = 2;
+  string path = 3;
+
+  string message = 4;
+  string sha = 5;*/
