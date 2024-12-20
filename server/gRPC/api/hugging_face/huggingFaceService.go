@@ -40,7 +40,7 @@ func NewHuggingFaceService() (*HuggingFaceService, error) {
 }
 
 func (hfServ *HuggingFaceService) LaunchTextGeneration(ctx context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "HFService")
 	if errClaim != nil {
 		return nil, errClaim
 	}

@@ -82,8 +82,9 @@ func (dt *DateTimeService) checkTimeTrigger() {
 	}
 	for _, dtAct := range *allDTActions {
 		if dateData.Day == int(dtAct.DayMonth) && dateData.Hour == int(dtAct.Hours) && dateData.Minute == int(dtAct.Minutes) {
+			ctx := utils.CreateContextFromUserID(int(dtAct.UserID))
 			dt.reactService.LaunchReaction(
-				context.Background(),
+				ctx,
 				&gRPCService.LaunchRequest{ActionId: int64(dtAct.ActionID), PrevOutput: bytesBody},
 			)
 		}
@@ -91,13 +92,13 @@ func (dt *DateTimeService) checkTimeTrigger() {
 }
 
 func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "DateTimeService")
 	if errClaim != nil {
 		log.Println(ctx)
 		return nil, errClaim
 	}
 	log.Println("Starting cron job")
-	dt.dtDb.InsertNewDTAction(&models.DateTime{
+	_, err := dt.dtDb.InsertNewDTAction(&models.DateTime{
 		ActionID: uint(req.ActionId),
 		UserID:   userID,
 
@@ -108,5 +109,9 @@ func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.T
 		Month:     req.Month,
 		DayWeek:   req.DayWeek,
 	})
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 	return &gRPCService.TriggerTimeResponse{}, nil
 }
