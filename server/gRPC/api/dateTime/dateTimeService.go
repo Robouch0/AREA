@@ -11,6 +11,7 @@ import (
 	"area/db"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	"area/utils"
 	"context"
 	"encoding/json"
 	"io"
@@ -26,7 +27,7 @@ const (
 )
 
 type DateTimeService struct {
-	db           *db.DateTimeDB
+	dtDb         *db.DateTimeDB
 	c            *cron.Cron
 	reactService gRPCService.ReactionServiceClient
 
@@ -41,7 +42,7 @@ func NewDateTimeService() (*DateTimeService, error) {
 	if err != nil {
 		return nil, err
 	}
-	dt := &DateTimeService{db: DtDb, c: scheduler, reactService: nil}
+	dt := &DateTimeService{dtDb: DtDb, c: scheduler, reactService: nil}
 	dt.c.AddFunc("* * * * *", dt.checkTimeTrigger)
 	return dt, nil
 }
@@ -73,7 +74,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 		log.Println(err)
 		return
 	}
-	allDTActions, err := dt.db.GetAllDTActionsActivated()
+	allDTActions, err := dt.dtDb.GetAllDTActionsActivated()
 
 	if err != nil {
 		log.Println(err)
@@ -81,19 +82,26 @@ func (dt *DateTimeService) checkTimeTrigger() {
 	}
 	for _, dtAct := range *allDTActions {
 		if dateData.Day == int(dtAct.DayMonth) && dateData.Hour == int(dtAct.Hours) && dateData.Minute == int(dtAct.Minutes) {
+			ctx := utils.CreateContextFromUserID(int(dtAct.UserID))
 			dt.reactService.LaunchReaction(
-				context.Background(),
+				ctx,
 				&gRPCService.LaunchRequest{ActionId: int64(dtAct.ActionID), PrevOutput: bytesBody},
 			)
 		}
 	}
 }
 
-func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
+func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "DateTimeService")
+	if errClaim != nil {
+		log.Println(ctx)
+		return nil, errClaim
+	}
 	log.Println("Starting cron job")
-	log.Println(req)
-	dt.db.InsertNewDTAction(&models.DateTime{
-		ActionID:  uint(req.ActionId),
+	_, err := dt.dtDb.InsertNewDTAction(&models.DateTime{
+		ActionID: uint(req.ActionId),
+		UserID:   userID,
+
 		Activated: true,
 		Minutes:   req.Minutes,
 		Hours:     req.Hours,
@@ -101,5 +109,9 @@ func (dt *DateTimeService) LaunchCronJob(_ context.Context, req *gRPCService.Tri
 		Month:     req.Month,
 		DayWeek:   req.DayWeek,
 	})
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 	return &gRPCService.TriggerTimeResponse{}, nil
 }

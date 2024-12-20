@@ -23,9 +23,8 @@ message Reaction {
 }
 
 message ReactionRequest {
-  int64 user_id = 1;
-  Action action = 2;
-  Reaction reaction = 3;
+  Action action = 1;
+  Reaction reaction = 2;
 }
 
 message ReactionResponse {

@@ -35,17 +35,17 @@ func LaunchServices() {
 	helloService := hello.NewHelloService(nil)
 	dtService, errDt := dateTime.NewDateTimeService()
 	reactService, errReact := reaction.NewReactionService()
-	huggingFaceService := huggingFace.NewHuggingFaceService()
-	githubService := github.NewGithubService()
+	huggingFaceService, errHf := huggingFace.NewHuggingFaceService()
+	githubService, errGit := github.NewGithubService()
 
-	if err = cmp.Or(errDt, errReact); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf); err != nil {
 		log.Println(err)
 		return
 	}
 	services.RegisterHelloWorldServiceServer(s, &helloService)
 	services.RegisterDateTimeServiceServer(s, dtService)
-	services.RegisterHuggingFaceServiceServer(s, &huggingFaceService)
-	services.RegisterGithubServiceServer(s, &githubService)
+	services.RegisterHuggingFaceServiceServer(s, huggingFaceService)
+	services.RegisterGithubServiceServer(s, githubService)
 	services.RegisterReactionServiceServer(s, reactService)
 
 	var wg sync.WaitGroup
