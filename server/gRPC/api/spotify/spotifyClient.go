@@ -29,6 +29,7 @@ func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	(*spotify.MicroservicesLauncher)["stopSong"] = spotify.stopSong
 	(*spotify.MicroservicesLauncher)["createPlaylist"] = spotify.createPlaylist
 	(*spotify.MicroservicesLauncher)["nextSong"] = spotify.nextSong
+	(*spotify.MicroservicesLauncher)["previousSong"] = spotify.previousSong
 	return spotify
 }
 
@@ -60,6 +61,14 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
             IServ.MicroserviceStatus{
                 Name:    "Launch the next song",
                 RefName: "nextSong",
+                Type:    "reaction",
+
+                Ingredients: map[string]string{
+                },
+            },
+            IServ.MicroserviceStatus{
+                Name:    "Launch the previous song",
+                RefName: "previousSong",
                 Type:    "reaction",
 
                 Ingredients: map[string]string{
@@ -124,6 +133,22 @@ func (spot *SpotifyClient) nextSong(ingredients map[string]any, prevOutput []byt
 	}
 
 	return &IServ.ReactionResponseStatus{Description: "Song skipped"}, nil
+}
+
+func (spot *SpotifyClient) previousSong(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+	_, err := json.Marshal(ingredients)
+	if err != nil {
+        log.Println("Ingredients problems", err)
+		return nil, err
+	}
+
+	_, err = spot.cc.PreviousSong(context.Background(), &gRPCService.SpotifyPreviousInfo{})
+	if err != nil {
+        log.Println("Error when running songPrevious service", err)
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Go back to previous song"}, nil
 }
 
 

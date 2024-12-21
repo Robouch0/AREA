@@ -8,6 +8,7 @@ service SpotifyService {
   rpc StopSong(SpotifyStopInfo) returns(SpotifyStopInfo) {}
   rpc CreatePlaylist(SpotifyCreatePlaylist) returns(SpotifyCreatePlaylist) {}
   rpc NextSong(SpotifyNextInfo) returns(SpotifyNextInfo) {}
+  rpc PreviousSong(SpotifyPreviousInfo) returns(SpotifyPreviousInfo) {}
 }
 
 message SpotifyStopInfo {
@@ -20,5 +21,7 @@ message SpotifyCreatePlaylist {
 }
 
 message SpotifyNextInfo {
+}
 
+message SpotifyPreviousInfo {
 }

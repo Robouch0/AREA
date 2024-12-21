@@ -20,6 +20,7 @@ type SpotifyServiceClient interface {
 	StopSong(ctx context.Context, in *SpotifyStopInfo, opts ...grpc.CallOption) (*SpotifyStopInfo, error)
 	CreatePlaylist(ctx context.Context, in *SpotifyCreatePlaylist, opts ...grpc.CallOption) (*SpotifyCreatePlaylist, error)
 	NextSong(ctx context.Context, in *SpotifyNextInfo, opts ...grpc.CallOption) (*SpotifyNextInfo, error)
+	PreviousSong(ctx context.Context, in *SpotifyPreviousInfo, opts ...grpc.CallOption) (*SpotifyPreviousInfo, error)
 }
 
 type spotifyServiceClient struct {
@@ -57,6 +58,15 @@ func (c *spotifyServiceClient) NextSong(ctx context.Context, in *SpotifyNextInfo
 	return out, nil
 }
 
+func (c *spotifyServiceClient) PreviousSong(ctx context.Context, in *SpotifyPreviousInfo, opts ...grpc.CallOption) (*SpotifyPreviousInfo, error) {
+	out := new(SpotifyPreviousInfo)
+	err := c.cc.Invoke(ctx, "/spotify.SpotifyService/PreviousSong", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SpotifyServiceServer is the server API for SpotifyService service.
 // All implementations must embed UnimplementedSpotifyServiceServer
 // for forward compatibility
@@ -64,6 +74,7 @@ type SpotifyServiceServer interface {
 	StopSong(context.Context, *SpotifyStopInfo) (*SpotifyStopInfo, error)
 	CreatePlaylist(context.Context, *SpotifyCreatePlaylist) (*SpotifyCreatePlaylist, error)
 	NextSong(context.Context, *SpotifyNextInfo) (*SpotifyNextInfo, error)
+	PreviousSong(context.Context, *SpotifyPreviousInfo) (*SpotifyPreviousInfo, error)
 	mustEmbedUnimplementedSpotifyServiceServer()
 }
 
@@ -79,6 +90,9 @@ func (UnimplementedSpotifyServiceServer) CreatePlaylist(context.Context, *Spotif
 }
 func (UnimplementedSpotifyServiceServer) NextSong(context.Context, *SpotifyNextInfo) (*SpotifyNextInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NextSong not implemented")
+}
+func (UnimplementedSpotifyServiceServer) PreviousSong(context.Context, *SpotifyPreviousInfo) (*SpotifyPreviousInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PreviousSong not implemented")
 }
 func (UnimplementedSpotifyServiceServer) mustEmbedUnimplementedSpotifyServiceServer() {}
 
@@ -147,6 +161,24 @@ func _SpotifyService_NextSong_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SpotifyService_PreviousSong_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SpotifyPreviousInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SpotifyServiceServer).PreviousSong(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spotify.SpotifyService/PreviousSong",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SpotifyServiceServer).PreviousSong(ctx, req.(*SpotifyPreviousInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SpotifyService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "spotify.SpotifyService",
 	HandlerType: (*SpotifyServiceServer)(nil),
@@ -162,6 +194,10 @@ var _SpotifyService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NextSong",
 			Handler:    _SpotifyService_NextSong_Handler,
+		},
+		{
+			MethodName: "PreviousSong",
+			Handler:    _SpotifyService_PreviousSong_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

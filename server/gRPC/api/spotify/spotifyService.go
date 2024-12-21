@@ -140,3 +140,36 @@ func (spot *SpotifyService) NextSong(_ context.Context, req *gRPCService.Spotify
 	log.Println("Here: ", resp.Body)
 	return req, nil
 }
+
+
+func (spot *SpotifyService) PreviousSong(_ context.Context, req *gRPCService.SpotifyPreviousInfo) (*gRPCService.SpotifyPreviousInfo, error) {
+	bearerTok, err := utils.GetEnvParameterToBearer("API_SPOTIFY")
+	log.Println(bearerTok)
+    if err != nil {
+        log.Println("No api bearer SPOTIFY : ", err)
+        return nil, err
+    }
+    url := fmt.Sprintf("https://api.spotify.com/v1/me/player/previous")
+    postRequest, err := http.NewRequest("POST", url, nil)
+    if err != nil {
+        log.Println("Error when creating api call to spotify", err)
+        return nil, err
+    }
+	postRequest.Header = http.Header{}
+    postRequest.Header.Set("Authorization", bearerTok)
+    postRequest.Header.Set("Content-Type", "application/json")
+
+    cli := &http.Client{}
+    resp, err := cli.Do(postRequest)
+    if err != nil {
+        log.Println("Error when sending api call to spotify", err)
+        return nil, err
+    }
+
+	if resp.StatusCode != 200 {
+	    log.Println("here", resp.Status)
+		return nil, errors.New(resp.Status)
+	}
+	log.Println("Here: ", resp.Body)
+	return req, nil
+}
