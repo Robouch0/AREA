@@ -28,6 +28,7 @@ func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	spotify := &SpotifyClient{MicroservicesLauncher: micros, cc: gRPCService.NewSpotifyServiceClient(conn)}
 	(*spotify.MicroservicesLauncher)["stopSong"] = spotify.stopSong
 	(*spotify.MicroservicesLauncher)["createPlaylist"] = spotify.createPlaylist
+	(*spotify.MicroservicesLauncher)["nextSong"] = spotify.nextSong
 	return spotify
 }
 
@@ -54,6 +55,14 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
                     "playlistName":    "string",
                     "playlistDescription":    "string",
                     "public": "string",
+                },
+            },
+            IServ.MicroserviceStatus{
+                Name:    "Launch the next song",
+                RefName: "nextSong",
+                Type:    "reaction",
+
+                Ingredients: map[string]string{
                 },
             },
 		},
@@ -99,6 +108,22 @@ func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, prevOutput
 	}
 
 	return &IServ.ReactionResponseStatus{Description: "Playlist created"}, nil
+}
+
+func (spot *SpotifyClient) nextSong(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+	_, err := json.Marshal(ingredients)
+	if err != nil {
+        log.Println("Ingredients problems", err)
+		return nil, err
+	}
+
+	_, err = spot.cc.NextSong(context.Background(), &gRPCService.SpotifyNextInfo{})
+	if err != nil {
+        log.Println("Error when running songNext service", err)
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Song skipped"}, nil
 }
 
 
