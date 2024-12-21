@@ -35,7 +35,7 @@ func DeleteEmail(googleUserID string, accessToken string, messageID string) erro
 	if err != nil {
 		return err
 	}
-	if result.StatusCode != 200 {
+	if result.StatusCode/100 != 2 {
 		io.Copy(os.Stderr, result.Body)
 		return status.Errorf(codes.Aborted, result.Status)
 	}

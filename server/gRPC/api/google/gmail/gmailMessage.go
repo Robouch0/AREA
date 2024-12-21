@@ -19,8 +19,8 @@ type GmailHeader struct {
 }
 
 type GmailMessagePart struct {
-	Header []GmailHeader    `json:"header,omitempty"`
-	Body   GmailMessageBody `json:"body,omitempty"`
+	Headers []GmailHeader    `json:"headers,omitempty"`
+	Body    GmailMessageBody `json:"body,omitempty"`
 }
 
 type GmailMessage struct {

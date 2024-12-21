@@ -44,7 +44,6 @@ func NewGoogleService() (*GoogleService, error) {
 }
 
 // To delete message we have to get the list then get the correctID
-
 func (google *GoogleService) DeleteEmailMe(ctx context.Context, req *gRPCService.DeleteEmailRequestMe) (*gRPCService.DeleteEmailRequestMe, error) {
 	if req.Subject == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Empty subject for email deletion")
@@ -60,15 +59,20 @@ func (google *GoogleService) DeleteEmailMe(ctx context.Context, req *gRPCService
 	}
 
 	for _, message := range emails.Messages {
-		idx := slices.IndexFunc[[]gmail.GmailHeader](message.Payload.Header, func(h gmail.GmailHeader) bool {
+		mess, err := gmail.GetEmail("me", tokenInfo.AccessToken, message.ID, "metadata", "subject")
+		if err != nil {
+			return nil, nil
+		}
+		idx := slices.IndexFunc[[]gmail.GmailHeader](mess.Payload.Headers, func(h gmail.GmailHeader) bool {
 			return h.Name == "Subject"
 		})
 		if idx == -1 {
 			continue
 		}
-		if message.Payload.Header[idx].Value == req.Subject {
+		if mess.Payload.Headers[idx].Value == req.Subject {
 			err := gmail.DeleteEmail("me", tokenInfo.AccessToken, message.ID)
 			if err != nil {
+				log.Println("Delete Error: ", err)
 				return nil, err
 			}
 			return req, nil

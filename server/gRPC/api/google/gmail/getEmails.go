@@ -21,7 +21,9 @@ import (
 
 const (
 	listEmailsURL = "https://gmail.googleapis.com/gmail/v1/users/%s/messages"
-	maxResults    = "100"
+	maxResults    = "50"
+
+	getEmailURL = "https://gmail.googleapis.com/gmail/v1/users/%s/messages/%s"
 )
 
 type MessageListRes struct {
@@ -53,4 +55,35 @@ func GetListEmails(googleUserID string, accessToken string) (*MessageListRes, er
 		return nil, err
 	}
 	return messageList, nil
+}
+
+func GetEmail( // Look for later if it will not be called getEmailHeader
+	googleUserID string,
+	accessToken string,
+	messageID string,
+	format string,
+	metadata string,
+) (*GmailMessage, error) {
+	url := fmt.Sprintf(getEmailURL, googleUserID, messageID)
+	request, _ := http.NewRequest("GET", url, nil)
+	request.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
+	request.Header.Add("Accept", "application/json")
+	request.URL.Query().Set("format", format)
+	request.URL.Query().Add("metadataHeaders", metadata)
+
+	client := &http.Client{}
+	result, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	if result.StatusCode != 200 {
+		io.Copy(os.Stderr, result.Body)
+		return nil, status.Errorf(codes.Aborted, result.Status)
+	}
+	message := &GmailMessage{}
+	err = json.NewDecoder(result.Body).Decode(message)
+	if err != nil {
+		return nil, err
+	}
+	return message, nil
 }
