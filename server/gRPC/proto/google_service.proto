@@ -5,10 +5,14 @@ package google;
 option go_package = "github.com/area/grpc-go/service";
 
 service GoogleService {
-  rpc TestCall (TestRequest) returns (TestRequest) {}
+  // Send an email with the current user email
+  rpc SendEmailMe (EmailRequestMe) returns (EmailRequestMe) {}
 }
 
-message TestRequest {
-  string user_name = 1;
-  int32 user_id = 2;
+message EmailRequestMe {
+  string to = 1;
+  // string from = 2; // Will be the user email registered
+  string subject = 2;
+
+  string body_message = 3;
 }

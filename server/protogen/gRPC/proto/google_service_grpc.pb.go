@@ -19,14 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GoogleService_TestCall_FullMethodName = "/google.GoogleService/TestCall"
+	GoogleService_SendEmailMe_FullMethodName = "/google.GoogleService/SendEmailMe"
 )
 
 // GoogleServiceClient is the client API for GoogleService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GoogleServiceClient interface {
-	TestCall(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestRequest, error)
+	// Send an email with the current user email
+	SendEmailMe(ctx context.Context, in *EmailRequestMe, opts ...grpc.CallOption) (*EmailRequestMe, error)
 }
 
 type googleServiceClient struct {
@@ -37,10 +38,10 @@ func NewGoogleServiceClient(cc grpc.ClientConnInterface) GoogleServiceClient {
 	return &googleServiceClient{cc}
 }
 
-func (c *googleServiceClient) TestCall(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestRequest, error) {
+func (c *googleServiceClient) SendEmailMe(ctx context.Context, in *EmailRequestMe, opts ...grpc.CallOption) (*EmailRequestMe, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TestRequest)
-	err := c.cc.Invoke(ctx, GoogleService_TestCall_FullMethodName, in, out, cOpts...)
+	out := new(EmailRequestMe)
+	err := c.cc.Invoke(ctx, GoogleService_SendEmailMe_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +52,8 @@ func (c *googleServiceClient) TestCall(ctx context.Context, in *TestRequest, opt
 // All implementations must embed UnimplementedGoogleServiceServer
 // for forward compatibility.
 type GoogleServiceServer interface {
-	TestCall(context.Context, *TestRequest) (*TestRequest, error)
+	// Send an email with the current user email
+	SendEmailMe(context.Context, *EmailRequestMe) (*EmailRequestMe, error)
 	mustEmbedUnimplementedGoogleServiceServer()
 }
 
@@ -62,8 +64,8 @@ type GoogleServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGoogleServiceServer struct{}
 
-func (UnimplementedGoogleServiceServer) TestCall(context.Context, *TestRequest) (*TestRequest, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TestCall not implemented")
+func (UnimplementedGoogleServiceServer) SendEmailMe(context.Context, *EmailRequestMe) (*EmailRequestMe, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendEmailMe not implemented")
 }
 func (UnimplementedGoogleServiceServer) mustEmbedUnimplementedGoogleServiceServer() {}
 func (UnimplementedGoogleServiceServer) testEmbeddedByValue()                       {}
@@ -86,20 +88,20 @@ func RegisterGoogleServiceServer(s grpc.ServiceRegistrar, srv GoogleServiceServe
 	s.RegisterService(&GoogleService_ServiceDesc, srv)
 }
 
-func _GoogleService_TestCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TestRequest)
+func _GoogleService_SendEmailMe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailRequestMe)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GoogleServiceServer).TestCall(ctx, in)
+		return srv.(GoogleServiceServer).SendEmailMe(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: GoogleService_TestCall_FullMethodName,
+		FullMethod: GoogleService_SendEmailMe_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GoogleServiceServer).TestCall(ctx, req.(*TestRequest))
+		return srv.(GoogleServiceServer).SendEmailMe(ctx, req.(*EmailRequestMe))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -112,8 +114,8 @@ var GoogleService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GoogleServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "TestCall",
-			Handler:    _GoogleService_TestCall_Handler,
+			MethodName: "SendEmailMe",
+			Handler:    _GoogleService_SendEmailMe_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
