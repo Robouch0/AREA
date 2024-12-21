@@ -11,7 +11,7 @@ import (
 	"area/db"
 	"area/gRPC/api/google/gmail"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -20,6 +20,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"slices"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -42,13 +43,42 @@ func NewGoogleService() (*GoogleService, error) {
 	return &GoogleService{tokenDb: tokenDb, reactService: nil}, err
 }
 
-func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.EmailRequestMe) (*gRPCService.EmailRequestMe, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "GoogleGmailService")
-	if errClaim != nil {
-		return nil, errClaim
+// To delete message we have to get the list then get the correctID
+
+func (google *GoogleService) DeleteEmailMe(ctx context.Context, req *gRPCService.DeleteEmailRequestMe) (*gRPCService.DeleteEmailRequestMe, error) {
+	if req.Subject == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Empty subject for email deletion")
+	}
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, google.tokenDb, "GoogleGmailService", "google")
+	if err != nil {
+		return nil, err
 	}
 
-	tokenInfo, err := google.tokenDb.GetUserTokenByProvider(int64(userID), "google")
+	emails, err := gmail.GetListEmails("me", tokenInfo.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, message := range emails.Messages {
+		idx := slices.IndexFunc[[]gmail.GmailHeader](message.Payload.Header, func(h gmail.GmailHeader) bool {
+			return h.Name == "Subject"
+		})
+		if idx == -1 {
+			continue
+		}
+		if message.Payload.Header[idx].Value == req.Subject {
+			err := gmail.DeleteEmail("me", tokenInfo.AccessToken, message.ID)
+			if err != nil {
+				return nil, err
+			}
+			return req, nil
+		}
+	}
+	return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Did not find any email with subject %s", req.Subject))
+}
+
+func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.EmailRequestMe) (*gRPCService.EmailRequestMe, error) {
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, google.tokenDb, "GoogleGmailService", "google")
 	if err != nil {
 		return nil, err
 	}

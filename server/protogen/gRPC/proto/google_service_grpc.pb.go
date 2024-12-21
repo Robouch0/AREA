@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GoogleService_SendEmailMe_FullMethodName = "/google.GoogleService/SendEmailMe"
+	GoogleService_SendEmailMe_FullMethodName   = "/google.GoogleService/SendEmailMe"
+	GoogleService_DeleteEmailMe_FullMethodName = "/google.GoogleService/DeleteEmailMe"
 )
 
 // GoogleServiceClient is the client API for GoogleService service.
@@ -28,6 +29,8 @@ const (
 type GoogleServiceClient interface {
 	// Send an email with the current user email
 	SendEmailMe(ctx context.Context, in *EmailRequestMe, opts ...grpc.CallOption) (*EmailRequestMe, error)
+	// Delete one of user's email based on the subject of the mail
+	DeleteEmailMe(ctx context.Context, in *DeleteEmailRequestMe, opts ...grpc.CallOption) (*DeleteEmailRequestMe, error)
 }
 
 type googleServiceClient struct {
@@ -48,12 +51,24 @@ func (c *googleServiceClient) SendEmailMe(ctx context.Context, in *EmailRequestM
 	return out, nil
 }
 
+func (c *googleServiceClient) DeleteEmailMe(ctx context.Context, in *DeleteEmailRequestMe, opts ...grpc.CallOption) (*DeleteEmailRequestMe, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteEmailRequestMe)
+	err := c.cc.Invoke(ctx, GoogleService_DeleteEmailMe_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GoogleServiceServer is the server API for GoogleService service.
 // All implementations must embed UnimplementedGoogleServiceServer
 // for forward compatibility.
 type GoogleServiceServer interface {
 	// Send an email with the current user email
 	SendEmailMe(context.Context, *EmailRequestMe) (*EmailRequestMe, error)
+	// Delete one of user's email based on the subject of the mail
+	DeleteEmailMe(context.Context, *DeleteEmailRequestMe) (*DeleteEmailRequestMe, error)
 	mustEmbedUnimplementedGoogleServiceServer()
 }
 
@@ -66,6 +81,9 @@ type UnimplementedGoogleServiceServer struct{}
 
 func (UnimplementedGoogleServiceServer) SendEmailMe(context.Context, *EmailRequestMe) (*EmailRequestMe, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendEmailMe not implemented")
+}
+func (UnimplementedGoogleServiceServer) DeleteEmailMe(context.Context, *DeleteEmailRequestMe) (*DeleteEmailRequestMe, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmailMe not implemented")
 }
 func (UnimplementedGoogleServiceServer) mustEmbedUnimplementedGoogleServiceServer() {}
 func (UnimplementedGoogleServiceServer) testEmbeddedByValue()                       {}
@@ -106,6 +124,24 @@ func _GoogleService_SendEmailMe_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GoogleService_DeleteEmailMe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEmailRequestMe)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoogleServiceServer).DeleteEmailMe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoogleService_DeleteEmailMe_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoogleServiceServer).DeleteEmailMe(ctx, req.(*DeleteEmailRequestMe))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GoogleService_ServiceDesc is the grpc.ServiceDesc for GoogleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +152,10 @@ var GoogleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendEmailMe",
 			Handler:    _GoogleService_SendEmailMe_Handler,
+		},
+		{
+			MethodName: "DeleteEmailMe",
+			Handler:    _GoogleService_DeleteEmailMe_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

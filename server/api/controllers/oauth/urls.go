@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email"
+	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email https://mail.google.com/"
 )
 
 func createOAuthRedirect(consentURL, provider, redirectURI string) string {

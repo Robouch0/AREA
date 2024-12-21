@@ -7,6 +7,9 @@ option go_package = "github.com/area/grpc-go/service";
 service GoogleService {
   // Send an email with the current user email
   rpc SendEmailMe (EmailRequestMe) returns (EmailRequestMe) {}
+
+  // Delete one of user's email based on the subject of the mail
+  rpc DeleteEmailMe (DeleteEmailRequestMe) returns (DeleteEmailRequestMe) {}
 }
 
 message EmailRequestMe {
@@ -15,4 +18,8 @@ message EmailRequestMe {
   string subject = 2;
 
   string body_message = 3;
+}
+
+message DeleteEmailRequestMe {
+  string subject = 1;
 }
