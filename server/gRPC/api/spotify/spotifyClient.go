@@ -30,6 +30,7 @@ func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	(*spotify.MicroservicesLauncher)["createPlaylist"] = spotify.createPlaylist
 	(*spotify.MicroservicesLauncher)["nextSong"] = spotify.nextSong
 	(*spotify.MicroservicesLauncher)["previousSong"] = spotify.previousSong
+	(*spotify.MicroservicesLauncher)["setPlaybackVolume"] = spotify.setPlaybackVolume
 	return spotify
 }
 
@@ -72,6 +73,15 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
                 Type:    "reaction",
 
                 Ingredients: map[string]string{
+                },
+            },
+            IServ.MicroserviceStatus{
+                Name:    "Change the playback Volume",
+                RefName: "setPlaybackVolume",
+                Type:    "reaction",
+
+                Ingredients: map[string]string{
+                    "volume": "string",
                 },
             },
 		},
@@ -149,6 +159,25 @@ func (spot *SpotifyClient) previousSong(ingredients map[string]any, prevOutput [
 	}
 
 	return &IServ.ReactionResponseStatus{Description: "Go back to previous song"}, nil
+}
+
+func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+    jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var setPlaybackVolume gRPCService.SpotifySetPlaybackVolumeInfo
+	err = json.Unmarshal(jsonString, &setPlaybackVolume)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = spot.cc.SetPlaybackVolume(context.Background(), &setPlaybackVolume)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Change the playback volume"}, nil
 }
 
 

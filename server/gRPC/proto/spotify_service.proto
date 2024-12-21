@@ -9,6 +9,7 @@ service SpotifyService {
   rpc CreatePlaylist(SpotifyCreatePlaylist) returns(SpotifyCreatePlaylist) {}
   rpc NextSong(SpotifyNextInfo) returns(SpotifyNextInfo) {}
   rpc PreviousSong(SpotifyPreviousInfo) returns(SpotifyPreviousInfo) {}
+  rpc SetPlaybackVolume(SpotifySetPlaybackVolumeInfo) returns(SpotifySetPlaybackVolumeInfo) {}
 }
 
 message SpotifyStopInfo {
@@ -24,4 +25,8 @@ message SpotifyNextInfo {
 }
 
 message SpotifyPreviousInfo {
+}
+
+message SpotifySetPlaybackVolumeInfo {
+  string volume = 1;
 }

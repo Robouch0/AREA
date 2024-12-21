@@ -16,6 +16,7 @@ import (
 	"log"
 	"bytes"
 	"net/http"
+	"strconv"
 )
 
 type SpotifyService struct {
@@ -171,5 +172,46 @@ func (spot *SpotifyService) PreviousSong(_ context.Context, req *gRPCService.Spo
 		return nil, errors.New(resp.Status)
 	}
 	log.Println("Here: ", resp.Body)
+	return req, nil
+}
+
+func (spot *SpotifyService) SetPlaybackVolume(_ context.Context, req *gRPCService.SpotifySetPlaybackVolumeInfo) (*gRPCService.SpotifySetPlaybackVolumeInfo, error) {
+    if req.Volume == "" {
+        log.Println("la", req.Volume)
+        return nil, errors.New("Some required parameters are empty")
+    }
+    volume, err := strconv.ParseInt(req.Volume, 10, 32)
+    if err != nil {
+        log.Println("Error while parsing the int : ", err)
+        return nil, err
+    }
+
+	bearerTok, err := utils.GetEnvParameterToBearer("API_SPOTIFY")
+	log.Println(bearerTok)
+    if err != nil {
+        log.Println("No api bearer SPOTIFY : ", err)
+        return nil, err
+    }
+    url := fmt.Sprintf("https://api.spotify.com/v1/me/player/volume?volume_percent=%d", volume)
+    putRequest, err := http.NewRequest("PUT", url, nil)
+    if err != nil {
+        log.Println("Error when creating api call to spotify", err)
+        return nil, err
+    }
+	putRequest.Header = http.Header{}
+    putRequest.Header.Set("Authorization", bearerTok)
+    putRequest.Header.Set("Content-Type", "application/json")
+
+    cli := &http.Client{}
+    resp, err := cli.Do(putRequest)
+    if err != nil {
+        log.Println("Error when sending api call to spotify", err)
+        return nil, err
+    }
+
+	if resp.StatusCode != 204 {
+	    log.Println("here", resp.Status)
+		return nil, errors.New(resp.Status)
+	}
 	return req, nil
 }
