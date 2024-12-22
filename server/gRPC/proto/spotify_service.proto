@@ -10,6 +10,7 @@ service SpotifyService {
   rpc NextSong(SpotifyNextInfo) returns(SpotifyNextInfo) {}
   rpc PreviousSong(SpotifyPreviousInfo) returns(SpotifyPreviousInfo) {}
   rpc SetPlaybackVolume(SpotifySetPlaybackVolumeInfo) returns(SpotifySetPlaybackVolumeInfo) {}
+  rpc LaunchSong(SpotifyLauchSongInfo) returns(SpotifyLauchSongInfo) {}
 }
 
 message SpotifyStopInfo {
@@ -29,4 +30,8 @@ message SpotifyPreviousInfo {
 
 message SpotifySetPlaybackVolumeInfo {
   string volume = 1;
+}
+message SpotifyLauchSongInfo {
+  string songUrl = 1;
+  string millisecondsPosition = 2;
 }
