@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 
@@ -21,7 +22,7 @@ import (
 
 const (
 	listEmailsURL = "https://gmail.googleapis.com/gmail/v1/users/%s/messages"
-	maxResults    = "50"
+	maxResults    = "10"
 
 	getEmailURL = "https://gmail.googleapis.com/gmail/v1/users/%s/messages/%s"
 )
@@ -32,14 +33,20 @@ type MessageListRes struct {
 	ResultSizeEstimate int            `json:"resultSizeEstimate,omitempty"`
 }
 
-func GetListEmails(googleUserID string, accessToken string) (*MessageListRes, error) {
+func GetListEmails(googleUserID string, accessToken string, label string) (*MessageListRes, error) {
 	url := fmt.Sprintf(listEmailsURL, googleUserID)
 	request, _ := http.NewRequest("GET", url, nil) // GetUserMail request
 	request.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
 	request.Header.Add("Accept", "application/json")
 
-	request.URL.Query().Set("maxResults", maxResults)
+	q := request.URL.Query()
+	q.Add("maxResults", maxResults)
+	if label != "" {
+		q.Add("labelIds", label)
+	}
+	request.URL.RawQuery = q.Encode()
 
+	log.Println("Query: ", request.URL.String())
 	client := &http.Client{}
 	result, err := client.Do(request)
 	if err != nil {
@@ -57,7 +64,7 @@ func GetListEmails(googleUserID string, accessToken string) (*MessageListRes, er
 	return messageList, nil
 }
 
-func GetEmail( // Look for later if it will not be called getEmailHeader
+func GetEmail(
 	googleUserID string,
 	accessToken string,
 	messageID string,
@@ -80,8 +87,7 @@ func GetEmail( // Look for later if it will not be called getEmailHeader
 		io.Copy(os.Stderr, result.Body)
 		return nil, status.Errorf(codes.Aborted, result.Status)
 	}
-	message := &GmailMessage{}
-	err = json.NewDecoder(result.Body).Decode(message)
+	message, err := utils.ResponseToStruct[GmailMessage](result)
 	if err != nil {
 		return nil, err
 	}

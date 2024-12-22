@@ -43,7 +43,6 @@ func NewGoogleService() (*GoogleService, error) {
 	return &GoogleService{tokenDb: tokenDb, reactService: nil}, err
 }
 
-// To delete message we have to get the list then get the correctID
 func (google *GoogleService) DeleteEmailMe(ctx context.Context, req *gRPCService.DeleteEmailRequestMe) (*gRPCService.DeleteEmailRequestMe, error) {
 	if req.Subject == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Empty subject for email deletion")
@@ -53,7 +52,7 @@ func (google *GoogleService) DeleteEmailMe(ctx context.Context, req *gRPCService
 		return nil, err
 	}
 
-	emails, err := gmail.GetListEmails("me", tokenInfo.AccessToken)
+	emails, err := gmail.GetListEmails("me", tokenInfo.AccessToken, "")
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,12 @@ service GoogleService {
 
   // Delete one of user's email based on the subject of the mail
   rpc DeleteEmailMe (DeleteEmailRequestMe) returns (DeleteEmailRequestMe) {}
+
+  // Move to trash an email
+  rpc MoveToTrash (TrashEmailRequestMe) returns (TrashEmailRequestMe) {}
+
+  // Move out of trash an email
+  rpc MoveFromTrash (TrashEmailRequestMe) returns (TrashEmailRequestMe) {}
 }
 
 message EmailRequestMe {
@@ -21,5 +27,9 @@ message EmailRequestMe {
 }
 
 message DeleteEmailRequestMe {
+  string subject = 1;
+}
+
+message TrashEmailRequestMe {
   string subject = 1;
 }

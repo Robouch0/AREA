@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	GoogleService_SendEmailMe_FullMethodName   = "/google.GoogleService/SendEmailMe"
 	GoogleService_DeleteEmailMe_FullMethodName = "/google.GoogleService/DeleteEmailMe"
+	GoogleService_MoveToTrash_FullMethodName   = "/google.GoogleService/MoveToTrash"
+	GoogleService_MoveFromTrash_FullMethodName = "/google.GoogleService/MoveFromTrash"
 )
 
 // GoogleServiceClient is the client API for GoogleService service.
@@ -31,6 +33,10 @@ type GoogleServiceClient interface {
 	SendEmailMe(ctx context.Context, in *EmailRequestMe, opts ...grpc.CallOption) (*EmailRequestMe, error)
 	// Delete one of user's email based on the subject of the mail
 	DeleteEmailMe(ctx context.Context, in *DeleteEmailRequestMe, opts ...grpc.CallOption) (*DeleteEmailRequestMe, error)
+	// Move to trash an email
+	MoveToTrash(ctx context.Context, in *TrashEmailRequestMe, opts ...grpc.CallOption) (*TrashEmailRequestMe, error)
+	// Move out of trash an email
+	MoveFromTrash(ctx context.Context, in *TrashEmailRequestMe, opts ...grpc.CallOption) (*TrashEmailRequestMe, error)
 }
 
 type googleServiceClient struct {
@@ -61,6 +67,26 @@ func (c *googleServiceClient) DeleteEmailMe(ctx context.Context, in *DeleteEmail
 	return out, nil
 }
 
+func (c *googleServiceClient) MoveToTrash(ctx context.Context, in *TrashEmailRequestMe, opts ...grpc.CallOption) (*TrashEmailRequestMe, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TrashEmailRequestMe)
+	err := c.cc.Invoke(ctx, GoogleService_MoveToTrash_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *googleServiceClient) MoveFromTrash(ctx context.Context, in *TrashEmailRequestMe, opts ...grpc.CallOption) (*TrashEmailRequestMe, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TrashEmailRequestMe)
+	err := c.cc.Invoke(ctx, GoogleService_MoveFromTrash_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GoogleServiceServer is the server API for GoogleService service.
 // All implementations must embed UnimplementedGoogleServiceServer
 // for forward compatibility.
@@ -69,6 +95,10 @@ type GoogleServiceServer interface {
 	SendEmailMe(context.Context, *EmailRequestMe) (*EmailRequestMe, error)
 	// Delete one of user's email based on the subject of the mail
 	DeleteEmailMe(context.Context, *DeleteEmailRequestMe) (*DeleteEmailRequestMe, error)
+	// Move to trash an email
+	MoveToTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error)
+	// Move out of trash an email
+	MoveFromTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error)
 	mustEmbedUnimplementedGoogleServiceServer()
 }
 
@@ -84,6 +114,12 @@ func (UnimplementedGoogleServiceServer) SendEmailMe(context.Context, *EmailReque
 }
 func (UnimplementedGoogleServiceServer) DeleteEmailMe(context.Context, *DeleteEmailRequestMe) (*DeleteEmailRequestMe, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmailMe not implemented")
+}
+func (UnimplementedGoogleServiceServer) MoveToTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MoveToTrash not implemented")
+}
+func (UnimplementedGoogleServiceServer) MoveFromTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MoveFromTrash not implemented")
 }
 func (UnimplementedGoogleServiceServer) mustEmbedUnimplementedGoogleServiceServer() {}
 func (UnimplementedGoogleServiceServer) testEmbeddedByValue()                       {}
@@ -142,6 +178,42 @@ func _GoogleService_DeleteEmailMe_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GoogleService_MoveToTrash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TrashEmailRequestMe)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoogleServiceServer).MoveToTrash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoogleService_MoveToTrash_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoogleServiceServer).MoveToTrash(ctx, req.(*TrashEmailRequestMe))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GoogleService_MoveFromTrash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TrashEmailRequestMe)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoogleServiceServer).MoveFromTrash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoogleService_MoveFromTrash_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoogleServiceServer).MoveFromTrash(ctx, req.(*TrashEmailRequestMe))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GoogleService_ServiceDesc is the grpc.ServiceDesc for GoogleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -156,6 +228,14 @@ var GoogleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteEmailMe",
 			Handler:    _GoogleService_DeleteEmailMe_Handler,
+		},
+		{
+			MethodName: "MoveToTrash",
+			Handler:    _GoogleService_MoveToTrash_Handler,
+		},
+		{
+			MethodName: "MoveFromTrash",
+			Handler:    _GoogleService_MoveFromTrash_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
