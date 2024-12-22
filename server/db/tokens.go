@@ -48,6 +48,20 @@ func (token *TokenDb) CreateToken(newToken *models.Token) (*models.Token, error)
 	return newToken, nil
 }
 
+func (token *TokenDb) UpdateUserTokenByProvider(userID int64, provider string, accessToken string) (*models.Token, error) {
+	upTok := new(models.Token)
+	_, err := token.Db.NewUpdate().
+		Model(upTok).
+		Set("access_token = ?", accessToken).
+		Where("user_id = ?", userID).
+		Where("provider = ?", provider).
+		Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return upTok, nil
+}
+
 func (Token *TokenDb) GetTokens() (*([]models.Token), error) {
 	allTokens := new([]models.Token)
 	err := Token.Db.NewSelect().

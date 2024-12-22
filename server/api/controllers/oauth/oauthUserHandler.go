@@ -15,6 +15,7 @@ import (
 	"area/utils"
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -69,6 +70,10 @@ func CreateToken(w http.ResponseWriter, user *models.User, AccessToken string, S
 			return
 		}
 	} else {
-		tkn.AccessToken = AccessToken
+		_, err := tokenDb.UpdateUserTokenByProvider(int64(user.ID), Service, AccessToken)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 	}
 }

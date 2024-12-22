@@ -14,3 +14,9 @@ func EncodeToBase64(mess string) string {
 	base64.StdEncoding.Encode(dst, []byte(mess))
 	return string(dst)
 }
+
+func EncodeToBase64Bytes(mess string) []byte {
+	dst := make([]byte, base64.StdEncoding.EncodedLen(len(mess)))
+	base64.StdEncoding.Encode(dst, []byte(mess))
+	return dst
+}
