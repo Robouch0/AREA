@@ -10,6 +10,7 @@ package reaction
 import (
 	"area/db"
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
 	"area/gRPC/api/google"
 	"area/gRPC/api/hello"
@@ -59,6 +60,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["hello"] = hello.NewHelloServiceClient(conn)
 	react.clients["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	react.clients["github"] = github.NewGithubClient(conn)
+	react.clients["discord"] = discord.NewDiscordClient(conn)
 	react.clients["google"] = google.NewGoogleClient(conn)
 }
 

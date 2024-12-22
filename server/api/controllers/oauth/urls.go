@@ -51,7 +51,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 		},
 	}
 	oauthUrls["discord"] = OAuthURLs{
-		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email",
+		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email+bot+applications.commands+guilds",
 		OAuth: &DiscordOAuth{
 			AccessTokenURL:  "https://discord.com/api/oauth2/token",
 			EmailRequestURL: "https://discord.com/api/users/@me",

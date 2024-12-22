@@ -9,6 +9,7 @@ package grpc_routes
 
 import (
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
 	"area/gRPC/api/google"
 	"area/gRPC/api/hello"
@@ -38,9 +39,10 @@ func LaunchServices() {
 	reactService, errReact := reaction.NewReactionService()
 	huggingFaceService, errHf := huggingFace.NewHuggingFaceService()
 	githubService, errGit := github.NewGithubService()
+	discordService, errDiscord := discord.NewDiscordService()
 	googleService, errGoogle := google.NewGoogleService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord); err != nil {
 		log.Println(err)
 		return
 	}
@@ -48,6 +50,7 @@ func LaunchServices() {
 	services.RegisterDateTimeServiceServer(s, dtService)
 	services.RegisterHuggingFaceServiceServer(s, huggingFaceService)
 	services.RegisterGithubServiceServer(s, githubService)
+	services.RegisterDiscordServiceServer(s, discordService)
 	services.RegisterGoogleServiceServer(s, googleService)
 	services.RegisterReactionServiceServer(s, reactService)
 
