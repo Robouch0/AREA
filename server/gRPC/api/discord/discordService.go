@@ -8,215 +8,210 @@
 package discord
 
 import (
-	// "area/db"
+	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 type DiscordService struct {
+	tokenDb      *db.TokenDb
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedDiscordServiceServer
 }
 
-func NewDiscordService() DiscordService {
-	return DiscordService{reactService: nil}
+func NewDiscordService() (*DiscordService, error) {
+	tokenDb, err := db.InitTokenDb()
+
+	return &DiscordService{tokenDb: tokenDb, reactService: nil}, err
 }
 
-func (disCli *DiscordService) CreateMessage(_ context.Context, req *gRPCService.CreateMsg) (*gRPCService.CreateMsg, error) {
+func (discord *DiscordService) CreateMessage(ctx context.Context, req *gRPCService.CreateMsg) (*gRPCService.CreateMsg, error) {
 	if req.Channel == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	// Tokendb := db.InitTokenDb()
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	_, err := grpcutils.GetTokenByContext(ctx, discord.tokenDb, "DiscordService", "discord")
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := json.Marshal(req)
-	if err != nil {
+	BotToken, errToken := utils.GetEnvParameter("DISCORD_BOT_TOKEN")
+	b, errMarshal := json.Marshal(req)
+	if err = cmp.Or(errToken, errMarshal); err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages", req.Channel)
 	putRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "200 OK" {
+	if resp.StatusCode != 200 {
+		io.Copy(os.Stderr, resp.Body)
 		return nil, errors.New(resp.Status)
 	}
 	log.Println("Here: ", resp.Body) // Do something with it
 	return req, nil
 }
 
-func (disCli *DiscordService) EditMessage(_ context.Context, req *gRPCService.EditMsg) (*gRPCService.EditMsg, error) {
+func (discord *DiscordService) EditMessage(ctx context.Context, req *gRPCService.EditMsg) (*gRPCService.EditMsg, error) {
 	if req.Channel == "" || req.MessageId == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	// Tokendb := db.InitTokenDb()
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	_, err := grpcutils.GetTokenByContext(ctx, discord.tokenDb, "DiscordService", "discord")
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := json.Marshal(req)
-	if err != nil {
+	BotToken, errToken := utils.GetEnvParameter("DISCORD_BOT_TOKEN")
+	b, errMarshal := json.Marshal(req)
+	if err = cmp.Or(errToken, errMarshal); err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v", req.Channel, req.MessageId)
 	putRequest, err := http.NewRequest("PATCH", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "200 OK" {
+	if resp.StatusCode != 200 {
+		io.Copy(os.Stderr, resp.Body)
 		return nil, errors.New(resp.Status)
 	}
 	log.Println("Here: ", resp.Body) // Do something with it
 	return req, nil
 }
 
-func (disCli *DiscordService) DeleteMessage(_ context.Context, req *gRPCService.DeleteMsg) (*gRPCService.DeleteMsg, error) {
+func (discord *DiscordService) DeleteMessage(ctx context.Context, req *gRPCService.DeleteMsg) (*gRPCService.DeleteMsg, error) {
 	if req.Channel == "" || req.MessageId == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	// Tokendb := db.InitTokenDb()
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	_, err := grpcutils.GetTokenByContext(ctx, discord.tokenDb, "DiscordService", "discord")
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := json.Marshal(req)
-	if err != nil {
+	BotToken, errToken := utils.GetEnvParameter("DISCORD_BOT_TOKEN")
+	if err = cmp.Or(errToken); err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v", req.Channel, req.MessageId)
-	putRequest, err := http.NewRequest("DELETE", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	putRequest, err := http.NewRequest("DELETE", url, nil)
+	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "200 OK" {
+	if resp.StatusCode != 204 {
+		io.Copy(os.Stderr, resp.Body)
 		return nil, errors.New(resp.Status)
 	}
 	log.Println("Here: ", resp.Body) // Do something with it
 	return req, nil
 }
 
-func (disCli *DiscordService) CreateReaction(_ context.Context, req *gRPCService.CreateReact) (*gRPCService.CreateReact, error) {
+func (discord *DiscordService) CreateReaction(ctx context.Context, req *gRPCService.CreateReact) (*gRPCService.CreateReact, error) {
 	if req.Channel == "" || req.MessageId == "" || req.Emoji == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	// Tokendb := db.InitTokenDb()
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	_, err := grpcutils.GetTokenByContext(ctx, discord.tokenDb, "DiscordService", "discord")
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := json.Marshal(req)
-	if err != nil {
+	BotToken, errToken := utils.GetEnvParameter("DISCORD_BOT_TOKEN")
+
+	if err = cmp.Or(errToken); err != nil {
 		return nil, err
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v/reactions/%v/@me", req.Channel, req.MessageId, req.Emoji)
-	putRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	putRequest, err := http.NewRequest("PUT", url, nil)
+	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "204 OK" {
+	if resp.StatusCode != 204 {
 		return nil, errors.New(resp.Status)
 	}
 	log.Println("Here: ", resp.Body) // Do something with it
 	return req, nil
 }
 
-func (disCli *DiscordService) DeleteAllReactions(_ context.Context, req *gRPCService.DeleteAllReact) (*gRPCService.DeleteAllReact, error) {
+func (discord *DiscordService) DeleteAllReactions(ctx context.Context, req *gRPCService.DeleteAllReact) (*gRPCService.DeleteAllReact, error) {
 	if req.Channel == "" || req.MessageId == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	// Tokendb := db.InitTokenDb()
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	_, err := grpcutils.GetTokenByContext(ctx, discord.tokenDb, "DiscordService", "discord")
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := json.Marshal(req)
-	if err != nil {
+	BotToken, errToken := utils.GetEnvParameter("DISCORD_BOT_TOKEN")
+
+	if err = cmp.Or(errToken); err != nil {
 		return nil, err
 	}
-	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v/reactions/", req.Channel, req.MessageId)
-	putRequest, err := http.NewRequest("DELETE", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v/reactions", req.Channel, req.MessageId)
+	putRequest, err := http.NewRequest("DELETE", url, nil)
+	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "204 OK" {
+	if resp.StatusCode != 204 {
 		return nil, errors.New(resp.Status)
 	}
 	log.Println("Here: ", resp.Body) // Do something with it
 	return req, nil
 }
 
-func (disCli *DiscordService) DeleteReactions(_ context.Context, req *gRPCService.DeleteReact) (*gRPCService.DeleteReact, error) {
+func (discord *DiscordService) DeleteReactions(ctx context.Context, req *gRPCService.DeleteReact) (*gRPCService.DeleteReact, error) {
 	if req.Channel == "" || req.MessageId == "" || req.Emoji == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
-	// Tokendb := db.InitTokenDb()
-	bearerTok, err := utils.GetEnvParameterToBearer("API_GITHUB")
+	_, err := grpcutils.GetTokenByContext(ctx, discord.tokenDb, "DiscordService", "discord")
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := json.Marshal(req)
-	if err != nil {
+	BotToken, errToken := utils.GetEnvParameter("DISCORD_BOT_TOKEN")
+
+	if err = cmp.Or(errToken); err != nil {
 		return nil, err
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v/reactions/%v", req.Channel, req.MessageId, req.Emoji)
-	putRequest, err := http.NewRequest("DELETE", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultHTTPHeader(bearerTok)
+	putRequest, err := http.NewRequest("DELETE", url, nil)
+	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "204 OK" {
+	if resp.StatusCode != 204 {
 		return nil, errors.New(resp.Status)
 	}
 	log.Println("Here: ", resp.Body) // Do something with it
 	return req, nil
 }
-
-/*
-id
-channel_id
-author [1]
-content [2]
-timestamp
-edited_timestamp
-tts
-mention_everyone
-mentions
-mention_roles
-attachments [2]
-embeds [2]
-pinned
-type
-*/

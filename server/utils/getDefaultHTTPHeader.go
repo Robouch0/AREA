@@ -20,3 +20,8 @@ func GetDefaultHTTPHeader(bearerTok string) http.Header {
 func GetDefaultBearerHTTPHeader(token string) http.Header {
 	return GetDefaultHTTPHeader("Bearer " + token)
 }
+
+func GetDefaultBotHTTPHeader(token string) http.Header {
+	return GetDefaultHTTPHeader("Bot " + token)
+}
+

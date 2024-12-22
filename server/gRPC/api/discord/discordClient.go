@@ -57,9 +57,9 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Type:    "reaction",
 
 				Ingredients: map[string]string{
-					"channel":   "string",
-					"messageid": "string",
-					"content":   "string",
+					"channel":    "string",
+					"message_id": "string",
+					"content":    "string",
 				},
 			},
 			IServ.MicroserviceStatus{
@@ -68,8 +68,8 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Type:    "reaction",
 
 				Ingredients: map[string]string{
-					"channel":   "string",
-					"messageid": "string",
+					"channel":    "string",
+					"message_id": "string",
 				},
 			},
 			IServ.MicroserviceStatus{
@@ -78,9 +78,9 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Type:    "reaction",
 
 				Ingredients: map[string]string{
-					"channel":   "string",
-					"messageid": "string",
-					"emoji":     "string",
+					"channel":    "string",
+					"message_id": "string",
+					"emoji":      "string",
 				},
 			},
 			IServ.MicroserviceStatus{
@@ -89,8 +89,8 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Type:    "reaction",
 
 				Ingredients: map[string]string{
-					"channel":   "string",
-					"messageid": "string",
+					"channel":    "string",
+					"message_id": "string",
 				},
 			},
 			IServ.MicroserviceStatus{
@@ -99,9 +99,9 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Type:    "reaction",
 
 				Ingredients: map[string]string{
-					"channel":   "string",
-					"messageid": "string",
-					"emoji":     "string",
+					"channel":    "string",
+					"message_id": "string",
+					"emoji":      "string",
 				},
 			},
 		},

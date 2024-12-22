@@ -10,6 +10,7 @@ package api
 import (
 	areaMiddleware "area/api/middleware"
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
 	"area/gRPC/api/google"
 	"area/gRPC/api/hello"
@@ -44,6 +45,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	m["github"] = github.NewGithubClient(conn)
 	m["google"] = google.NewGoogleClient(conn)
+	m["discord"] = discord.NewDiscordClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
