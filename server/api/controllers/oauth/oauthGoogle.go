@@ -34,8 +34,6 @@ type googleUserInfo struct {
 	Email string `json:"email"`
 }
 
-// AccessTokenBody: `{ "client_id" : "%s", "client_secret" : "%s", "code" : "%s", redirect_uri: "%s", grant_type: "authorization_code" }`,
-
 func (google *GoogleOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccessInfos, error) {
 	requestBodyMap := map[string]string{
 		"client_id":     os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(OAuthCode.Service))),

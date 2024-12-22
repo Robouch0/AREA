@@ -9,8 +9,9 @@ package discord
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"context"
+	"area/utils"
 	"encoding/json"
 	"errors"
 
@@ -108,7 +109,7 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 	return status, nil
 }
 
-func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -119,7 +120,8 @@ func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	res, err := disCli.cc.CreateMessage(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := disCli.cc.CreateMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +129,7 @@ func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutpu
 	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
 }
 
-func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -138,7 +140,8 @@ func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput 
 		return nil, err
 	}
 
-	res, err := disCli.cc.EditMessage(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := disCli.cc.EditMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +149,7 @@ func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput 
 	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
 }
 
-func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -157,7 +160,8 @@ func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	res, err := disCli.cc.DeleteMessage(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := disCli.cc.DeleteMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +169,7 @@ func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutpu
 	return &IServ.ReactionResponseStatus{Description: res.MessageId}, nil
 }
 
-func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -176,7 +180,8 @@ func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	res, err := disCli.cc.CreateReaction(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := disCli.cc.CreateReaction(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +189,7 @@ func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutp
 	return &IServ.ReactionResponseStatus{Description: res.Emoji}, nil
 }
 
-func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -195,7 +200,8 @@ func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prev
 		return nil, err
 	}
 
-	res, err := disCli.cc.DeleteAllReactions(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := disCli.cc.DeleteAllReactions(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +209,7 @@ func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prev
 	return &IServ.ReactionResponseStatus{Description: res.MessageId}, nil
 }
 
-func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -214,7 +220,8 @@ func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	res, err := disCli.cc.DeleteReactions(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := disCli.cc.DeleteReactions(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -222,13 +229,13 @@ func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutp
 	return &IServ.ReactionResponseStatus{Description: res.Emoji}, nil
 }
 
-func (disCli *DiscordClient) SendAction(body map[string]any, actionId int) (*IServ.ActionResponseStatus, error) {
+func (disCli *DiscordClient) SendAction(scenario models.AreaScenario, actionId int, userID int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No action supported in Discord service (Next will be Webhooks)")
 }
 
-func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*disCli.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput)
+		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
 }

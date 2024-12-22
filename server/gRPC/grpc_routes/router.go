@@ -10,6 +10,7 @@ package grpc_routes
 import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/github"
+	"area/gRPC/api/google"
 	"area/gRPC/api/hello"
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
@@ -35,17 +36,19 @@ func LaunchServices() {
 	helloService := hello.NewHelloService(nil)
 	dtService, errDt := dateTime.NewDateTimeService()
 	reactService, errReact := reaction.NewReactionService()
-	huggingFaceService := huggingFace.NewHuggingFaceService()
-	githubService := github.NewGithubService()
+	huggingFaceService, errHf := huggingFace.NewHuggingFaceService()
+	githubService, errGit := github.NewGithubService()
+	googleService, errGoogle := google.NewGoogleService()
 
-	if err = cmp.Or(errDt, errReact); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle); err != nil {
 		log.Println(err)
 		return
 	}
 	services.RegisterHelloWorldServiceServer(s, &helloService)
 	services.RegisterDateTimeServiceServer(s, dtService)
-	services.RegisterHuggingFaceServiceServer(s, &huggingFaceService)
-	services.RegisterGithubServiceServer(s, &githubService)
+	services.RegisterHuggingFaceServiceServer(s, huggingFaceService)
+	services.RegisterGithubServiceServer(s, githubService)
+	services.RegisterGoogleServiceServer(s, googleService)
 	services.RegisterReactionServiceServer(s, reactService)
 
 	var wg sync.WaitGroup
