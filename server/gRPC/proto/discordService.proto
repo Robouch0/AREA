@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package discord;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service DiscordService {
+  rpc CreateMessage(CreateMsg) returns(CreateMsg) {}
+
+  rpc EditMessage(EditMsg) returns(EditMsg) {}
+
+  rpc DeleteMessage(DeleteMsg) returns(DeleteMsg) {}
+
+  rpc CreateReaction(CreateReact) returns(CreateReact) {}
+
+  rpc DeleteAllReactions(DeleteAllReact) returns(DeleteAllReact) {}
+
+  rpc DeleteReactions(DeleteReact) returns(DeleteReact) {}
+}
+
+message CreateMsg {
+  string Channel = 1;
+  string Content = 2;
+}
+
+message EditMsg {
+  string Channel = 1;
+  string MessageId = 2;
+  string content = 3;
+}
+
+message DeleteMsg {
+  string Channel = 1;
+  string MessageId = 2;
+}
+
+message CreateReact {
+  string Channel = 1;
+  string MessageId = 2;
+  string Emoji = 3;
+}
+
+message DeleteAllReact {
+  string Channel = 1;
+  string MessageId = 2;
+}
+
+message DeleteReact {
+  string Channel = 1;
+  string MessageId = 2;
+  string Emoji = 3;
+}
