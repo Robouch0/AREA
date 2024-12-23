@@ -23,6 +23,7 @@ type SpotifyServiceClient interface {
 	PreviousSong(ctx context.Context, in *SpotifyPreviousInfo, opts ...grpc.CallOption) (*SpotifyPreviousInfo, error)
 	SetPlaybackVolume(ctx context.Context, in *SpotifySetPlaybackVolumeInfo, opts ...grpc.CallOption) (*SpotifySetPlaybackVolumeInfo, error)
 	LaunchSong(ctx context.Context, in *SpotifyLauchSongInfo, opts ...grpc.CallOption) (*SpotifyLauchSongInfo, error)
+	AddSongToPlaylist(ctx context.Context, in *SpotifyAddSongToPlaylist, opts ...grpc.CallOption) (*SpotifyAddSongToPlaylist, error)
 }
 
 type spotifyServiceClient struct {
@@ -87,6 +88,15 @@ func (c *spotifyServiceClient) LaunchSong(ctx context.Context, in *SpotifyLauchS
 	return out, nil
 }
 
+func (c *spotifyServiceClient) AddSongToPlaylist(ctx context.Context, in *SpotifyAddSongToPlaylist, opts ...grpc.CallOption) (*SpotifyAddSongToPlaylist, error) {
+	out := new(SpotifyAddSongToPlaylist)
+	err := c.cc.Invoke(ctx, "/spotify.SpotifyService/AddSongToPlaylist", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SpotifyServiceServer is the server API for SpotifyService service.
 // All implementations must embed UnimplementedSpotifyServiceServer
 // for forward compatibility
@@ -97,6 +107,7 @@ type SpotifyServiceServer interface {
 	PreviousSong(context.Context, *SpotifyPreviousInfo) (*SpotifyPreviousInfo, error)
 	SetPlaybackVolume(context.Context, *SpotifySetPlaybackVolumeInfo) (*SpotifySetPlaybackVolumeInfo, error)
 	LaunchSong(context.Context, *SpotifyLauchSongInfo) (*SpotifyLauchSongInfo, error)
+	AddSongToPlaylist(context.Context, *SpotifyAddSongToPlaylist) (*SpotifyAddSongToPlaylist, error)
 	mustEmbedUnimplementedSpotifyServiceServer()
 }
 
@@ -121,6 +132,9 @@ func (UnimplementedSpotifyServiceServer) SetPlaybackVolume(context.Context, *Spo
 }
 func (UnimplementedSpotifyServiceServer) LaunchSong(context.Context, *SpotifyLauchSongInfo) (*SpotifyLauchSongInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LaunchSong not implemented")
+}
+func (UnimplementedSpotifyServiceServer) AddSongToPlaylist(context.Context, *SpotifyAddSongToPlaylist) (*SpotifyAddSongToPlaylist, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddSongToPlaylist not implemented")
 }
 func (UnimplementedSpotifyServiceServer) mustEmbedUnimplementedSpotifyServiceServer() {}
 
@@ -243,6 +257,24 @@ func _SpotifyService_LaunchSong_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SpotifyService_AddSongToPlaylist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SpotifyAddSongToPlaylist)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SpotifyServiceServer).AddSongToPlaylist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spotify.SpotifyService/AddSongToPlaylist",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SpotifyServiceServer).AddSongToPlaylist(ctx, req.(*SpotifyAddSongToPlaylist))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SpotifyService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "spotify.SpotifyService",
 	HandlerType: (*SpotifyServiceServer)(nil),
@@ -270,6 +302,10 @@ var _SpotifyService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LaunchSong",
 			Handler:    _SpotifyService_LaunchSong_Handler,
+		},
+		{
+			MethodName: "AddSongToPlaylist",
+			Handler:    _SpotifyService_AddSongToPlaylist_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

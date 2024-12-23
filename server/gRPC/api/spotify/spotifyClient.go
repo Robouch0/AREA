@@ -32,6 +32,7 @@ func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	(*spotify.MicroservicesLauncher)["previousSong"] = spotify.previousSong
 	(*spotify.MicroservicesLauncher)["setPlaybackVolume"] = spotify.setPlaybackVolume
 	(*spotify.MicroservicesLauncher)["launchSong"] = spotify.launchSong
+	(*spotify.MicroservicesLauncher)["addSongToPlaylist"] = spotify.addSongToPlaylist
 	return spotify
 }
 
@@ -93,6 +94,14 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
                 Ingredients: map[string]string{
                     "songUrl": "string",
                     "millisecondsPosition" : "string",
+                },
+            },
+            IServ.MicroserviceStatus{
+                Name:    "Add a song to a playlist",
+                RefName: "addSongToPlaylist",
+                Type:    "reaction",
+
+                Ingredients: map[string]string{
                 },
             },
 		},
@@ -208,6 +217,25 @@ func (spot *SpotifyClient) launchSong(ingredients map[string]any, prevOutput []b
 	}
 
 	return &IServ.ReactionResponseStatus{Description: "Song launched"}, nil
+}
+
+func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+// 	jsonString, err := json.Marshal(ingredients)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	var launchSong gRPCService.SpotifyAddSongToPlaylist
+// 	err = json.Unmarshal(jsonString, &launchSong)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+	var addSong gRPCService.SpotifyAddSongToPlaylist
+	_, err := spot.cc.AddSongToPlaylist(context.Background(), &addSong)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Song added"}, nil
 }
 
 

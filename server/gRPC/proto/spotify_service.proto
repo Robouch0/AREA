@@ -11,6 +11,7 @@ service SpotifyService {
   rpc PreviousSong(SpotifyPreviousInfo) returns(SpotifyPreviousInfo) {}
   rpc SetPlaybackVolume(SpotifySetPlaybackVolumeInfo) returns(SpotifySetPlaybackVolumeInfo) {}
   rpc LaunchSong(SpotifyLauchSongInfo) returns(SpotifyLauchSongInfo) {}
+  rpc AddSongToPlaylist(SpotifyAddSongToPlaylist) returns(SpotifyAddSongToPlaylist) {}
 }
 
 message SpotifyStopInfo {
@@ -34,4 +35,8 @@ message SpotifySetPlaybackVolumeInfo {
 message SpotifyLauchSongInfo {
   string songUrl = 1;
   string millisecondsPosition = 2;
+}
+
+message SpotifyAddSongToPlaylist {
+
 }

@@ -257,3 +257,49 @@ func (spot *SpotifyService) LaunchSong(_ context.Context, req *gRPCService.Spoti
 	}
 	return req, nil
 }
+
+func (spot *SpotifyService) AddSongToPlaylist(_ context.Context, req *gRPCService.SpotifyAddSongToPlaylist) (*gRPCService.SpotifyAddSongToPlaylist, error) {
+//     if req.SongUrl == "" || req.MillisecondsPosition == ""{
+//         return nil, errors.New("Some required parameters are empty")
+//     }
+//     milliseconds, err := strconv.ParseInt(req.MillisecondsPosition, 10, 32)
+//     if err != nil {
+//         log.Println("Error while parsing the int : ", err)
+//         return nil, err
+//     }
+
+	bearerTok, _ := utils.GetEnvParameterToBearer("API_SPOTIFY")
+	playlists, _ := spot.GetUserPlaylists(bearerTok)
+
+	foundID, _ := spot.FindPlayList(playlists, "My Playlist #2")
+	log.Println(foundID)
+// 	log.Println(bearerTok)
+//     if err != nil {
+//         log.Println("No api bearer SPOTIFY : ", err)
+//         return nil, err
+//     }
+//     url := fmt.Sprintf("https://api.spotify.com/v1/me/player/play")
+//     putRequestBody := fmt.Sprintf(`{"uris": ["spotify:track:%s"], "position_ms":%d}`, req.SongUrl, milliseconds)
+//     putRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer([]byte(putRequestBody)))
+//     if err != nil {
+//         log.Println("Error when creating api call to spotify", err)
+//         return nil, err
+//     }
+//
+// 	putRequest.Header = http.Header{}
+//     putRequest.Header.Set("Authorization", bearerTok)
+//     putRequest.Header.Set("Content-Type", "application/json")
+//
+//     cli := &http.Client{}
+//     resp, err := cli.Do(putRequest)
+//     if err != nil {
+//         log.Println("Error when sending api call to spotify", err)
+//         return nil, err
+//     }
+//
+// 	if resp.StatusCode != 204 {
+// 	    log.Println("here", resp.Status)
+// 		return nil, errors.New(resp.Status)
+// 	}
+	return req, nil
+}
