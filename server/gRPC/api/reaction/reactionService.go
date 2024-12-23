@@ -13,10 +13,9 @@ import (
 	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
 	"area/gRPC/api/google"
-	"area/gRPC/api/hello"
-	"area/gRPC/api/spotify"
 	huggingFace "area/gRPC/api/hugging_face"
 	IServ "area/gRPC/api/serviceInterface"
+	"area/gRPC/api/spotify"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
@@ -58,7 +57,6 @@ func NewReactionService() (*ReactionService, error) {
 
 func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["dt"] = dateTime.NewDateTimeServiceClient(conn)
-	react.clients["hello"] = hello.NewHelloServiceClient(conn)
 	react.clients["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	react.clients["github"] = github.NewGithubClient(conn)
 	react.clients["discord"] = discord.NewDiscordClient(conn)
