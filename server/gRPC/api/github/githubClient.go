@@ -9,8 +9,9 @@ package github
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"context"
+	"area/utils"
 	"encoding/json"
 	"errors"
 
@@ -79,7 +80,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 	return status, nil
 }
 
-func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -90,7 +91,8 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	res, err := git.cc.UpdateRepository(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := git.cc.UpdateRepository(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +100,7 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput
 	return &IServ.ReactionResponseStatus{Description: res.Description}, nil
 }
 
-func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -109,7 +111,8 @@ func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	res, err := git.cc.UpdateFile(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := git.cc.UpdateFile(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +120,7 @@ func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byt
 	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
 }
 
-func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -128,7 +131,8 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	res, err := git.cc.DeleteFile(context.Background(), &updateReq)
+	ctx := utils.CreateContextFromUserID(userID)
+	res, err := git.cc.DeleteFile(ctx, &updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -136,13 +140,13 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byt
 	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
 }
 
-func (git *GithubClient) SendAction(body map[string]any, actionId int) (*IServ.ActionResponseStatus, error) {
+func (git *GithubClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
 }
 
-func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*git.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput)
+		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
 }

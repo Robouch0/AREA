@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email"
+	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email https://mail.google.com/"
 )
 
 func createOAuthRedirect(consentURL, provider, redirectURI string) string {
@@ -51,7 +51,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 		},
 	}
 	oauthUrls["discord"] = OAuthURLs{
-		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email",
+		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email+bot+applications.commands+guilds",
 		OAuth: &DiscordOAuth{
 			AccessTokenURL:  "https://discord.com/api/oauth2/token",
 			EmailRequestURL: "https://discord.com/api/users/@me",

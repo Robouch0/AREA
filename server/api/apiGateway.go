@@ -10,7 +10,9 @@ package api
 import (
 	areaMiddleware "area/api/middleware"
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
+	"area/gRPC/api/google"
 	"area/gRPC/api/hello"
 	"area/gRPC/api/spotify"
 	huggingFace "area/gRPC/api/hugging_face"
@@ -43,6 +45,8 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
 	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	m["github"] = github.NewGithubClient(conn)
+	m["google"] = google.NewGoogleClient(conn)
+	m["discord"] = discord.NewDiscordClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
 	m["spotify"] = spotify.NewSpotifyClient(conn)
 	return &ApiGateway{
