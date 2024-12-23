@@ -10,18 +10,20 @@ package reaction
 import (
 	"area/db"
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
-	"area/gRPC/api/hello"
+	"area/gRPC/api/google"
 	huggingFace "area/gRPC/api/hugging_face"
-	"fmt"
-
-	"area/models"
-	"cmp"
-	"encoding/json"
-
 	IServ "area/gRPC/api/serviceInterface"
+	"area/gRPC/api/spotify"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	"area/utils"
+
+	"cmp"
 	"context"
+	"encoding/json"
+	"fmt"
 	"log"
 
 	"google.golang.org/grpc"
@@ -55,14 +57,21 @@ func NewReactionService() (*ReactionService, error) {
 
 func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["dt"] = dateTime.NewDateTimeServiceClient(conn)
-	react.clients["hello"] = hello.NewHelloServiceClient(conn)
 	react.clients["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	react.clients["github"] = github.NewGithubClient(conn)
+	react.clients["discord"] = discord.NewDiscordClient(conn)
+	react.clients["google"] = google.NewGoogleClient(conn)
+	react.clients["spotify"] = spotify.NewSpotifyClient(conn)
 }
 
-func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
+func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	if errClaim != nil {
+		return nil, errClaim
+	}
+
 	log.Println("ActionID Launch reaction (reactService): ", req.ActionId)
-	area, err := react.AreaDB.GetAreaByActionID(uint(req.ActionId))
+	area, err := react.AreaDB.GetUserAreaByActionID(userID, uint(req.ActionId))
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -72,7 +81,7 @@ func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService
 	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID)
 	for _, re := range *reactions {
 		if cliService, ok := react.clients[re.Reaction.Service]; ok {
-			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, req.PrevOutput)
+			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, req.PrevOutput, int(area.UserID))
 			if err != nil {
 				fmt.Println("error: ", err)
 				return nil, err
@@ -83,8 +92,13 @@ func (react *ReactionService) LaunchReaction(_ context.Context, req *gRPCService
 	return &gRPCService.LaunchResponse{}, nil
 }
 
-func (react *ReactionService) RegisterAction(_ context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
-	newArea, err := react.AreaDB.InsertNewArea(uint(req.UserId), false)
+func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
+	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	if errClaim != nil {
+		return nil, errClaim
+	}
+
+	newArea, err := react.AreaDB.InsertNewArea(userID, false)
 	if err != nil {
 		log.Println(err)
 		return nil, err

@@ -26,7 +26,7 @@ export const RegisterUserSchema: ZodType<RegisterFormData> = z
             .min(6, { message: "Password must be at least 6 characters long" }),
         confirmPassword: z.string()
     })
-    .refine((data) => data.password === data.confirmPassword, {
+    .refine((data) : boolean => data.password === data.confirmPassword, {
         message: "Passwords don't match",
         path: ["confirmPassword"],
     });

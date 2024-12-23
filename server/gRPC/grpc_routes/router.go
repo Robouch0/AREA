@@ -9,10 +9,12 @@ package grpc_routes
 
 import (
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
-	"area/gRPC/api/hello"
+	"area/gRPC/api/google"
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
+	"area/gRPC/api/spotify"
 	services "area/protogen/gRPC/proto"
 	"cmp"
 	"log"
@@ -32,20 +34,24 @@ func LaunchServices() {
 	}
 	s := grpc.NewServer()
 
-	helloService := hello.NewHelloService(nil)
 	dtService, errDt := dateTime.NewDateTimeService()
 	reactService, errReact := reaction.NewReactionService()
-	huggingFaceService := huggingFace.NewHuggingFaceService()
-	githubService := github.NewGithubService()
+	huggingFaceService, errHf := huggingFace.NewHuggingFaceService()
+	githubService, errGit := github.NewGithubService()
+	discordService, errDiscord := discord.NewDiscordService()
+	googleService, errGoogle := google.NewGoogleService()
+	spotifyService, errSpotify := spotify.NewSpotifyService()
 
-	if err = cmp.Or(errDt, errReact); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify); err != nil {
 		log.Println(err)
 		return
 	}
-	services.RegisterHelloWorldServiceServer(s, &helloService)
 	services.RegisterDateTimeServiceServer(s, dtService)
-	services.RegisterHuggingFaceServiceServer(s, &huggingFaceService)
-	services.RegisterGithubServiceServer(s, &githubService)
+	services.RegisterHuggingFaceServiceServer(s, huggingFaceService)
+	services.RegisterGithubServiceServer(s, githubService)
+	services.RegisterDiscordServiceServer(s, discordService)
+	services.RegisterGoogleServiceServer(s, googleService)
+	services.RegisterSpotifyServiceServer(s, spotifyService)
 	services.RegisterReactionServiceServer(s, reactService)
 
 	var wg sync.WaitGroup

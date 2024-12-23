@@ -1,0 +1,381 @@
+definitions:
+  controllers.credentials:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  controllers.userSignUp:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
+  log_types.UserLogInfos:
+    properties:
+      token:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Action:
+    properties:
+      ingredients:
+        additionalProperties: {}
+        type: object
+      microservice:
+        type: string
+      service:
+        type: string
+    type: object
+  models.Actions:
+    properties:
+      action:
+        $ref: '#/definitions/models.Action'
+      area_id:
+        description: No anotation here !
+        type: integer
+      id:
+        type: integer
+    type: object
+  models.Area:
+    properties:
+      action:
+        $ref: '#/definitions/models.Actions'
+      id:
+        type: integer
+      one_shot:
+        type: boolean
+      reactions:
+        items:
+          $ref: '#/definitions/models.Reactions'
+        type: array
+      user_id:
+        type: integer
+    type: object
+  models.AreaScenario:
+    properties:
+      action:
+        $ref: '#/definitions/models.Action'
+      reaction:
+        $ref: '#/definitions/models.Reaction'
+      user_id:
+        type: integer
+    type: object
+  models.Reaction:
+    properties:
+      ingredients:
+        additionalProperties: {}
+        type: object
+      microservice:
+        type: string
+      service:
+        type: string
+    type: object
+  models.Reactions:
+    properties:
+      area_id:
+        description: No anotation here !
+        type: integer
+      id:
+        type: integer
+      prev_out:
+        additionalProperties: true
+        type: object
+      reaction:
+        $ref: '#/definitions/models.Reaction'
+    type: object
+  models.Token:
+    properties:
+      access_token:
+        type: string
+      id:
+        type: integer
+      provider:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      areas:
+        items:
+          $ref: '#/definitions/models.Area'
+        type: array
+      created_at:
+        description: Useful for log and security purposes
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+      tokens:
+        items:
+          $ref: '#/definitions/models.Token'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  serviceinterface.ActionResponseStatus:
+    properties:
+      action_id:
+        type: integer
+      description:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a the document of the Backend routes of the application AREA
+  title: Swagger AREA API
+  version: "1.0"
+paths:
+  /about.json:
+    get:
+      consumes:
+      - application/json
+      description: json giving the list of handled action-reaction services
+      produces:
+      - application/json
+      responses: {}
+      summary: List of handled services
+      tags:
+      - Utils
+  /create/{service}:
+    get:
+      consumes:
+      - application/json
+      description: Register a new Area in the application
+      parameters:
+      - description: Service Name
+        in: path
+        name: service
+        required: true
+        type: string
+      - description: Full body of an Area Scenario
+        in: body
+        name: area
+        required: true
+        schema:
+          $ref: '#/definitions/models.AreaScenario'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serviceinterface.ActionResponseStatus'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a new Area
+      tags:
+      - Area
+  /login/:
+    post:
+      consumes:
+      - application/json
+      description: Login a user if he has the correct credentials and returns the
+        tokens and the user_id
+      parameters:
+      - description: Credentials of the user who wants to connect
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/log_types.UserLogInfos'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Sign-In
+      tags:
+      - Account
+  /oauth/:
+    post:
+      consumes:
+      - application/json
+      description: Create account with code from redirect url
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/log_types.UserLogInfos'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create account with oauth
+      tags:
+      - Account
+  /oauth/{service}:
+    get:
+      consumes:
+      - application/json
+      description: get the oauth redirect url for a service
+      parameters:
+      - description: Redirect URL for the oauth
+        in: query
+        name: redirect_uri
+        required: true
+        type: string
+      - description: Name of the service to use oauth with
+        in: path
+        name: service
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: get Oauth url by service
+      tags:
+      - Account
+  /ping:
+    get:
+      description: pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+      summary: prints pong
+      tags:
+      - ping
+  /sign-up/:
+    post:
+      consumes:
+      - application/json
+      description: register an account by giving credentials
+      parameters:
+      - description: New User informations to sign-up to the app
+        in: body
+        name: newUser
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.userSignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.userSignUp'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Sign-up a new account
+      tags:
+      - Account
+  /token/:
+    post:
+      consumes:
+      - application/json
+      description: Get the tokens from a user_id and a provider
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Token'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get a token
+      tags:
+      - Token
+  /token/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all the tokens from a user_id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Token'
+            type: array
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get all the tokens from a user
+      tags:
+      - Token
+  /token/create/:
+    post:
+      consumes:
+      - application/json
+      description: Create a token from a user_id and a provider
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Token'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a token
+      tags:
+      - Token
+swagger: "2.0"

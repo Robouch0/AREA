@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios, {AxiosInstance} from 'axios';
 
-const axiosInstance = axios.create({
-    baseURL: 'http://localhost:3000/'
+const axiosInstance : AxiosInstance = axios.create({
+    baseURL: process.env["NEXT_PUBLIC_GATEWAY_URL"]
 });
 
 export default axiosInstance;

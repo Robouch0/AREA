@@ -1,6 +1,6 @@
 'use client';
-import { AreaCard } from "@/components/ui/areaCard"
-import {Input} from "@/components/ui/input";
+import { AreaCard } from "@/components/ui/services/AreaCard"
+import {Input} from "@/components/ui/utils/Input";
 import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
 import Image from "next/image";
@@ -32,7 +32,7 @@ export default function Explore() {
 
     return (
         <>
-            <div className=" flex flex-col sm:flex-row justify-center items-center p-32">
+            <div className="pt-36 flex flex-col sm:flex-row justify-center items-center p-32">
                 <Image
                     className="opacity-40"
                     src="/bg.png"

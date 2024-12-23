@@ -10,6 +10,7 @@ package controllers
 import (
 	"area/db"
 	"area/models"
+	"area/utils"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -43,15 +44,13 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 		struserID := chi.URLParam(r, "user_id")
 		userID, err := strconv.Atoi(struserID)
 		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte(err.Error()))
+			utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
 
 		tokens, err := tokenDb.GetUserTokens(int64(userID))
 		if err != nil {
-			w.WriteHeader(500)
-			w.Write([]byte(err.Error()))
+			utils.WriteHTTPResponseErr(&w, 500, err.Error())
 			return
 		}
 		w.WriteHeader(200)
@@ -72,12 +71,8 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 func getToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		TokenReq := new(TokenRequest)
-		err := json.NewDecoder(r.Body).Decode(&TokenReq)
-		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte(err.Error()))
-			return
-		}
+		TokenReq.UserID = chi.URLParam(r, "user_id")
+		TokenReq.Provider = chi.URLParam(r, "provider")
 
 		UserId, err := strconv.Atoi(TokenReq.UserID)
 		if err != nil {
@@ -86,7 +81,7 @@ func getToken(tokenDb *db.TokenDb) http.HandlerFunc {
 			return
 		}
 
-		tokens, err := tokenDb.GetToken(int64(UserId), TokenReq.Provider)
+		tokens, err := tokenDb.GetUserTokenByProvider(int64(UserId), TokenReq.Provider)
 		if err != nil {
 			w.WriteHeader(400)
 			w.Write([]byte(err.Error()))
@@ -119,7 +114,7 @@ func createTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 			return
 		}
 		UserId, err := strconv.Atoi(CreateReq.UserID)
-		Oldtoken, err := tokenDb.GetToken(int64(UserId), CreateReq.Provider)
+		Oldtoken, err := tokenDb.GetUserTokenByProvider(int64(UserId), CreateReq.Provider)
 
 		if err != nil {
 			NewToken.AccessToken = CreateReq.Token
@@ -148,7 +143,7 @@ func TokenRoutes() chi.Router {
 
 	TokenRouter.Get("/{user_id}", getTokens(tokenDb))
 
-	TokenRouter.Post("/", getToken(tokenDb))
+	TokenRouter.Get("/", getToken(tokenDb))
 
 	TokenRouter.Post("/create/", createTkn(tokenDb))
 

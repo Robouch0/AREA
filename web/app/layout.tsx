@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import '../styles/global.css'
+import {NextFontWithVariable} from "next/dist/compiled/@next/font";
 
 
 
-const avenirNext = localFont({
+const avenirNext : NextFontWithVariable = localFont({
     src: [
         {
             path: '../public/fonts/AvenirNextLTPro-Regular.otf',

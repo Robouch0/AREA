@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:developer' as developer;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -11,7 +12,7 @@ class AuthService {
 
   final _storage = const FlutterSecureStorage();
   static const _tokenKey = 'auth_token';
-  static const _apiUrl = 'http://10.0.2.2:3000';
+  final _apiUrl = dotenv.get('API_URL');
 
   bool _isLoggedIn = false;
 

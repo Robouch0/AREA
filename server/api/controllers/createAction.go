@@ -10,9 +10,11 @@ package controllers
 import (
 	api "area/api"
 	gRPCapi "area/gRPC/api/serviceInterface"
+	"area/models"
+	"area/utils"
 	"encoding/json"
 	"fmt"
-	"io"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -22,8 +24,8 @@ const (
 	DEFAULT_ACTION_ID int = -1
 )
 
-func sendToService(cliService gRPCapi.ClientService, body map[string]any, actionID int) (*gRPCapi.ActionResponseStatus, error) {
-	msg, err := cliService.SendAction(body, actionID)
+func sendToService(cliService gRPCapi.ClientService, scenario models.AreaScenario, actionID int, userID int) (*gRPCapi.ActionResponseStatus, error) {
+	msg, err := cliService.SendAction(scenario, actionID, userID)
 	if err != nil {
 		return msg, err
 	}
@@ -46,46 +48,44 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		serviceParam := chi.URLParam(r, "service")
-
+		userID, err := utils.GetUserIDClaim(r.Context())
+		if err != nil {
+			utils.WriteHTTPResponseErr(&w, 401, "Invalid claims in jwt tokens.")
+			log.Println("Invalid claims in jwt tokens", err)
+			return
+		}
 		if service, ok := gateway.Clients[serviceParam]; ok {
-			b, err := io.ReadAll(r.Body)
+			var scenario models.AreaScenario
+
+			err := json.NewDecoder(r.Body).Decode(&scenario)
 			if err != nil {
-				w.WriteHeader(401)
-				w.Write([]byte(err.Error()))
+				utils.WriteHTTPResponseErr(&w, 401, "Incorrect body is sent.")
+				log.Printf("Json Error: %v\n", err)
 				return
 			}
 
-			body := map[string]any{}
-			err = json.Unmarshal(b, &body)
+			msg, err := sendToService(gateway.Clients["react"], scenario, DEFAULT_ACTION_ID, int(userID))
 			if err != nil {
-				w.WriteHeader(401)
-				w.Write([]byte(err.Error()))
+				utils.WriteHTTPResponseErr(&w, 401, err.Error())
+				log.Println(err)
 				return
 			}
-
-			msg, err := sendToService(gateway.Clients["react"], body, DEFAULT_ACTION_ID) // Create the action if possible
+			msg, err = sendToService(service, scenario, msg.ActionID, int(userID))
 			if err != nil {
-				w.WriteHeader(401)
-				w.Write([]byte(err.Error()))
-				return
-			}
-			msg, err = sendToService(service, body, msg.ActionID)
-			if err != nil {
-				w.WriteHeader(401)
-				w.Write([]byte(err.Error()))
+				utils.WriteHTTPResponseErr(&w, 401, err.Error())
+				log.Println(err)
 				return
 			}
 
 			res, err := json.Marshal(msg)
 			if err != nil {
-				w.WriteHeader(401)
-				w.Write([]byte(err.Error()))
+				utils.WriteHTTPResponseErr(&w, 401, err.Error())
+				log.Println(err)
 				return
 			}
 			w.Write([]byte(res))
 		} else {
-			w.WriteHeader(401)
-			w.Write([]byte(fmt.Sprintf("No such Service: %v", serviceParam)))
+			utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("No such Service: %v", serviceParam))
 		}
 	}
 }

@@ -12,7 +12,9 @@ import "github.com/uptrace/bun"
 type DateTime struct {
 	bun.BaseModel `bun:"table:dateTime,alias:cs"`
 	ID            uint `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
-	ActionID      uint `bun:"action_id" json:"action_id"`
+
+	ActionID uint `bun:"action_id" json:"action_id"`
+	UserID   uint `bun:"user_id" json:"user_id"`
 
 	Activated bool  `bun:"activated" json:"activated,omitempty"`
 	Minutes   int32 `bun:"minutes" json:"minutes,omitempty"`
