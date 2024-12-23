@@ -20,6 +20,7 @@ type ReactionResponseStatus struct {
 }
 
 type MicroserviceLauncher = map[string]func(ingredients map[string]any, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
+type ActionLauncher = map[string]func(scenario models.AreaScenario, actionId, userID int) (*ActionResponseStatus, error)
 
 // Map with the ingredient name mapped with his possible value type (named as a string)
 //
@@ -52,4 +53,6 @@ type ClientService interface {
 
 	// prevOutput is an array of byte because output can be raw
 	TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
+
+	//
 }
