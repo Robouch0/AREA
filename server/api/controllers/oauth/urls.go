@@ -21,6 +21,7 @@ import (
 
 const (
 	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email https://mail.google.com/"
+	hfScopes     = "openid profile email read-repos write-repos manage-repos write-discussions read-billing"
 )
 
 func createOAuthRedirect(consentURL, provider, redirectURI string) string {
@@ -65,6 +66,14 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 			EmailRequestURL: "https://api.spotify.com/v1/me",
 		},
 	}
+	oauthUrls["hf"] = OAuthURLs{
+		RedirectURL: fmt.Sprintf(
+			`https://huggingface.co/oauth/authorize?client_id=%s&response_type=code&prompt=consent&redirect_uri=%s&scope=%s&state=STATE`, "%s", "%s", hfScopes),
+		OAuth: &HFOAuth{
+			AccessTokenURL:  "https://huggingface.co/oauth/token",
+			EmailRequestURL: "https://huggingface.co/api/whoami-v2",
+		},
+	}
 	return oauthUrls
 }
 
@@ -91,6 +100,7 @@ func GetUrl(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 		log.Println("Service: ", OAuthservice)
 		if serviceUrls, ok := OAuthURLs[OAuthservice]; ok {
 			url := createOAuthRedirect(serviceUrls.RedirectURL, OAuthservice, OAuthRedirectURI)
+			log.Println(url)
 			if url != "" {
 				w.WriteHeader(200)
 				w.Write([]byte(url))
