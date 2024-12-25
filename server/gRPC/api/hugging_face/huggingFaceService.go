@@ -25,6 +25,7 @@ const (
 
 type HuggingFaceService struct {
 	tokenDb      *db.TokenDb
+	hfDb         *db.HuggingFaceDB
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedHuggingFaceServiceServer
@@ -35,8 +36,12 @@ func NewHuggingFaceService() (*HuggingFaceService, error) {
 	if err != nil {
 		return nil, err
 	}
+	hfDb, err := db.InitHuggingFaceDb()
+	if err != nil {
+		return nil, err
+	}
 
-	return &HuggingFaceService{tokenDb: tokenDb, reactService: nil}, nil
+	return &HuggingFaceService{tokenDb: tokenDb, hfDb: hfDb, reactService: nil}, nil
 }
 
 func (hfServ *HuggingFaceService) LaunchTextGeneration(ctx context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {

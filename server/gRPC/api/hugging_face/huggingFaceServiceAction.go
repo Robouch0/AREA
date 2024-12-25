@@ -23,15 +23,29 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-/*
- * Actions:
- * - If someone push reaction (action: update, scope: repo.content)
- * - If some create a new discussion (action: create, scope: discussion, discussion.isPullRequest: false)
- * - If some create a new PR (action: create, scope: discussion, discussion.isPullRequest: true)
- */
 const (
 	webHookURL = "https://huggingface.co/api/settings/webhooks"
 )
+
+func (hfServ *HuggingFaceService) storeNewWebHook(
+	tokenInfo *models.Token,
+	req *gRPCService.HFWebHookInfo,
+	repoAction,
+	repoScope string,
+	isPR bool,
+) error {
+	_, err := hfServ.hfDb.StoreNewHF(&models.HuggingFace{
+		ActionID:      uint(req.ActionId),
+		UserID:        uint(tokenInfo.UserID),
+		Activated:     true,
+		RepoType:      req.Type,
+		RepoName:      req.Name,
+		RepoAction:    repoAction,
+		RepoScope:     repoScope, // Maybe add few scope possible as response
+		IsPullRequest: isPR,
+	})
+	return err
+}
 
 func (hfServ *HuggingFaceService) createWebHook(tokenInfo *models.Token, webhookReq *hfType.HFWebHookRequest) error {
 	b, err := json.Marshal(webhookReq)
@@ -72,7 +86,9 @@ func (hfServ *HuggingFaceService) CreateRepoUpdateWebHook(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	// Put to database
+	if err := hfServ.storeNewWebHook(tokenInfo, req, "update", "repo.content", false); err != nil {
+		return nil, err
+	}
 	return req, nil
 }
 
@@ -80,8 +96,24 @@ func (hfServ *HuggingFaceService) CreateNewPRWebHook(ctx context.Context, req *g
 	if req.Name == "" || req.Type == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
 	}
-	_, err := grpcutils.GetTokenByContext(ctx, hfServ.tokenDb, "HuggingFaceService", "hf")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, hfServ.tokenDb, "HuggingFaceService", "hf")
 	if err != nil {
+		return nil, err
+	}
+	envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
+	if err != nil {
+		return nil, err
+	}
+
+	err = hfServ.createWebHook(tokenInfo, &hfType.HFWebHookRequest{
+		Watched: []hfType.HFRepo{{Type: req.Type, Name: req.Name}},
+		Url:     fmt.Sprintf(envWebhookUrl, "hf", req.ActionId),
+		Domains: []string{"discussion"},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err := hfServ.storeNewWebHook(tokenInfo, req, "create", "discussion", true); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -91,8 +123,24 @@ func (hfServ *HuggingFaceService) CreateNewDiscussionWebHook(ctx context.Context
 	if req.Name == "" || req.Type == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
 	}
-	_, err := grpcutils.GetTokenByContext(ctx, hfServ.tokenDb, "HuggingFaceService", "hf")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, hfServ.tokenDb, "HuggingFaceService", "hf")
 	if err != nil {
+		return nil, err
+	}
+	envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
+	if err != nil {
+		return nil, err
+	}
+
+	err = hfServ.createWebHook(tokenInfo, &hfType.HFWebHookRequest{
+		Watched: []hfType.HFRepo{{Type: req.Type, Name: req.Name}},
+		Url:     fmt.Sprintf(envWebhookUrl, "hf", req.ActionId),
+		Domains: []string{"discussion"},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err := hfServ.storeNewWebHook(tokenInfo, req, "create", "discussion", false); err != nil {
 		return nil, err
 	}
 	return req, nil
