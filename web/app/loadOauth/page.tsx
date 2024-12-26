@@ -1,5 +1,10 @@
-"use server";
-export default async function LoadOauth() {
+"use client";
+import OAuthRedirectHandler from "@/components/ui/services/OauthRedirectHandler";
 
-    return <div className="text-7xl text-red-600"> Hola </div>;
+export default function LoadOauth() {
+   return (
+    <>
+        <OAuthRedirectHandler/>
+    </>
+    );
 }

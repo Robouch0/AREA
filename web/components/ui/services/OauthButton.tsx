@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
-import { oauhLogin } from "@/api/authentification";
+import { oauthLogin } from "@/api/authentification";
 import { Button } from '@/components/ui/utils/Button';
 import redirectURI from '@/lib/redirectUri';
 
@@ -15,7 +15,7 @@ async function redirectToService(service: string) {
     try {
         const response = await axiosInstance.get(`oauth/${service}`, {
             params: {
-                "redirect_uri": redirectURI
+                "redirect_uri": redirectURI + "?service=" + service,
             }
         });
         return response.data;
@@ -28,7 +28,7 @@ async function askForToken(service: string, code: string | null) {
     try {
         if (redirectURI == undefined)
             throw Error("env variable redirectURI is undefined")
-        await oauhLogin({ service: service, code: code, redirect_uri: redirectURI })
+        await oauthLogin({ service: service, code: code, redirect_uri: redirectURI })
 
         return true;
     } catch (error) {
@@ -39,61 +39,42 @@ async function askForToken(service: string, code: string | null) {
 export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
     const serviceDisplayName = service.charAt(0).toUpperCase() + service.slice(1);
     const router = useRouter();
-    const [popupWindow, setPopupWindow] = useState<Window|null>(null);
     const [code, setPopupCode] = useState<string|null>("");
 
 
-    const openPopup = useCallback(async (service) => {
+    const openPopup = useCallback(async (service : string) => {
         const url:string = await redirectToService(service)
 
             if (typeof window !== 'undefined') {
-                const newWindow = window.open(url, "popup", "width=900,height=700,left=400,top=700,popup=true");
-                setPopupWindow(newWindow);
+                window.open(url, "popup", "width=1200,height=800,left=400,top=700,popup=true");
             }
     }, []);
 
-
     useEffect(() => {
-        if (!popupWindow) {
-            return;
-        }
-
-        const checkPopup = setInterval(() => {
-            if (popupWindow.closed) {
-                clearInterval(checkPopup);
-                setPopupWindow(null);
-                return;
-            }
-
-            try {
-                console.log(popupWindow.location.href);
-                if (popupWindow.location.href.includes("code")) {
-                    const url = new URL(popupWindow.location.href);
-                    const code: string|null = url.searchParams.get('code');
-                    window.opener.postMessage({ code: `${code}` }, 'http://127.0.0.1:8081');
-
-                    popupWindow.close();
-                    clearInterval(checkPopup);
-                    setPopupWindow(null);
-                }
-            } catch (e) {
-                console.error("error:", e);
-            }
-        }, 1000);
-
-    }, [popupWindow]);
-
-    useEffect(() => {
-        const url = new URL(window.location.href);
-        const code: string | null = url.searchParams.get('code');
-
         if (code) {
-            console.log(service, code)
             askForToken(service, code)
                 .then(() => router.push("/services"))
                 .catch((error) => console.log(error));
         }
-    }, [router, service]);
+    }, [code, router, service]);
+
+    useEffect(()  => {
+        const handleMessage = (event:MessageEvent) => {
+            if (!event || !event.data.code) {
+                return;
+            }
+            // maybe we will later need to check for message origin, for security purposes
+            const eventValues:string[] = event.data.code.split(",")
+            const code: string = eventValues[0];
+            const msgService :string = eventValues[1];
+            if (event.data.type === "message" && msgService === service) {
+                setPopupCode(code);
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
 
     return (
         <Button
