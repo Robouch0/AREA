@@ -16,26 +16,44 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GoogleClient struct {
 	MicroservicesLauncher *IServ.MicroserviceLauncher
-	cc                    gRPCService.GoogleServiceClient
+	ActionLauncher        *IServ.ActionLauncher
+
+	cc gRPCService.GoogleServiceClient
 }
 
 func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	micros := &IServ.MicroserviceLauncher{}
-	google := &GoogleClient{MicroservicesLauncher: micros, cc: gRPCService.NewGoogleServiceClient(conn)}
+	actions := &IServ.ActionLauncher{}
+	google := &GoogleClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewGoogleServiceClient(conn)}
 	(*google.MicroservicesLauncher)["gmail/sendEmailMe"] = google.sendEmailMe
 	(*google.MicroservicesLauncher)["gmail/deleteEmailMe"] = google.deleteEmailMe
 	(*google.MicroservicesLauncher)["gmail/moveToTrash"] = google.moveToTrash
 	(*google.MicroservicesLauncher)["gmail/moveFromTrash"] = google.moveFromTrash
 
+	(*google.ActionLauncher)["gmail/watchme"] = google.watchEmail
 	return google
 }
 
+func (google *GoogleClient) watchEmail(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := google.cc.WatchGmailEmail(ctx, &gRPCService.EmailTriggerReq{ActionId: uint32(actionID)})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
+}
+
 func (google *GoogleClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
-	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
+	if micro, ok := (*google.ActionLauncher)[scenario.Reaction.Microservice]; ok {
+		return micro(scenario, actionID, userID)
+	}
+	return nil, errors.New("No such microservice")
 }
 
 func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {

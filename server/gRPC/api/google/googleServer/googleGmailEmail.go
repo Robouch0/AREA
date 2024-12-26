@@ -25,6 +25,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	sendMessageMeURL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
+)
+
 func (google *GoogleService) DeleteEmailMe(ctx context.Context, req *gRPCService.DeleteEmailRequestMe) (*gRPCService.DeleteEmailRequestMe, error) {
 	if req.Subject == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Empty subject for email deletion")

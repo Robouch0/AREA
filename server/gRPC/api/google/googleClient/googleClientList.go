@@ -17,7 +17,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		RefName: "google",
 
 		Microservices: []IServ.MicroserviceStatus{
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Send an email to a specific user",
 				RefName: "gmail/sendEmailMe",
 				Type:    "reaction",
@@ -28,7 +28,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					"body_message": "string",
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Delete an email of a specific user",
 				RefName: "gmail/deleteEmailMe",
 				Type:    "reaction",
@@ -37,7 +37,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					"subject": "string",
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Move an email to trash",
 				RefName: "gmail/moveToTrash",
 				Type:    "reaction",
@@ -46,7 +46,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					"subject": "string",
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Move an email from trash",
 				RefName: "gmail/moveFromTrash",
 				Type:    "reaction",
@@ -54,6 +54,13 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Ingredients: map[string]string{
 					"subject": "string",
 				},
+			},
+			{
+				Name:    "Watch email received by an user",
+				RefName: "gmail/watchme",
+				Type:    "action",
+
+				Ingredients: map[string]string{},
 			},
 		},
 	}
