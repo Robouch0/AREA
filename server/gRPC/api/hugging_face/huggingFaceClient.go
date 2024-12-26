@@ -17,6 +17,8 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type HuggingFaceServiceClient struct {
@@ -27,30 +29,29 @@ type HuggingFaceServiceClient struct {
 }
 
 // Alias for the webhook send function for HuggingFace
-type WebHookRepoSendFunction = func(
-	ctx context.Context, in *gRPCService.HFWebHookInfo, opts ...grpc.CallOption) (*gRPCService.HFWebHookInfo, error)
+type WebHookRepoSendFunction = func(ctx context.Context, in *gRPCService.HFWebHookInfo, opts ...grpc.CallOption) (*gRPCService.HFWebHookInfo, error)
 
 func NewHuggingFaceClient(conn *grpc.ClientConn) *HuggingFaceServiceClient {
-	hfCli := &HuggingFaceServiceClient{
+	hf := &HuggingFaceServiceClient{
 		MicroservicesLauncher: &IServ.MicroserviceLauncher{},
 		ActionsLauncher:       &IServ.ActionLauncher{},
 		cc:                    gRPCService.NewHuggingFaceServiceClient(conn),
 	}
-	(*hfCli.MicroservicesLauncher)["textGen"] = hfCli.sendTextGenerationReaction
+	(*hf.MicroservicesLauncher)["textGen"] = hf.sendTextGenerationReaction
 
-	(*hfCli.ActionsLauncher)["push"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
-		return hfCli.sendNewWebHookAction(scenario, actionId, userID, hfCli.cc.CreateRepoUpdateWebHook)
+	(*hf.ActionsLauncher)["push"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return hf.sendNewWebHookAction(scenario, actionId, userID, hf.cc.CreateRepoUpdateWebHook)
 	}
-	(*hfCli.ActionsLauncher)["pr"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
-		return hfCli.sendNewWebHookAction(scenario, actionId, userID, hfCli.cc.CreateNewPRWebHook)
+	(*hf.ActionsLauncher)["pr"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return hf.sendNewWebHookAction(scenario, actionId, userID, hf.cc.CreateNewPRWebHook)
 	}
-	(*hfCli.ActionsLauncher)["discussion"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
-		return hfCli.sendNewWebHookAction(scenario, actionId, userID, hfCli.cc.CreateNewDiscussionWebHook)
+	(*hf.ActionsLauncher)["discussion"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return hf.sendNewWebHookAction(scenario, actionId, userID, hf.cc.CreateNewDiscussionWebHook)
 	}
-	return hfCli
+	return hf
 }
 
-func (hfCli *HuggingFaceServiceClient) sendNewWebHookAction(
+func (hf *HuggingFaceServiceClient) sendNewWebHookAction(
 	scenario models.AreaScenario, actionID, userID int, sendFn WebHookRepoSendFunction,
 ) (*IServ.ActionResponseStatus, error) {
 	webHookIng, err := json.Marshal(scenario.Action.Ingredients)
@@ -71,16 +72,16 @@ func (hfCli *HuggingFaceServiceClient) sendNewWebHookAction(
 	return &IServ.ActionResponseStatus{Description: res.Name}, nil
 }
 
-func (hfCli *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
-	if micro, ok := (*hfCli.ActionsLauncher)[scenario.Action.Microservice]; ok {
+func (hf *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	if micro, ok := (*hf.ActionsLauncher)[scenario.Action.Microservice]; ok {
 		return micro(scenario, actionID, userID)
 	}
 	return nil, errors.New("No such action microservice")
 }
 
-func (hfCli *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	res, err := hfCli.cc.LaunchTextGeneration(ctx, &gRPCService.TextGenerationReq{Inputs: ingredients["inputs"].(string)})
+	res, err := hf.cc.LaunchTextGeneration(ctx, &gRPCService.TextGenerationReq{Inputs: ingredients["inputs"].(string)})
 	if err != nil {
 		return nil, err
 	}
@@ -88,13 +89,21 @@ func (hfCli *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients ma
 	return &IServ.ReactionResponseStatus{Description: res.GeneratedText}, nil
 }
 
-func (hfCli *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
-	if micro, ok := (*hfCli.MicroservicesLauncher)[microservice]; ok {
+func (hf *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	if micro, ok := (*hf.MicroservicesLauncher)[microservice]; ok {
 		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
 }
 
-func (_ *HuggingFaceServiceClient) TriggerWebhook(_ map[string]any, _ string, _ int) {
-
+// No need to check microservice here but later there will be a map for multiple type of actions (like actions and reactions)
+func (hf *HuggingFaceServiceClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
+	}
+	if _, err := hf.cc.TriggerWebHook(context.Background(), &gRPCService.WebHookTriggerReq{ActionId: uint32(actionID), Payload: payloadBytes}); err != nil {
+		return nil, err
+	}
+	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil
 }

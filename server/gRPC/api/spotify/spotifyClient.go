@@ -248,6 +248,6 @@ func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microserv
 	return nil, errors.New("No such microservice")
 }
 
-func (_ *SpotifyClient) TriggerWebhook(_ map[string]any, _ string, _ int) {
-
+func (_ *SpotifyClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

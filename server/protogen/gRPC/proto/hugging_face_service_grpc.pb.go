@@ -23,6 +23,7 @@ const (
 	HuggingFaceService_CreateRepoUpdateWebHook_FullMethodName    = "/huggingface.HuggingFaceService/CreateRepoUpdateWebHook"
 	HuggingFaceService_CreateNewPRWebHook_FullMethodName         = "/huggingface.HuggingFaceService/CreateNewPRWebHook"
 	HuggingFaceService_CreateNewDiscussionWebHook_FullMethodName = "/huggingface.HuggingFaceService/CreateNewDiscussionWebHook"
+	HuggingFaceService_TriggerWebHook_FullMethodName             = "/huggingface.HuggingFaceService/TriggerWebHook"
 )
 
 // HuggingFaceServiceClient is the client API for HuggingFaceService service.
@@ -33,6 +34,7 @@ type HuggingFaceServiceClient interface {
 	CreateRepoUpdateWebHook(ctx context.Context, in *HFWebHookInfo, opts ...grpc.CallOption) (*HFWebHookInfo, error)
 	CreateNewPRWebHook(ctx context.Context, in *HFWebHookInfo, opts ...grpc.CallOption) (*HFWebHookInfo, error)
 	CreateNewDiscussionWebHook(ctx context.Context, in *HFWebHookInfo, opts ...grpc.CallOption) (*HFWebHookInfo, error)
+	TriggerWebHook(ctx context.Context, in *WebHookTriggerReq, opts ...grpc.CallOption) (*WebHookTriggerReq, error)
 }
 
 type huggingFaceServiceClient struct {
@@ -83,6 +85,16 @@ func (c *huggingFaceServiceClient) CreateNewDiscussionWebHook(ctx context.Contex
 	return out, nil
 }
 
+func (c *huggingFaceServiceClient) TriggerWebHook(ctx context.Context, in *WebHookTriggerReq, opts ...grpc.CallOption) (*WebHookTriggerReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WebHookTriggerReq)
+	err := c.cc.Invoke(ctx, HuggingFaceService_TriggerWebHook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HuggingFaceServiceServer is the server API for HuggingFaceService service.
 // All implementations must embed UnimplementedHuggingFaceServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type HuggingFaceServiceServer interface {
 	CreateRepoUpdateWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error)
 	CreateNewPRWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error)
 	CreateNewDiscussionWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error)
+	TriggerWebHook(context.Context, *WebHookTriggerReq) (*WebHookTriggerReq, error)
 	mustEmbedUnimplementedHuggingFaceServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedHuggingFaceServiceServer) CreateNewPRWebHook(context.Context,
 }
 func (UnimplementedHuggingFaceServiceServer) CreateNewDiscussionWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNewDiscussionWebHook not implemented")
+}
+func (UnimplementedHuggingFaceServiceServer) TriggerWebHook(context.Context, *WebHookTriggerReq) (*WebHookTriggerReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TriggerWebHook not implemented")
 }
 func (UnimplementedHuggingFaceServiceServer) mustEmbedUnimplementedHuggingFaceServiceServer() {}
 func (UnimplementedHuggingFaceServiceServer) testEmbeddedByValue()                            {}
@@ -206,6 +222,24 @@ func _HuggingFaceService_CreateNewDiscussionWebHook_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HuggingFaceService_TriggerWebHook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WebHookTriggerReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HuggingFaceServiceServer).TriggerWebHook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HuggingFaceService_TriggerWebHook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HuggingFaceServiceServer).TriggerWebHook(ctx, req.(*WebHookTriggerReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HuggingFaceService_ServiceDesc is the grpc.ServiceDesc for HuggingFaceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var HuggingFaceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateNewDiscussionWebHook",
 			Handler:    _HuggingFaceService_CreateNewDiscussionWebHook_Handler,
+		},
+		{
+			MethodName: "TriggerWebHook",
+			Handler:    _HuggingFaceService_TriggerWebHook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

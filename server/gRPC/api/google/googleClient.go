@@ -174,6 +174,6 @@ func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microser
 	return nil, errors.New("No such microservice")
 }
 
-func (_ *GoogleClient) TriggerWebhook(_ map[string]any, _ string, _ int) {
-
+func (_ *GoogleClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

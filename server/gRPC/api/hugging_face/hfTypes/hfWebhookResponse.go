@@ -13,7 +13,7 @@ type EventType struct {
 }
 
 type HFDiscussion struct {
-	ID            string `json:"id"`
+	ID            string `json:"id,omitempty"`
 	Title         string `json:"title,omitempty"`
 	IsPullRequest bool   `json:"isPullRequest,omitempty"`
 }
