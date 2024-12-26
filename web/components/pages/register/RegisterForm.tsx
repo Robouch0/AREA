@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { RegisterFormData, RegisterUserSchema } from "@/lib/typeRegister";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {FaDiscord, FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle, FaSpotify} from "react-icons/fa";
+import {FaDiscord, FaEye, FaEyeSlash, FaGithub, FaSpotify} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/api/authentification";
