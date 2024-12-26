@@ -74,7 +74,7 @@ export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    }, [service]);
 
     return (
         <Button
