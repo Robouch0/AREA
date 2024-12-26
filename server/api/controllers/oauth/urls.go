@@ -8,7 +8,7 @@
 package oauth
 
 import (
-	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,7 +20,8 @@ import (
 )
 
 const (
-	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email"
+	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email https://mail.google.com/"
+	hfScopes     = "openid profile email read-repos write-repos manage-repos write-discussions read-billing"
 )
 
 func createOAuthRedirect(consentURL, provider, redirectURI string) string {
@@ -51,7 +52,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 		},
 	}
 	oauthUrls["discord"] = OAuthURLs{
-		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email",
+		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email+bot+applications.commands+guilds",
 		OAuth: &DiscordOAuth{
 			AccessTokenURL:  "https://discord.com/api/oauth2/token",
 			EmailRequestURL: "https://discord.com/api/users/@me",
@@ -59,10 +60,18 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 	}
 	oauthUrls["spotify"] = OAuthURLs{
 		RedirectURL: `https://accounts.spotify.com/authorize?
-			client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private user-read-email`, // Maybe add state later
+			client_id=%s&response_type=code&redirect_uri=%s&scope=user-modify-playback-state playlist-modify-public playlist-modify-private`, // Maybe add state later
 		OAuth: &SpotifyOAuth{
 			AccessTokenURL:  "https://accounts.spotify.com/api/token",
 			EmailRequestURL: "https://api.spotify.com/v1/me",
+		},
+	}
+	oauthUrls["hf"] = OAuthURLs{
+		RedirectURL: fmt.Sprintf(
+			`https://huggingface.co/oauth/authorize?client_id=%s&response_type=code&prompt=consent&redirect_uri=%s&scope=%s&state=STATE`, "%s", "%s", hfScopes),
+		OAuth: &HFOAuth{
+			AccessTokenURL:  "https://huggingface.co/oauth/token",
+			EmailRequestURL: "https://huggingface.co/api/whoami-v2",
 		},
 	}
 	return oauthUrls
@@ -91,14 +100,15 @@ func GetUrl(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 		log.Println("Service: ", OAuthservice)
 		if serviceUrls, ok := OAuthURLs[OAuthservice]; ok {
 			url := createOAuthRedirect(serviceUrls.RedirectURL, OAuthservice, OAuthRedirectURI)
+			log.Println(url)
 			if url != "" {
 				w.WriteHeader(200)
 				w.Write([]byte(url))
 			} else {
-				utils.WriteHTTPResponseErr(&w, 400, "Service does not exist")
+				http_utils.WriteHTTPResponseErr(&w, 400, "Service does not exist")
 			}
 			return
 		}
-		utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthservice))
+		http_utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthservice))
 	}
 }

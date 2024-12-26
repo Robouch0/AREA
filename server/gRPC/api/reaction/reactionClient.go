@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"context"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 
@@ -33,47 +33,43 @@ func (react *ReactionServiceClient) ListServiceStatus() (*IServ.ServiceStatus, e
 	return nil, nil
 }
 
-func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte) (*IServ.ReactionResponseStatus, error) {
+func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }
 
-func (react *ReactionServiceClient) SendAction(body map[string]any, actionID int) (*IServ.ActionResponseStatus, error) {
-	jsonString, err := json.Marshal(body)
+func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	bytesActIngredients, err := json.Marshal(scenario.Action.Ingredients)
 	if err != nil {
 		return nil, err
 	}
 
-	var scenarioArea models.AreaScenario
-	err = json.Unmarshal(jsonString, &scenarioArea)
+	bytesReactIngredients, err := json.Marshal(scenario.Reaction.Ingredients)
 	if err != nil {
 		return nil, err
 	}
 
-	bytesActIngredients, err := json.Marshal(scenarioArea.Action.Ingredients)
-	if err != nil {
-		return nil, err
-	}
-
-	bytesReactIngredients, err := json.Marshal(scenarioArea.Reaction.Ingredients)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx := context.Background()
-	res, err := react.RegisterAction(ctx, &gRPCService.ReactionRequest{
-		UserId: int64(scenarioArea.UserId),
-		Action: &gRPCService.Action{
-			Service:      scenarioArea.Action.Service,
-			Microservice: scenarioArea.Action.Microservice,
-			Ingredients:  bytesActIngredients,
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	res, err := react.RegisterAction(
+		ctx,
+		&gRPCService.ReactionRequest{
+			Action: &gRPCService.Action{
+				Service:      scenario.Action.Service,
+				Microservice: scenario.Action.Microservice,
+				Ingredients:  bytesActIngredients,
+			},
+			Reaction: &gRPCService.Reaction{
+				Service:      scenario.Reaction.Service,
+				Microservice: scenario.Reaction.Microservice,
+				Ingredients:  bytesReactIngredients,
+			},
 		},
-		Reaction: &gRPCService.Reaction{
-			Service:      scenarioArea.Reaction.Service,
-			Microservice: scenarioArea.Reaction.Microservice,
-			Ingredients:  bytesReactIngredients,
-		}})
+	)
 	if err != nil {
 		return nil, err
 	}
 	return &IServ.ActionResponseStatus{Description: res.Description, ActionID: int(res.ActionId)}, nil
+}
+
+func (_ *ReactionServiceClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

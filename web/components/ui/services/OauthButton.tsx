@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import { oauhLogin } from "@/api/authentification";
 import { Button } from '@/components/ui/utils/Button';
+import redirectURI from '@/lib/redirectUri';
 
 interface IOAuthButton {
     className: string,
@@ -14,7 +15,7 @@ async function redirectToService(service: string) {
     try {
         const response = await axiosInstance.get(`oauth/${service}`, {
             params: {
-                "redirect_uri": "http://127.0.0.1:8081"
+                "redirect_uri": redirectURI
             }
         });
         return response.data;
@@ -25,7 +26,9 @@ async function redirectToService(service: string) {
 // http://127.0.0.1:8081
 async function askForToken(service: string, code: string | null) {
     try {
-        await oauhLogin({ service: service, code: code, redirect_uri: "http://127.0.0.1:8081" })
+        if (redirectURI == undefined)
+            throw Error("env variable redirectURI is undefined")
+        await oauhLogin({ service: service, code: code, redirect_uri: redirectURI })
 
         return true;
     } catch (error) {
