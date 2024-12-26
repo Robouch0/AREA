@@ -18,7 +18,18 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// Swaggoooo
+// WebHook Enpoint godoc
+// @Summary      WebHook Enpoint
+// @Description  WebHook Enpoint for the remote services payloads
+// @Tags         Area
+// @Accept       json
+// @Produce      json
+// @Param 		 service      path	string	true 	"Service Name"
+// @Param 		 microservice path	string	true 	"Microservice Name"
+// @Param 		 action_id    path	string	true 	"Action ID for the reaction service"
+// @Success      200  {object}  string
+// @Failure      401  {object}  error
+// @Router       /webhook/{service}/{microservice}/{action_id} [post]
 func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		service := chi.URLParam(r, "service")
