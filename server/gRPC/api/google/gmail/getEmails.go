@@ -88,7 +88,7 @@ func GetEmail(
 		io.Copy(os.Stderr, result.Body)
 		return nil, status.Errorf(codes.Aborted, result.Status)
 	}
-	message, err := utils.IOReaderToStruct[GmailMessage](&result.Body)
+	message, err := utils.IoReaderToStruct[GmailMessage](&result.Body)
 	if err != nil {
 		return nil, err
 	}
