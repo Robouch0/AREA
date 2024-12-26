@@ -17,6 +17,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+
+	"google.golang.org/grpc"
 )
 
 const (
@@ -42,6 +44,10 @@ func NewHuggingFaceService() (*HuggingFaceService, error) {
 	}
 
 	return &HuggingFaceService{tokenDb: tokenDb, hfDb: hfDb, reactService: nil}, nil
+}
+
+func (hf *HuggingFaceService) InitReactClient(conn *grpc.ClientConn) {
+	hf.reactService = gRPCService.NewReactionServiceClient(conn)
 }
 
 func (hfServ *HuggingFaceService) LaunchTextGeneration(ctx context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {

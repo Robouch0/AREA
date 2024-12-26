@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -57,7 +58,8 @@ func (hfServ *HuggingFaceService) createWebHook(tokenInfo *models.Token, webhook
 	if err != nil {
 		return err
 	}
-	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
+	log.Println("Bearer " + tokenInfo.AccessToken)
+	postRequest.Header.Set("authorization", "Bearer "+tokenInfo.AccessToken)
 	postRequest.Header.Add("Accept", "application/json")
 	_, err = http_utils.SendHttpRequest(postRequest, 200)
 	if err != nil {

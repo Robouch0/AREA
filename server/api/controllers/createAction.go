@@ -68,13 +68,13 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 			msg, err := sendToService(gateway.Clients["react"], scenario, DEFAULT_ACTION_ID, int(userID))
 			if err != nil {
 				http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
-				log.Println(err)
+				log.Println("ReactionService error: ", err)
 				return
 			}
 			msg, err = sendToService(service, scenario, msg.ActionID, int(userID))
 			if err != nil {
 				http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
-				log.Println(err)
+				log.Println("ActionService error: ", err)
 				return
 			}
 
