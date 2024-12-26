@@ -57,7 +57,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Watch email received by an user",
-				RefName: "gmail/watchme",
+				RefName: "watchme",
 				Type:    "action",
 
 				Ingredients: map[string]string{},

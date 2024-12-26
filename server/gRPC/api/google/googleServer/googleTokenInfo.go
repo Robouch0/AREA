@@ -10,6 +10,7 @@ package google_server
 import (
 	"area/utils"
 	http_utils "area/utils/httpUtils"
+	"fmt"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -17,12 +18,10 @@ import (
 )
 
 const (
-	tokenInfoURL = "https://oauth2.googleapis.com/tokeninfo"
+	tokenInfoURL = "https://www.googleapis.com/oauth2/v1/userinfo"
 )
 
 type GoogleTokenInfo struct {
-	// First contents like iss, sub are ignored feel free to add it.
-
 	Email         string `json:"email,omitempty"`
 	EmailVerified bool   `json:"email_verified,omitempty"`
 }
@@ -32,8 +31,10 @@ func GetTokenInfo(token string) (*GoogleTokenInfo, error) {
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Invalid request: %v", err)
 	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	q := req.URL.Query()
 	q.Add("id_token", token)
+	q.Add("personFields", "emailAddresses")
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := http_utils.SendHttpRequest(req, 200)

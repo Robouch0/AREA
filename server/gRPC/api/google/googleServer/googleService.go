@@ -16,6 +16,7 @@ import (
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
+	"log"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -69,7 +70,7 @@ func (google *GoogleService) WatchGmailEmail(ctx context.Context, req *gRPCServi
 		EmailAdress: gTokenInfo.Email,
 	})
 	if err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.InvalidArgument, "Cannot store new data in DB: %v", err)
 	}
 	return req, nil
 }
@@ -81,10 +82,12 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 	}
 	data, err := utils.DecodeBase64ToStruct[gmail.GmailPayload]([]byte(payload.Message.Data))
 	if err != nil {
+		log.Println("Cannot convert to struct")
 		return nil, err
 	}
 	act, err := google.gmailDb.GetByEmail(data.EmailAddress)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	if act.Activated {

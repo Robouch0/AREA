@@ -48,9 +48,10 @@ func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
 		}
 		if cli, ok := gateway.Clients[service]; ok {
 			cli.TriggerWebhook(payload, microservice, actionId)
+			w.WriteHeader(204)
+			return
 		}
-		w.WriteHeader(200)
-		w.Write([]byte("Done"))
+		http_utils.WriteHTTPResponseErr(&w, 401, "Invalid payload sent")
 	}
 }
 

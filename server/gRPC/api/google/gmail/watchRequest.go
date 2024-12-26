@@ -39,8 +39,8 @@ type WatchReponseBody struct {
 /* WebHook response */
 
 type GmailPayload struct {
-	EmailAddress string `json:"emailAddress"`
-	HistoryId    string `json:"historyId"`
+	EmailAddress string  `json:"emailAddress"`
+	HistoryId    float64 `json:"historyId,omitempty"`
 }
 
 type PubSubMessage struct {
@@ -64,7 +64,7 @@ func SendWatchMeRequest(tokenInfo *models.Token) (*WatchReponseBody, error) {
 	}
 	watchBody := &WatchRequestBody{
 		TopicName:           topic,
-		LabelIds:            []string{"INBOX"},
+		LabelIds:            []string{"UNREAD"},
 		LabelFilterBehavior: "INCLUDE",
 	}
 
@@ -76,7 +76,7 @@ func SendWatchMeRequest(tokenInfo *models.Token) (*WatchReponseBody, error) {
 	if err != nil {
 		return nil, err
 	}
-	postRequest.Header.Set("Authorization", tokenInfo.AccessToken)
+	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
 	postRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
 	postRequest.Header.Add("Accept", "application/json")
 	resp, err := http_utils.SendHttpRequest(postRequest, 200)

@@ -12,6 +12,7 @@ import (
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
+	"context"
 	"encoding/json"
 	"errors"
 
@@ -36,7 +37,7 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	(*google.MicroservicesLauncher)["gmail/moveToTrash"] = google.moveToTrash
 	(*google.MicroservicesLauncher)["gmail/moveFromTrash"] = google.moveFromTrash
 
-	(*google.ActionLauncher)["gmail/watchme"] = google.watchEmail
+	(*google.ActionLauncher)["watchme"] = google.watchEmail
 	return google
 }
 
@@ -50,7 +51,7 @@ func (google *GoogleClient) watchEmail(scenario models.AreaScenario, actionID, u
 }
 
 func (google *GoogleClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
-	if micro, ok := (*google.ActionLauncher)[scenario.Reaction.Microservice]; ok {
+	if micro, ok := (*google.ActionLauncher)[scenario.Action.Microservice]; ok {
 		return micro(scenario, actionID, userID)
 	}
 	return nil, errors.New("No such microservice")
@@ -143,6 +144,17 @@ func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microser
 	return nil, errors.New("No such microservice")
 }
 
-func (_ *GoogleClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
-	return &IServ.WebHookResponseStatus{}, nil
+func (google *GoogleClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+	if microservice == "watchme" {
+		b, err := json.Marshal(payload)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
+		}
+		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
+		if err != nil {
+			return nil, err
+		}
+		return &IServ.WebHookResponseStatus{}, nil
+	}
+	return nil, status.Errorf(codes.NotFound, "Microservice: %v not found", microservice)
 }
