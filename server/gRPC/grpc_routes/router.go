@@ -11,7 +11,7 @@ import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
-	"area/gRPC/api/google"
+	google_server "area/gRPC/api/google/googleServer"
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
 	"area/gRPC/api/spotify"
@@ -39,7 +39,7 @@ func LaunchServices() {
 	huggingFaceService, errHf := huggingFace.NewHuggingFaceService()
 	githubService, errGit := github.NewGithubService()
 	discordService, errDiscord := discord.NewDiscordService()
-	googleService, errGoogle := google.NewGoogleService()
+	googleService, errGoogle := google_server.NewGoogleService()
 	spotifyService, errSpotify := spotify.NewSpotifyService()
 
 	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify); err != nil {
