@@ -10,7 +10,7 @@ package controllers
 import (
 	"area/db"
 	"area/models"
-	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -44,13 +44,13 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 		struserID := chi.URLParam(r, "user_id")
 		userID, err := strconv.Atoi(struserID)
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 400, err.Error())
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
 
 		tokens, err := tokenDb.GetUserTokens(int64(userID))
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 500, err.Error())
+			http_utils.WriteHTTPResponseErr(&w, 500, err.Error())
 			return
 		}
 		w.WriteHeader(200)

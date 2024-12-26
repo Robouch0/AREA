@@ -10,13 +10,15 @@ package huggingFace
 import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 
 	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
+
+	"google.golang.org/grpc"
 )
 
 const (
@@ -25,6 +27,7 @@ const (
 
 type HuggingFaceService struct {
 	tokenDb      *db.TokenDb
+	hfDb         *db.HuggingFaceDB
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedHuggingFaceServiceServer
@@ -35,12 +38,20 @@ func NewHuggingFaceService() (*HuggingFaceService, error) {
 	if err != nil {
 		return nil, err
 	}
+	hfDb, err := db.InitHuggingFaceDb()
+	if err != nil {
+		return nil, err
+	}
 
-	return &HuggingFaceService{tokenDb: tokenDb, reactService: nil}, nil
+	return &HuggingFaceService{tokenDb: tokenDb, hfDb: hfDb, reactService: nil}, nil
+}
+
+func (hf *HuggingFaceService) InitReactClient(conn *grpc.ClientConn) {
+	hf.reactService = gRPCService.NewReactionServiceClient(conn)
 }
 
 func (hfServ *HuggingFaceService) LaunchTextGeneration(ctx context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "HFService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "HFService")
 	if errClaim != nil {
 		return nil, errClaim
 	}

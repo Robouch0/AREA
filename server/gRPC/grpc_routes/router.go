@@ -74,6 +74,7 @@ func LaunchServices() {
 
 	reactService.InitServiceClients(conn)
 	dtService.InitReactClient(conn)
+	huggingFaceService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

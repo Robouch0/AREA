@@ -12,7 +12,7 @@ import (
 	"area/api/middleware"
 	"area/db"
 	"area/models"
-	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"context"
 	"encoding/json"
 	"log"
@@ -35,14 +35,14 @@ func CreateUserWithEmail(w http.ResponseWriter, email string, JwtTok *jwtauth.JW
 		_, err := userDb.CreateUser(&newUser)
 
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 401, err.Error())
+			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return nil, err
 		}
 		us = &newUser
 	}
 	b, err := json.Marshal(log_types.UserLogInfos{Token: middleware.CreateToken(JwtTok, us.ID), UserID: us.ID})
 	if err != nil {
-		utils.WriteHTTPResponseErr(&w, 401, err.Error())
+		http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 		return nil, err
 	}
 	w.WriteHeader(200)
@@ -66,7 +66,7 @@ func CreateToken(w http.ResponseWriter, user *models.User, AccessToken string, S
 		_, err := tokenDb.CreateToken(&newToken)
 
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 401, err.Error())
+			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
 	} else {

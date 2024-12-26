@@ -8,7 +8,7 @@
 package oauth
 
 import (
-	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"fmt"
 	"log"
 	"net/http"
@@ -105,10 +105,10 @@ func GetUrl(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 				w.WriteHeader(200)
 				w.Write([]byte(url))
 			} else {
-				utils.WriteHTTPResponseErr(&w, 400, "Service does not exist")
+				http_utils.WriteHTTPResponseErr(&w, 400, "Service does not exist")
 			}
 			return
 		}
-		utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthservice))
+		http_utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthservice))
 	}
 }

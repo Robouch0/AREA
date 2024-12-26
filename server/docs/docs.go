@@ -362,6 +362,56 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/webhook/{service}/{microservice}/{action_id}": {
+            "post": {
+                "description": "WebHook Enpoint for the remote services payloads",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "WebHook Enpoint",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service Name",
+                        "name": "service",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Microservice Name",
+                        "name": "microservice",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Action ID for the reaction service",
+                        "name": "action_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -465,9 +515,6 @@ const docTemplate = `{
                 },
                 "reaction": {
                     "$ref": "#/definitions/models.Reaction"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },

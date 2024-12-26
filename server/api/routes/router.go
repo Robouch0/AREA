@@ -16,7 +16,7 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
-    "github.com/go-chi/cors"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
 
 	_ "area/docs"
@@ -36,11 +36,10 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Use(middleware.Logger)
 	gateway.Router.Use(middleware.AllowContentType("application/json"))
 	gateway.Router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		MaxAge:           300,
+		AllowedOrigins: []string{"https://*", "http://*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		MaxAge:         300,
 	}))
-
 
 	gateway.Router.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
@@ -52,6 +51,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Mount("/users/", UserRoutes())
 	gateway.Router.Mount("/oauth/", controllers.OAuthRoutes(gateway.JwtTok))
 	gateway.Router.Mount("/token/", controllers.TokenRoutes())
+	gateway.Router.Mount("/webhook/", controllers.WebHookRoutes(gateway))
 
 	gateway.Router.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(gateway.JwtTok))

@@ -10,7 +10,8 @@ package github
 import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
+	http_utils "area/utils/httpUtils"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -35,7 +36,7 @@ func NewGithubService() (*GithubService, error) {
 
 // Update a repository content
 func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "GithubService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GithubService")
 	if errClaim != nil {
 		return nil, errClaim
 	}
@@ -61,7 +62,7 @@ func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.Updat
 	}
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
 	putRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+	putRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
 	putRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}
@@ -78,7 +79,7 @@ func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.Updat
 }
 
 func (git *GithubService) UpdateRepository(ctx context.Context, req *gRPCService.UpdateRepoInfos) (*gRPCService.UpdateRepoInfos, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "GithubService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GithubService")
 	if errClaim != nil {
 		return nil, errClaim
 	}
@@ -98,7 +99,7 @@ func (git *GithubService) UpdateRepository(ctx context.Context, req *gRPCService
 	}
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v", req.Owner, req.Repo)
 	pathRequest, err := http.NewRequest("PATCH", url, bytes.NewBuffer(b))
-	pathRequest.Header = utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+	pathRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
 	pathRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}
@@ -120,7 +121,7 @@ func (git *GithubService) UpdateRepository(ctx context.Context, req *gRPCService
 }
 
 func (git *GithubService) DeleteFile(ctx context.Context, req *gRPCService.DeleteRepoFile) (*gRPCService.DeleteRepoFile, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "GithubService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GithubService")
 	if errClaim != nil {
 		return nil, errClaim
 	}
@@ -146,7 +147,7 @@ func (git *GithubService) DeleteFile(ctx context.Context, req *gRPCService.Delet
 		return nil, err
 	}
 	pathRequest, err := http.NewRequest("DELETE", url, bytes.NewBuffer(b))
-	pathRequest.Header = utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+	pathRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
 	pathRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}

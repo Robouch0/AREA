@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 
@@ -48,7 +48,7 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := react.RegisterAction(
 		ctx,
 		&gRPCService.ReactionRequest{
@@ -68,4 +68,8 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 		return nil, err
 	}
 	return &IServ.ActionResponseStatus{Description: res.Description, ActionID: int(res.ActionId)}, nil
+}
+
+func (_ *ReactionServiceClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

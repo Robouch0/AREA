@@ -5,7 +5,7 @@
 // writeHTTPResponseErr
 //
 
-package utils
+package http_utils
 
 import "net/http"
 
