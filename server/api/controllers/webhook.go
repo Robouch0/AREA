@@ -8,18 +8,34 @@
 package controllers
 
 import (
-	"io"
-	"log"
+	"area/api"
+	"area/db"
 	"net/http"
-	"os"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func WebHookRoute(w http.ResponseWriter, r *http.Request) {
-	service := chi.URLParam(r, "service")
-	action_id := chi.URLParam(r, "action_id")
+// Swaggoooo
+func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		service := chi.URLParam(r, "service")
+		action_id := chi.URLParam(r, "action_id")
 
-	log.Println("HERE: ", service, action_id)
-	io.Copy(os.Stdout, r.Body)
+		if _, err := strconv.Atoi(action_id); err != nil {
+			// Error http
+			return
+		}
+		if cli, ok := gateway.Clients[service]; ok {
+			cli.ListServiceStatus()
+		}
+	}
+}
+
+func WebHookRoutes(gateway *api.ApiGateway) chi.Router {
+	WebHooks := chi.NewRouter()
+	db.InitTokenDb()
+
+	WebHooks.Post("/service}/{action_id}", handleWebhookPayload(gateway))
+	return WebHooks
 }

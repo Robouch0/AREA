@@ -51,7 +51,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 	gateway.Router.Mount("/users/", UserRoutes())
 	gateway.Router.Mount("/oauth/", controllers.OAuthRoutes(gateway.JwtTok))
 	gateway.Router.Mount("/token/", controllers.TokenRoutes())
-	gateway.Router.Post("/webhook/{service}/{action_id}", controllers.WebHookRoute)
+	gateway.Router.Mount("/webhook/", controllers.WebHookRoutes(gateway))
 
 	gateway.Router.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(gateway.JwtTok))

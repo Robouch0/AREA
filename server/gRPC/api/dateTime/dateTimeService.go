@@ -11,7 +11,7 @@ import (
 	"area/db"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
 	"io"
@@ -82,7 +82,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 	}
 	for _, dtAct := range *allDTActions {
 		if dateData.Day == int(dtAct.DayMonth) && dateData.Hour == int(dtAct.Hours) && dateData.Minute == int(dtAct.Minutes) {
-			ctx := utils.CreateContextFromUserID(int(dtAct.UserID))
+			ctx := grpcutils.CreateContextFromUserID(int(dtAct.UserID))
 			dt.reactService.LaunchReaction(
 				ctx,
 				&gRPCService.LaunchRequest{ActionId: int64(dtAct.ActionID), PrevOutput: bytesBody},
@@ -92,7 +92,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 }
 
 func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "DateTimeService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "DateTimeService")
 	if errClaim != nil {
 		log.Println(ctx)
 		return nil, errClaim

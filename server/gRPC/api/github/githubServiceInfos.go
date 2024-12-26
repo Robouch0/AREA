@@ -8,7 +8,8 @@
 package github
 
 import (
-	"area/utils"
+	http_utils "area/utils/httpUtils"
+
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -43,7 +44,7 @@ func (git *GithubService) createFileInfos(Owner string, Repo string, Path string
 func (git *GithubService) getRepositoryFileInfos(accessToken string, req *RepoFileInfo) (*FileInfos, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
 	postRequest, err := http.NewRequest("GET", url, nil)
-	postRequest.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
+	postRequest.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
 	postRequest.Header.Add("Accept", "application/vnd.github+json")
 
 	cli := &http.Client{}

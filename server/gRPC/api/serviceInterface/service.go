@@ -54,5 +54,5 @@ type ClientService interface {
 	// prevOutput is an array of byte because output can be raw
 	TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
 
-	//
+	TriggerWebhook(ingredients map[string]any, microservice string, action_id int)
 }

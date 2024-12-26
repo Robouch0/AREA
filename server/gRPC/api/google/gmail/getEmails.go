@@ -9,6 +9,7 @@ package gmail
 
 import (
 	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -36,7 +37,7 @@ type MessageListRes struct {
 func GetListEmails(googleUserID string, accessToken string, label string) (*MessageListRes, error) {
 	url := fmt.Sprintf(listEmailsURL, googleUserID)
 	request, _ := http.NewRequest("GET", url, nil) // GetUserMail request
-	request.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
+	request.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
 	request.Header.Add("Accept", "application/json")
 
 	q := request.URL.Query()
@@ -73,7 +74,7 @@ func GetEmail(
 ) (*GmailMessage, error) {
 	url := fmt.Sprintf(getEmailURL, googleUserID, messageID)
 	request, _ := http.NewRequest("GET", url, nil)
-	request.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
+	request.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
 	request.Header.Add("Accept", "application/json")
 	request.URL.Query().Set("format", format)
 	request.URL.Query().Add("metadataHeaders", metadata)
@@ -87,7 +88,7 @@ func GetEmail(
 		io.Copy(os.Stderr, result.Body)
 		return nil, status.Errorf(codes.Aborted, result.Status)
 	}
-	message, err := utils.ResponseToStruct[GmailMessage](result)
+	message, err := utils.IOReaderToStruct[GmailMessage](&result.Body)
 	if err != nil {
 		return nil, err
 	}

@@ -8,11 +8,12 @@
 package huggingFace
 
 import (
-	hfType "area/gRPC/api/hugging_face/HFTypes"
+	hfType "area/gRPC/api/hugging_face/hfTypes"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
 	grpcutils "area/utils/grpcUtils"
+	http_utils "area/utils/httpUtils"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -58,7 +59,7 @@ func (hfServ *HuggingFaceService) createWebHook(tokenInfo *models.Token, webhook
 	}
 	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
 	postRequest.Header.Add("Accept", "application/json")
-	_, err = utils.SendHttpRequest(postRequest, 200)
+	_, err = http_utils.SendHttpRequest(postRequest, 200)
 	if err != nil {
 		return err
 	}

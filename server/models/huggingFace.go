@@ -24,5 +24,5 @@ type HuggingFace struct {
 	RepoScope  string `bun:"repo_scope" json:"scope"`   /* Scope of the webhook sent in the payload */
 
 	// Action checks pull request only if scope is discussion
-	IsPullRequest bool `bun:"is_pull_request,omitempty" json:"is_pull_request,omitempty"`
+	IsPullRequest bool `bun:"is_pull_request" json:"is_pull_request,omitempty"`
 }

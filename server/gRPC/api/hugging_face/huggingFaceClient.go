@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
 	"errors"
@@ -63,7 +63,7 @@ func (hfCli *HuggingFaceServiceClient) sendNewWebHookAction(
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := sendFn(ctx, &webHookReq)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (hfCli *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, 
 }
 
 func (hfCli *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := hfCli.cc.LaunchTextGeneration(ctx, &gRPCService.TextGenerationReq{Inputs: ingredients["inputs"].(string)})
 	if err != nil {
 		return nil, err
@@ -93,4 +93,8 @@ func (hfCli *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]an
 		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
+}
+
+func (_ *HuggingFaceServiceClient) TriggerWebhook(_ map[string]any, _ string, _ int) {
+
 }

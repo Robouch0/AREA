@@ -10,7 +10,7 @@ package huggingFace
 import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 
 	"bytes"
 	"context"
@@ -45,7 +45,7 @@ func NewHuggingFaceService() (*HuggingFaceService, error) {
 }
 
 func (hfServ *HuggingFaceService) LaunchTextGeneration(ctx context.Context, req *gRPCService.TextGenerationReq) (*gRPCService.TextGenerationRes, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "HFService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "HFService")
 	if errClaim != nil {
 		return nil, errClaim
 	}

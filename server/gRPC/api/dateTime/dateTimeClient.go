@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 
@@ -66,7 +66,11 @@ func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID, us
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	dt.LaunchCronJob(ctx, &timeReq)
 	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
+}
+
+func (_ *DTServiceClient) TriggerWebhook(_ map[string]any, _ string, _ int) {
+
 }

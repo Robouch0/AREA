@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 
@@ -120,7 +120,7 @@ func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.CreateMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput 
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.EditMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -160,7 +160,7 @@ func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.DeleteMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -180,7 +180,7 @@ func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.CreateReaction(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -200,7 +200,7 @@ func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prev
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.DeleteAllReactions(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -220,7 +220,7 @@ func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.DeleteReactions(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -238,4 +238,8 @@ func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microse
 		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
+}
+
+func (_ *DiscordClient) TriggerWebhook(_ map[string]any, _ string, _ int) {
+
 }

@@ -18,7 +18,7 @@ import (
 	"area/gRPC/api/spotify"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 
 	"cmp"
 	"context"
@@ -65,7 +65,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "ReactionService")
 	if errClaim != nil {
 		return nil, errClaim
 	}
@@ -93,7 +93,7 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 }
 
 func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "ReactionService")
 	if errClaim != nil {
 		return nil, errClaim
 	}

@@ -2,19 +2,19 @@
 // EPITECH PROJECT, 2024
 // AREA
 // File description:
-// responseToStruct
+// IOReaderToStruct
 //
 
 package utils
 
 import (
 	"encoding/json"
-	"net/http"
+	"io"
 )
 
-func ResponseToStruct[T any](resp *http.Response) (*T, error) {
+func IOReaderToStruct[T any](body *io.ReadCloser) (*T, error) {
 	value := new(T)
-	err := json.NewDecoder(resp.Body).Decode(value)
+	err := json.NewDecoder(*body).Decode(value)
 	if err != nil {
 		return nil, err
 	}

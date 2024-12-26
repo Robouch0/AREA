@@ -5,7 +5,7 @@
 // sendHttpRequest
 //
 
-package utils
+package http_utils
 
 import (
 	"io"
