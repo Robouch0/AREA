@@ -70,7 +70,7 @@ func UserRoutes() chi.Router {
 			return
 		}
 
-		res, err := userDb.GetUser(id)
+		res, err := userDb.GetUserByID(id)
 		if err != nil {
 			w.WriteHeader(422)
 			w.Write([]byte(fmt.Sprintf("error: no such user with id: %d", id)))

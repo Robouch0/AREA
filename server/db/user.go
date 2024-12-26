@@ -57,7 +57,7 @@ func (user *UserDb) GetUsers() (*([]models.User), error) { // Use the generic fu
 	return allUsers, nil
 }
 
-func (user *UserDb) GetUser(id int) (*models.User, error) { // Use the generic function
+func (user *UserDb) GetUserByID(id int) (*models.User, error) { // Use the generic function
 	us := new(models.User)
 	err := user.Db.NewSelect().
 		Model(us).
