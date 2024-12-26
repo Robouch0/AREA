@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 
@@ -98,7 +98,7 @@ func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.MoveToTrash(ctx, &deleteEmailMe)
 	if err != nil {
 		return nil, err
@@ -118,7 +118,7 @@ func (google *GoogleClient) moveFromTrash(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.MoveFromTrash(ctx, &deleteEmailMe)
 	if err != nil {
 		return nil, err
@@ -138,7 +138,7 @@ func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.DeleteEmailMe(ctx, &deleteEmailMe)
 	if err != nil {
 		return nil, err
@@ -158,7 +158,7 @@ func (google *GoogleClient) sendEmailMe(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.SendEmailMe(ctx, &sendEmailMe)
 	if err != nil {
 		return nil, err
@@ -172,4 +172,8 @@ func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microser
 		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
+}
+
+func (_ *GoogleClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

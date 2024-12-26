@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 	"log"
@@ -117,7 +117,7 @@ func (spot *SpotifyClient) stopSong(ingredients map[string]any, _ []byte, userID
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	_, err = spot.cc.StopSong(ctx, &gRPCService.SpotifyStopInfo{})
 	if err != nil {
 		log.Println("Error when running stopSong service", err)
@@ -137,7 +137,7 @@ func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, _ []byte, 
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	_, err = spot.cc.CreatePlaylist(ctx, &createReq)
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func (spot *SpotifyClient) nextSong(ingredients map[string]any, _ []byte, userID
 		log.Println("Ingredients problems", err)
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.NextSong(ctx, &gRPCService.SpotifyNextInfo{})
 	if err != nil {
@@ -169,7 +169,7 @@ func (spot *SpotifyClient) previousSong(ingredients map[string]any, _ []byte, us
 		log.Println("Ingredients problems", err)
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.PreviousSong(ctx, &gRPCService.SpotifyPreviousInfo{})
 	if err != nil {
@@ -190,7 +190,7 @@ func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, _ []byt
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.SetPlaybackVolume(ctx, &setPlaybackVolume)
 	if err != nil {
@@ -210,7 +210,7 @@ func (spot *SpotifyClient) launchSong(ingredients map[string]any, _ []byte, user
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.LaunchSong(ctx, &launchSong)
 	if err != nil {
@@ -230,7 +230,7 @@ func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, _ []byt
 	// 	if err != nil {
 	// 		return nil, err
 	// 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	var addSong gRPCService.SpotifyAddSongToPlaylist
 	_, err := spot.cc.AddSongToPlaylist(ctx, &addSong)
 	if err != nil {
@@ -246,4 +246,8 @@ func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microserv
 	}
 	log.Println(microservice)
 	return nil, errors.New("No such microservice")
+}
+
+func (_ *SpotifyClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

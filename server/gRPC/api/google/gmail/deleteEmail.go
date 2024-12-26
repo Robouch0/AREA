@@ -8,7 +8,7 @@
 package gmail
 
 import (
-	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"fmt"
 	"io"
 	"log"
@@ -27,7 +27,7 @@ func DeleteEmail(googleUserID string, accessToken string, messageID string) erro
 	url := fmt.Sprintf(deleteURL, googleUserID, messageID)
 
 	request, _ := http.NewRequest("DELETE", url, nil) // GetUserMail request
-	request.Header = utils.GetDefaultBearerHTTPHeader(accessToken)
+	request.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
 	request.Header.Add("Accept", "application/json")
 
 	client := &http.Client{}

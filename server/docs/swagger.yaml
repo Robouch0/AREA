@@ -65,8 +65,6 @@ definitions:
         $ref: '#/definitions/models.Action'
       reaction:
         $ref: '#/definitions/models.Reaction'
-      user_id:
-        type: integer
     type: object
   models.Reaction:
     properties:
@@ -378,4 +376,38 @@ paths:
       summary: Create a token
       tags:
       - Token
+  /webhook/{service}/{microservice}/{action_id}:
+    post:
+      consumes:
+      - application/json
+      description: WebHook Enpoint for the remote services payloads
+      parameters:
+      - description: Service Name
+        in: path
+        name: service
+        required: true
+        type: string
+      - description: Microservice Name
+        in: path
+        name: microservice
+        required: true
+        type: string
+      - description: Action ID for the reaction service
+        in: path
+        name: action_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema: {}
+      summary: WebHook Enpoint
+      tags:
+      - Area
 swagger: "2.0"

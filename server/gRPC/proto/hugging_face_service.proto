@@ -6,6 +6,12 @@ option go_package = "github.com/area/grpc-go/service";
 
 service HuggingFaceService {
   rpc LaunchTextGeneration(TextGenerationReq) returns (TextGenerationRes) {}
+
+  rpc CreateRepoUpdateWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
+  rpc CreateNewPRWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
+  rpc CreateNewDiscussionWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
+
+  rpc TriggerWebHook (WebHookTriggerReq) returns (WebHookTriggerReq) {}
 }
 
 message TextGenerationReq {
@@ -15,4 +21,20 @@ message TextGenerationReq {
 
 message TextGenerationRes {
   string generated_text = 1;
+}
+
+message HFWebHookInfo {
+  // Id of the action that will be sent while creating the webhook
+  int32 action_id = 1;
+
+  // Type of repo (model, dataset, etc)
+  string type = 2;
+
+  // Name of the repository
+  string name = 3;
+}
+
+message WebHookTriggerReq {
+  uint32 action_id = 1;
+  bytes payload = 2;
 }

@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 
@@ -91,7 +91,7 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := git.cc.UpdateRepository(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := git.cc.UpdateFile(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := git.cc.DeleteFile(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -149,4 +149,8 @@ func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservic
 		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
+}
+
+func (_ *GithubClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

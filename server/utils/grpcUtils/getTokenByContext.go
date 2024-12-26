@@ -10,7 +10,6 @@ package grpcutils
 import (
 	"area/db"
 	"area/models"
-	"area/utils"
 	"context"
 )
 
@@ -20,7 +19,7 @@ func GetTokenByContext(
 	serviceName string,
 	remoteProvider string,
 ) (*models.Token, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, serviceName)
+	userID, errClaim := GetUserIdFromContext(ctx, serviceName)
 	if errClaim != nil {
 		return nil, errClaim
 	}
