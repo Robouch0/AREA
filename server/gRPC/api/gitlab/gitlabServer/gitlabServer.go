@@ -10,26 +10,31 @@ package gitlab_server
 import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
+	"context"
 
 	"google.golang.org/grpc"
 )
 
-type GoogleService struct {
+type GitlabService struct {
 	tokenDb      *db.TokenDb
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedGitlabServiceServer
 }
 
-func NewGoogleService() (*GoogleService, error) {
+func NewGoogleService() (*GitlabService, error) {
 	tokenDb, err := db.InitTokenDb()
 	if err != nil {
 		return nil, err
 	}
 
-	return &GoogleService{tokenDb: tokenDb, reactService: nil}, err
+	return &GitlabService{tokenDb: tokenDb, reactService: nil}, err
 }
 
-func (git *GoogleService) InitReactClient(conn *grpc.ClientConn) {
+func (git *GitlabService) InitReactClient(conn *grpc.ClientConn) {
 	git.reactService = gRPCService.NewReactionServiceClient(conn)
+}
+
+func (git *GitlabService) Test(ctx context.Context, req *gRPCService.TestReq) (*gRPCService.TestReq, error) {
+	return nil, nil
 }
