@@ -13,6 +13,13 @@ import (
 	"github.com/uptrace/bun"
 )
 
+type UpdatableUserData struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+
+	Password string `json:"password"`
+}
+
 type User struct {
 	bun.BaseModel `bun:"table:user,alias:cs"`
 	ID            uint   `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
