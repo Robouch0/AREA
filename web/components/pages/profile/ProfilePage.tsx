@@ -8,16 +8,20 @@ import {ScrollArea} from "@/components/ui/utils/Scroll-area"
 import {useState} from "react";
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
+import {OauthButton} from "@/components/ui/services/OauthButton";
 
-export default function ProfilePage({email, first_name, last_name, password}: userInfo) {
+export default function ProfilePage({email, first_name, last_name, password, providers}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
 
     const tags : string[] = [
-        "Github",
-        "Google",
-        "Twitter",
-        "Discord",
+        "github",
+        "google",
+        "twitter",
+        "discord",
+        "spotify",
     ]
+
+    console.log(providers)
 
 
     return (
@@ -109,12 +113,24 @@ export default function ProfilePage({email, first_name, last_name, password}: us
                                                     <ServiceIcon className="text-2xl" tag={tag}/>
                                                 </div>
                                                 <div className="mx-4 lg:mx-8 text-2xl text-black font-semibold">
-                                                    {tag}
+                                                    {tag.charAt(0).toUpperCase() + tag.slice(1)}
                                                 </div>
                                             </div>
-                                            <Button className="my-2 mr-6 lg:mr-2">
-                                                Connect
-                                            </Button>
+                                            <div className={"ml-auto"}>
+                                                {providers.includes(tag) ?
+                                                    <Button className="my-2 mr-6 lg:mr-2 font-bold bg-red-600">
+                                                        Disconnect
+                                                    </Button> :
+                                                    <OauthButton
+                                                        arial-label={`${tag}`}
+                                                        service={`${tag}`}
+                                                        login={false}
+                                                        textButton={"Connect"}
+                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-green-600 w-24"
+                                                        ServiceIcon={null}
+                                                    />
+                                                }
+                                            </div>
                                         </div>
                                         <hr className="w-72 h-px bg-black border-0 dark:bg-gray-700"/>
                                     </div>

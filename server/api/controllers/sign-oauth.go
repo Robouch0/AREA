@@ -22,7 +22,7 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 	OAuthRouter.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(JwtTok))
 		r.Use(jwtauth.Authenticator(JwtTok))
-		r.Post("/connect/", oauth.Connect(OAuthURLs))
+        r.Post("/connect/", oauth.Connect(OAuthURLs))
 	})
 
 	OAuthRouter.Get("/{service}", oauth.GetUrl(OAuthURLs))

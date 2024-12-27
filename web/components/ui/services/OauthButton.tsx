@@ -1,14 +1,16 @@
 import {useCallback, useEffect, useState} from 'react';
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
-import { oauthLogin } from "@/api/authentification";
+import {connectOauth, oauthLogin} from "@/api/authentification";
 import { Button } from '@/components/ui/utils/Button';
 import redirectURI from '@/lib/redirectUri';
 
 interface IOAuthButton {
     className: string,
     service: string,
-    ServiceIcon?: React.ReactNode,
+    ServiceIcon?: React.ReactNode|null,
+    textButton:string,
+    login: boolean,
 }
 
 async function redirectToService(service: string) {
@@ -24,11 +26,16 @@ async function redirectToService(service: string) {
     }
 }
 // http://127.0.0.1:8081
-async function askForToken(service: string, code: string | null) {
+async function askForToken(service: string, code: string | null, login:boolean) {
     try {
         if (redirectURI == undefined)
             throw Error("env variable redirectURI is undefined")
-        await oauthLogin({ service: service, code: code, redirect_uri: redirectURI })
+        console.log(login)
+        if (login) {
+            await oauthLogin({service: service, code: code, redirect_uri: redirectURI})
+        } else {
+            await connectOauth(service, code)
+        }
 
         return true;
     } catch (error) {
@@ -36,8 +43,7 @@ async function askForToken(service: string, code: string | null) {
     }
 }
 
-export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
-    const serviceDisplayName = service.charAt(0).toUpperCase() + service.slice(1);
+export function OauthButton({ service, className, ServiceIcon, textButton, login }: IOAuthButton) {
     const router = useRouter();
     const [code, setPopupCode] = useState<string|null>("");
 
@@ -52,7 +58,7 @@ export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
 
     useEffect(() => {
         if (code) {
-            askForToken(service, code)
+            askForToken(service, code, login)
                 .then(() => router.push("/services"))
                 .catch((error) => console.log(error));
         }
@@ -81,8 +87,14 @@ export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
             className={className}
             onClick={() => { openPopup(service) }}
         >
-            {ServiceIcon}
-            <p className="mx-3 text-2xl font-semibold">Continuer avec {serviceDisplayName}</p>
+            {ServiceIcon == null ?
+                <></>
+                :
+                <div className={"mx-3"}>
+                    {ServiceIcon}
+                </div>
+            }
+            <p >{textButton}</p>
         </Button>
     );
 }
