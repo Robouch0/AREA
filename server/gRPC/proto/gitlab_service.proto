@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package gitlab;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service GitlabService {
+  rpc Test(TestReq) returns(TestReq) {}
+}
+
+message TestReq {
+}

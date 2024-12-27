@@ -11,6 +11,7 @@ import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
+	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
@@ -38,17 +39,19 @@ func LaunchServices() {
 	reactService, errReact := reaction.NewReactionService()
 	huggingFaceService, errHf := huggingFace.NewHuggingFaceService()
 	githubService, errGit := github.NewGithubService()
+	gitlabService, errGitlab := gitlab_server.NewGitlabService()
 	discordService, errDiscord := discord.NewDiscordService()
 	googleService, errGoogle := google_server.NewGoogleService()
 	spotifyService, errSpotify := spotify.NewSpotifyService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab); err != nil {
 		log.Println(err)
 		return
 	}
 	services.RegisterDateTimeServiceServer(s, dtService)
 	services.RegisterHuggingFaceServiceServer(s, huggingFaceService)
 	services.RegisterGithubServiceServer(s, githubService)
+	services.RegisterGitlabServiceServer(s, gitlabService)
 	services.RegisterDiscordServiceServer(s, discordService)
 	services.RegisterGoogleServiceServer(s, googleService)
 	services.RegisterSpotifyServiceServer(s, spotifyService)
