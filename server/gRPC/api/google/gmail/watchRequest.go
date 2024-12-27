@@ -64,7 +64,7 @@ func SendWatchMeRequest(tokenInfo *models.Token) (*WatchReponseBody, error) {
 	}
 	watchBody := &WatchRequestBody{
 		TopicName:           topic,
-		LabelIds:            []string{"UNREAD"},
+		LabelIds:            []string{"UNREAD", "INBOX"},
 		LabelFilterBehavior: "INCLUDE",
 	}
 

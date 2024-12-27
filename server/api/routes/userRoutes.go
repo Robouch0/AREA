@@ -11,6 +11,7 @@ import (
 	"area/db"
 	"area/models"
 	"fmt"
+	"log"
 	"strconv"
 
 	"encoding/json"
@@ -79,7 +80,7 @@ func UserRoutes() chi.Router {
 
 		err = json.NewEncoder(w).Encode(res)
 		if err != nil {
-			fmt.Printf("Error: %v\n", err)
+			log.Printf("Error: %v\n", err)
 			return
 		}
 	})

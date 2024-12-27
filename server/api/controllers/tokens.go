@@ -143,7 +143,7 @@ func TokenRoutes() chi.Router {
 
 	TokenRouter.Get("/{user_id}", getTokens(tokenDb))
 
-	TokenRouter.Get("/", getToken(tokenDb))
+	TokenRouter.Get("/{user_id}/{provider}", getToken(tokenDb))
 
 	TokenRouter.Post("/create/", createTkn(tokenDb))
 

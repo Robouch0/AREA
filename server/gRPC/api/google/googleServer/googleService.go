@@ -91,6 +91,7 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 		return nil, err
 	}
 	if act.Activated {
+		log.Println(payload.Message.MessageId)
 		ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
 		_, err := google.reactService.LaunchReaction(
 			ctx,
