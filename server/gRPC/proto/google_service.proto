@@ -16,6 +16,14 @@ service GoogleService {
 
   // Move out of trash an email
   rpc MoveFromTrash (TrashEmailRequestMe) returns (TrashEmailRequestMe) {}
+
+  /* WebHooks Microservice */
+
+  // Watch email of the user currently logged
+  rpc WatchGmailEmail (EmailTriggerReq) returns (EmailTriggerReq) {}
+
+  // Function that handle the payload sent by google gmail
+  rpc WatchMeTrigger (GmailTriggerReq) returns (GmailTriggerReq) {}
 }
 
 message EmailRequestMe {
@@ -32,4 +40,13 @@ message DeleteEmailRequestMe {
 
 message TrashEmailRequestMe {
   string subject = 1;
+}
+
+message EmailTriggerReq {
+  uint32 action_id = 1;
+}
+
+message GmailTriggerReq {
+  uint32 action_id = 1;
+  bytes payload = 2;
 }
