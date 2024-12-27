@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package gitlab;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service WeatherService {
+  rpc NewTemperatureTrigger(TempTriggerReq) returns(TempTriggerReq) {}
+}
+
+message TempTriggerReq {
+  bool activated = 1;
+  int32 action_id = 2;
+}

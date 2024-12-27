@@ -17,6 +17,7 @@ import (
 	huggingFace "area/gRPC/api/hugging_face"
 	IServ "area/gRPC/api/serviceInterface"
 	"area/gRPC/api/spotify"
+	weather_client "area/gRPC/api/weather/weatherClient"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
@@ -64,6 +65,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["discord"] = discord.NewDiscordClient(conn)
 	react.clients["google"] = google_client.NewGoogleClient(conn)
 	react.clients["spotify"] = spotify.NewSpotifyClient(conn)
+	react.clients["weather"] = weather_client.NewWeatherClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
