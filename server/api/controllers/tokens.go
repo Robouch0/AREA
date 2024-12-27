@@ -12,13 +12,14 @@ import (
 	"area/models"
 	http_utils "area/utils/httpUtils"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
 
-type TokenRequest struct {
+type TokenInformations struct {
 	UserID   string `json:"user_id"`
 	Provider string `json:"provider"`
 }
@@ -73,7 +74,7 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 // @Router       /token/ [post]
 func getToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		TokenReq := new(TokenRequest)
+		TokenReq := new(TokenInformations)
 		TokenReq.UserID = chi.URLParam(r, "user_id")
 		TokenReq.Provider = chi.URLParam(r, "provider")
 
@@ -140,15 +141,50 @@ func createTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 	}
 }
 
+// Delete Token godoc
+// @Summary      Delete a token
+// @Description  Delete a token from a user_id and a provider
+// @Tags         Token
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  TokenInformations
+// @Failure      400  {object}  error
+// @Failure      500  {object}  error
+// @Router       /token/ [delete]
+func deleteUserToken(tokenDb *db.TokenDb) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userStrID := chi.URLParam(r, "user_id")
+		provider := chi.URLParam(r, "provider")
+
+		userId, err := strconv.Atoi(userStrID)
+		if err != nil {
+			http_utils.WriteHTTPResponseErr(&w, 401, "Invalid userID given")
+			log.Println(err)
+			return
+		}
+
+		_, err = tokenDb.DeleteUserTokenByProvider(int64(userId), provider)
+		if err != nil {
+			http_utils.WriteHTTPResponseErr(&w, 401, "Error while deleting token")
+			log.Println(err)
+			return
+		}
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(&TokenInformations{UserID: userStrID, Provider: provider})
+	}
+}
+
 func TokenRoutes() chi.Router {
-	TokenRouter := chi.NewRouter()
+	tokenRouter := chi.NewRouter()
 	tokenDb := db.GetTokenDb()
 
-	TokenRouter.Get("/{user_id}", getTokens(tokenDb))
+	tokenRouter.Get("/{user_id}", getTokens(tokenDb))
 
-	TokenRouter.Get("/{user_id}/{provider}", getToken(tokenDb))
+	tokenRouter.Get("/{user_id}/{provider}", getToken(tokenDb))
 
-	TokenRouter.Post("/create/", createTkn(tokenDb))
+	tokenRouter.Post("/create/", createTkn(tokenDb))
 
-	return TokenRouter
+	tokenRouter.Delete("/{user_id}/{provider}", deleteUserToken(tokenDb))
+
+	return tokenRouter
 }
