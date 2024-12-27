@@ -62,7 +62,7 @@ export function OauthButton({ service, className, ServiceIcon, textButton, login
                 .then(() => router.push("/services"))
                 .catch((error) => console.log(error));
         }
-    }, [code, router, service]);
+    }, [code, router, service, login]);
 
     useEffect(()  => {
         const handleMessage = (event:MessageEvent) => {
