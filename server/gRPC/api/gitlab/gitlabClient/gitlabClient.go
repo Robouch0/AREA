@@ -30,11 +30,11 @@ func NewGitlabClient(conn *grpc.ClientConn) *GitlabClient {
 	return gitlab
 }
 
-func (google *GitlabClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+func (git *GitlabClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No microservice Action yet")
 }
 
-func (google *GitlabClient) TriggerReaction(
+func (git *GitlabClient) TriggerReaction(
 	ingredients map[string]any,
 	microservice string,
 	prevOutput []byte,
@@ -43,6 +43,6 @@ func (google *GitlabClient) TriggerReaction(
 	return nil, errors.New("No microservice Reaction yet")
 }
 
-func (google *GitlabClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+func (git *GitlabClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }

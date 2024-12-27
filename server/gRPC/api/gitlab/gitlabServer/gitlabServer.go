@@ -22,7 +22,7 @@ type GitlabService struct {
 	gRPCService.UnimplementedGitlabServiceServer
 }
 
-func NewGoogleService() (*GitlabService, error) {
+func NewGitlabService() (*GitlabService, error) {
 	tokenDb, err := db.InitTokenDb()
 	if err != nil {
 		return nil, err
