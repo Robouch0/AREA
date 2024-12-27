@@ -22,7 +22,7 @@ export async function login(emailValue: string, passwordValue: string): Promise<
     }
 }
 
-export async function oauhLogin(oauthLogBody: OAuthLoginBody): Promise<void> {
+export async function oauthLogin(oauthLogBody: OAuthLoginBody): Promise<void> {
     try {
         const response: AxiosResponse<UserLogInfosBody, string> = await axiosInstance.post<UserLogInfosBody, AxiosResponse<UserLogInfosBody, string>>(
             `oauth/`, oauthLogBody);
@@ -33,7 +33,7 @@ export async function oauhLogin(oauthLogBody: OAuthLoginBody): Promise<void> {
         cookiesObj.set('token', token);
         cookiesObj.set('UID', user_id.toString());
     } catch (error) {
-        throw error;
+        throw error
     }
 }
 

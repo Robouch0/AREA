@@ -11,7 +11,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -70,7 +69,6 @@ func AccessTokenPost(
 		return nil, resperr
 	}
 	if response.StatusCode != 200 {
-		log.Println("RES: ", response)
 		return nil, errors.New("Invalid status")
 	}
 	return response, nil

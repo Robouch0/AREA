@@ -29,7 +29,7 @@ class MainAppScaffold extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 70),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
             child: child),
       ),
     );

@@ -12,6 +12,8 @@ import (
 	"context"
 
 	"github.com/uptrace/bun"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type TokenDb struct {
@@ -26,7 +28,7 @@ func InitTokenDb() (*TokenDb, error) {
 		IfNotExists().
 		Exec(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Cannot init token database %v", err)
 	}
 
 	return &TokenDb{Db: db}, nil
@@ -94,6 +96,18 @@ func (Token *TokenDb) GetUserTokenByProvider(userID int64, provider string) (*mo
 		Model(us).
 		Where("user_id = ? AND provider = ?", userID, provider).
 		Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return us, nil
+}
+
+func (Token *TokenDb) DeleteUserTokenByProvider(userID int64, provider string) (*models.Token, error) {
+	us := new(models.Token)
+	_, err := Token.Db.NewDelete().
+		Model(us).
+		Where("user_id = ? AND provider = ?", userID, provider).
+		Exec(context.Background())
 	if err != nil {
 		return nil, err
 	}

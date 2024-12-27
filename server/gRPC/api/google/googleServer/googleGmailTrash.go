@@ -5,7 +5,7 @@
 // googleGmailTrash
 //
 
-package google
+package google_server
 
 import (
 	"area/gRPC/api/google/gmail"
