@@ -4,7 +4,7 @@ import { FormData, UserSchema, ValidFieldNames } from "@/lib/typeLogin";
 import FormField from "@/components/ui/utils/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import {FaEye, FaEyeSlash, FaFacebook, FaGoogle } from "react-icons/fa";
+import {FaEye, FaEyeSlash, FaFacebook, FaGitlab } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
@@ -139,12 +139,12 @@ function LoginForm() {
                                 </Button>
 
 
-                                <OauthButton
+                                {/*<OauthButton
                                     arial-label="Google"
                                     service="google"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGoogle className="w-12 h-12" />}
-                                />
+                                />*/}
 
                                 {/* {<OauthButton
                                     arial-label="Hf"
@@ -160,12 +160,12 @@ function LoginForm() {
                                 {/*    ServiceIcon={<FaDiscord className="w-12 h-12" />}*/}
                                 {/*/>*/}
 
-                                {/*<OauthButton
-                                    arial-label="Github"
-                                    service="github"
+                                <OauthButton
+                                    arial-label="Gitlab"
+                                    service="gitlab"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGithub className="w-12 h-12" />}
-                                />*/}
+                                    ServiceIcon={<FaGitlab className="w-12 h-12" />}
+                                />
 
                                 <div className="flex flex-row font-bold">
                                     <p>
