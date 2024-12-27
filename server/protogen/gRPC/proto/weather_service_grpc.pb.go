@@ -20,13 +20,17 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	WeatherService_NewTemperatureTrigger_FullMethodName = "/gitlab.WeatherService/NewTemperatureTrigger"
+	WeatherService_NewIsDayTrigger_FullMethodName       = "/gitlab.WeatherService/NewIsDayTrigger"
 )
 
 // WeatherServiceClient is the client API for WeatherService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WeatherServiceClient interface {
+	// Each hour, when temperature exceed a certain amount, do this
 	NewTemperatureTrigger(ctx context.Context, in *TempTriggerReq, opts ...grpc.CallOption) (*TempTriggerReq, error)
+	// Each Hour, when it is night, do this
+	NewIsDayTrigger(ctx context.Context, in *IsDayTriggerReq, opts ...grpc.CallOption) (*IsDayTriggerReq, error)
 }
 
 type weatherServiceClient struct {
@@ -47,11 +51,24 @@ func (c *weatherServiceClient) NewTemperatureTrigger(ctx context.Context, in *Te
 	return out, nil
 }
 
+func (c *weatherServiceClient) NewIsDayTrigger(ctx context.Context, in *IsDayTriggerReq, opts ...grpc.CallOption) (*IsDayTriggerReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsDayTriggerReq)
+	err := c.cc.Invoke(ctx, WeatherService_NewIsDayTrigger_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WeatherServiceServer is the server API for WeatherService service.
 // All implementations must embed UnimplementedWeatherServiceServer
 // for forward compatibility.
 type WeatherServiceServer interface {
+	// Each hour, when temperature exceed a certain amount, do this
 	NewTemperatureTrigger(context.Context, *TempTriggerReq) (*TempTriggerReq, error)
+	// Each Hour, when it is night, do this
+	NewIsDayTrigger(context.Context, *IsDayTriggerReq) (*IsDayTriggerReq, error)
 	mustEmbedUnimplementedWeatherServiceServer()
 }
 
@@ -64,6 +81,9 @@ type UnimplementedWeatherServiceServer struct{}
 
 func (UnimplementedWeatherServiceServer) NewTemperatureTrigger(context.Context, *TempTriggerReq) (*TempTriggerReq, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewTemperatureTrigger not implemented")
+}
+func (UnimplementedWeatherServiceServer) NewIsDayTrigger(context.Context, *IsDayTriggerReq) (*IsDayTriggerReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewIsDayTrigger not implemented")
 }
 func (UnimplementedWeatherServiceServer) mustEmbedUnimplementedWeatherServiceServer() {}
 func (UnimplementedWeatherServiceServer) testEmbeddedByValue()                        {}
@@ -104,6 +124,24 @@ func _WeatherService_NewTemperatureTrigger_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WeatherService_NewIsDayTrigger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsDayTriggerReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WeatherServiceServer).NewIsDayTrigger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WeatherService_NewIsDayTrigger_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WeatherServiceServer).NewIsDayTrigger(ctx, req.(*IsDayTriggerReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WeatherService_ServiceDesc is the grpc.ServiceDesc for WeatherService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +152,10 @@ var WeatherService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NewTemperatureTrigger",
 			Handler:    _WeatherService_NewTemperatureTrigger_Handler,
+		},
+		{
+			MethodName: "NewIsDayTrigger",
+			Handler:    _WeatherService_NewIsDayTrigger_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

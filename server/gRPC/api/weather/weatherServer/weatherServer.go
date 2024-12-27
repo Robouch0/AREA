@@ -38,3 +38,7 @@ func (weather *WeatherService) InitReactClient(conn *grpc.ClientConn) {
 func (weather *WeatherService) NewTemperatureTrigger(ctx context.Context, req *gRPCService.TempTriggerReq) (*gRPCService.TempTriggerReq, error) {
 	return nil, nil
 }
+
+func (weather *WeatherService) NewIsDayTrigger(ctx context.Context, req *gRPCService.IsDayTriggerReq) (*gRPCService.IsDayTriggerReq, error) {
+	return nil, nil
+}
