@@ -5,86 +5,56 @@
 // googleClient
 //
 
-package google
+package google_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
+	"context"
 	"encoding/json"
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GoogleClient struct {
 	MicroservicesLauncher *IServ.MicroserviceLauncher
-	cc                    gRPCService.GoogleServiceClient
+	ActionLauncher        *IServ.ActionLauncher
+
+	cc gRPCService.GoogleServiceClient
 }
 
 func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	micros := &IServ.MicroserviceLauncher{}
-	google := &GoogleClient{MicroservicesLauncher: micros, cc: gRPCService.NewGoogleServiceClient(conn)}
+	actions := &IServ.ActionLauncher{}
+	google := &GoogleClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewGoogleServiceClient(conn)}
 	(*google.MicroservicesLauncher)["gmail/sendEmailMe"] = google.sendEmailMe
 	(*google.MicroservicesLauncher)["gmail/deleteEmailMe"] = google.deleteEmailMe
 	(*google.MicroservicesLauncher)["gmail/moveToTrash"] = google.moveToTrash
 	(*google.MicroservicesLauncher)["gmail/moveFromTrash"] = google.moveFromTrash
 
+	(*google.ActionLauncher)["watchme"] = google.watchEmail
 	return google
 }
 
-func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
-	status := &IServ.ServiceStatus{
-		Name:    "Google",
-		RefName: "google",
-
-		Microservices: []IServ.MicroserviceStatus{
-			IServ.MicroserviceStatus{
-				Name:    "Send an email to a specific user",
-				RefName: "gmail/sendEmailMe",
-				Type:    "reaction",
-
-				Ingredients: map[string]string{
-					"to":           "string",
-					"subject":      "string",
-					"body_message": "string",
-				},
-			},
-			IServ.MicroserviceStatus{
-				Name:    "Delete an email of a specific user",
-				RefName: "gmail/deleteEmailMe",
-				Type:    "reaction",
-
-				Ingredients: map[string]string{
-					"subject": "string",
-				},
-			},
-			IServ.MicroserviceStatus{
-				Name:    "Move an email to trash",
-				RefName: "gmail/moveToTrash",
-				Type:    "reaction",
-
-				Ingredients: map[string]string{
-					"subject": "string",
-				},
-			},
-			IServ.MicroserviceStatus{
-				Name:    "Move an email from trash",
-				RefName: "gmail/moveFromTrash",
-				Type:    "reaction",
-
-				Ingredients: map[string]string{
-					"subject": "string",
-				},
-			},
-		},
+func (google *GoogleClient) watchEmail(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := google.cc.WatchGmailEmail(ctx, &gRPCService.EmailTriggerReq{ActionId: uint32(actionID)})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return status, nil
+	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
 }
 
 func (google *GoogleClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
-	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
+	if micro, ok := (*google.ActionLauncher)[scenario.Action.Microservice]; ok {
+		return micro(scenario, actionID, userID)
+	}
+	return nil, errors.New("No such microservice")
 }
 
 func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -98,7 +68,7 @@ func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.MoveToTrash(ctx, &deleteEmailMe)
 	if err != nil {
 		return nil, err
@@ -118,7 +88,7 @@ func (google *GoogleClient) moveFromTrash(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.MoveFromTrash(ctx, &deleteEmailMe)
 	if err != nil {
 		return nil, err
@@ -138,7 +108,7 @@ func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.DeleteEmailMe(ctx, &deleteEmailMe)
 	if err != nil {
 		return nil, err
@@ -158,7 +128,7 @@ func (google *GoogleClient) sendEmailMe(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := google.cc.SendEmailMe(ctx, &sendEmailMe)
 	if err != nil {
 		return nil, err
@@ -172,4 +142,19 @@ func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microser
 		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
+}
+
+func (google *GoogleClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+	if microservice == "watchme" {
+		b, err := json.Marshal(payload)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
+		}
+		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
+		if err != nil {
+			return nil, err
+		}
+		return &IServ.WebHookResponseStatus{}, nil
+	}
+	return nil, status.Errorf(codes.NotFound, "Microservice: %v not found", microservice)
 }

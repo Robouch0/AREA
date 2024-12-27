@@ -10,7 +10,7 @@ package controllers
 import (
 	"area/db"
 	"area/models"
-	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"context"
 	"encoding/json"
 	"log"
@@ -41,7 +41,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
-		utils.WriteHTTPResponseErr(&w, 401, "Invalid request body")
+		http_utils.WriteHTTPResponseErr(&w, 401, "Invalid request body")
 		log.Println(err)
 		return
 	}
@@ -53,7 +53,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		Where("email = ?", us.Email).
 		Scan(context.Background())
 	if err == nil {
-		utils.WriteHTTPResponseErr(&w, 401, "An user already exists with this email address")
+		http_utils.WriteHTTPResponseErr(&w, 401, "An user already exists with this email address")
 		log.Println(err)
 		return
 	}
@@ -65,14 +65,14 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		Password:  newUser.Password,
 	})
 	if err != nil {
-		utils.WriteHTTPResponseErr(&w, 500, "Error while creating an user")
+		http_utils.WriteHTTPResponseErr(&w, 500, "Error while creating an user")
 		log.Println(err)
 		return
 	}
 
 	b, err := json.Marshal(&newUser)
 	if err != nil {
-		utils.WriteHTTPResponseErr(&w, 500, "Error while converting results to json")
+		http_utils.WriteHTTPResponseErr(&w, 500, "Error while converting results to json")
 		log.Println(err)
 		return
 	}

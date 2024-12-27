@@ -12,6 +12,7 @@ import (
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
 	grpcutils "area/utils/grpcUtils"
+	http_utils "area/utils/httpUtils"
 	"bytes"
 	"cmp"
 	"context"
@@ -54,7 +55,7 @@ func (discord *DiscordService) CreateMessage(ctx context.Context, req *gRPCServi
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages", req.Channel)
 	putRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
+	putRequest.Header = http_utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
@@ -85,7 +86,7 @@ func (discord *DiscordService) EditMessage(ctx context.Context, req *gRPCService
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v", req.Channel, req.MessageId)
 	putRequest, err := http.NewRequest("PATCH", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
+	putRequest.Header = http_utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
@@ -115,7 +116,7 @@ func (discord *DiscordService) DeleteMessage(ctx context.Context, req *gRPCServi
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v", req.Channel, req.MessageId)
 	putRequest, err := http.NewRequest("DELETE", url, nil)
-	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
+	putRequest.Header = http_utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
@@ -145,7 +146,7 @@ func (discord *DiscordService) CreateReaction(ctx context.Context, req *gRPCServ
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v/reactions/%v/@me", req.Channel, req.MessageId, req.Emoji)
 	putRequest, err := http.NewRequest("PUT", url, nil)
-	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
+	putRequest.Header = http_utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
@@ -174,7 +175,7 @@ func (discord *DiscordService) DeleteAllReactions(ctx context.Context, req *gRPC
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v/reactions", req.Channel, req.MessageId)
 	putRequest, err := http.NewRequest("DELETE", url, nil)
-	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
+	putRequest.Header = http_utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
@@ -203,7 +204,7 @@ func (discord *DiscordService) DeleteReactions(ctx context.Context, req *gRPCSer
 	}
 	url := fmt.Sprintf("https://discord.com/api/channels/%v/messages/%v/reactions/%v", req.Channel, req.MessageId, req.Emoji)
 	putRequest, err := http.NewRequest("DELETE", url, nil)
-	putRequest.Header = utils.GetDefaultBotHTTPHeader(BotToken)
+	putRequest.Header = http_utils.GetDefaultBotHTTPHeader(BotToken)
 	cli := &http.Client{}
 	resp, err := cli.Do(putRequest)
 	if err != nil {
