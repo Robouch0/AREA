@@ -35,6 +35,7 @@ type TokenCreateRequest struct {
 // @Tags         Token
 // @Accept       json
 // @Produce      json
+// @Param 		 user_id path	string	true 	"Id of the user"
 // @Success      200  {object}  []models.Token
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
@@ -64,6 +65,8 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 // @Tags         Token
 // @Accept       json
 // @Produce      json
+// @Param 		 user_id path	string	true 	"Id of the user"
+// @Param 		 provider path	string	true 	"Provider of the Remote Service"
 // @Success      200  {object}  models.Token
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error

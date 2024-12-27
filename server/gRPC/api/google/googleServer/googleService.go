@@ -82,7 +82,7 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 	}
 	data, err := utils.DecodeBase64ToStruct[gmail.GmailPayload]([]byte(payload.Message.Data))
 	if err != nil {
-		log.Println("Cannot convert to struct")
+		log.Println("Cannot convert gmail payload to struct")
 		return nil, err
 	}
 	act, err := google.gmailDb.GetByEmail(data.EmailAddress)
@@ -91,13 +91,13 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 		return nil, err
 	}
 	if act.Activated {
-		log.Println(payload.Message.MessageId)
 		ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
 		_, err := google.reactService.LaunchReaction(
 			ctx,
 			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: []byte(payload.Message.Data)},
 		)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 	}
