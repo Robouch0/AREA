@@ -69,3 +69,18 @@ func (user *UserDb) GetUser(id int) (*models.User, error) { // Use the generic f
 	}
 	return us, nil
 }
+
+func (user *UserDb) UpdateUserData(id int, datas *models.UpdatableUserData) (*models.User, error) {
+	userData := new(models.User)
+	_, err := user.Db.NewUpdate().
+		Model(userData).
+		Set("first_name = ?", datas.FirstName).
+		Set("last_name = ?", datas.LastName).
+		Set("password = ?", datas.Password).
+		Where("id = ?", id).
+		Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return userData, nil
+}
