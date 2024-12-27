@@ -12,6 +12,7 @@ import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
+	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace "area/gRPC/api/hugging_face"
 	IServ "area/gRPC/api/serviceInterface"
@@ -59,6 +60,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["dt"] = dateTime.NewDateTimeServiceClient(conn)
 	react.clients["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	react.clients["github"] = github.NewGithubClient(conn)
+	react.clients["gitlab"] = gitlab_client.NewGitlabClient(conn)
 	react.clients["discord"] = discord.NewDiscordClient(conn)
 	react.clients["google"] = google_client.NewGoogleClient(conn)
 	react.clients["spotify"] = spotify.NewSpotifyClient(conn)
