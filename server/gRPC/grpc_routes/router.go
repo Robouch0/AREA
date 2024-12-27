@@ -16,6 +16,7 @@ import (
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
 	"area/gRPC/api/spotify"
+	weather_server "area/gRPC/api/weather/weatherServer"
 	services "area/protogen/gRPC/proto"
 	"cmp"
 	"log"
@@ -43,8 +44,9 @@ func LaunchServices() {
 	discordService, errDiscord := discord.NewDiscordService()
 	googleService, errGoogle := google_server.NewGoogleService()
 	spotifyService, errSpotify := spotify.NewSpotifyService()
+	weatherService, errWeather := weather_server.NewWeatherService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather); err != nil {
 		log.Println(err)
 		return
 	}
@@ -56,6 +58,7 @@ func LaunchServices() {
 	services.RegisterGoogleServiceServer(s, googleService)
 	services.RegisterSpotifyServiceServer(s, spotifyService)
 	services.RegisterReactionServiceServer(s, reactService)
+	services.RegisterWeatherServiceServer(s, weatherService)
 
 	var wg sync.WaitGroup
 
@@ -79,6 +82,7 @@ func LaunchServices() {
 	dtService.InitReactClient(conn)
 	huggingFaceService.InitReactClient(conn)
 	googleService.InitReactClient(conn)
+	weatherService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

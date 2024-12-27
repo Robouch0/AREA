@@ -18,6 +18,7 @@ import (
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
 	"area/gRPC/api/spotify"
+	weather_client "area/gRPC/api/weather/weatherClient"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
@@ -49,6 +50,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["discord"] = discord.NewDiscordClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
 	m["spotify"] = spotify.NewSpotifyClient(conn)
+	m["weather"] = weather_client.NewWeatherClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),
