@@ -41,6 +41,7 @@ type GoogleServiceClient interface {
 	MoveFromTrash(ctx context.Context, in *TrashEmailRequestMe, opts ...grpc.CallOption) (*TrashEmailRequestMe, error)
 	// Watch email of the user currently logged
 	WatchGmailEmail(ctx context.Context, in *EmailTriggerReq, opts ...grpc.CallOption) (*EmailTriggerReq, error)
+	// Function that handle the payload sent by google gmail
 	WatchMeTrigger(ctx context.Context, in *GmailTriggerReq, opts ...grpc.CallOption) (*GmailTriggerReq, error)
 }
 
@@ -126,6 +127,7 @@ type GoogleServiceServer interface {
 	MoveFromTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error)
 	// Watch email of the user currently logged
 	WatchGmailEmail(context.Context, *EmailTriggerReq) (*EmailTriggerReq, error)
+	// Function that handle the payload sent by google gmail
 	WatchMeTrigger(context.Context, *GmailTriggerReq) (*GmailTriggerReq, error)
 	mustEmbedUnimplementedGoogleServiceServer()
 }
