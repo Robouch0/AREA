@@ -12,6 +12,8 @@ import (
 	"context"
 
 	"github.com/uptrace/bun"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type TokenDb struct {
@@ -26,7 +28,7 @@ func InitTokenDb() (*TokenDb, error) {
 		IfNotExists().
 		Exec(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Cannot init token database %v", err)
 	}
 
 	return &TokenDb{Db: db}, nil

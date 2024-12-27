@@ -12,7 +12,7 @@ import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
-	"area/gRPC/api/google"
+	google_client "area/gRPC/api/google/googleClient"
 	huggingFace "area/gRPC/api/hugging_face"
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
@@ -43,7 +43,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
 	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
 	m["github"] = github.NewGithubClient(conn)
-	m["google"] = google.NewGoogleClient(conn)
+	m["google"] = google_client.NewGoogleClient(conn)
 	m["discord"] = discord.NewDiscordClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
 	m["spotify"] = spotify.NewSpotifyClient(conn)
