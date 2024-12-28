@@ -4,7 +4,7 @@ import { FormData, UserSchema, ValidFieldNames } from "@/lib/typeLogin";
 import FormField from "@/components/ui/utils/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import {FaDiscord, FaEye, FaEyeSlash, FaGithub, FaSpotify} from "react-icons/fa";
+import { FaDiscord, FaEye, FaEyeSlash, FaGithub, FaSpotify } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
@@ -130,12 +130,14 @@ function LoginForm() {
                             </div>
                             <div className="max-w-md w-full space-y-4">
 
-                                {/*<OauthButton
+                                {/* {<OauthButton
                                     arial-label="Google"
                                     service="google"
+                                    login={true}
+                                    textButton="Continuer avec Google"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGoogle className="w-12 h-12" />}
-                                />*/}
+                                />} */}
 
                                 {<OauthButton
                                     arial-label="Hf"
@@ -143,7 +145,7 @@ function LoginForm() {
                                     login={true}
                                     textButton={"Continuer avec HuggingFace"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaSpotify/>}
+                                    ServiceIcon={<FaSpotify />}
                                 />}
 
                                 <OauthButton
@@ -152,7 +154,7 @@ function LoginForm() {
                                     login={true}
                                     textButton={"Continuer avec Discord"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-purple-500 hover:bg-purple-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaDiscord/>}
+                                    ServiceIcon={<FaDiscord />}
                                 />
 
                                 {<OauthButton
@@ -161,7 +163,7 @@ function LoginForm() {
                                     login={true}
                                     textButton={"Continuer avec Github"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGithub/>}
+                                    ServiceIcon={<FaGithub />}
                                 />}
 
                                 <div className="flex flex-row font-bold">
