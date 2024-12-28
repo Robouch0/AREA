@@ -48,7 +48,7 @@ func NewWeatherService() (*WeatherService, error) {
 		regionSupported: RegionSupported(),
 	}
 	weatherService.c.AddFunc("@hourly", weatherService.checkDayCondition)
-	weatherService.c.AddFunc("* * * * *", weatherService.checkTemperature)
+	weatherService.c.AddFunc("@hourly", weatherService.checkTemperature)
 	return weatherService, nil
 }
 
