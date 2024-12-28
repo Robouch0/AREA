@@ -23,9 +23,14 @@ message TempTriggerReq {
   int32 action_id = 2;
 
   float temperature = 3; /* With a degree of precision of 0.5 */
+  string timezone = 4; /* Timezone of the trigger */
+  string region = 5; /* Will be converted to latitude and longitude */
 }
 
 message IsDayTriggerReq {
   bool activated = 1;
   int32 action_id = 2;
+
+  string timezone = 4; /* Timezone of the trigger */
+  string region = 5; /* Will be converted to latitude and longitude */
 }

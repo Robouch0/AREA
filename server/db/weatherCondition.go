@@ -55,6 +55,20 @@ func (wDb *WeatherConditionDB) GetActionsByType(actionType models.WeatherActionT
 	return allDatas, nil
 }
 
+func (wDb *WeatherConditionDB) UpdateUserIsDay(actionID, IsDay int) error {
+	var wData models.WeatherCondition
+
+	_, err := wDb.Db.NewUpdate().
+		Model(&wData).
+		Set("is_day = ?", IsDay).
+		Where("action_id = ?", actionID).
+		Exec(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Do enable/disable
 // GetAll
 // ...

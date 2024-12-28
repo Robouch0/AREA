@@ -29,5 +29,9 @@ type WeatherCondition struct {
 	Temperature        float64 `bun:"temperature" json:"temperature,omitempty"`
 	TemperatureMetrics string  `bun:"temperature_metrics" json:"temperature_metrics,omitempty"` /* Celcius or Fahrenheit */
 
-	IsDay bool `bun:"is_day" json:"is_day,omitempty"`
+	Timezone  string  `bun:"timezone" json:"timezone,omitempty"`
+	Latitude  float64 `bun:"latitude" json:"latitude,omitempty"`
+	Longitude float64 `bun:"longitude" json:"longitude,omitempty"`
+
+	IsDay int `bun:"is_day" json:"is_day,omitempty"`
 }
