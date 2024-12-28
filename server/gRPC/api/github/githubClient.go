@@ -12,6 +12,7 @@ import (
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
+	"context"
 	"encoding/json"
 	"errors"
 
@@ -20,74 +21,45 @@ import (
 
 type GithubClient struct {
 	MicroservicesLauncher *IServ.MicroserviceLauncher
+	ActionsLauncher       *IServ.ActionLauncher
 	cc                    gRPCService.GithubServiceClient
 }
 
+type WebHookRepoSendFunction = func(ctx context.Context, in *gRPCService.GitWebHookInfo, opts ...grpc.CallOption) (*gRPCService.GitWebHookInfo, error)
+
 func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 	micros := &IServ.MicroserviceLauncher{}
-	git := &GithubClient{MicroservicesLauncher: micros, cc: gRPCService.NewGithubServiceClient(conn)}
+	launcher := &IServ.ActionLauncher{}
+	git := &GithubClient{MicroservicesLauncher: micros, ActionsLauncher:launcher, cc: gRPCService.NewGithubServiceClient(conn)}
 	(*git.MicroservicesLauncher)["updateRepo"] = git.updateRepository
 	(*git.MicroservicesLauncher)["updateFile"] = git.updateFile
 	(*git.MicroservicesLauncher)["deleteFile"] = git.deleteFile
+
+	(*git.ActionsLauncher)["triggerPush"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreatePushWebhook)
+	}
 	return git
 }
 
-func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
-	status := &IServ.ServiceStatus{
-		Name:    "Github",
-		RefName: "github",
-
-		Microservices: []IServ.MicroserviceStatus{
-			IServ.MicroserviceStatus{
-				Name:    "Trigger every new push of a repository",
-				RefName: "triggerPush",
-				Type:    "action",
-
-				Ingredients: map[string]string{
-					"owner": "string",
-					"repo":  "string",
-				},
-			},
-			IServ.MicroserviceStatus{
-				Name:    "Update Repository Informations",
-				RefName: "updateRepo",
-				Type:    "reaction",
-
-				Ingredients: map[string]string{
-					"owner":       "string",
-					"repo":        "string",
-					"name":        "string",
-					"description": "string",
-				},
-			},
-			IServ.MicroserviceStatus{
-				Name:    "Update a file in a repository",
-				RefName: "updateFile",
-				Type:    "reaction",
-
-				Ingredients: map[string]string{
-					"owner":   "string",
-					"repo":    "string",
-					"path":    "string",
-					"message": "string",
-					"content": "string",
-				},
-			},
-			IServ.MicroserviceStatus{
-				Name:    "Delete Repository File",
-				RefName: "deleteFile",
-				Type:    "reaction",
-
-				Ingredients: map[string]string{
-					"owner":   "string",
-					"repo":    "string",
-					"path":    "string",
-					"message": "string",
-				},
-			},
-		},
+func (git *GithubClient) sendNewWebHookAction(
+	scenario models.AreaScenario, actionID, userID int, sendFn WebHookRepoSendFunction,
+) (*IServ.ActionResponseStatus, error) {
+	webHookIng, err := json.Marshal(scenario.Action.Ingredients)
+	if err != nil {
+		return nil, err
 	}
-	return status, nil
+
+	webHookReq := gRPCService.GitWebHookInfo{ActionId: int32(actionID)}
+	err = json.Unmarshal(webHookIng, &webHookReq)
+	if err != nil {
+		return nil, err
+	}
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	res, err := sendFn(ctx, &webHookReq)
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.ActionResponseStatus{Description: res.Name}, nil
 }
 
 func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -151,23 +123,10 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byt
 }
 
 func (git *GithubClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
-	jsonString, err := json.Marshal(scenario.Action.Ingredients)
-	if err != nil {
-		return nil, err
+	if micro, ok := (*git.ActionsLauncher)[scenario.Action.Microservice]; ok {
+		return micro(scenario, actionID, userID)
 	}
-	var updateReq gRPCService.PushTrigger
-	err = json.Unmarshal(jsonString, &updateReq)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx := utils.CreateContextFromUserID(userID)
-	_, err = git.cc.TriggerPush(ctx, &updateReq)
-	if err != nil {
-		return nil, err
-	}
-
-	return &IServ.ActionResponseStatus{Description: "Done", ActionID:actionID}, nil
+	return nil, errors.New("No such action microservice")
 }
 
 func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
