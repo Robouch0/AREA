@@ -10,6 +10,10 @@ import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
 import {OauthButton} from "@/components/ui/services/OauthButton";
 
+function handleDisconnectProvider() {
+
+}
+
 export default function ProfilePage({email, first_name, last_name, password, providers}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -118,14 +122,17 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                                             </div>
                                             <div className={"ml-auto"}>
                                                 {providers.includes(tag) ?
-                                                    <Button className="my-2 mr-6 lg:mr-2 font-bold bg-red-600">
-                                                        Disconnect
+                                                    <Button
+                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-red-600 w-24"
+                                                        onClick={handleDisconnectProvider}
+                                                    >
+                                                        Unlink
                                                     </Button> :
                                                     <OauthButton
                                                         arial-label={`${tag}`}
                                                         service={`${tag}`}
                                                         login={false}
-                                                        textButton={"Connect"}
+                                                        textButton={"Link"}
                                                         className="my-2 mr-6 lg:mr-2 font-bold bg-green-600 w-24"
                                                         ServiceIcon={null}
                                                     />
