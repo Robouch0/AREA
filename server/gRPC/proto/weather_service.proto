@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package gitlab;
+
+option go_package = "github.com/area/grpc-go/service";
+
+/**
+ * Cool microservices:
+ *  -> Each hour, when temperature exceed a certain amount, do this
+ *  -> Each Hour, when it is night, do this
+ */
+
+service WeatherService {
+  // Each hour, when temperature exceed a certain amount, do this
+  rpc NewTemperatureTrigger(TempTriggerReq) returns(TempTriggerReq) {}
+
+  // Each Hour, when it is night, do this
+  rpc NewIsDayTrigger(IsDayTriggerReq) returns(IsDayTriggerReq) {}
+}
+
+message TempTriggerReq {
+  bool activated = 1;
+  int32 action_id = 2;
+
+  float temperature = 3; /* With a degree of precision of 0.5 */
+}
+
+message IsDayTriggerReq {
+  bool activated = 1;
+  int32 action_id = 2;
+}

@@ -48,16 +48,19 @@ func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
 		}
 		if cli, ok := gateway.Clients[service]; ok {
 			cli.TriggerWebhook(payload, microservice, actionId)
+			w.WriteHeader(204)
+			return
 		}
-		w.WriteHeader(200)
-		w.Write([]byte("Done"))
+		http_utils.WriteHTTPResponseErr(&w, 401, "Invalid payload sent")
 	}
 }
+
+// Créer une db google gmail
 
 func WebHookRoutes(gateway *api.ApiGateway) chi.Router {
 	WebHooks := chi.NewRouter()
 	db.InitTokenDb()
 
-	WebHooks.Post("/service}/{microservice}/{action_id}", handleWebhookPayload(gateway))
+	WebHooks.Post("/{service}/{microservice}/{action_id}", handleWebhookPayload(gateway))
 	return WebHooks
 }

@@ -54,7 +54,7 @@ func (hf *HuggingFaceDB) GetHfByActionID(actionID uint) (*models.HuggingFace, er
 	return allDatas, nil
 }
 
-func (hf *HuggingFaceDB) GetAllDTActionsActivated() (*[]models.HuggingFace, error) {
+func (hf *HuggingFaceDB) GetAllActionsActivated() (*[]models.HuggingFace, error) {
 	allDatas := new([]models.HuggingFace)
 	err := hf.Db.NewSelect().
 		Model(allDatas).

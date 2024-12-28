@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:my_area_flutter/api/types/area_services.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -92,5 +93,33 @@ class AuthService {
   Future<void> logout() async {
     await _storage.delete(key: _tokenKey);
     _isLoggedIn = false;
+  }
+
+  Future<List<AreaService>> listAreas() async {
+    try {
+      final token = await _storage.read(key: _tokenKey);
+
+      if (token == null) {
+        throw Exception('Token is undefined');
+      }
+
+      final response = await http.get(
+        Uri.parse('$_apiUrl/create/list'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+        return jsonData.map((json) => AreaService.fromJson(json)).toList();
+      }
+
+      throw Exception('Failed to load areas: ${response.statusCode}');
+    } catch (e) {
+      developer.log('Failed to list areas: $e', name: 'my_network_log');
+      rethrow;
+    }
   }
 }

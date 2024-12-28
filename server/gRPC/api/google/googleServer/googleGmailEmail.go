@@ -2,13 +2,12 @@
 // EPITECH PROJECT, 2024
 // AREA
 // File description:
-// googleService
+// googleGmailEmail
 //
 
-package google
+package google_server
 
 import (
-	"area/db"
 	"area/gRPC/api/google/gmail"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
@@ -29,19 +28,6 @@ import (
 const (
 	sendMessageMeURL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
 )
-
-type GoogleService struct {
-	tokenDb      *db.TokenDb
-	reactService gRPCService.ReactionServiceClient
-
-	gRPCService.UnimplementedGoogleServiceServer
-}
-
-func NewGoogleService() (*GoogleService, error) {
-	tokenDb, err := db.InitTokenDb()
-
-	return &GoogleService{tokenDb: tokenDb, reactService: nil}, err
-}
 
 func (google *GoogleService) DeleteEmailMe(ctx context.Context, req *gRPCService.DeleteEmailRequestMe) (*gRPCService.DeleteEmailRequestMe, error) {
 	if req.Subject == "" {
