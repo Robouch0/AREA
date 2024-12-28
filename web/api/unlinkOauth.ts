@@ -1,7 +1,6 @@
 "use server";
 import {cookies} from 'next/headers';
 import axiosInstance from "@/lib/axios"
-import {AxiosResponse} from 'axios';
 import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export async function unlinkOauthProvider(provider: string): Promise<void> {
@@ -13,19 +12,14 @@ export async function unlinkOauthProvider(provider: string): Promise<void> {
         if (!uid) {
             throw new Error("User ID not found in cookies");
         }
-        const response = await axiosInstance.post("oauth/connect/   ", {
-            service: service,
-            code: code,
-        }, {
+        const response = await axiosInstance.delete(`token/${uid}/${provider}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
 
-        console.log(response);
-        return response.data;
     } catch (error) {
-        console.error("Error in connectOauth:", error);
+        console.error("Error in unlinkOauth:", error);
         throw error;
     }
 }

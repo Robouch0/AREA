@@ -9,10 +9,8 @@ import {useState} from "react";
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
 import {OauthButton} from "@/components/ui/services/OauthButton";
+import {unlinkOauthProvider} from "@/api/unlinkOauth";
 
-function handleDisconnectProvider() {
-
-}
 
 export default function ProfilePage({email, first_name, last_name, password, providers}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
@@ -20,13 +18,19 @@ export default function ProfilePage({email, first_name, last_name, password, pro
     const tags : string[] = [
         "github",
         "google",
-        "twitter",
         "discord",
         "spotify",
     ]
 
     console.log(providers)
+    function handleDisconnectProvider(provider: string) {
+        unlinkOauthProvider(provider);
+    }
+    const reloadPage = () => {
 
+        window.location.reload()
+
+    }
 
     return (
         <>
@@ -124,7 +128,12 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                                                 {providers.includes(tag) ?
                                                     <Button
                                                         className="my-2 mr-6 lg:mr-2 font-bold bg-red-600 w-24"
-                                                        onClick={handleDisconnectProvider}
+                                                        onClick={() => {
+                                                            handleDisconnectProvider(tag);
+                                                            setTimeout(() => {
+                                                                reloadPage()
+                                                            }, 500);
+                                                        }}
                                                     >
                                                         Unlink
                                                     </Button> :
