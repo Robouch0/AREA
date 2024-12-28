@@ -19,7 +19,20 @@ message PushTrigger {
   string repo = 2; /* Path parameter */
 
   map<string, string> config = 3;
+  int32 action_id  = 4;
 }
+
+message GitWebHookInfo {
+  // Id of the action that will be sent while creating the webhook
+  int32 action_id = 1;
+
+  // Type of repo (model, dataset, etc)
+  string type = 2;
+
+  // Name of the repository
+  string name = 3;
+}
+
 
 message UpdateRepoInfos {
   string owner = 1; /* Path parameter */
