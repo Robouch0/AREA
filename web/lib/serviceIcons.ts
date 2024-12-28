@@ -7,7 +7,7 @@ import {
     FaYoutube,
     FaMailBulk,
     FaBrain,
-    FaClock
+    FaClock, FaSpotify
 } from "react-icons/fa";
 import {IconType} from "react-icons";
 
@@ -20,6 +20,7 @@ export const serviceIcons: { [key: string]: IconType } = {
     youtube: FaYoutube,
     tweeter: FaTwitter,
     outlook: FaMailBulk,
+    spotify: FaSpotify,
     hf: FaBrain,
     dt: FaClock,
 };

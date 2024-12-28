@@ -91,7 +91,7 @@ func GetUserByID(userDb *db.UserDb) http.HandlerFunc {
 			return
 		}
 
-		res, err := userDb.GetUser(id)
+		res, err := userDb.GetUserByID(id)
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 422, fmt.Sprintf("error: no such user with id: %d", id))
 			log.Printf("Error: %v\n", err)

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import '../styles/global.css'
 import {NextFontWithVariable} from "next/dist/compiled/@next/font";
+import {Toaster} from "@/components/ui/toaster";
 
 
 
@@ -41,6 +42,7 @@ export default function RootLayout({
             className={`${avenirNext.variable} antialiased bg-white`}
           >
             {children}
+            <Toaster />
           </body>
         </html>
   );
