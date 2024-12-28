@@ -39,6 +39,16 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 		Microservices: []IServ.MicroserviceStatus{
 			IServ.MicroserviceStatus{
+				Name:    "Trigger every new push of a repository",
+				RefName: "triggerPush",
+				Type:    "action",
+
+				Ingredients: map[string]string{
+					"owner": "string",
+					"repo":  "string",
+				},
+			},
+			IServ.MicroserviceStatus{
 				Name:    "Update Repository Informations",
 				RefName: "updateRepo",
 				Type:    "reaction",
@@ -141,7 +151,23 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byt
 }
 
 func (git *GithubClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
-	return nil, errors.New("No action supported in hugging face service (Next will be Webhooks)")
+	jsonString, err := json.Marshal(scenario.Action.Ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var updateReq gRPCService.PushTrigger
+	err = json.Unmarshal(jsonString, &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := utils.CreateContextFromUserID(userID)
+	_, err = git.cc.TriggerPush(ctx, &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ActionResponseStatus{Description: "Done", ActionID:actionID}, nil
 }
 
 func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {

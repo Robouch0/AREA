@@ -10,6 +10,15 @@ service GithubService {
   rpc UpdateFile(UpdateRepoFile) returns(UpdateRepoFile) {}
 
   rpc DeleteFile(DeleteRepoFile) returns(DeleteRepoFile) {}
+
+  rpc TriggerPush(PushTrigger) returns(PushTrigger) {}
+}
+
+message PushTrigger {
+  string owner = 1; /* Path parameter */
+  string repo = 2; /* Path parameter */
+
+  map<string, string> config = 3;
 }
 
 message UpdateRepoInfos {

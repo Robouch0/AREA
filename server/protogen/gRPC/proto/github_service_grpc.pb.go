@@ -22,6 +22,7 @@ const (
 	GithubService_UpdateRepository_FullMethodName = "/github.GithubService/UpdateRepository"
 	GithubService_UpdateFile_FullMethodName       = "/github.GithubService/UpdateFile"
 	GithubService_DeleteFile_FullMethodName       = "/github.GithubService/DeleteFile"
+	GithubService_TriggerPush_FullMethodName      = "/github.GithubService/TriggerPush"
 )
 
 // GithubServiceClient is the client API for GithubService service.
@@ -31,6 +32,7 @@ type GithubServiceClient interface {
 	UpdateRepository(ctx context.Context, in *UpdateRepoInfos, opts ...grpc.CallOption) (*UpdateRepoInfos, error)
 	UpdateFile(ctx context.Context, in *UpdateRepoFile, opts ...grpc.CallOption) (*UpdateRepoFile, error)
 	DeleteFile(ctx context.Context, in *DeleteRepoFile, opts ...grpc.CallOption) (*DeleteRepoFile, error)
+	TriggerPush(ctx context.Context, in *PushTrigger, opts ...grpc.CallOption) (*PushTrigger, error)
 }
 
 type githubServiceClient struct {
@@ -71,6 +73,16 @@ func (c *githubServiceClient) DeleteFile(ctx context.Context, in *DeleteRepoFile
 	return out, nil
 }
 
+func (c *githubServiceClient) TriggerPush(ctx context.Context, in *PushTrigger, opts ...grpc.CallOption) (*PushTrigger, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PushTrigger)
+	err := c.cc.Invoke(ctx, GithubService_TriggerPush_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GithubServiceServer is the server API for GithubService service.
 // All implementations must embed UnimplementedGithubServiceServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type GithubServiceServer interface {
 	UpdateRepository(context.Context, *UpdateRepoInfos) (*UpdateRepoInfos, error)
 	UpdateFile(context.Context, *UpdateRepoFile) (*UpdateRepoFile, error)
 	DeleteFile(context.Context, *DeleteRepoFile) (*DeleteRepoFile, error)
+	TriggerPush(context.Context, *PushTrigger) (*PushTrigger, error)
 	mustEmbedUnimplementedGithubServiceServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedGithubServiceServer) UpdateFile(context.Context, *UpdateRepoF
 }
 func (UnimplementedGithubServiceServer) DeleteFile(context.Context, *DeleteRepoFile) (*DeleteRepoFile, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
+}
+func (UnimplementedGithubServiceServer) TriggerPush(context.Context, *PushTrigger) (*PushTrigger, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TriggerPush not implemented")
 }
 func (UnimplementedGithubServiceServer) mustEmbedUnimplementedGithubServiceServer() {}
 func (UnimplementedGithubServiceServer) testEmbeddedByValue()                       {}
@@ -172,6 +188,24 @@ func _GithubService_DeleteFile_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GithubService_TriggerPush_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushTrigger)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GithubServiceServer).TriggerPush(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GithubService_TriggerPush_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GithubServiceServer).TriggerPush(ctx, req.(*PushTrigger))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GithubService_ServiceDesc is the grpc.ServiceDesc for GithubService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var GithubService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteFile",
 			Handler:    _GithubService_DeleteFile_Handler,
+		},
+		{
+			MethodName: "TriggerPush",
+			Handler:    _GithubService_TriggerPush_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
