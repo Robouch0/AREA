@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
+import 'package:my_area_flutter/api/types/profile_body.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String password;
+  final Future<UserInfoData> userInfos;
 
   const ProfilePage({
     super.key,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.password,
+    required this.userInfos
   });
 
   @override
@@ -21,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool userInfosLoaded = false;
   bool showPassword = false;
   final List<Map<String, dynamic>> services = [
     {"name": "Github", "icon": FontAwesomeIcons.github},
@@ -29,8 +25,33 @@ class _ProfilePageState extends State<ProfilePage> {
     {"name": "Discord", "icon": FontAwesomeIcons.discord},
   ];
 
+  late UserInfoData userInfos;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfos();
+  }
+
+  Future<void> _loadUserInfos() async {
+    try {
+      final loadedUserInfos = await widget.userInfos;
+      setState(() {
+        userInfosLoaded = true;
+        userInfos = loadedUserInfos;
+      });
+    } catch (e) {
+      debugPrint('Error loading user infos: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (userInfosLoaded == false) {
+      return const MainAppScaffold(
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
     return MainAppScaffold(
       child: SingleChildScrollView(
           child: Column(
@@ -117,9 +138,9 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         children: [
           _buildProfilePicture(),
-          _buildInfoField('Email', widget.email),
-          _buildInfoField('First name', widget.firstName),
-          _buildInfoField('Last name', widget.lastName),
+          _buildInfoField('Email', userInfos.email),
+          _buildInfoField('First name', userInfos.firstName),
+          _buildInfoField('Last name', userInfos.lastName),
           _buildPasswordField(),
         ],
       ),
@@ -199,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 border: Border.all(color: Colors.black, width: 4),
               ),
               child: Text(
-                showPassword ? widget.password : '•' * widget.password.length,
+                showPassword ? userInfos.password : '•' * userInfos.password.length,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
