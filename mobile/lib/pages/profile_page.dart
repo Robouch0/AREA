@@ -4,11 +4,11 @@ import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 
 class ProfilePage extends StatefulWidget {
-  final Future<UserInfoData> userInfos;
+  final Future<UserInfoData> userInfo;
 
   const ProfilePage({
     super.key,
-    required this.userInfos
+    required this.userInfo
   });
 
   @override
@@ -35,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserInfos() async {
     try {
-      final loadedUserInfos = await widget.userInfos;
+      final loadedUserInfos = await widget.userInfo;
       setState(() {
         userInfosLoaded = true;
         userInfos = loadedUserInfos;

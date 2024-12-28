@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:my_area_flutter/api/types/profile_body.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
-  final int uid;
+  final Future<UserInfoData> userInfo;
 
   const CreateAreaPage({
     super.key,
     required this.services,
-    required this.uid,
+    required this.userInfo,
   });
 
   @override
@@ -27,6 +28,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
+  late UserInfoData userInfo;
 
   @override
   void initState() {
@@ -37,8 +39,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   Future<void> _loadServices() async {
     try {
       final loadedServices = await widget.services;
+      final loadedUserInfo = await widget.userInfo;
       setState(() {
         services = loadedServices;
+        userInfo = loadedUserInfo;
         actions = _filterAreaByType(loadedServices, 'action');
         reactions = _filterAreaByType(loadedServices, 'reaction');
       });
@@ -412,7 +416,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   void _handleSubmit() {
     final payload = {
-      'user_id': widget.uid,
+      'user_id': userInfo.userId,
       'action': {
         'service': actionName,
         'microservice': microActionName,

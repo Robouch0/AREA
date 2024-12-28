@@ -33,6 +33,8 @@ class ProfileService {
 
       developer.log(response.body);
 
+      developer.log('token: $token');
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
         return UserInfoData.fromJson(jsonData);
