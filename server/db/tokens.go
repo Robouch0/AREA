@@ -101,3 +101,15 @@ func (Token *TokenDb) GetUserTokenByProvider(userID int64, provider string) (*mo
 	}
 	return us, nil
 }
+
+func (Token *TokenDb) DeleteUserTokenByProvider(userID int64, provider string) (*models.Token, error) {
+	us := new(models.Token)
+	_, err := Token.Db.NewDelete().
+		Model(us).
+		Where("user_id = ? AND provider = ?", userID, provider).
+		Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return us, nil
+}
