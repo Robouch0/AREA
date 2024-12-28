@@ -48,7 +48,7 @@ func NewWeatherService() (*WeatherService, error) {
 		regionSupported: RegionSupported(),
 	}
 	weatherService.c.AddFunc("@hourly", weatherService.checkDayCondition)
-	weatherService.c.AddFunc("@hourly", weatherService.checkTemperature)
+	weatherService.c.AddFunc("* * * * *", weatherService.checkTemperature)
 	return weatherService, nil
 }
 
@@ -67,7 +67,7 @@ func (weather *WeatherService) createNewWeatherInfo(
 		ActionID:           uint(actionID),
 		UserID:             userID,
 		ActionType:         actionType,
-		Activated:          false,
+		Activated:          true,
 		Temperature:        temperature,
 		TemperatureMetrics: "°C",
 		Timezone:           resp.Timezone,
