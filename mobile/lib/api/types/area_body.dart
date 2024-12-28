@@ -1,19 +1,19 @@
 // lib/api/types/area_body.dart
 enum IngredientType { string, int, bool, time }
 
-class AreaServiceBody {
+class AreaServiceData {
   final String name;
   final String refName;
   final List<MicroServiceBody> microservices;
 
-  AreaServiceBody({
+  AreaServiceData({
     required this.name,
     required this.refName,
     required this.microservices,
   });
 
-  factory AreaServiceBody.fromJson(Map<String, dynamic> json) {
-    return AreaServiceBody(
+  factory AreaServiceData.fromJson(Map<String, dynamic> json) {
+    return AreaServiceData(
       name: json['name'],
       refName: json['ref_name'],
       microservices: (json['microservices'] as List)
