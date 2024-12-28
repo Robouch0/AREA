@@ -5,7 +5,7 @@
 // huggingFaceClient
 //
 
-package huggingFace
+package huggingFace_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
