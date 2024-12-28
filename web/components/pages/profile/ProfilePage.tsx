@@ -5,15 +5,22 @@ import {Input} from "@/components/ui/utils/Input";
 import {Button} from "@/components/ui/utils/Button";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
 import {ScrollArea} from "@/components/ui/utils/Scroll-area"
-import {useState} from "react";
+import {ChangeEvent, useState} from "react";
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
 import {OauthButton} from "@/components/ui/services/OauthButton";
 import {unlinkOauthProvider} from "@/api/unlinkOauth";
+import {updateUserInfos} from "@/api/updateUserInfos";
+
+
 
 
 export default function ProfilePage({email, first_name, last_name, password, providers}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
+    const [firstName, setFirstName] = useState(first_name);
+    const [lastName, setLastName] = useState(last_name);
+    const [passw, setPassword] = useState(password);
+    const [passwTooShort, setTooShort] = useState(false);
 
     const tags : string[] = [
         "github",
@@ -22,14 +29,15 @@ export default function ProfilePage({email, first_name, last_name, password, pro
         "spotify",
     ]
 
-    console.log(providers)
     function handleDisconnectProvider(provider: string) {
         unlinkOauthProvider(provider);
     }
+    function handleDataUpdate() {
+        updateUserInfos(firstName, lastName, passw)
+    }
+
     const reloadPage = () => {
-
         window.location.reload()
-
     }
 
     return (
@@ -61,21 +69,25 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                         />
                         <h2 className=" text-white text-2xl font-bold my-2"> First name </h2>
                         <Input
-                            type="email"
-                            id="mail"
+                            type="text"
+                            id="firstname"
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
-                            value={first_name}
-                            disabled
+                            value={firstName}
+                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                                setFirstName(e.target.value);
+                            }}
                         />
                         <h2 className="p-2 text-white text-2xl font-bold"> Last name </h2>
                         <Input
-                            type="email"
-                            id="mail"
+                            type="text"
+                            id="lastname"
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
-                            value={last_name}
-                            disabled
+                            value={lastName}
+                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                                setLastName(e.target.value);
+                            }}
                         />
                         <h2 className="p-2 text-white text-2xl font-bold"> Password </h2>
                         <div className="w-full flex flex-row justify-center relative mb-6">
@@ -84,8 +96,15 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                                 id="password"
                                 className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 aria-label="text"
-                                value={password}
-                                disabled
+                                value={passw}
+                                onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                                    setPassword(e.target.value);
+                                    if (passw.length < 6) {
+                                        setTooShort(true);
+                                    } else {
+                                        setTooShort(false);
+                                    }
+                                }}
                             />
                             <Button
                                 type="button"
@@ -97,6 +116,17 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                                     <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
                             </Button>
                         </div>
+                        {passwTooShort ?
+                                <p className={"text-xl text-red-600 font-bold"}> Your password must be longer than 6 characters</p>
+                            : <></>
+                        }
+                            <Button
+                                className="text-xl font-bold duration-200 hover:bg-white hover:text-black"
+                                onClick={handleDataUpdate}
+                                disabled={passw.length < 6}
+                            >
+                                Save & Update Profile
+                            </Button>
                     </div>
                     userData
                     userData
