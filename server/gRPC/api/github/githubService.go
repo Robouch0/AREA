@@ -23,6 +23,7 @@ import (
 
 type GithubService struct {
 	tokenDb      *db.TokenDb
+	GithubDb         *db.GithubDB
 	reactService gRPCService.GithubServiceClient
 
 	gRPCService.UnimplementedGithubServiceServer
@@ -34,42 +35,6 @@ func NewGithubService() (*GithubService, error) {
 	return &GithubService{tokenDb: tokenDb, reactService: nil}, err
 }
 
-func (git *GithubService) TriggerPush(ctx context.Context, req *gRPCService.PushTrigger) (*gRPCService.PushTrigger, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "GithubService")
-	if errClaim != nil {
-		return nil, errClaim
-	}
-
-	if req.Owner == "" || req.Repo == "" {
-		return nil, errors.New("Some required parameters are empty")
-	}
-	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "github")
-	if err != nil {
-		log.Println("User is not registered to github")
-		return nil, err
-	}
-
-	b, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/hooks", req.Owner, req.Repo)
-	putRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
-	putRequest.Header = utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
-	putRequest.Header.Add("Accept", "application/vnd.github+json")
-
-	cli := &http.Client{}
-	resp, err := cli.Do(putRequest)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != 200 {
-		log.Println("Update file error: ", resp.Status)
-		return nil, errors.New(resp.Status)
-	}
-	log.Println("Here: ", resp.Body) // Do something with it
-	return req, nil
-}
 
 // Update a repository content
 func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {

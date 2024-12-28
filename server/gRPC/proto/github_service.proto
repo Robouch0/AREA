@@ -11,26 +11,18 @@ service GithubService {
 
   rpc DeleteFile(DeleteRepoFile) returns(DeleteRepoFile) {}
 
-  rpc TriggerPush(PushTrigger) returns(PushTrigger) {}
-}
-
-message PushTrigger {
-  string owner = 1; /* Path parameter */
-  string repo = 2; /* Path parameter */
-
-  map<string, string> config = 3;
-  int32 action_id  = 4;
+  rpc CreatePushWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 }
 
 message GitWebHookInfo {
   // Id of the action that will be sent while creating the webhook
   int32 action_id = 1;
 
-  // Type of repo (model, dataset, etc)
-  string type = 2;
+  // Name of the owner of the repository
+  string owner = 2;
 
   // Name of the repository
-  string name = 3;
+  string repo = 3;
 }
 
 
