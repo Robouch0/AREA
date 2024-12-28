@@ -61,6 +61,8 @@ export function OauthButton({ service, className, ServiceIcon, textButton, login
             toast({
                 title: "ERROR : Area server are down for the moment",
                 description: "Failed to get the Oauth provider URL. Please try again later.",
+                variant: 'destructive',
+                duration: 2000,
             });
             console.log("ERROR trying to reach server" + err);
         }

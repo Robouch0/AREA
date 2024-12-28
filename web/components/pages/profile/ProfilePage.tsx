@@ -11,6 +11,7 @@ import {userInfo} from "@/api/getUserInfos";
 import {OauthButton} from "@/components/ui/services/OauthButton";
 import {unlinkOauthProvider} from "@/api/unlinkOauth";
 import {updateUserInfos} from "@/api/updateUserInfos";
+import {useToast} from "@/hooks/use-toast";
 
 
 
@@ -21,6 +22,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
     const [lastName, setLastName] = useState(last_name);
     const [passw, setPassword] = useState(password);
     const [passwTooShort, setTooShort] = useState(false);
+    const { toast } = useToast()
 
     const tags : string[] = [
         "github",
@@ -33,7 +35,21 @@ export default function ProfilePage({email, first_name, last_name, password, pro
         unlinkOauthProvider(provider);
     }
     function handleDataUpdate() {
-        updateUserInfos(firstName, lastName, passw)
+        updateUserInfos(firstName, lastName, passw).then(() => {
+        toast({
+            title: "Update sucessful",
+            description: "Your new datas have been updated on our server.",
+            variant: 'default',
+            duration: 2500,
+        })}
+        ).catch(() => {
+        toast({
+            title: "Update failed",
+            description: "Your new datas have not been updated on our server.",
+            variant: 'destructive',
+            duration: 2500,
+        })}
+        )
     }
 
     const reloadPage = () => {
@@ -62,7 +78,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                         <Input
                             type="email"
                             id="mail"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="Email"
                             value={email}
                             disabled
@@ -71,7 +87,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                         <Input
                             type="text"
                             id="firstname"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={firstName}
                             onChange={(e:ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +98,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                         <Input
                             type="text"
                             id="lastname"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={lastName}
                             onChange={(e:ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +110,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                             <Input
                                 type={showPassword ? "text" : "password"}
                                 id="password"
-                                className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 aria-label="text"
                                 value={passw}
                                 onChange={(e:ChangeEvent<HTMLInputElement>) => {
@@ -109,8 +125,9 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                             <Button
                                 type="button"
                                 onClick={() : void => setShowPassword(!showPassword)}
-                                className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
+                                className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent focus-visible:!border-black focus-visible::border focus-visible:!border-8 hover:bg-transparent shadow-none p-2"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
+                                tabIndex={0}
                             >
                                 {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl"/> :
                                     <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
@@ -121,7 +138,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                             : <></>
                         }
                             <Button
-                                className="text-xl font-bold duration-200 hover:bg-white hover:text-black"
+                                className="text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
                                 onClick={handleDataUpdate}
                                 disabled={passw.length < 6}
                             >
@@ -157,7 +174,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                                             <div className={"ml-auto"}>
                                                 {providers.includes(tag) ?
                                                     <Button
-                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-red-600 w-24"
+                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-red-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
                                                         onClick={() => {
                                                             handleDisconnectProvider(tag);
                                                             setTimeout(() => {
@@ -172,7 +189,7 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                                                         service={`${tag}`}
                                                         login={false}
                                                         textButton={"Link"}
-                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-green-600 w-24"
+                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-green-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
                                                         ServiceIcon={null}
                                                     />
                                                 }
