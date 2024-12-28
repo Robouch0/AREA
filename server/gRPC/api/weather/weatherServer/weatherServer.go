@@ -56,13 +56,19 @@ func (weather *WeatherService) InitReactClient(conn *grpc.ClientConn) {
 	weather.reactService = gRPCService.NewReactionServiceClient(conn)
 }
 
-func (weather *WeatherService) createNewWeatherInfo(resp *WeatherAPIResponseBody, userID uint, actionID int, actionType models.WeatherActionType) error {
+func (weather *WeatherService) createNewWeatherInfo(
+	resp *WeatherAPIResponseBody,
+	userID uint,
+	actionID int,
+	actionType models.WeatherActionType,
+	temperature float64,
+) error {
 	_, err := weather.weatherDb.InsertNewWeatherCondition(&models.WeatherCondition{
 		ActionID:           uint(actionID),
 		UserID:             userID,
 		ActionType:         actionType,
 		Activated:          false,
-		Temperature:        resp.Current.Temperature2m,
+		Temperature:        temperature,
 		TemperatureMetrics: "°C",
 		Timezone:           resp.Timezone,
 		Latitude:           resp.Latitude,
@@ -89,7 +95,7 @@ func (weather *WeatherService) NewTemperatureTrigger(ctx context.Context, req *g
 			log.Println("Could not fetch weather data: ", err)
 			return nil, err
 		}
-		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.TemperatureExceed)
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.TemperatureExceed, float64(req.Temperature))
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +123,7 @@ func (weather *WeatherService) NewIsDayTrigger(ctx context.Context, req *gRPCSer
 			log.Println("Could not fetch weather data: ", err)
 			return nil, err
 		}
-		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.DayCondition)
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.DayCondition, resp.Current.Temperature2m)
 		if err != nil {
 			return nil, err
 		}

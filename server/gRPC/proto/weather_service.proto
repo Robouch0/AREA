@@ -31,6 +31,6 @@ message IsDayTriggerReq {
   bool activated = 1;
   int32 action_id = 2;
 
-  string timezone = 4; /* Timezone of the trigger */
-  string region = 5; /* Will be converted to latitude and longitude */
+  string timezone = 3; /* Timezone of the trigger */
+  string region = 4; /* Will be converted to latitude and longitude */
 }

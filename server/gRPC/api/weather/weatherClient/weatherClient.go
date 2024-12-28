@@ -26,12 +26,18 @@ func NewWeatherClient(conn *grpc.ClientConn) *WeatherClient {
 	actions := &IServ.ActionLauncher{}
 	weather := &WeatherClient{ActionLauncher: actions, cc: gRPCService.NewWeatherServiceClient(conn)}
 
+	(*weather.ActionLauncher)["temperatureExceed"] = weather.SendTemperatureAction
+	(*weather.ActionLauncher)["dayChanged"] = weather.SendIsDayAction
+
 	// send a request to create a cron job and every 30min trigger it
 	return weather
 }
 
 func (weather *WeatherClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
-	return nil, errors.New("No microservice Action yet")
+	if micro, ok := (*weather.ActionLauncher)[scenario.Action.Microservice]; ok {
+		return micro(scenario, actionID, userID)
+	}
+	return nil, errors.New("No such microservice")
 }
 
 func (weather *WeatherClient) TriggerReaction(
