@@ -1,5 +1,5 @@
 /** Type of ingredients possible. */
-export type IngredientPossible = "string" | "int" | "bool" | "time"
+export type IngredientPossible = "string" | "int" | "bool" | "time" | "float"
 
 /**
  *  This is a representation of an Area Microservices.

@@ -1,47 +1,48 @@
+// lib/api/types/area_body.dart
 enum IngredientType { string, int, bool, time }
 
-class AreaService {
+class AreaServiceData {
   final String name;
   final String refName;
-  final List<MicroService> microservices;
+  final List<MicroServiceBody> microservices;
 
-  AreaService({
+  AreaServiceData({
     required this.name,
     required this.refName,
     required this.microservices,
   });
 
-  factory AreaService.fromJson(Map<String, dynamic> json) {
-    return AreaService(
+  factory AreaServiceData.fromJson(Map<String, dynamic> json) {
+    return AreaServiceData(
       name: json['name'],
       refName: json['ref_name'],
       microservices: (json['microservices'] as List)
-          .map((m) => MicroService.fromJson(m))
+          .map((m) => MicroServiceBody.fromJson(m))
           .toList(),
     );
   }
 }
 
-class MicroService {
+class MicroServiceBody {
   final String name;
   final String refName;
   final String type;
   final Map<String, IngredientType> ingredients;
 
-  MicroService({
+  MicroServiceBody({
     required this.name,
     required this.refName,
     required this.type,
     required this.ingredients,
   });
 
-  factory MicroService.fromJson(Map<String, dynamic> json) {
-    return MicroService(
+  factory MicroServiceBody.fromJson(Map<String, dynamic> json) {
+    return MicroServiceBody(
       name: json['name'],
       refName: json['ref_name'],
       type: json['type'],
       ingredients: (json['ingredients'] as Map<String, dynamic>).map(
-            (key, value) => MapEntry(key, _stringToIngredientType(value)),
+        (key, value) => MapEntry(key, _stringToIngredientType(value)),
       ),
     );
   }
@@ -49,10 +50,15 @@ class MicroService {
 
 IngredientType _stringToIngredientType(String value) {
   switch (value) {
-    case 'string': return IngredientType.string;
-    case 'int': return IngredientType.int;
-    case 'bool': return IngredientType.bool;
-    case 'time': return IngredientType.time;
-    default: throw Exception('Unknown ingredient type: $value');
+    case 'string':
+      return IngredientType.string;
+    case 'int':
+      return IngredientType.int;
+    case 'bool':
+      return IngredientType.bool;
+    case 'time':
+      return IngredientType.time;
+    default:
+      throw Exception('Unknown ingredient type: $value');
   }
 }

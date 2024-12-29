@@ -95,6 +95,8 @@ const convertIngredient = (ingredient: string | undefined, type: IngredientPossi
     switch (type) {
         case "int":
             return parseInt(ingredient)
+        case "float":
+            return parseFloat(ingredient)
         case "bool":
             return ingredient.toLowerCase() === "true"
         case "time":

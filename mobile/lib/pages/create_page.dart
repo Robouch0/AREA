@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
-import 'package:my_area_flutter/api/types/area_services.dart';
+import 'package:my_area_flutter/api/types/area_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
-  final Future<List<AreaService>> services;
+  final Future<List<AreaServiceData>> services;
   final int uid;
 
   const CreateAreaPage({
@@ -17,7 +17,7 @@ class CreateAreaPage extends StatefulWidget {
 }
 
 class _CreateAreaPageState extends State<CreateAreaPage> {
-  List<AreaService>? services;
+  List<AreaServiceData>? services;
   String actionName = '';
   String microActionName = '';
   String reactionName = '';
@@ -25,8 +25,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   Map<String, String> actionIngredients = {};
   Map<String, String> reactionIngredients = {};
 
-  late List<AreaService> actions;
-  late List<AreaService> reactions;
+  late List<AreaServiceData> actions;
+  late List<AreaServiceData> reactions;
 
   @override
   void initState() {
@@ -47,10 +47,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     }
   }
 
-  List<AreaService> _filterAreaByType(List<AreaService> services, String type) {
+  List<AreaServiceData> _filterAreaByType(List<AreaServiceData> services, String type) {
     return services
         .where((service) => service.microservices.any((micro) => micro.type == type))
-        .map((service) => AreaService(
+        .map((service) => AreaServiceData(
       name: service.name,
       refName: service.refName,
       microservices: service.microservices
@@ -113,7 +113,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
     final service = services.firstWhere((s) => s.refName == selectedService);
     final selectedMicroService = service.microservices
-        .firstWhere((m) => m.refName == selectedMicro, orElse: () => MicroService(
+        .firstWhere((m) => m.refName == selectedMicro, orElse: () => MicroServiceBody(
       name: '',
       refName: '',
       type: '',
@@ -243,7 +243,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }
 
   Widget _buildServiceSelection({
-    required List<AreaService> services,
+    required List<AreaServiceData> services,
     required String selectedService,
     required Function(String) onServiceChanged,
   }) {
@@ -281,7 +281,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }
 
   Widget _buildMicroserviceGrid({
-    required AreaService service,
+    required AreaServiceData service,
     required String selectedMicro,
     required Function(String) onMicroSelected,
   }) {

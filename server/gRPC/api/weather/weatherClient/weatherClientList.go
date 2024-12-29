@@ -16,7 +16,27 @@ func (weather *WeatherClient) ListServiceStatus() (*IServ.ServiceStatus, error) 
 		Name:    "Weather",
 		RefName: "weather",
 
-		Microservices: []IServ.MicroserviceStatus{},
+		Microservices: []IServ.MicroserviceStatus{
+			{
+				Name:    "Each hour, when temperature exceed a certain amount trigger happens",
+				RefName: "temperatureExceed",
+				Type:    "action",
+				Ingredients: map[string]string{
+					"temperature": "float",
+					"timezone":    "string",
+					"region":      "string",
+				},
+			},
+			{
+				Name:    "Each Hour, when the day condition (night or day changes)",
+				RefName: "dayChanged",
+				Type:    "action",
+				Ingredients: map[string]string{
+					"timezone": "string",
+					"region":   "string",
+				},
+			},
+		},
 	}
 	return status, nil
 }
