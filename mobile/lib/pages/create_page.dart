@@ -22,8 +22,34 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   String microActionName = '';
   String reactionName = '';
   String microReactionName = '';
-  Map<String, String> actionIngredients = {};
-  Map<String, String> reactionIngredients = {};
+  Map<String, dynamic> actionIngredients = {};
+  Map<String, dynamic> reactionIngredients = {};
+
+  dynamic convertIngredientValue(String value, IngredientType type) {
+    switch (type) {
+      case IngredientType.int:
+        return int.tryParse(value) ?? 0;
+      case IngredientType.float:
+        return double.tryParse(value) ?? 0.0;
+      case IngredientType.bool:
+        return value.toLowerCase() == 'true';
+      case IngredientType.time:
+        return value;
+      case IngredientType.string:
+    }
+  }
+
+  void _handleIngredientChange(
+      bool isAction, String key, String value, IngredientType type) {
+    final convertedValue = convertIngredientValue(value, type);
+    setState(() {
+      if (isAction) {
+        actionIngredients[key] = convertedValue;
+      } else {
+        reactionIngredients[key] = convertedValue;
+      }
+    });
+  }
 
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
@@ -47,16 +73,18 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     }
   }
 
-  List<AreaServiceData> _filterAreaByType(List<AreaServiceData> services, String type) {
+  List<AreaServiceData> _filterAreaByType(
+      List<AreaServiceData> services, String type) {
     return services
-        .where((service) => service.microservices.any((micro) => micro.type == type))
+        .where((service) =>
+            service.microservices.any((micro) => micro.type == type))
         .map((service) => AreaServiceData(
-      name: service.name,
-      refName: service.refName,
-      microservices: service.microservices
-          .where((micro) => micro.type == type)
-          .toList(),
-    ))
+              name: service.name,
+              refName: service.refName,
+              microservices: service.microservices
+                  .where((micro) => micro.type == type)
+                  .toList(),
+            ))
         .toList();
   }
 
@@ -112,13 +140,14 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     if (selectedService.isEmpty) return const SizedBox.shrink();
 
     final service = services.firstWhere((s) => s.refName == selectedService);
-    final selectedMicroService = service.microservices
-        .firstWhere((m) => m.refName == selectedMicro, orElse: () => MicroServiceBody(
-      name: '',
-      refName: '',
-      type: '',
-      ingredients: {},
-    ));
+    final selectedMicroService =
+        service.microservices.firstWhere((m) => m.refName == selectedMicro,
+            orElse: () => MicroServiceBody(
+                  name: '',
+                  refName: '',
+                  type: '',
+                  ingredients: {},
+                ));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -141,18 +170,9 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
         if (selectedMicro.isNotEmpty) ...[
           const SizedBox(height: 20),
           _buildIngredientsForm(
-            ingredients: selectedMicroService.ingredients,
-            values: isAction ? actionIngredients : reactionIngredients,
-            onIngredientChanged: (key, value) {
-              setState(() {
-                if (isAction) {
-                  actionIngredients[key] = value;
-                } else {
-                  reactionIngredients[key] = value;
-                }
-              });
-            },
-          ),
+              ingredients: selectedMicroService.ingredients,
+              values: isAction ? actionIngredients : reactionIngredients,
+              isAction: isAction),
         ],
       ],
     );
@@ -187,8 +207,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
               });
             },
           ),
-          if (actionName.isNotEmpty)
-            _buildMicroserviceSection(true),
+          if (actionName.isNotEmpty) _buildMicroserviceSection(true),
         ],
       ),
     );
@@ -235,8 +254,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
               });
             },
           ),
-          if (reactionName.isNotEmpty)
-            _buildMicroserviceSection(false),
+          if (reactionName.isNotEmpty) _buildMicroserviceSection(false),
         ],
       ),
     );
@@ -328,8 +346,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   Widget _buildIngredientsForm({
     required Map<String, IngredientType> ingredients,
-    required Map<String, String> values,
-    required Function(String, String) onIngredientChanged,
+    required Map<String, dynamic> values,
+    required bool isAction,
   }) {
     if (ingredients.isEmpty) return const SizedBox.shrink();
     return Column(
@@ -370,7 +388,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                       fillColor: Colors.white.withOpacity(0.1),
                     ),
                     style: const TextStyle(color: Colors.white),
-                    onChanged: (value) => onIngredientChanged(entry.key, value),
+                    onChanged: (value) => _handleIngredientChange(
+                        isAction, entry.key, value, entry.value),
                     key: ValueKey(entry.key),
                     controller: null,
                     onTapOutside: (event) => FocusScope.of(context).unfocus(),
@@ -385,8 +404,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }
 
   Widget _buildCreateButton() {
-    final bool isValid = microActionName.isNotEmpty &&
-        microReactionName.isNotEmpty;
+    final bool isValid =
+        microActionName.isNotEmpty && microReactionName.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
