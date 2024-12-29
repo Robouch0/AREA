@@ -56,6 +56,27 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				},
 			},
 			{
+				Name:    "Create a new label",
+				RefName: "gmail/createLabel",
+				Type:    "reaction",
+
+				Ingredients: map[string]string{
+					"name":                  "string",
+					"messageListVisibility": "string",
+					"LabelListVisibility":   "string",
+					"type":                  "string",
+				},
+			},
+			{
+				Name:    "Delete a label",
+				RefName: "gmail/deleteLabel",
+				Type:    "reaction",
+
+				Ingredients: map[string]string{
+					"name": "string",
+				},
+			},
+			{
 				Name:    "Watch email received by an user",
 				RefName: "watchme",
 				Type:    "action",

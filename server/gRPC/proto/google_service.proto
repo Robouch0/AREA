@@ -17,6 +17,12 @@ service GoogleService {
   // Move out of trash an email
   rpc MoveFromTrash (TrashEmailRequestMe) returns (TrashEmailRequestMe) {}
 
+  // Create a new label
+  rpc CreateLabel (CreateLabelReq) returns (CreateLabelReq) {}
+
+  // Delete a label
+  rpc DeleteLabel (DeleteLabelReq) returns (DeleteLabelReq) {}
+
   /* WebHooks Microservice */
 
   // Watch email of the user currently logged
@@ -49,4 +55,15 @@ message EmailTriggerReq {
 message GmailTriggerReq {
   uint32 action_id = 1;
   bytes payload = 2;
+}
+
+message CreateLabelReq {
+  string name = 1;
+  string messageListVisibility = 2;
+  string LabelListVisibility = 3;
+  string type = 4;
+}
+
+message DeleteLabelReq {
+  string name = 1;
 }

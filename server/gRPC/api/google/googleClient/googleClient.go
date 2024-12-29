@@ -36,6 +36,8 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	(*google.MicroservicesLauncher)["gmail/deleteEmailMe"] = google.deleteEmailMe
 	(*google.MicroservicesLauncher)["gmail/moveToTrash"] = google.moveToTrash
 	(*google.MicroservicesLauncher)["gmail/moveFromTrash"] = google.moveFromTrash
+	(*google.MicroservicesLauncher)["gmail/createLabel"] = google.createLabel
+	(*google.MicroservicesLauncher)["gmail/deleteLabel"] = google.deleteLabel
 
 	(*google.ActionLauncher)["watchme"] = google.watchEmail
 	return google
@@ -55,6 +57,46 @@ func (google *GoogleClient) SendAction(scenario models.AreaScenario, actionID, u
 		return micro(scenario, actionID, userID)
 	}
 	return nil, errors.New("No such microservice")
+}
+
+func (google *GoogleClient) deleteLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var labelReq gRPCService.DeleteLabelReq
+	err = json.Unmarshal(jsonString, &labelReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	res, err := google.cc.DeleteLabel(ctx, &labelReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+}
+
+func (google *GoogleClient) createLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var labelReq gRPCService.CreateLabelReq
+	err = json.Unmarshal(jsonString, &labelReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	res, err := google.cc.CreateLabel(ctx, &labelReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
 }
 
 func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {

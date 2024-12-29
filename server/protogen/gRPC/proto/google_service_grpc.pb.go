@@ -23,6 +23,8 @@ const (
 	GoogleService_DeleteEmailMe_FullMethodName   = "/google.GoogleService/DeleteEmailMe"
 	GoogleService_MoveToTrash_FullMethodName     = "/google.GoogleService/MoveToTrash"
 	GoogleService_MoveFromTrash_FullMethodName   = "/google.GoogleService/MoveFromTrash"
+	GoogleService_CreateLabel_FullMethodName     = "/google.GoogleService/CreateLabel"
+	GoogleService_DeleteLabel_FullMethodName     = "/google.GoogleService/DeleteLabel"
 	GoogleService_WatchGmailEmail_FullMethodName = "/google.GoogleService/WatchGmailEmail"
 	GoogleService_WatchMeTrigger_FullMethodName  = "/google.GoogleService/WatchMeTrigger"
 )
@@ -39,6 +41,10 @@ type GoogleServiceClient interface {
 	MoveToTrash(ctx context.Context, in *TrashEmailRequestMe, opts ...grpc.CallOption) (*TrashEmailRequestMe, error)
 	// Move out of trash an email
 	MoveFromTrash(ctx context.Context, in *TrashEmailRequestMe, opts ...grpc.CallOption) (*TrashEmailRequestMe, error)
+	// Create a new label
+	CreateLabel(ctx context.Context, in *CreateLabelReq, opts ...grpc.CallOption) (*CreateLabelReq, error)
+	// Delete a label
+	DeleteLabel(ctx context.Context, in *DeleteLabelReq, opts ...grpc.CallOption) (*DeleteLabelReq, error)
 	// Watch email of the user currently logged
 	WatchGmailEmail(ctx context.Context, in *EmailTriggerReq, opts ...grpc.CallOption) (*EmailTriggerReq, error)
 	// Function that handle the payload sent by google gmail
@@ -93,6 +99,26 @@ func (c *googleServiceClient) MoveFromTrash(ctx context.Context, in *TrashEmailR
 	return out, nil
 }
 
+func (c *googleServiceClient) CreateLabel(ctx context.Context, in *CreateLabelReq, opts ...grpc.CallOption) (*CreateLabelReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateLabelReq)
+	err := c.cc.Invoke(ctx, GoogleService_CreateLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *googleServiceClient) DeleteLabel(ctx context.Context, in *DeleteLabelReq, opts ...grpc.CallOption) (*DeleteLabelReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteLabelReq)
+	err := c.cc.Invoke(ctx, GoogleService_DeleteLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *googleServiceClient) WatchGmailEmail(ctx context.Context, in *EmailTriggerReq, opts ...grpc.CallOption) (*EmailTriggerReq, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmailTriggerReq)
@@ -125,6 +151,10 @@ type GoogleServiceServer interface {
 	MoveToTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error)
 	// Move out of trash an email
 	MoveFromTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error)
+	// Create a new label
+	CreateLabel(context.Context, *CreateLabelReq) (*CreateLabelReq, error)
+	// Delete a label
+	DeleteLabel(context.Context, *DeleteLabelReq) (*DeleteLabelReq, error)
 	// Watch email of the user currently logged
 	WatchGmailEmail(context.Context, *EmailTriggerReq) (*EmailTriggerReq, error)
 	// Function that handle the payload sent by google gmail
@@ -150,6 +180,12 @@ func (UnimplementedGoogleServiceServer) MoveToTrash(context.Context, *TrashEmail
 }
 func (UnimplementedGoogleServiceServer) MoveFromTrash(context.Context, *TrashEmailRequestMe) (*TrashEmailRequestMe, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MoveFromTrash not implemented")
+}
+func (UnimplementedGoogleServiceServer) CreateLabel(context.Context, *CreateLabelReq) (*CreateLabelReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateLabel not implemented")
+}
+func (UnimplementedGoogleServiceServer) DeleteLabel(context.Context, *DeleteLabelReq) (*DeleteLabelReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteLabel not implemented")
 }
 func (UnimplementedGoogleServiceServer) WatchGmailEmail(context.Context, *EmailTriggerReq) (*EmailTriggerReq, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WatchGmailEmail not implemented")
@@ -250,6 +286,42 @@ func _GoogleService_MoveFromTrash_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GoogleService_CreateLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateLabelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoogleServiceServer).CreateLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoogleService_CreateLabel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoogleServiceServer).CreateLabel(ctx, req.(*CreateLabelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GoogleService_DeleteLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteLabelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoogleServiceServer).DeleteLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoogleService_DeleteLabel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoogleServiceServer).DeleteLabel(ctx, req.(*DeleteLabelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GoogleService_WatchGmailEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EmailTriggerReq)
 	if err := dec(in); err != nil {
@@ -308,6 +380,14 @@ var GoogleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MoveFromTrash",
 			Handler:    _GoogleService_MoveFromTrash_Handler,
+		},
+		{
+			MethodName: "CreateLabel",
+			Handler:    _GoogleService_CreateLabel_Handler,
+		},
+		{
+			MethodName: "DeleteLabel",
+			Handler:    _GoogleService_DeleteLabel_Handler,
 		},
 		{
 			MethodName: "WatchGmailEmail",
