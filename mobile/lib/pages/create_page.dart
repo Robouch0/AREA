@@ -1,7 +1,10 @@
+// lib/pages/create_page.dart
 import 'package:flutter/material.dart';
+import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
+import 'package:my_area_flutter/api/types/area_create_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
@@ -23,8 +26,68 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   String microActionName = '';
   String reactionName = '';
   String microReactionName = '';
-  Map<String, String> actionIngredients = {};
-  Map<String, String> reactionIngredients = {};
+  Map<String, dynamic> actionIngredients = {};
+  Map<String, dynamic> reactionIngredients = {};
+
+  dynamic convertIngredientValue(String value, IngredientType type) {
+    switch (type) {
+      case IngredientType.int:
+        return int.tryParse(value) ?? 0;
+      case IngredientType.float:
+        return double.tryParse(value) ?? 0.0;
+      case IngredientType.bool:
+        return value.toLowerCase() == 'true';
+      case IngredientType.time:
+        return value;
+      case IngredientType.string:
+    }
+  }
+
+  void _handleIngredientChange(
+      bool isAction, String key, String value, IngredientType type) {
+    final convertedValue = convertIngredientValue(value, type);
+    setState(() {
+      if (isAction) {
+        actionIngredients[key] = convertedValue;
+      } else {
+        reactionIngredients[key] = convertedValue;
+      }
+    });
+  }
+
+  void _handleSubmit() async {
+    final newArea = AreaCreateBody(
+      userId: widget.uid,
+      action: Service(
+        service: actionName,
+        microservice: microActionName,
+        ingredients: actionIngredients,
+      ),
+      reaction: Service(
+        service: reactionName,
+        microservice: microReactionName,
+        ingredients: reactionIngredients,
+      ),
+    );
+
+    final success = await AreaService.instance.createArea(newArea);
+    _displayScaffoldStatus(success);
+  }
+
+  void _displayScaffoldStatus(bool success) {
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+        Text('Area created successfully.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Area creation failed.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
 
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
@@ -147,15 +210,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           _buildIngredientsForm(
             ingredients: selectedMicroService.ingredients,
             values: isAction ? actionIngredients : reactionIngredients,
-            onIngredientChanged: (key, value) {
-              setState(() {
-                if (isAction) {
-                  actionIngredients[key] = value;
-                } else {
-                  reactionIngredients[key] = value;
-                }
-              });
-            },
+            isAction: isAction
           ),
         ],
       ],
@@ -332,8 +387,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   Widget _buildIngredientsForm({
     required Map<String, IngredientType> ingredients,
-    required Map<String, String> values,
-    required Function(String, String) onIngredientChanged,
+    required Map<String, dynamic> values,
+    required bool isAction,
   }) {
     if (ingredients.isEmpty) return const SizedBox.shrink();
     return Column(
@@ -374,7 +429,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                       fillColor: Colors.white.withOpacity(0.1),
                     ),
                     style: const TextStyle(color: Colors.white),
-                    onChanged: (value) => onIngredientChanged(entry.key, value),
+                    onChanged: (value) => _handleIngredientChange(
+                        isAction, entry.key, value, entry.value),
                     key: ValueKey(entry.key),
                     controller: null,
                     onTapOutside: (event) => FocusScope.of(context).unfocus(),
@@ -389,8 +445,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }
 
   Widget _buildCreateButton() {
-    final bool isValid = microActionName.isNotEmpty &&
-        microReactionName.isNotEmpty;
+    final bool isValid =
+        microActionName.isNotEmpty && microReactionName.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -412,23 +468,5 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
         ),
       ),
     );
-  }
-
-  void _handleSubmit() {
-    final payload = {
-      'user_id': userInfo.userId,
-      'action': {
-        'service': actionName,
-        'microservice': microActionName,
-        'ingredients': actionIngredients,
-      },
-      'reaction': {
-        'service': reactionName,
-        'microservice': microReactionName,
-        'ingredients': reactionIngredients,
-      },
-    };
-
-    print(payload);
   }
 }
