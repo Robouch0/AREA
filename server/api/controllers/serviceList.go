@@ -10,6 +10,7 @@ package controllers
 import (
 	api "area/api"
 	IServ "area/gRPC/api/serviceInterface"
+	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"net/http"
 )
@@ -27,8 +28,7 @@ func ListService(gateway *api.ApiGateway) http.HandlerFunc {
 		}
 		b, err := json.Marshal(services)
 		if err != nil {
-			w.WriteHeader(401)
-			w.Write([]byte(err.Error()))
+			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")

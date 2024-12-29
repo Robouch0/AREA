@@ -16,45 +16,25 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 		Name:    "Hugging Face",
 		RefName: "hf",
 
-		Microservices: []IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
 			{
 				Name:    "Text Generation",
 				RefName: "textGen",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"model":  "string",
-					"inputs": "string",
-				},
-			},
-			{
-				Name:    "Check if someone push in the repository",
-				RefName: "push",
-				Type:    "action",
-
-				Ingredients: map[string]string{
-					"type": "string",
-					"name": "string",
-				},
-			},
-			{
-				Name:    "Check if someone create a pull request",
-				RefName: "pr",
-				Type:    "action",
-
-				Ingredients: map[string]string{
-					"type": "string",
-					"name": "string",
-				},
-			},
-			{
-				Name:    "Check if someone create a discussion",
-				RefName: "discussion",
-				Type:    "action",
-
-				Ingredients: map[string]string{
-					"type": "string",
-					"name": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"model": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the model",
+						Required:    true,
+					},
+					"inputs": {
+						Value:       "",
+						Type:        "string",
+						Description: "Input phrase of the model",
+						Required:    true,
+					},
 				},
 			},
 		},

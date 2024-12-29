@@ -16,7 +16,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		Name:    "Gitlab",
 		RefName: "gitlab",
 
-		Microservices: []IServ.MicroserviceStatus{},
+		Microservices: []IServ.MicroserviceDescriptor{},
 	}
 	return status, nil
 }

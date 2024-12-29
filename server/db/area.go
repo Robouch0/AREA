@@ -29,6 +29,11 @@ func InitAreaDb() (*AreaDB, error) {
 	return &AreaDB{Db: db}, err
 }
 
+func GetAreaDb() *AreaDB {
+	db := initDB()
+	return &AreaDB{Db: db}
+}
+
 func (area *AreaDB) SubmitNewArea(newArea *models.Area) (*models.Area, error) {
 	_, err := area.Db.NewInsert().
 		Model(newArea).
@@ -51,6 +56,19 @@ func (area *AreaDB) InsertNewArea(UserID uint, OneShot bool) (*models.Area, erro
 		return nil, err
 	}
 	return newArea, nil
+}
+
+func (area *AreaDB) GetAreaByUserID(userID uint) (*[]models.Area, error) {
+	us := new([]models.Area)
+	err := area.Db.NewSelect().
+		Model(us).
+		Where("user_id = ?", userID).
+		Scan(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return us, nil
 }
 
 func (area *AreaDB) GetAreaByID(AreaID uint) (*models.Area, error) {
