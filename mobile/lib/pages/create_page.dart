@@ -1,6 +1,9 @@
+// lib/pages/create_page.dart
 import 'package:flutter/material.dart';
+import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
+import 'package:my_area_flutter/api/types/area_create_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
@@ -51,6 +54,40 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     });
   }
 
+  void _handleSubmit() async {
+    final newArea = AreaCreateBody(
+      userId: widget.uid,
+      action: Service(
+        service: actionName,
+        microservice: microActionName,
+        ingredients: actionIngredients,
+      ),
+      reaction: Service(
+        service: reactionName,
+        microservice: microReactionName,
+        ingredients: reactionIngredients,
+      ),
+    );
+
+    final success = await AreaService.instance.createArea(newArea);
+    _displayScaffoldStatus(success);
+  }
+
+  void _displayScaffoldStatus(bool success) {
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+        Text('Area created successfully.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Area creation failed.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
 
@@ -73,18 +110,16 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     }
   }
 
-  List<AreaServiceData> _filterAreaByType(
-      List<AreaServiceData> services, String type) {
+  List<AreaServiceData> _filterAreaByType(List<AreaServiceData> services, String type) {
     return services
-        .where((service) =>
-            service.microservices.any((micro) => micro.type == type))
+        .where((service) => service.microservices.any((micro) => micro.type == type))
         .map((service) => AreaServiceData(
-              name: service.name,
-              refName: service.refName,
-              microservices: service.microservices
-                  .where((micro) => micro.type == type)
-                  .toList(),
-            ))
+      name: service.name,
+      refName: service.refName,
+      microservices: service.microservices
+          .where((micro) => micro.type == type)
+          .toList(),
+    ))
         .toList();
   }
 
@@ -140,14 +175,13 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     if (selectedService.isEmpty) return const SizedBox.shrink();
 
     final service = services.firstWhere((s) => s.refName == selectedService);
-    final selectedMicroService =
-        service.microservices.firstWhere((m) => m.refName == selectedMicro,
-            orElse: () => MicroServiceBody(
-                  name: '',
-                  refName: '',
-                  type: '',
-                  ingredients: {},
-                ));
+    final selectedMicroService = service.microservices
+        .firstWhere((m) => m.refName == selectedMicro, orElse: () => MicroServiceBody(
+      name: '',
+      refName: '',
+      type: '',
+      ingredients: {},
+    ));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,9 +204,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
         if (selectedMicro.isNotEmpty) ...[
           const SizedBox(height: 20),
           _buildIngredientsForm(
-              ingredients: selectedMicroService.ingredients,
-              values: isAction ? actionIngredients : reactionIngredients,
-              isAction: isAction),
+            ingredients: selectedMicroService.ingredients,
+            values: isAction ? actionIngredients : reactionIngredients,
+            isAction: isAction
+          ),
         ],
       ],
     );
@@ -207,7 +242,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
               });
             },
           ),
-          if (actionName.isNotEmpty) _buildMicroserviceSection(true),
+          if (actionName.isNotEmpty)
+            _buildMicroserviceSection(true),
         ],
       ),
     );
@@ -254,7 +290,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
               });
             },
           ),
-          if (reactionName.isNotEmpty) _buildMicroserviceSection(false),
+          if (reactionName.isNotEmpty)
+            _buildMicroserviceSection(false),
         ],
       ),
     );
@@ -427,23 +464,5 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
         ),
       ),
     );
-  }
-
-  void _handleSubmit() {
-    final payload = {
-      'user_id': widget.uid,
-      'action': {
-        'service': actionName,
-        'microservice': microActionName,
-        'ingredients': actionIngredients,
-      },
-      'reaction': {
-        'service': reactionName,
-        'microservice': microReactionName,
-        'ingredients': reactionIngredients,
-      },
-    };
-
-    print(payload);
   }
 }
