@@ -143,7 +143,7 @@ func (git *GithubClient) TriggerWebhook(payload map[string]any, _ string, action
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
 	}
-	if _, err := git.cc.TriggerWebHook(context.Background(), &gRPCService.WebHookTriggerReq{ActionId: uint32(actionID), Payload: payloadBytes}); err != nil {
+	if _, err := git.cc.TriggerWebHook(context.Background(), &gRPCService.GithubWebHookTriggerReq{ActionId: uint32(actionID), Payload: payloadBytes}); err != nil {
 		return nil, err
 	}
 	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil

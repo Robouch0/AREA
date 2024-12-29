@@ -93,7 +93,7 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	return req, nil
 }
 
-func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.WebHookTriggerReq) (*gRPCService.WebHookTriggerReq, error) {
+func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.GithubWebHookTriggerReq) (*gRPCService.GithubWebHookTriggerReq, error) {
 	act, err := git.GithubDb.GetGithubByActionID(uint(req.ActionId))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "No such action with id %d", req.ActionId)

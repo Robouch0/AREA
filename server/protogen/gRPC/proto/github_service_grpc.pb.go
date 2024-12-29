@@ -34,7 +34,7 @@ type GithubServiceClient interface {
 	UpdateFile(ctx context.Context, in *UpdateRepoFile, opts ...grpc.CallOption) (*UpdateRepoFile, error)
 	DeleteFile(ctx context.Context, in *DeleteRepoFile, opts ...grpc.CallOption) (*DeleteRepoFile, error)
 	CreatePushWebhook(ctx context.Context, in *GitWebHookInfo, opts ...grpc.CallOption) (*GitWebHookInfo, error)
-	TriggerWebHook(ctx context.Context, in *WebHookTriggerReq, opts ...grpc.CallOption) (*WebHookTriggerReq, error)
+	TriggerWebHook(ctx context.Context, in *GithubWebHookTriggerReq, opts ...grpc.CallOption) (*GithubWebHookTriggerReq, error)
 }
 
 type githubServiceClient struct {
@@ -85,9 +85,9 @@ func (c *githubServiceClient) CreatePushWebhook(ctx context.Context, in *GitWebH
 	return out, nil
 }
 
-func (c *githubServiceClient) TriggerWebHook(ctx context.Context, in *WebHookTriggerReq, opts ...grpc.CallOption) (*WebHookTriggerReq, error) {
+func (c *githubServiceClient) TriggerWebHook(ctx context.Context, in *GithubWebHookTriggerReq, opts ...grpc.CallOption) (*GithubWebHookTriggerReq, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(WebHookTriggerReq)
+	out := new(GithubWebHookTriggerReq)
 	err := c.cc.Invoke(ctx, GithubService_TriggerWebHook_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ type GithubServiceServer interface {
 	UpdateFile(context.Context, *UpdateRepoFile) (*UpdateRepoFile, error)
 	DeleteFile(context.Context, *DeleteRepoFile) (*DeleteRepoFile, error)
 	CreatePushWebhook(context.Context, *GitWebHookInfo) (*GitWebHookInfo, error)
-	TriggerWebHook(context.Context, *WebHookTriggerReq) (*WebHookTriggerReq, error)
+	TriggerWebHook(context.Context, *GithubWebHookTriggerReq) (*GithubWebHookTriggerReq, error)
 	mustEmbedUnimplementedGithubServiceServer()
 }
 
@@ -126,7 +126,7 @@ func (UnimplementedGithubServiceServer) DeleteFile(context.Context, *DeleteRepoF
 func (UnimplementedGithubServiceServer) CreatePushWebhook(context.Context, *GitWebHookInfo) (*GitWebHookInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePushWebhook not implemented")
 }
-func (UnimplementedGithubServiceServer) TriggerWebHook(context.Context, *WebHookTriggerReq) (*WebHookTriggerReq, error) {
+func (UnimplementedGithubServiceServer) TriggerWebHook(context.Context, *GithubWebHookTriggerReq) (*GithubWebHookTriggerReq, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TriggerWebHook not implemented")
 }
 func (UnimplementedGithubServiceServer) mustEmbedUnimplementedGithubServiceServer() {}
@@ -223,7 +223,7 @@ func _GithubService_CreatePushWebhook_Handler(srv interface{}, ctx context.Conte
 }
 
 func _GithubService_TriggerWebHook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WebHookTriggerReq)
+	in := new(GithubWebHookTriggerReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func _GithubService_TriggerWebHook_Handler(srv interface{}, ctx context.Context,
 		FullMethod: GithubService_TriggerWebHook_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GithubServiceServer).TriggerWebHook(ctx, req.(*WebHookTriggerReq))
+		return srv.(GithubServiceServer).TriggerWebHook(ctx, req.(*GithubWebHookTriggerReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

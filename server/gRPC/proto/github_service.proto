@@ -13,7 +13,7 @@ service GithubService {
 
   rpc CreatePushWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 
-  rpc TriggerWebHook (WebHookTriggerReq) returns (WebHookTriggerReq) {}
+  rpc TriggerWebHook (GithubWebHookTriggerReq) returns (GithubWebHookTriggerReq) {}
 }
 
 message GitWebHookInfo {
@@ -58,7 +58,7 @@ message DeleteRepoFile {
   // There is more to add if needed
 }
 
-message WebHookTriggerReq {
+message GithubWebHookTriggerReq {
   uint32 action_id = 1;
   bytes payload = 2;
 }
