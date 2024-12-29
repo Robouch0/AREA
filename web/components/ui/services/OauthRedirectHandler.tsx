@@ -9,10 +9,11 @@ export default function OAuthRedirectHandler() {
         const searchParams = new URLSearchParams(url.search);
         const code: string | null = searchParams.get('code');
         const service: string | null = searchParams.get('state');
-
-        if (window.opener && code && service) {
+    
+        if (code && service) {
             try {
-                window.opener.postMessage({type: "message", code: `${code},${service}`}, "/");
+                const channel = new BroadcastChannel(`oauth-${service}`)
+                channel.postMessage({type: "message", code: `${code},${service}`});
                 setTimeout(() => {
                     console.log("Redirecting to main site");
                     window.close();

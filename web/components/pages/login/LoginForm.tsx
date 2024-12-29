@@ -140,10 +140,10 @@ function LoginForm() {
                                 />} */}
 
                                 {<OauthButton
-                                    arial-label="Spotify"
-                                    service="spotify"
+                                    arial-label="Hugging Face"
+                                    service="hf"
                                     login={true}
-                                    textButton={"Continuer avec Spotify"}
+                                    textButton={"Continuer avec Hugging Face"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaSpotify />}
                                 />}
