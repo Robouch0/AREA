@@ -25,6 +25,7 @@ const (
 	listLabelURL   = "https://gmail.googleapis.com/gmail/v1/users/%s/labels"
 	createLabelURL = "https://gmail.googleapis.com/gmail/v1/users/%s/labels"
 	deleteLabelURL = "https://gmail.googleapis.com/gmail/v1/users/%s/labels/%s"
+	updateLabelURL = "https://gmail.googleapis.com/gmail/v1/users/%s/labels/%s"
 )
 
 // Visibility of a gmail message with this label
@@ -84,6 +85,34 @@ func ListLabels(accessToken, userID string) (*ListGmailLabel, error) {
 		return nil, err
 	}
 	return messageList, nil
+}
+
+func PutLabel(accessToken, userID, labelName string, putLabel GmailLabel) (*GmailLabel, error) {
+	labels, err := ListLabels(accessToken, userID)
+	if err != nil {
+		return nil, err
+	}
+	for _, label := range labels.Labels {
+		if label.Name == labelName {
+			url := fmt.Sprintf(updateLabelURL, userID, label.ID)
+			b, err := json.Marshal(&putLabel)
+			if err != nil {
+				return nil, err
+			}
+			putRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer(b))
+			if err != nil {
+				return nil, err
+			}
+			putRequest.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
+			putRequest.Header.Add("Accept", "application/json")
+			resp, err := http_utils.SendHttpRequest(putRequest, 200)
+			if err != nil {
+				return nil, err
+			}
+			return utils.IoReaderToStruct[GmailLabel](&resp.Body)
+		}
+	}
+	return nil, status.Errorf(codes.NotFound, "Did not found label named: %v", labelName)
 }
 
 func CreateLabel(accessToken, userID string, newLabel GmailLabel) (*GmailLabel, error) {

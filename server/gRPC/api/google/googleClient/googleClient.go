@@ -38,6 +38,7 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	(*google.MicroservicesLauncher)["gmail/moveFromTrash"] = google.moveFromTrash
 	(*google.MicroservicesLauncher)["gmail/createLabel"] = google.createLabel
 	(*google.MicroservicesLauncher)["gmail/deleteLabel"] = google.deleteLabel
+	(*google.MicroservicesLauncher)["gmail/updateLabel"] = google.updateLabel
 
 	(*google.ActionLauncher)["watchme"] = google.watchEmail
 	return google
@@ -77,6 +78,26 @@ func (google *GoogleClient) deleteLabel(ingredients map[string]any, prevOutput [
 	}
 
 	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+}
+
+func (google *GoogleClient) updateLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var labelReq gRPCService.UpdateLabelReq
+	err = json.Unmarshal(jsonString, &labelReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	res, err := google.cc.UpdateLabel(ctx, &labelReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: res.NewName}, nil
 }
 
 func (google *GoogleClient) createLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {

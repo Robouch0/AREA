@@ -25,6 +25,7 @@ const (
 	GoogleService_MoveFromTrash_FullMethodName   = "/google.GoogleService/MoveFromTrash"
 	GoogleService_CreateLabel_FullMethodName     = "/google.GoogleService/CreateLabel"
 	GoogleService_DeleteLabel_FullMethodName     = "/google.GoogleService/DeleteLabel"
+	GoogleService_UpdateLabel_FullMethodName     = "/google.GoogleService/UpdateLabel"
 	GoogleService_WatchGmailEmail_FullMethodName = "/google.GoogleService/WatchGmailEmail"
 	GoogleService_WatchMeTrigger_FullMethodName  = "/google.GoogleService/WatchMeTrigger"
 )
@@ -45,6 +46,8 @@ type GoogleServiceClient interface {
 	CreateLabel(ctx context.Context, in *CreateLabelReq, opts ...grpc.CallOption) (*CreateLabelReq, error)
 	// Delete a label
 	DeleteLabel(ctx context.Context, in *DeleteLabelReq, opts ...grpc.CallOption) (*DeleteLabelReq, error)
+	// Update a label
+	UpdateLabel(ctx context.Context, in *UpdateLabelReq, opts ...grpc.CallOption) (*UpdateLabelReq, error)
 	// Watch email of the user currently logged
 	WatchGmailEmail(ctx context.Context, in *EmailTriggerReq, opts ...grpc.CallOption) (*EmailTriggerReq, error)
 	// Function that handle the payload sent by google gmail
@@ -119,6 +122,16 @@ func (c *googleServiceClient) DeleteLabel(ctx context.Context, in *DeleteLabelRe
 	return out, nil
 }
 
+func (c *googleServiceClient) UpdateLabel(ctx context.Context, in *UpdateLabelReq, opts ...grpc.CallOption) (*UpdateLabelReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateLabelReq)
+	err := c.cc.Invoke(ctx, GoogleService_UpdateLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *googleServiceClient) WatchGmailEmail(ctx context.Context, in *EmailTriggerReq, opts ...grpc.CallOption) (*EmailTriggerReq, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmailTriggerReq)
@@ -155,6 +168,8 @@ type GoogleServiceServer interface {
 	CreateLabel(context.Context, *CreateLabelReq) (*CreateLabelReq, error)
 	// Delete a label
 	DeleteLabel(context.Context, *DeleteLabelReq) (*DeleteLabelReq, error)
+	// Update a label
+	UpdateLabel(context.Context, *UpdateLabelReq) (*UpdateLabelReq, error)
 	// Watch email of the user currently logged
 	WatchGmailEmail(context.Context, *EmailTriggerReq) (*EmailTriggerReq, error)
 	// Function that handle the payload sent by google gmail
@@ -186,6 +201,9 @@ func (UnimplementedGoogleServiceServer) CreateLabel(context.Context, *CreateLabe
 }
 func (UnimplementedGoogleServiceServer) DeleteLabel(context.Context, *DeleteLabelReq) (*DeleteLabelReq, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteLabel not implemented")
+}
+func (UnimplementedGoogleServiceServer) UpdateLabel(context.Context, *UpdateLabelReq) (*UpdateLabelReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLabel not implemented")
 }
 func (UnimplementedGoogleServiceServer) WatchGmailEmail(context.Context, *EmailTriggerReq) (*EmailTriggerReq, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WatchGmailEmail not implemented")
@@ -322,6 +340,24 @@ func _GoogleService_DeleteLabel_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GoogleService_UpdateLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLabelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoogleServiceServer).UpdateLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoogleService_UpdateLabel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoogleServiceServer).UpdateLabel(ctx, req.(*UpdateLabelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GoogleService_WatchGmailEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EmailTriggerReq)
 	if err := dec(in); err != nil {
@@ -388,6 +424,10 @@ var GoogleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteLabel",
 			Handler:    _GoogleService_DeleteLabel_Handler,
+		},
+		{
+			MethodName: "UpdateLabel",
+			Handler:    _GoogleService_UpdateLabel_Handler,
 		},
 		{
 			MethodName: "WatchGmailEmail",
