@@ -39,6 +39,9 @@ func NewHuggingFaceClient(conn *grpc.ClientConn) *HuggingFaceServiceClient {
 	}
 	(*hf.MicroservicesLauncher)["textGen"] = hf.SendTextGenerationReaction
 	(*hf.MicroservicesLauncher)["createRepo"] = hf.CreateRepositoryReaction
+	(*hf.MicroservicesLauncher)["deleteRepo"] = hf.DeleteRepositoryReaction
+	(*hf.MicroservicesLauncher)["moveRepo"] = hf.MoveRepoReaction
+	(*hf.MicroservicesLauncher)["changeVisibility"] = hf.ChangeRepoVisibilityReaction
 
 	(*hf.ActionsLauncher)["push"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
 		return hf.sendNewWebHookAction(scenario, actionId, userID, hf.cc.CreateRepoUpdateWebHook)

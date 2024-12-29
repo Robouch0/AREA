@@ -8,5 +8,5 @@
 package hfType
 
 type RepoVisibility struct {
-	Private string `json:"private"`
+	Private bool `json:"private"`
 }

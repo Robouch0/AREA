@@ -55,7 +55,7 @@ message CreateHFRepoReq {
   string organisation = 3;
 
   // Whether this repo is private or not
-  string private = 4;
+  bool private = 4;
 
   // SDK not supported yet
 }
@@ -80,15 +80,15 @@ message ChangeHFRepoReq {
   string repo_id = 2;
 
   // Whether this repo is private or not
-  string private = 3;
+  bool private = 3;
 }
 
 message MoveHFRepoReq {
   // Origin repo
-  string from_repo = 1;
+  string fromRepo = 1;
 
   // Destination repo
-  string to_repo = 2;
+  string toRepo = 2;
 
   // Type of repo (model, dataset, etc)
   string type = 3;

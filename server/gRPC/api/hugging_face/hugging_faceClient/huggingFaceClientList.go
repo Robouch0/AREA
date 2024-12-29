@@ -36,39 +36,20 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 					"type":         "string", // Default is model
 					"name":         "string",
 					"organisation": "string", // optionnal
-					"private":      "string", // optionnal
+					"private":      "bool",   // optionnal
 				},
 			},
-			// {
-			// 	Name:    "Check if someone push in the repository",
-			// 	RefName: "push",
-			// 	Type:    "action",
+			{
+				Name:    "Move repository",
+				RefName: "moveRepo",
+				Type:    "reaction",
 
-			// 	Ingredients: map[string]string{
-			// 		"type": "string",
-			// 		"name": "string",
-			// 	},
-			// },
-			// {
-			// 	Name:    "Check if someone create a pull request",
-			// 	RefName: "pr",
-			// 	Type:    "action",
-
-			// 	Ingredients: map[string]string{
-			// 		"type": "string",
-			// 		"name": "string",
-			// 	},
-			// },
-			// {
-			// 	Name:    "Check if someone create a discussion",
-			// 	RefName: "discussion",
-			// 	Type:    "action",
-
-			// 	Ingredients: map[string]string{
-			// 		"type": "string",
-			// 		"name": "string",
-			// 	},
-			// },
+				Ingredients: map[string]string{
+					"fromRepo": "string",
+					"toRepo":   "string",
+					"type":     "string",
+				},
+			},
 		},
 	}
 	return status, nil

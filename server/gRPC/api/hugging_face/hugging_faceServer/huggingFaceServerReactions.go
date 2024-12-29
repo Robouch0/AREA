@@ -51,6 +51,7 @@ func (hfServ *HuggingFaceService) CreateRepository(ctx context.Context, req *gRP
 	return req, nil
 }
 
+// Not supported by HF
 func (hfServ *HuggingFaceService) DeleteRepository(ctx context.Context, req *gRPCService.DeleteHFRepoReq) (*gRPCService.DeleteHFRepoReq, error) {
 	tokenInfo, err := grpcutils.GetTokenByContext(ctx, hfServ.tokenDb, "HuggingFaceService", "hf")
 	if err != nil {
@@ -73,6 +74,7 @@ func (hfServ *HuggingFaceService) DeleteRepository(ctx context.Context, req *gRP
 	return req, nil
 }
 
+// deprecated
 func (hfServ *HuggingFaceService) ChangeRepoVisibility(ctx context.Context, req *gRPCService.ChangeHFRepoReq) (*gRPCService.ChangeHFRepoReq, error) {
 	tokenInfo, err := grpcutils.GetTokenByContext(ctx, hfServ.tokenDb, "HuggingFaceService", "hf")
 	if err != nil {
