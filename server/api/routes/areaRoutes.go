@@ -19,6 +19,6 @@ func AreaRoutes(gateway *api.ApiGateway) chi.Router {
 	areaRouter := chi.NewRouter()
 	areaDb := db.GetAreaDb()
 
-	areaRouter.Get("/list/", controllers.GetUserAreas(gateway, areaDb))
+	areaRouter.Get("/list", controllers.GetUserAreas(gateway, areaDb))
 	return areaRouter
 }

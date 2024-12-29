@@ -58,11 +58,17 @@ func (area *AreaDB) InsertNewArea(UserID uint, OneShot bool) (*models.Area, erro
 	return newArea, nil
 }
 
-func (area *AreaDB) GetAreaByUserID(userID uint) (*[]models.Area, error) {
+func (area *AreaDB) GetFullAreaByUserID(userID uint) (*[]models.Area, error) {
 	us := new([]models.Area)
 	err := area.Db.NewSelect().
 		Model(us).
 		Where("user_id = ?", userID).
+		Relation("Action", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.Where("user_id = ?", userID)
+		}).
+		Relation("Reactions", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.Where("user_id = ?", userID)
+		}).
 		Scan(context.Background())
 
 	if err != nil {
