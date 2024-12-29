@@ -17,6 +17,8 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GithubClient struct {
@@ -59,7 +61,7 @@ func (git *GithubClient) sendNewWebHookAction(
 	if err != nil {
 		return nil, err
 	}
-	return &IServ.ActionResponseStatus{Description: res.Name}, nil
+	return &IServ.ActionResponseStatus{Description: res.Repo}, nil
 }
 
 func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -136,6 +138,13 @@ func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservic
 	return nil, errors.New("No such microservice")
 }
 
-func (_ *GithubClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
-	return &IServ.WebHookResponseStatus{}, nil
+func (git *GithubClient) TriggerWebhook(payload map[string]any, _ string, actionID int) (*IServ.WebHookResponseStatus, error) {
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
+	}
+	if _, err := git.cc.TriggerWebHook(context.Background(), &gRPCService.WebHookTriggerReq{ActionId: uint32(actionID), Payload: payloadBytes}); err != nil {
+		return nil, err
+	}
+	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil
 }

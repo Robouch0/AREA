@@ -92,3 +92,29 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	}
 	return req, nil
 }
+
+func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.WebHookTriggerReq) (*gRPCService.WebHookTriggerReq, error) {
+	act, err := git.GithubDb.GetGithubByActionID(uint(req.ActionId))
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "No such action with id %d", req.ActionId)
+	}
+
+	// var hfPayload hfType.HFWebHookResponse
+	// if json.Unmarshal(req.Payload, &hfPayload) != nil {
+	// 	return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
+	// }
+	// if hfPayload.Event.Action == act.RepoAction && hfPayload.Event.Scope == act.RepoScope {
+	// 	if hfPayload.Event.Action == "discussion" && hfPayload.Discussion.IsPullRequest != act.IsPullRequest {
+	// 		return nil, status.Errorf(codes.InvalidArgument, "Received Discussion event with incorrect value for IsPullRequest")
+	// 	}
+	reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
+	_, err = git.reactService.LaunchReaction(
+		reactCtx,
+		&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: req.Payload},
+	)
+	// 	if err != nil {
+	// 		return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+	// 	}
+	// }
+	return req, nil
+}
