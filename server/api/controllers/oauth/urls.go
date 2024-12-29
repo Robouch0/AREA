@@ -69,7 +69,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 	}
 	oauthUrls["hf"] = OAuthURLs{
 		RedirectURL: fmt.Sprintf(
-			`https://huggingface.co/oauth/authorize?client_id=%s&response_type=code&prompt=consent&redirect_uri=%s&scope=%s&state=STATE`, "%s", "%s", hfScopes),
+			`https://huggingface.co/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code&prompt=consent&scope=%s&state=STATE`, "%s", "%s", hfScopes),
 		OAuth: &HFOAuth{
 			AccessTokenURL:  "https://huggingface.co/oauth/token",
 			EmailRequestURL: "https://huggingface.co/api/whoami-v2",
