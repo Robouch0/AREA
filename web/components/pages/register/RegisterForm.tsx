@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { RegisterFormData, RegisterUserSchema } from "@/lib/typeRegister";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FaEye, FaEyeSlash, FaFacebook, FaGithub, FaGoogle } from "react-icons/fa";
+import {FaDiscord, FaEye, FaEyeSlash, FaGithub, FaSpotify} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/api/authentification";
@@ -148,28 +148,33 @@ function RegisterForm() {
                                 </div>
                             </div>
                             <div className="max-w-md w-full space-y-4">
-                                <Button
-                                    className="focus-visible:border-slate-500  focus-visible:border-8 flex items-center justify-start px-6 bg-blue-800 hover:bg-blue-800 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    type="button"
-                                    arial-label="Facebook"
-                                >
-                                    <FaFacebook className="w-12 h-12" />
-                                    <p className=" mx-3 text-2xl font-semibold"> Continuer avec Facebook </p>
-                                </Button>
+
+                                {<OauthButton
+                                    arial-label="Hf"
+                                    service="hf"
+                                    login={true}
+                                    textButton={"Continuer avec HuggingFace"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaSpotify/>}
+                                />}
 
                                 <OauthButton
-                                    arial-label="Google"
-                                    service="google"
-                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGoogle className="w-12 h-12"/>}
-                                />      
+                                    arial-label="Discord"
+                                    service="discord"
+                                    login={true}
+                                    textButton={"Continuer avec Discord"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-purple-500 hover:bg-purple-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaDiscord/>}
+                                />
 
-                                <OauthButton
+                                {<OauthButton
                                     arial-label="Github"
                                     service="github"
-                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGithub className="w-12 h-12"/>}
-                                />
+                                    login={true}
+                                    textButton={"Continuer avec Github"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaGithub/>}
+                                />}
 
                                 <div className="flex flex-row font-bold">
                                     <p className="mb-8">

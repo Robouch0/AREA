@@ -10,6 +10,7 @@ import MicroserviceCreateZone from "@/components/ui/services/MicroserviceCreateZ
 import {getColorForService} from "@/lib/utils";
 import {AreaServices, AreaMicroservices, IngredientPossible} from "@/api/types/areaStatus";
 import {AreaCreateBody} from "@/api/types/areaCreateBody";
+import {getUserTokens} from "@/api/getUserInfos";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -94,6 +95,8 @@ const convertIngredient = (ingredient: string | undefined, type: IngredientPossi
     switch (type) {
         case "int":
             return parseInt(ingredient)
+        case "float":
+            return parseFloat(ingredient)
         case "bool":
             return ingredient.toLowerCase() === "true"
         case "time":
@@ -108,6 +111,9 @@ const filterServiceByRefName = (services: AreaServices[], refName: string): Area
 }
 
 export default function CreatePage({services, uid}: { services: AreaServices[], uid: number }) {
+    const [isTokenActionPresent, setTokenAction] = useState(true);
+    const [isTokenReactionPresent, setTokenReaction] = useState(true);
+
     const actions: AreaServices[] = useMemo(() => {
         return filterAreaByType(services, "action")
     }, [services])
@@ -133,6 +139,24 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
 
     const [ingredientValuesActions, setIngredientValuesActions] = useState<string[]>([]);
     const [ingredientValuesReactions, setIngredientValuesReactions] = useState<string[]>([]);
+
+    useEffect((): void => {
+        if (actionName != "" && reactionName != "") {
+            getUserTokens().then((res)=> {
+                let actionToken = false;
+                if (actionName != "dt") {
+                    actionToken = res.includes(actionName);
+                } else {
+                    actionToken = true;
+                }
+                const reactionToken = res.includes(reactionName);
+                setTokenAction(actionToken)
+                setTokenReaction(reactionToken)
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    }, [actionName, reactionName])
 
     useEffect((): void => {
         setMicroActionName("")
@@ -209,10 +233,24 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                         textColor={"text-red-500"}
                     />
                 </div>
+                {(!isTokenActionPresent || !isTokenReactionPresent) && (
+                    <div className={"font-bold mt-4 text-xl "}>
+                        <p>You cannot create this area</p>
+                        <p>There is no account linked to AREA for the following services </p>
+                        {!isTokenActionPresent && (
+                            <p className={"font-bold mx-4"}> Action : {actionName}</p>
+                        )}
+                        {!isTokenReactionPresent && (
+                            <p className={"font-bold mx-4"}> Reaction :  {reactionName}</p>
+                        )}
+                    </div>
+                )}
+
+
                 <Button
                     type="submit"
                     className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold"
-                    disabled={microActionName === "" || microReactionName === ""}
+                    disabled={microActionName === "" || microReactionName === "" || !isTokenActionPresent  || !isTokenReactionPresent}
                 >
                     Create AREA
                 </Button>

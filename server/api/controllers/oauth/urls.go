@@ -22,6 +22,7 @@ import (
 const (
 	googleScopes = "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email https://mail.google.com/"
 	hfScopes     = "openid profile email read-repos write-repos manage-repos write-discussions read-billing"
+	gitlabScopes = "api read_api read_user read_repository write_repository openid profile email"
 )
 
 func createOAuthRedirect(consentURL, provider, redirectURI string) string {
@@ -72,6 +73,14 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 		OAuth: &HFOAuth{
 			AccessTokenURL:  "https://huggingface.co/oauth/token",
 			EmailRequestURL: "https://huggingface.co/api/whoami-v2",
+		},
+	}
+	oauthUrls["gitlab"] = OAuthURLs{
+		RedirectURL: fmt.Sprintf(
+			`https://gitlab.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code&state=STATE&scope=%s`, "%s", "%s", gitlabScopes),
+		OAuth: &GitlabOAuth{
+			AccessTokenURL:  "https://gitlab.com/oauth/token",
+			EmailRequestURL: "https://gitlab.com/oauth/userinfo",
 		},
 	}
 	return oauthUrls

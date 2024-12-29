@@ -1,9 +1,11 @@
 // lib/core/router/app_router.dart
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_area_flutter/pages/create_page.dart';
+import 'package:my_area_flutter/pages/profile_page.dart';
 import 'package:my_area_flutter/pages/register_page.dart';
+import 'package:my_area_flutter/services/api/area_service.dart';
 
-import 'package:my_area_flutter/services/auth_service.dart';
+import 'package:my_area_flutter/services/api/auth_service.dart';
 import 'package:my_area_flutter/pages/login_page.dart';
 import 'package:my_area_flutter/pages/home_page.dart';
 import 'package:my_area_flutter/pages/page_not_found.dart';
@@ -12,7 +14,7 @@ import 'route_names.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: RouteNames.create,
     redirect: (context, state) {
       final authService = AuthService.instance;
       final isLoggedIn = authService.isLoggedInSync;
@@ -39,6 +41,18 @@ class AppRouter {
       GoRoute(
         path: RouteNames.signup,
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: RouteNames.create,
+        builder: (context, state) => CreateAreaPage(services: AreaService.instance.listAreas(), uid: 12345),
+      ),
+      GoRoute(
+        path: RouteNames.profile,
+        builder: (context, state) => const ProfilePage(
+            email: 'axeltacheau@live.fr',
+            firstName: 'Axel',
+            lastName: 'Tacheau',
+            password: 'axel1208')
       )
     ],
     errorBuilder: (context, state) => const NotFoundPage(),
