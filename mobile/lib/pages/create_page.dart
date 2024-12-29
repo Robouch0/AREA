@@ -57,7 +57,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   void _handleSubmit() async {
     final newArea = AreaCreateBody(
-      userId: widget.uid,
+      userId: userInfo.userId,
       action: Service(
         service: actionName,
         microservice: microActionName,

@@ -25,18 +25,33 @@ class _ProfilePageState extends State<ProfilePage> {
   final _passwordController = TextEditingController();
   bool isEditing = false;
 
+  late UserInfoData userInfo;
+
   @override
   void initState() {
     super.initState();
-    _firstNameController.text = widget.firstName;
-    _lastNameController.text = widget.lastName;
+    _loadUserInfos();
+  }
+
+  Future<void> _loadUserInfos() async {
+    try {
+      final loadedUserInfos = await widget.userInfo;
+      setState(() {
+        userInfosLoaded = true;
+        userInfo = loadedUserInfos;
+      });
+      _firstNameController.text = userInfo.firstName;
+      _lastNameController.text = userInfo.lastName;
+    } catch (e) {
+      debugPrint('Error loading user infos: $e');
+    }
   }
 
   void _toggleEdit() {
     setState(() {
       if (isEditing) {
-        _firstNameController.text = widget.firstName;
-        _lastNameController.text = widget.lastName;
+        _firstNameController.text = userInfo.firstName;
+        _lastNameController.text = userInfo.lastName;
       }
       isEditing = !isEditing;
     });
@@ -70,26 +85,6 @@ class _ProfilePageState extends State<ProfilePage> {
     {"name": "Twitter", "icon": FontAwesomeIcons.twitter},
     {"name": "Discord", "icon": FontAwesomeIcons.discord},
   ];
-
-  late UserInfoData userInfos;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserInfos();
-  }
-
-  Future<void> _loadUserInfos() async {
-    try {
-      final loadedUserInfos = await widget.userInfo;
-      setState(() {
-        userInfosLoaded = true;
-        userInfos = loadedUserInfos;
-      });
-    } catch (e) {
-      debugPrint('Error loading user infos: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,10 +180,10 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: [
             _buildProfilePicture(),
-            _buildInfoField('Email', widget.email),
-            _buildInfoField('First name', widget.firstName,
+            _buildInfoField('Email', userInfo.email),
+            _buildInfoField('First name', userInfo.firstName,
                 controller: _firstNameController),
-            _buildInfoField('Last name', widget.lastName,
+            _buildInfoField('Last name', userInfo.lastName,
                 controller: _lastNameController),
             _buildPasswordField(),
             const SizedBox(height: 16),
@@ -361,8 +356,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     )
                   : Text(
                       showPassword
-                          ? userInfos.password
-                          : '•' * userInfos.password.length,
+                          ? userInfo.password
+                          : '•' * userInfo.password.length,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
