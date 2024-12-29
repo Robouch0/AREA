@@ -18,7 +18,7 @@ async function redirectToService(service: string) {
     try {
         const response = await axiosInstance.get(`oauth/${service}`, {
             params: {
-                "redirect_uri": redirectURI + "?service=" + service,
+                "redirect_uri": redirectURI,
             }
         });
         return response.data;
