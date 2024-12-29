@@ -112,9 +112,9 @@ func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.W
 		reactCtx,
 		&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: req.Payload},
 	)
-	// 	if err != nil {
-	// 		return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
-	// 	}
+	if err != nil {
+			return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+		}
 	// }
 	return req, nil
 }
