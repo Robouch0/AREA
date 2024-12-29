@@ -21,6 +21,7 @@ async function redirectToService(service: string) {
                 "redirect_uri": redirectURI + "?service=" + service,
             }
         });
+        console.log('response data: ' + response.data);
         return response.data;
     } catch (error) {
         throw error;

@@ -47,6 +47,10 @@ class AreaService {
     try {
       final token = await _authStorage.getToken();
 
+      if (token == null) {
+        throw Exception('Token is undefined');
+      }
+
       final response = await http.post(
         Uri.parse('$_apiUrl/create/${newArea.action.service}'),
         headers: {
@@ -56,8 +60,6 @@ class AreaService {
         body: json.encode(newArea.toJson()),
       );
 
-      developer.log('Statuscode while creating area: ${response.statusCode}');
-      developer.log('area: ${newArea.toJson()}');
       if (response.statusCode == 200) {
         return true;
       }
