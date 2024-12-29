@@ -71,8 +71,12 @@ func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.E
 	if err != nil {
 		return nil, err
 	}
+	emailMeInfo, err := GetTokenInfo(tokenInfo.AccessToken)
+	if err != nil {
+		return nil, err
+	}
 
-	emailRawContent := gmail.CreateEmailRawContent("dikrah25@gmail.com", req.To, req.Subject, req.BodyMessage)
+	emailRawContent := gmail.CreateEmailRawContent(emailMeInfo.Email, req.To, req.Subject, req.BodyMessage)
 	emailBody := gmail.NewEmailRequestBody(emailRawContent)
 	b, err := json.Marshal(&emailBody)
 	if err != nil {
