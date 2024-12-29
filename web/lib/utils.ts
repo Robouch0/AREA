@@ -7,9 +7,12 @@ export function cn(...inputs: ClassValue[]): string {
 
 export function getColorForService(refName: string):string {
     const colors: { [key: string]: string; } = {
-        dt: "green",
+        dt: "orange",
         hf: "orange",
-        github: "gray"
+        github: "gray",
+        spotify: "green",
+        discord: "gray",
+        google: "red",
     };
     return colors[refName] || "blue";
 }
