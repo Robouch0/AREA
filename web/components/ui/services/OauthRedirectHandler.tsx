@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 
 export default function OAuthRedirectHandler() {
 
@@ -24,7 +24,8 @@ export default function OAuthRedirectHandler() {
         <div
             className="text-black bg-green-700 w-full h-24 flex flex-col justify-center items-center animate-pulse ease-in-out"
         >
-            <p className="font-mono md:text-4xl text-xl font-bold"> Authentification successful, redirection you toward
+            <p className="font-mono md:text-4xl text-xl font-bold"> Authentification successful, redirection you
+                toward
                 AREA </p>
         </div>
     </>)

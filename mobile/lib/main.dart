@@ -23,6 +23,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
         fontFamily: 'AvenirNextCyr',
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.white,
+          brightness: Brightness.light,
+        ),
       ),
       routerConfig: AppRouter.router,
     );

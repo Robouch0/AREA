@@ -37,6 +37,32 @@ export async function oauthLogin(oauthLogBody: OAuthLoginBody): Promise<void> {
     }
 }
 
+export async function connectOauth(service: string, code: string|null): Promise<void> {
+    try {
+        const cookiesObj: ReadonlyRequestCookies = await cookies();
+        const uid: string | undefined = cookiesObj.get("UID")?.value;
+        const token : string|undefined = cookiesObj.get('token')?.value;
+
+        if (!uid) {
+            throw new Error("User ID not found in cookies");
+        }
+        const response = await axiosInstance.post("oauth/connect/   ", {
+            service: service,
+            code: code,
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        console.log(response);
+        return response.data;
+    } catch (error) {
+        console.error("Error in connectOauth:", error);
+        throw error;
+    }
+}
+
 export async function checkAuthentification(token: string | undefined) : Promise<boolean> {
     try {
         const response = await axiosInstance.get(`ping`, {

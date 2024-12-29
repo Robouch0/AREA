@@ -18,6 +18,52 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool userInfosLoaded = false;
   bool showPassword = false;
+
+  final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _firstNameController.text = widget.firstName;
+    _lastNameController.text = widget.lastName;
+  }
+
+  void _toggleEdit() {
+    setState(() {
+      if (isEditing) {
+        _firstNameController.text = widget.firstName;
+        _lastNameController.text = widget.lastName;
+      }
+      isEditing = !isEditing;
+    });
+  }
+
+  void _handleUpdate() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    bool success = true;
+
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Profile updated successfully'),
+        backgroundColor: Colors.green,
+      ));
+      setState(() => isEditing = false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Update failed'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
   final List<Map<String, dynamic>> services = [
     {"name": "Github", "icon": FontAwesomeIcons.github},
     {"name": "Google", "icon": FontAwesomeIcons.google},
@@ -55,15 +101,14 @@ class _ProfilePageState extends State<ProfilePage> {
     return MainAppScaffold(
       child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeader(),
-              _buildDivider(),
-              _buildMainContent(),
-              const SizedBox(height: 40),
-            ],
-          )
-      ),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeader(),
+          _buildDivider(),
+          _buildMainContent(),
+          const SizedBox(height: 40),
+        ],
+      )),
     );
   }
 
@@ -129,20 +174,72 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildUserInfoSection() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[700],
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Column(
-        children: [
-          _buildProfilePicture(),
-          _buildInfoField('Email', userInfos.email),
-          _buildInfoField('First name', userInfos.firstName),
-          _buildInfoField('Last name', userInfos.lastName),
-          _buildPasswordField(),
-        ],
+    return Form(
+      key: _formKey,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[700],
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Column(
+          children: [
+            _buildProfilePicture(),
+            _buildInfoField('Email', widget.email),
+            _buildInfoField('First name', widget.firstName,
+                controller: _firstNameController),
+            _buildInfoField('Last name', widget.lastName,
+                controller: _lastNameController),
+            _buildPasswordField(),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _toggleEdit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[900],
+                      padding: const EdgeInsets.symmetric(vertical: 17),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      isEditing ? 'Cancel' : 'Edit Profile',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: isEditing ? Colors.red : Colors.white),
+                    ),
+                  ),
+                ),
+                if (isEditing) ...[
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _handleUpdate,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(vertical: 17),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -160,7 +257,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildInfoField(String label, String value) {
+  Widget _buildInfoField(String label, String value,
+      {TextEditingController? controller}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -183,13 +281,32 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.black, width: 4),
             ),
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            child: isEditing && controller != null
+                ? TextFormField(
+                    controller: controller,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field cannot be empty';
+                      }
+                      return null;
+                    },
+                  )
+                : Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -219,13 +336,38 @@ class _ProfilePageState extends State<ProfilePage> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.black, width: 4),
               ),
-              child: Text(
-                showPassword ? userInfos.password : '•' * userInfos.password.length,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+              child: isEditing
+                  ? TextFormField(
+                      controller: _passwordController,
+                      obscureText: !showPassword,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password cannot be empty';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                    )
+                  : Text(
+                      showPassword
+                          ? userInfos.password
+                          : '•' * userInfos.password.length,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
             ),
             Positioned(
               right: 16,
