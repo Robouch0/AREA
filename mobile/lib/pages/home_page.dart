@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:my_area_flutter/services/auth_service.dart';
+import 'package:my_area_flutter/services/api/auth_service.dart';
 import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 

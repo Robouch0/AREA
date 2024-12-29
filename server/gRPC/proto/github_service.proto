@@ -10,7 +10,23 @@ service GithubService {
   rpc UpdateFile(UpdateRepoFile) returns(UpdateRepoFile) {}
 
   rpc DeleteFile(DeleteRepoFile) returns(DeleteRepoFile) {}
+
+  rpc CreatePushWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  rpc TriggerWebHook (GithubWebHookTriggerReq) returns (GithubWebHookTriggerReq) {}
 }
+
+message GitWebHookInfo {
+  // Id of the action that will be sent while creating the webhook
+  int32 action_id = 1;
+
+  // Name of the owner of the repository
+  string owner = 2;
+
+  // Name of the repository
+  string repo = 3;
+}
+
 
 message UpdateRepoInfos {
   string owner = 1; /* Path parameter */
@@ -40,4 +56,9 @@ message DeleteRepoFile {
   string message = 4;
   string sha = 5;
   // There is more to add if needed
+}
+
+message GithubWebHookTriggerReq {
+  uint32 action_id = 1;
+  bytes payload = 2;
 }
