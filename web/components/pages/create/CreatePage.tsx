@@ -8,7 +8,7 @@ import {create} from "@/api/createArea";
 import Form from 'next/form';
 import MicroserviceCreateZone from "@/components/ui/services/MicroserviceCreateZone";
 import {getColorForService} from "@/lib/utils";
-import {AreaServices, AreaMicroservices, IngredientPossible, Ingredient} from "@/api/types/areaStatus";
+import {AreaServices, AreaMicroservices, Ingredient} from "@/api/types/areaStatus";
 import {AreaCreateBody} from "@/api/types/areaCreateBody";
 import {getUserTokens} from "@/api/getUserInfos";
 
