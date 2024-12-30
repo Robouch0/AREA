@@ -62,12 +62,6 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Description: "Month number",
 						Required:    true,
 					},
-					"day_week": {
-						Value:       0,
-						Type:        "int",
-						Description: "Day of the week",
-						Required:    true,
-					},
 				},
 			},
 		},

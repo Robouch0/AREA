@@ -7,15 +7,20 @@ export default function OAuthRedirectHandler() {
     useEffect(() => {
         const url = new URL(window.location.href);
         const searchParams = new URLSearchParams(url.search);
-        const service:string|null = searchParams.get("service");
-        const code:string|null = searchParams.get('code');
-        if (window.opener && code) {
-            console.log(service);
-            window.opener.postMessage({type: "message", code: `${code},${service}`}, "/");
-            setTimeout(() => {
-                console.log("Redirecting to main site");
-                window.close();
-            }, 1200);
+        const code: string | null = searchParams.get('code');
+        const service: string | null = searchParams.get('state');
+    
+        if (code && service) {
+            try {
+                const channel = new BroadcastChannel(`oauth-${service}`)
+                channel.postMessage({type: "message", code: `${code},${service}`});
+                setTimeout(() => {
+                    console.log("Redirecting to main site");
+                    window.close();
+                }, 1200);
+            } catch (error) {
+                console.error("Error parsing state:", error);
+            }
         }
     }, []);
 

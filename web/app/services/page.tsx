@@ -8,19 +8,12 @@ import Image from "next/image";
 export default function Explore() {
     const [searchField, setSearchField] = useState("");
 
-    // exemple mockup
     // a changer par un call au backend to get every default area
     let areas = [
         {id: 2, reactionCategory: "Github", areaColor: "green", areaCategory: "Clock", areaTitle: "Change la description et/ou le titre d'un repo github tout les X temps",
             ingredients: {owner: "moi", repo: "area", name: "nom", description: "desc"},
         microAction: "dateTimeTrigger", microReaction: "updateRepo"},
-        // {id: 0, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
-        // {id: 1, reactionCategory: "Instagram", areaColor: "blue", areaCategory: "Youtube", areaTitle: "Nouvel vidéo d'inoxtag, play quoicoubébou des montagnes"},
-        // {id: 3, reactionCategory: "Instagram", areaColor: "purple", areaCategory: "Instagram", areaTitle: "TOut les vendredis de chaque semaine récupérer mon top 10 spotify"},
-        // {id: 4, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Instagram", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
-        // {id: 5, reactionCategory: "Instagram", areaColor: "red", areaCategory: "Outlook", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
-        // {id: 6, reactionCategory: "Instagram", areaColor: "orange", areaCategory: "Tweeter", areaTitle: "If Every hour at 00 minutes past the hour, then Send me an email at hugo.duchemin.r@gmail.com"},
-    ];
+       ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchField(e.target.value);

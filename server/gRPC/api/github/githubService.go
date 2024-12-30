@@ -23,7 +23,8 @@ import (
 
 type GithubService struct {
 	tokenDb      *db.TokenDb
-	reactService gRPCService.GithubServiceClient
+	GithubDb         *db.GithubDB
+	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedGithubServiceServer
 }
@@ -33,6 +34,7 @@ func NewGithubService() (*GithubService, error) {
 
 	return &GithubService{tokenDb: tokenDb, reactService: nil}, err
 }
+
 
 // Update a repository content
 func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {

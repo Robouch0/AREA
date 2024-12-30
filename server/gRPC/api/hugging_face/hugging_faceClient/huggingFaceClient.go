@@ -5,7 +5,7 @@
 // huggingFaceClient
 //
 
-package huggingFace
+package huggingFace_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
@@ -37,7 +37,11 @@ func NewHuggingFaceClient(conn *grpc.ClientConn) *HuggingFaceServiceClient {
 		ActionsLauncher:       &IServ.ActionLauncher{},
 		cc:                    gRPCService.NewHuggingFaceServiceClient(conn),
 	}
-	(*hf.MicroservicesLauncher)["textGen"] = hf.sendTextGenerationReaction
+	(*hf.MicroservicesLauncher)["textGen"] = hf.SendTextGenerationReaction
+	(*hf.MicroservicesLauncher)["createRepo"] = hf.CreateRepositoryReaction
+	(*hf.MicroservicesLauncher)["deleteRepo"] = hf.DeleteRepositoryReaction
+	(*hf.MicroservicesLauncher)["moveRepo"] = hf.MoveRepoReaction
+	(*hf.MicroservicesLauncher)["changeVisibility"] = hf.ChangeRepoVisibilityReaction
 
 	(*hf.ActionsLauncher)["push"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
 		return hf.sendNewWebHookAction(scenario, actionId, userID, hf.cc.CreateRepoUpdateWebHook)
@@ -77,16 +81,6 @@ func (hf *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, act
 		return micro(scenario, actionID, userID)
 	}
 	return nil, errors.New("No such action microservice")
-}
-
-func (hf *HuggingFaceServiceClient) sendTextGenerationReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
-	ctx := grpcutils.CreateContextFromUserID(userID)
-	res, err := hf.cc.LaunchTextGeneration(ctx, &gRPCService.TextGenerationReq{Inputs: ingredients["inputs"].(string)})
-	if err != nil {
-		return nil, err
-	}
-
-	return &IServ.ReactionResponseStatus{Description: res.GeneratedText}, nil
 }
 
 func (hf *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
