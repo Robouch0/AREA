@@ -8,7 +8,7 @@ import {create} from "@/api/createArea";
 import Form from 'next/form';
 import MicroserviceCreateZone from "@/components/ui/services/MicroserviceCreateZone";
 import {getColorForService} from "@/lib/utils";
-import {AreaServices, AreaMicroservices, IngredientPossible} from "@/api/types/areaStatus";
+import {AreaServices, AreaMicroservices, IngredientPossible, Ingredient} from "@/api/types/areaStatus";
 import {AreaCreateBody} from "@/api/types/areaCreateBody";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
@@ -87,11 +87,12 @@ const filterAreaByType = (services: AreaServices[], type: string) => {
 
 // /!\ Disabling any error check because an ingredient can be of any type /!\
 // eslint-disable-next-line
-const convertIngredient = (ingredient: string | undefined, type: IngredientPossible): any => {
+const convertIngredient = (ingredient: string | undefined, obj: Ingredient): any => {
     if (ingredient === undefined) {
         return null
     }
-    switch (type) {
+
+    switch (obj.type) {
         case "int":
             return parseInt(ingredient)
         case "float":

@@ -1,6 +1,13 @@
 /** Type of ingredients possible. */
 export type IngredientPossible = "string" | "int" | "bool" | "time" | "float"
 
+export type Ingredient = {
+    value: IngredientPossible,
+    type: string,
+    description: string,
+    required: boolean,
+}
+
 /**
  *  This is a representation of an Area Microservices.
  *
@@ -17,7 +24,7 @@ export interface AreaMicroservices {
     /** Action or Reaction */
     type: string
 
-    ingredients: Map<string, IngredientPossible>
+    ingredients: Map<string, Ingredient>
 }
 
 /**
