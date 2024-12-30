@@ -23,7 +23,8 @@ const (
 	googleScopes string = "https://www.googleapis.com/auth/gmail.modify " +
 		"https://www.googleapis.com/auth/userinfo.email " +
 		"https://mail.google.com/ " +
-		"https://www.googleapis.com/auth/drive"
+		"https://www.googleapis.com/auth/drive " +
+		"https://www.googleapis.com/auth/drive.file"
 	hfScopes     = "openid profile email read-repos write-repos manage-repos write-discussions read-billing"
 	gitlabScopes = "api read_api read_user read_repository write_repository openid profile email"
 )

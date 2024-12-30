@@ -170,6 +170,72 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				},
 			},
 			{
+				Name:    "Create a comment in a file",
+				RefName: "gmail/createComment",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the file where to put the comment",
+						Required:    true,
+					},
+					"content": {
+						Value:       "",
+						Type:        "string",
+						Description: "Content of the comment",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Delete a comment in a file",
+				RefName: "gmail/deleteComment",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the file where to put the comment",
+						Required:    true,
+					},
+					"content": {
+						Value:       "",
+						Type:        "string",
+						Description: "Content of the comment",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Update a comment in a file",
+				RefName: "gmail/updateComment",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the file where to put the comment",
+						Required:    true,
+					},
+					"old_content": {
+						Value:       "",
+						Type:        "string",
+						Description: "Old content of the comment",
+						Required:    true,
+					},
+					"new_content": {
+						Value:       "",
+						Type:        "string",
+						Description: "New content of the comment",
+						Required:    true,
+					},
+				},
+			},
+			{
 				Name:    "Watch email received by an user",
 				RefName: "watchme",
 				Type:    "action",

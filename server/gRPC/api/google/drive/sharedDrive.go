@@ -7,11 +7,13 @@
 
 package drive
 
-type SharedDrive struct {
-	ID   string
-	Name string
-	Kind string `json:"kind"` // Available for output only
+// IT IS NOT FREE : (
 
-	CreatedTime string `json:"createdTime"`
+type SharedDrive struct {
+	ID          string `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Kind        string `json:"kind,omitempty"` // Available for output only
+	Hidden      bool   `json:"hidden,omitempty"`
+	CreatedTime string `json:"createdTime,omitempty"`
 	// Later add capabilities and restrictionss
 }

@@ -39,6 +39,12 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	(*google.MicroservicesLauncher)["gmail/createLabel"] = google.createLabel
 	(*google.MicroservicesLauncher)["gmail/deleteLabel"] = google.deleteLabel
 	(*google.MicroservicesLauncher)["gmail/updateLabel"] = google.updateLabel
+	// (*google.MicroservicesLauncher)["gmail/deleteDrive"] = google.deleteDrive // Not free
+	// (*google.MicroservicesLauncher)["gmail/updateDrive"] = google.updateDrive
+	// (*google.MicroservicesLauncher)["gmail/createDrive"] = google.createDrive
+	(*google.MicroservicesLauncher)["gmail/createComment"] = google.createComment
+	(*google.MicroservicesLauncher)["gmail/deleteComment"] = google.deleteComment
+	(*google.MicroservicesLauncher)["gmail/updateComment"] = google.updateComment
 
 	(*google.ActionLauncher)["watchme"] = google.watchEmail
 	return google
