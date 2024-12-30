@@ -31,18 +31,37 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		Name:    "Date and Time API",
 		RefName: "dt",
 
-		Microservices: []IServ.MicroserviceStatus{
-			IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
+			IServ.MicroserviceDescriptor{
 				Name:    "Trigger a reaction at a specific date and time",
 				RefName: "timeTrigger",
 				Type:    "action",
 
-				Ingredients: map[string]string{
-					// "activated": "bool",
-					"minutes":   "int",
-					"hours":     "int",
-					"day_month": "int",
-					"month":     "int",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"minutes": {
+						Value:       0,
+						Type:        "int",
+						Description: "Minutes",
+						Required:    true,
+					},
+					"hours": {
+						Value:       0,
+						Type:        "int",
+						Description: "Hours",
+						Required:    true,
+					},
+					"day_month": {
+						Value:       0,
+						Type:        "int",
+						Description: "Day of the current month",
+						Required:    true,
+					},
+					"month": {
+						Value:       0,
+						Type:        "int",
+						Description: "Month number",
+						Required:    true,
+					},
 				},
 			},
 		},

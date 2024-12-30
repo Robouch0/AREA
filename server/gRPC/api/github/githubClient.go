@@ -32,7 +32,7 @@ type WebHookRepoSendFunction = func(ctx context.Context, in *gRPCService.GitWebH
 func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 	micros := &IServ.MicroserviceLauncher{}
 	launcher := &IServ.ActionLauncher{}
-	git := &GithubClient{MicroservicesLauncher: micros, ActionsLauncher:launcher, cc: gRPCService.NewGithubServiceClient(conn)}
+	git := &GithubClient{MicroservicesLauncher: micros, ActionsLauncher: launcher, cc: gRPCService.NewGithubServiceClient(conn)}
 	(*git.MicroservicesLauncher)["updateRepo"] = git.updateRepository
 	(*git.MicroservicesLauncher)["updateFile"] = git.updateFile
 	(*git.MicroservicesLauncher)["deleteFile"] = git.deleteFile

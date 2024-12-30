@@ -16,16 +16,31 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		Name:    "Google",
 		RefName: "google",
 
-		Microservices: []IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
 			{
 				Name:    "Send an email to a specific user",
 				RefName: "gmail/sendEmailMe",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"to":           "string",
-					"subject":      "string",
-					"body_message": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"to": {
+						Value:       "",
+						Type:        "string",
+						Description: "Destination e-mail",
+						Required:    true,
+					},
+					"subject": {
+						Value:       "",
+						Type:        "string",
+						Description: "Subject of the email",
+						Required:    true,
+					},
+					"body_message": {
+						Value:       "",
+						Type:        "string",
+						Description: "Message Inside the email",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -33,8 +48,13 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "gmail/deleteEmailMe",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"subject": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"subject": {
+						Value:       "",
+						Type:        "string",
+						Description: "Subject of the email",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -42,8 +62,13 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "gmail/moveToTrash",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"subject": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"subject": {
+						Value:       "",
+						Type:        "string",
+						Description: "Subject of the email",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -51,8 +76,13 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "gmail/moveFromTrash",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"subject": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"subject": {
+						Value:       "",
+						Type:        "string",
+						Description: "Subject of the email",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -60,11 +90,31 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "gmail/createLabel",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"name":                  "string",
-					"messageListVisibility": "string",
-					"LabelListVisibility":   "string",
-					"type":                  "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the label",
+						Required:    true,
+					},
+					"messageListVisibility": {
+						Value:       "",
+						Type:        "string",
+						Description: "Visibility of the message with this label",
+						Required:    true,
+					},
+					"LabelListVisibility": {
+						Value:       "",
+						Type:        "string",
+						Description: "Visibility of the label",
+						Required:    true,
+					},
+					"type": {
+						Value:       "",
+						Type:        "string",
+						Description: "Type of the label (User/System)",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -72,12 +122,37 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "gmail/updateLabel",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"old_name":              "string",
-					"new_name":              "string",
-					"messageListVisibility": "string",
-					"LabelListVisibility":   "string",
-					"type":                  "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"old_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Old name of the label",
+						Required:    true,
+					},
+					"new_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "New name of the label",
+						Required:    true,
+					},
+					"messageListVisibility": {
+						Value:       "",
+						Type:        "string",
+						Description: "Visibility of the message with this label",
+						Required:    true,
+					},
+					"LabelListVisibility": {
+						Value:       "",
+						Type:        "string",
+						Description: "Visibility of the label",
+						Required:    true,
+					},
+					"type": {
+						Value:       "",
+						Type:        "string",
+						Description: "Type of the label (User/System)",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -85,8 +160,13 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "gmail/deleteLabel",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"name": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the label",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -94,7 +174,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "watchme",
 				Type:    "action",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 		},
 	}
