@@ -69,7 +69,7 @@ export function OauthButton({ service, className, ServiceIcon, textButton, login
             return
         }
         channel.onmessage = handleMessage
-    }, [channel])
+    }, [channel, service])
 
     const openPopup = useCallback(async (service: string) => {
         try {
