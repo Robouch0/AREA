@@ -23,9 +23,14 @@ jobs:
       - name: Install Protogen Go
         run: |
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-          export GO_PATH=~/go
-          export PATH=$PATH:/$GO_PATH/bin
+          echo "GO_PATH=~/go" >> $GITHUB_ENV
+          echo "PATH=$PATH:/$GO_PATH/bin" >> $GITHUB_ENV
         working-directory: ./server
+
+    - name: Test
+      run: |
+        echo $GO_PATH
+        echo $PATH
 
       - name: Generate protogen files
         run: |
