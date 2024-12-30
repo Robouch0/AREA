@@ -18,8 +18,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-//https://www.gitlab.com/api/v4/
-
 type GitlabClient struct {
 	MicroservicesLauncher *IServ.MicroserviceLauncher
 	ActionLauncher        *IServ.ActionLauncher
