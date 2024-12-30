@@ -27,10 +27,10 @@ jobs:
           echo "PATH=$PATH:/$GO_PATH/bin" >> $GITHUB_ENV
         working-directory: ./server
 
-    - name: Test
-      run: |
-        echo $GO_PATH
-        echo $PATH
+      - name: Test
+        run: |
+          echo $GO_PATH
+          echo $PATH
 
       - name: Generate protogen files
         run: |
