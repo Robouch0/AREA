@@ -50,10 +50,10 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 
 	gateway.Router.Mount("/oauth/", controllers.OAuthRoutes(gateway.JwtTok))
 
-	gateway.Router.Mount("/token/", controllers.TokenRoutes())
+	gateway.Router.Mount("/token/", controllers.TokenRoutes()) // put in secure place
 	gateway.Router.Mount("/webhook/", controllers.WebHookRoutes(gateway))
 
-	gateway.Router.Mount("/users/", UserRoutes())
+	gateway.Router.Mount("/users/", UserRoutes()) // put in secure place
 	gateway.Router.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(gateway.JwtTok))
 		r.Use(jwtauth.Authenticator(gateway.JwtTok))
@@ -63,6 +63,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 			w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user_id"])))
 		})
 
+		r.Mount("/areas/", AreaRoutes(gateway))
 		r.Post("/create/{service}", controllers.CreateRoute(gateway))
 		r.Get("/create/list", controllers.ListService(gateway))
 		r.Get("/ping", controllers.PingRoute)

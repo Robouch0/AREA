@@ -16,15 +16,25 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 		Name:    "Hugging Face",
 		RefName: "hf",
 
-		Microservices: []IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
 			{
 				Name:    "Text Generation",
 				RefName: "textGen",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"model":  "string",
-					"inputs": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"model": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the model",
+						Required:    true,
+					},
+					"inputs": {
+						Value:       "",
+						Type:        "string",
+						Description: "Input phrase of the model",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -32,11 +42,31 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 				RefName: "createRepo",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"type":         "string", // Default is model
-					"name":         "string",
-					"organisation": "string", // optionnal
-					"private":      "bool",   // optionnal
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"type": {
+						Value:       "model",
+						Type:        "string",
+						Description: "Type of repository",
+						Required:    true,
+					},
+					"name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the repository",
+						Required:    true,
+					},
+					"organisation": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the origanisation",
+						Required:    false,
+					},
+					"private": {
+						Value:       false,
+						Type:        "bool",
+						Description: "Whether or not the repository is private",
+						Required:    false,
+					},
 				},
 			},
 			{
@@ -44,10 +74,25 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 				RefName: "moveRepo",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"fromRepo": "string",
-					"toRepo":   "string",
-					"type":     "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"fromRepo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Repository name that will be moved",
+						Required:    true,
+					},
+					"toRepo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Destination of the repository",
+						Required:    true,
+					},
+					"type": {
+						Value:       "model",
+						Type:        "string",
+						Description: "Type of repository",
+						Required:    true,
+					},
 				},
 			},
 		},

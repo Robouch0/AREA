@@ -16,24 +16,49 @@ func (weather *WeatherClient) ListServiceStatus() (*IServ.ServiceStatus, error) 
 		Name:    "Weather",
 		RefName: "weather",
 
-		Microservices: []IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
 			{
 				Name:    "Each hour, when temperature exceed a certain amount trigger happens",
 				RefName: "temperatureExceed",
 				Type:    "action",
-				Ingredients: map[string]string{
-					"temperature": "float",
-					"timezone":    "string",
-					"region":      "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"temperature": {
+						Value:       0.0,
+						Type:        "float",
+						Description: "Temperature reference that will be tracked",
+						Required:    true,
+					},
+					"timezone": {
+						Value:       "Europe/Paris",
+						Type:        "string",
+						Description: "Timezone that will be tracked",
+						Required:    true,
+					},
+					"region": {
+						Value:       "France",
+						Type:        "string",
+						Description: "Region that will be tracked",
+						Required:    true,
+					},
 				},
 			},
 			{
 				Name:    "Each Hour, when the day condition (night or day changes)",
 				RefName: "dayChanged",
 				Type:    "action",
-				Ingredients: map[string]string{
-					"timezone": "string",
-					"region":   "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"timezone": {
+						Value:       "Europe/Paris",
+						Type:        "string",
+						Description: "Timezone that will be tracked",
+						Required:    true,
+					},
+					"region": {
+						Value:       "France",
+						Type:        "string",
+						Description: "Region that will be tracked",
+						Required:    true,
+					},
 				},
 			},
 		},

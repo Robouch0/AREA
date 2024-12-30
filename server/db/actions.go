@@ -29,6 +29,11 @@ func InitActionsDb() (*ActionsDb, error) {
 	return &ActionsDb{Db: db}, err
 }
 
+func GetActionDb() *ActionsDb {
+	db := initDB()
+	return &ActionsDb{Db: db}
+}
+
 func (action *ActionsDb) SubmitNewAction(newAction *models.Actions) (*models.Actions, error) {
 	_, err := action.Db.NewInsert().
 		Model(newAction).
