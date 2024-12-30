@@ -17,6 +17,14 @@ jobs:
         run: go mod download
         working-directory: ./server
 
+      - name: Generate protogen files
+        run: |
+          protoc --go_out=./protogen \
+          --go_opt=paths=source_relative \
+          --go-grpc_out=./protogen \
+          --go-grpc_opt=paths=source_relative gRPC/proto/*.proto
+        working-directory: ./server
+
       - name: Build project
         run: go build -v
         working-directory: ./server
