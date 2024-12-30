@@ -5,7 +5,7 @@
 // huggingFaceClientList
 //
 
-package huggingFace
+package huggingFace_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
@@ -28,33 +28,26 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 				},
 			},
 			{
-				Name:    "Check if someone push in the repository",
-				RefName: "push",
-				Type:    "action",
+				Name:    "Create repository",
+				RefName: "createRepo",
+				Type:    "reaction",
 
 				Ingredients: map[string]string{
-					"type": "string",
-					"name": "string",
+					"type":         "string", // Default is model
+					"name":         "string",
+					"organisation": "string", // optionnal
+					"private":      "bool",   // optionnal
 				},
 			},
 			{
-				Name:    "Check if someone create a pull request",
-				RefName: "pr",
-				Type:    "action",
+				Name:    "Move repository",
+				RefName: "moveRepo",
+				Type:    "reaction",
 
 				Ingredients: map[string]string{
-					"type": "string",
-					"name": "string",
-				},
-			},
-			{
-				Name:    "Check if someone create a discussion",
-				RefName: "discussion",
-				Type:    "action",
-
-				Ingredients: map[string]string{
-					"type": "string",
-					"name": "string",
+					"fromRepo": "string",
+					"toRepo":   "string",
+					"type":     "string",
 				},
 			},
 		},

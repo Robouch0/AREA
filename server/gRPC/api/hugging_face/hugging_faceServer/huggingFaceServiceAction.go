@@ -5,7 +5,7 @@
 // huggingFaceAction
 //
 
-package huggingFace
+package huggingFace_server
 
 import (
 	hfType "area/gRPC/api/hugging_face/hfTypes"

@@ -107,7 +107,6 @@ func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.T
 		Hours:     req.Hours,
 		DayMonth:  req.DayMonth,
 		Month:     req.Month,
-		DayWeek:   req.DayWeek,
 	})
 	if err != nil {
 		log.Println(err)

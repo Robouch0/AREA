@@ -43,7 +43,6 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					"hours":     "int",
 					"day_month": "int",
 					"month":     "int",
-					"day_week":  "int",
 				},
 			},
 		},
