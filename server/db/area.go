@@ -63,12 +63,8 @@ func (area *AreaDB) GetFullAreaByUserID(userID uint) (*[]models.Area, error) {
 	err := area.Db.NewSelect().
 		Model(us).
 		Where("user_id = ?", userID).
-		Relation("Action", func(sq *bun.SelectQuery) *bun.SelectQuery {
-			return sq.Where("user_id = ?", userID)
-		}).
-		Relation("Reactions", func(sq *bun.SelectQuery) *bun.SelectQuery {
-			return sq.Where("user_id = ?", userID)
-		}).
+		Relation("Action").
+		Relation("Reactions").
 		Scan(context.Background())
 
 	if err != nil {

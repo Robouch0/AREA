@@ -15,6 +15,7 @@ import (
 	grpcutils "area/utils/grpcUtils"
 	http_utils "area/utils/httpUtils"
 	"encoding/json"
+	"log"
 	"net/http"
 	"slices"
 
@@ -49,6 +50,14 @@ func getActionArea(gateway *api.ApiGateway, action *models.Action) (IServ.Servic
 		return IServ.ServiceStatus{}, err
 	}
 
+	for k, v := range (*micro).Ingredients {
+		value, ok := action.Ingredients[k]
+		if !ok {
+			return IServ.ServiceStatus{}, status.Errorf(codes.DataLoss, "Invalid ingredient %v", k)
+		}
+		v.Value = value
+		(*micro).Ingredients[k] = v
+	}
 	return IServ.ServiceStatus{
 		Name:    serviceStatus.Name,
 		RefName: serviceStatus.RefName,
@@ -71,6 +80,14 @@ func getReactionsArea(gateway *api.ApiGateway, reactions []*models.Reactions) ([
 			return []IServ.ServiceStatus{}, err
 		}
 
+		for k, v := range (*micro).Ingredients {
+			value, ok := react.Reaction.Ingredients[k]
+			if !ok {
+				return []IServ.ServiceStatus{}, status.Errorf(codes.DataLoss, "Invalid ingredient %v", k)
+			}
+			v.Value = value
+			(*micro).Ingredients[k] = v
+		}
 		services = append(services, IServ.ServiceStatus{
 			Name:    serviceStatus.Name,
 			RefName: serviceStatus.RefName,
@@ -82,7 +99,7 @@ func getReactionsArea(gateway *api.ApiGateway, reactions []*models.Reactions) ([
 	return services, nil
 }
 
-func getAllUserArea(gateway *api.ApiGateway, areas *[]models.Area) ([]userArea, error) {
+func formatUsersArea(gateway *api.ApiGateway, areas *[]models.Area) ([]userArea, error) {
 	var allAreas []userArea
 	for _, area := range *areas {
 		action, errAct := getActionArea(gateway, area.Action.Action)
@@ -122,11 +139,13 @@ func GetUserAreas(gateway *api.ApiGateway, areaDB *db.AreaDB) http.HandlerFunc {
 		}
 		areas, err := areaDB.GetFullAreaByUserID(userID)
 		if err != nil {
+			log.Println("Error while loading all the user's areas", err)
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
-		allAreas, err := getAllUserArea(gateway, areas)
+		allAreas, err := formatUsersArea(gateway, areas)
 		if err != nil {
+			log.Println("Error while formatting all of nthe user's areas", err)
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
