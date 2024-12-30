@@ -26,6 +26,10 @@ service GoogleService {
   // Update a label
   rpc UpdateLabel (UpdateLabelReq) returns (UpdateLabelReq) {}
 
+  rpc CreateSharedDrive (CreateSharedDriveReq) returns (CreateSharedDriveReq) {}
+  rpc DeleteSharedDrive (DeleteSharedDriveReq) returns (DeleteSharedDriveReq) {}
+  rpc UpdateSharedDrive (UpdateSharedDriveReq) returns (UpdateSharedDriveReq) {}
+
   /* WebHooks Microservice */
 
   // Watch email of the user currently logged
@@ -79,3 +83,17 @@ message UpdateLabelReq {
 message DeleteLabelReq {
   string name = 1;
 }
+
+message CreateSharedDriveReq {
+  string name = 1;
+}
+
+message DeleteSharedDriveReq {
+  string name = 1;
+}
+
+message UpdateSharedDriveReq {
+  string name = 1;
+  // Add more datas
+}
+
