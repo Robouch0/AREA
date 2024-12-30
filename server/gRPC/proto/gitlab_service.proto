@@ -5,8 +5,41 @@ package gitlab;
 option go_package = "github.com/area/grpc-go/service";
 
 service GitlabService {
-  rpc Test(TestReq) returns(TestReq) {}
+  rpc CreateFile(CreateLabRepoFile) returns(CreateLabRepoFile) {}
+
+  rpc UpdateFile(UpdateLabRepoFile) returns(UpdateLabRepoFile) {}
+
+  rpc DeleteFile(DeleteLabRepoFile) returns(DeleteLabRepoFile) {}
+
+  rpc MarkItemAsDone(TodoLabItemDone) returns(TodoLabItemDone) {}
 }
 
-message TestReq {
+message CreateLabRepoFile {
+  string file_path = 1; /* Path parameter */
+  string id = 2; /* Path parameter */
+
+  string branch = 3;
+  string commit_message = 4;
+  string content = 5;
+}
+
+message UpdateLabRepoFile {
+  string file_path = 1; /* Path parameter */
+  string id = 2; /* Path parameter */
+
+  string branch = 3;
+  string commit_message = 4;
+  string content = 5;
+}
+
+message DeleteLabRepoFile {
+  string file_path = 1; /* Path parameter */
+  string id = 2; /* Path parameter */
+
+  string branch = 3;
+  string commit_message = 4;
+}
+
+message TodoLabItemDone {
+  string id = 1;
 }

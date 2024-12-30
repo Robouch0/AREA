@@ -10,7 +10,6 @@ package gitlab_server
 import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
-	"context"
 
 	"google.golang.org/grpc"
 )
@@ -35,6 +34,3 @@ func (git *GitlabService) InitReactClient(conn *grpc.ClientConn) {
 	git.reactService = gRPCService.NewReactionServiceClient(conn)
 }
 
-func (git *GitlabService) Test(ctx context.Context, req *gRPCService.TestReq) (*gRPCService.TestReq, error) {
-	return nil, nil
-}
