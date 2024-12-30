@@ -24,7 +24,7 @@ jobs:
         run: |
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
           echo "GO_PATH=~/go" >> $GITHUB_ENV
-          echo "PATH=$PATH:/$GO_PATH/bin" >> $GITHUB_ENV
+          echo "PATH=$PATH:/~/go/bin" >> $GITHUB_ENV
         working-directory: ./server
 
       - name: Test
