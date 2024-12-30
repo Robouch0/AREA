@@ -20,6 +20,12 @@ jobs:
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
 
+      - name: Install Protogen Go
+        run: |
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+          export PATH="$PATH:$(go env GOPATH)/bin"
+        working-directory: ./server
+
       - name: Generate protogen files
         run: |
           protoc --go_out=./protogen \
