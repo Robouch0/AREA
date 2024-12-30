@@ -17,6 +17,9 @@ jobs:
         run: go mod download
         working-directory: ./server
 
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
       - name: Generate protogen files
         run: |
           protoc --go_out=./protogen \
