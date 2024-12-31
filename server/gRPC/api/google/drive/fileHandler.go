@@ -24,8 +24,10 @@ import (
 
 const (
 	listFilesURL  = "https://www.googleapis.com/drive/v3/files"
-	createFileURL = "https://www.googleapis.com/drive/v3/files"
+	createFileURL = "https://www.googleapis.com/drive/v3/files" // Metadata only
 	deleteFileURL = "https://www.googleapis.com/drive/v3/files/%s"
+	updateFileURL = "https://www.googleapis.com/drive/v3/files/%s" // Metadata only
+	copyFileURL   = "https://www.googleapis.com/drive/v3/files/%s/copy"
 )
 
 type ListDriveFile struct {
@@ -80,8 +82,29 @@ func CreateEmptyFile(accessToken string, file DriveFile) (*DriveFile, error) {
 	return drive, nil
 }
 
-func CopyFile(accessToken string) {
+func CopyFile(accessToken string, fileID string, file DriveFile) (*DriveFile, error) {
+	url := fmt.Sprintf(copyFileURL, fileID)
+	b, err := json.Marshal(&file)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
+	}
 
+	postRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
+	if err != nil {
+		return nil, err
+	}
+	postRequest.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
+	postRequest.Header.Add("Accept", "application/json")
+
+	resp, err := http_utils.SendHttpRequest(postRequest, 200)
+	if err != nil {
+		return nil, err
+	}
+	drive, err := utils.IoReaderToStruct[DriveFile](&resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return drive, nil
 }
 
 func DeleteFile(accessToken, fileID string) error {
@@ -100,6 +123,27 @@ func DeleteFile(accessToken, fileID string) error {
 	return nil
 }
 
-func UpdateFile(accessToken string) {
+func UpdateFile(accessToken, fileID string, file DriveFile) (*DriveFile, error) {
+	url := fmt.Sprintf(updateFileURL, fileID)
+	b, err := json.Marshal(&file)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
+	}
 
+	postRequest, err := http.NewRequest("PATCH", url, bytes.NewBuffer(b))
+	if err != nil {
+		return nil, err
+	}
+	postRequest.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
+	postRequest.Header.Add("Accept", "application/json")
+
+	resp, err := http_utils.SendHttpRequest(postRequest, 200)
+	if err != nil {
+		return nil, err
+	}
+	drive, err := utils.IoReaderToStruct[DriveFile](&resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return drive, nil
 }

@@ -47,6 +47,8 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	(*google.MicroservicesLauncher)["gmail/updateComment"] = google.updateComment
 	(*google.MicroservicesLauncher)["gmail/createEmptyFile"] = google.createEmptyFile
 	(*google.MicroservicesLauncher)["gmail/deleteFile"] = google.deleteFile
+	(*google.MicroservicesLauncher)["gmail/updateFile"] = google.updateFile
+	(*google.MicroservicesLauncher)["gmail/copyFile"] = google.copyFile
 
 	(*google.ActionLauncher)["watchme"] = google.watchEmail
 	return google

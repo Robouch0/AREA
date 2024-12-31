@@ -49,3 +49,51 @@ func (google *GoogleService) DeleteFile(ctx context.Context, req *gRPCService.De
 	}
 	return req, nil
 }
+
+func (google *GoogleService) UpdateFileMetadata(ctx context.Context, req *gRPCService.UpdateFileMetaReq) (*gRPCService.UpdateFileMetaReq, error) {
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, google.tokenDb, "GoogleService", "google")
+	if err != nil {
+		return nil, err
+	}
+	list, err := drive.ListFiles(tokenInfo.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+	for _, f := range list.Files {
+		if f.Name == req.OldFileName {
+			_, err := drive.UpdateFile(tokenInfo.AccessToken, f.ID, drive.DriveFile{
+				Name:        req.NewFileName,
+				Description: req.Description,
+			})
+			if err != nil {
+				return nil, err
+			}
+			return req, nil
+		}
+	}
+	return req, nil
+}
+
+func (google *GoogleService) CopyFile(ctx context.Context, req *gRPCService.CopyFileReq) (*gRPCService.CopyFileReq, error) {
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, google.tokenDb, "GoogleService", "google")
+	if err != nil {
+		return nil, err
+	}
+	list, err := drive.ListFiles(tokenInfo.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+	for _, f := range list.Files {
+		if f.Name == req.SrcFileName {
+			_, err := drive.CopyFile(tokenInfo.AccessToken, f.ID, drive.DriveFile{
+				Name:        req.DestFileName,
+				Description: req.Description,
+			})
+			if err != nil {
+				return nil, err
+			}
+			return req, nil
+		}
+	}
+	return req, nil
+}

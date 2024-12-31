@@ -270,6 +270,58 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				},
 			},
 			{
+				Name:    "Update a file",
+				RefName: "gmail/updateFile",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"old_file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Old name of the file",
+						Required:    true,
+					},
+					"new_file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "New name of the file",
+						Required:    true,
+					},
+					"description": {
+						Value:       "",
+						Type:        "string",
+						Description: "Description of the file",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Copy a file",
+				RefName: "gmail/copyFile",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"src_file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Source name of the file",
+						Required:    true,
+					},
+					"dest_file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Destination name of the file",
+						Required:    true,
+					},
+					"description": {
+						Value:       "",
+						Type:        "string",
+						Description: "Description of the file",
+						Required:    true,
+					},
+				},
+			},
+			{
 				Name:    "Watch email received by an user",
 				RefName: "watchme",
 				Type:    "action",

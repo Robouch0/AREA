@@ -45,6 +45,10 @@ service GoogleService {
 
   rpc DeleteFile (DeleteFileReq) returns (DeleteFileReq) {}
 
+  rpc UpdateFileMetadata (UpdateFileMetaReq) returns (UpdateFileMetaReq) {}
+
+  rpc CopyFile (CopyFileReq) returns (CopyFileReq) {}
+
   // Create a file with datas
   // rpc CreateFile(CreateEmptyFileReq) returns (CreateEmptyFileReq) {}
 
@@ -143,4 +147,17 @@ message CreateEmptyFileReq {
 
 message DeleteFileReq {
   string file_name = 1;
+}
+
+message UpdateFileMetaReq {
+  string old_file_name = 1;
+  string new_file_name = 2;
+
+  string description = 3;
+}
+
+message CopyFileReq {
+  string src_file_name = 1;
+  string dest_file_name = 2;
+  string description = 3;
 }
