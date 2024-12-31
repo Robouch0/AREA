@@ -315,6 +315,6 @@ func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microse
 	return nil, errors.New("No such microservice")
 }
 
-func (_ *DiscordClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+func (_ *DiscordClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
 }

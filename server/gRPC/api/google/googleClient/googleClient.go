@@ -51,7 +51,47 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	(*google.MicroservicesLauncher)["gmail/copyFile"] = google.copyFile
 
 	(*google.ActionLauncher)["watchme"] = google.watchEmail
+	(*google.ActionLauncher)["watchFile"] = google.watchFile
+	(*google.ActionLauncher)["watchChanges"] = google.watchChanges
 	return google
+}
+
+func (google *GoogleClient) watchFile(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	jsonString, err := json.Marshal(scenario.Action.Ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var fileReq gRPCService.WatchFileReq
+	err = json.Unmarshal(jsonString, &fileReq)
+	if err != nil {
+		return nil, err
+	}
+	fileReq.ActionId = uint32(actionID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = google.cc.WatchDriveFile(ctx, &fileReq)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
+}
+
+func (google *GoogleClient) watchChanges(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	jsonString, err := json.Marshal(scenario.Action.Ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var fileReq gRPCService.WatchChangesReq
+	err = json.Unmarshal(jsonString, &fileReq)
+	if err != nil {
+		return nil, err
+	}
+	fileReq.ActionId = uint32(actionID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = google.cc.WatchDriveChanges(ctx, &fileReq)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
 }
 
 func (google *GoogleClient) watchEmail(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
@@ -217,13 +257,32 @@ func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microser
 	return nil, errors.New("No such microservice")
 }
 
-func (google *GoogleClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+	// Refactor with a map
+	b, err := json.Marshal(webhook.Payload)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
+	}
+	bHeader, err := json.Marshal(webhook.Header)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
+	}
 	if microservice == "watchme" {
-		b, err := json.Marshal(payload)
-		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
-		}
 		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
+		if err != nil {
+			return nil, err
+		}
+		return &IServ.WebHookResponseStatus{}, nil
+	}
+	if microservice == "watchFile" {
+		_, err = google.cc.WatchFileTrigger(context.Background(), &gRPCService.FileTriggerReq{Headers: bHeader, ActionId: uint32(actionID)})
+		if err != nil {
+			return nil, err
+		}
+		return &IServ.WebHookResponseStatus{}, nil
+	}
+	if microservice == "watchChanges" {
+		_, err = google.cc.WatchChangesTrigger(context.Background(), &gRPCService.ChangesTriggerReq{Headers: bHeader, ActionId: uint32(actionID)})
 		if err != nil {
 			return nil, err
 		}

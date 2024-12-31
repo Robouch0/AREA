@@ -17,6 +17,7 @@ import (
 type GoogleService struct {
 	tokenDb      *db.TokenDb
 	gmailDb      *db.GoogleGmailDB
+	driveDb      *db.GoogleDriveDB
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedGoogleServiceServer
@@ -32,7 +33,12 @@ func NewGoogleService() (*GoogleService, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &GoogleService{tokenDb: tokenDb, gmailDb: gmailDB, reactService: nil}, err
+
+	driveDB, err := db.InitGoogleDriveDB()
+	if err != nil {
+		return nil, err
+	}
+	return &GoogleService{tokenDb: tokenDb, gmailDb: gmailDB, driveDb: driveDB, reactService: nil}, err
 }
 
 func (google *GoogleService) InitReactClient(conn *grpc.ClientConn) {

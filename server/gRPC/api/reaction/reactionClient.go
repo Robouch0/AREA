@@ -70,6 +70,6 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 	return &IServ.ActionResponseStatus{Description: res.Description, ActionID: int(res.ActionId)}, nil
 }
 
-func (_ *ReactionServiceClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+func (_ *ReactionServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
 }

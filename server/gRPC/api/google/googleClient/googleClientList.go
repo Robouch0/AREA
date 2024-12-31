@@ -328,6 +328,27 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
+			{
+				Name:    "Watch a specific file",
+				RefName: "watchFile",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the file",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Watch Changes for all file ressources",
+				RefName: "watchChanges",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+			},
 		},
 	}
 	return status, nil
