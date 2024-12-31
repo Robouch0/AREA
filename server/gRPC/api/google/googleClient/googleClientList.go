@@ -236,6 +236,40 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				},
 			},
 			{
+				Name:    "Create an empty file",
+				RefName: "gmail/createEmptyFile",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the new file",
+						Required:    true,
+					},
+					"description": {
+						Value:       "",
+						Type:        "string",
+						Description: "Description of the file created",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Delete a file",
+				RefName: "gmail/deleteFile",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"file_name": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the file",
+						Required:    true,
+					},
+				},
+			},
+			{
 				Name:    "Watch email received by an user",
 				RefName: "watchme",
 				Type:    "action",

@@ -40,6 +40,14 @@ service GoogleService {
   // Update a comment on a file
   rpc UpdateCommentOnFile (UpdateCommentReq) returns (UpdateCommentReq) {}
 
+  // Create an empty file
+  rpc CreateEmptyFile(CreateEmptyFileReq) returns (CreateEmptyFileReq) {}
+
+  rpc DeleteFile (DeleteFileReq) returns (DeleteFileReq) {}
+
+  // Create a file with datas
+  // rpc CreateFile(CreateEmptyFileReq) returns (CreateEmptyFileReq) {}
+
   /* WebHooks Microservice */
 
   // Watch email of the user currently logged
@@ -128,3 +136,11 @@ message UpdateCommentReq {
   string new_content = 3;
 }
 
+message CreateEmptyFileReq {
+  string file_name = 1;
+  string description = 2;
+}
+
+message DeleteFileReq {
+  string file_name = 1;
+}
