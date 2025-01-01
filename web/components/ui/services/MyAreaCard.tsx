@@ -31,8 +31,8 @@ export function MyAreaCard({action, reaction, areaID}: {
                             <ServiceIcon className="text-3xl text-black" tag={reaction.ref_name}/>
                         </div>
                         <CardHeader className="text-wrap mt-2">
-                            <CardTitle className="text-blue-600 my-2 !text-2xl break-words mb-6"> {action.microservices?.at(0).name} </CardTitle>
-                            <CardTitle className="text-red-600 my-2 !text-2xl break-words"> {reaction.microservices.at(0).name} </CardTitle>
+                            <CardTitle className="text-blue-600 my-2 !text-2xl break-words mb-6"> {action.microservices?.at(0)?.name} </CardTitle>
+                            <CardTitle className="text-red-600 my-2 !text-2xl break-words"> {reaction.microservices.at(0)?.name} </CardTitle>
 
                         </CardHeader>
                     </div>
