@@ -17,5 +17,6 @@ type Drive struct {
 	UserID    uint `bun:"user_id" json:"user_id"`
 	Activated bool `bun:"activated" json:"activated,omitempty"`
 
-	ChannelID string `bun:"channel_id" json:"channel_id,omitempty"`
+	ChannelID  string `bun:"channel_id" json:"channel_id,omitempty"`
+	ResourceID string `bun:"resourceId" json:"resourceId,omitempty"`
 }

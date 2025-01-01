@@ -15,6 +15,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -267,6 +268,7 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
 	}
+	log.Println(microservice)
 	if microservice == "watchme" {
 		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
 		if err != nil {
@@ -275,8 +277,10 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 		return &IServ.WebHookResponseStatus{}, nil
 	}
 	if microservice == "watchFile" {
+		log.Println(microservice)
 		_, err = google.cc.WatchFileTrigger(context.Background(), &gRPCService.FileTriggerReq{Headers: bHeader, ActionId: uint32(actionID)})
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		return &IServ.WebHookResponseStatus{}, nil

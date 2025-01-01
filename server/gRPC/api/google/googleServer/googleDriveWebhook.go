@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -29,16 +30,17 @@ func watchFile(
 	fileID string,
 ) (*gRPCService.WatchFileReq, error) {
 	channelID := uuid.NewString()
-	_, err := google.driveDb.StoreNewGWatch(&models.Drive{
-		ActionID:  uint(req.ActionId),
-		UserID:    uint(tokenInfo.UserID),
-		Activated: true,
-		ChannelID: channelID,
-	})
+	respWatch, err := drive.WatchFile(tokenInfo.AccessToken, fileID, channelID, uint(req.ActionId))
 	if err != nil {
 		return nil, err
 	}
-	_, err = drive.WatchFile(tokenInfo.AccessToken, fileID, channelID, uint(req.ActionId))
+	_, err = google.driveDb.StoreNewGWatch(&models.Drive{
+		ActionID:   uint(req.ActionId),
+		UserID:     uint(tokenInfo.UserID),
+		Activated:  true,
+		ChannelID:  channelID,
+		ResourceID: respWatch.ResourceId,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -68,16 +70,17 @@ func (google *GoogleService) WatchDriveChanges(ctx context.Context, req *gRPCSer
 		return nil, err
 	}
 	channelID := uuid.NewString()
-	_, err = google.driveDb.StoreNewGWatch(&models.Drive{
-		ActionID:  uint(req.ActionId),
-		UserID:    uint(tokenInfo.UserID),
-		Activated: true,
-		ChannelID: channelID,
-	})
+	respWatch, err := drive.WatchChanges(tokenInfo.AccessToken, channelID, uint(req.ActionId))
 	if err != nil {
 		return nil, err
 	}
-	_, err = drive.WatchChanges(tokenInfo.AccessToken, channelID, uint(req.ActionId))
+	_, err = google.driveDb.StoreNewGWatch(&models.Drive{
+		ActionID:   uint(req.ActionId),
+		UserID:     uint(tokenInfo.UserID),
+		Activated:  true,
+		ChannelID:  channelID,
+		ResourceID: respWatch.ResourceId,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -85,14 +88,12 @@ func (google *GoogleService) WatchDriveChanges(ctx context.Context, req *gRPCSer
 }
 
 func (google *GoogleService) WatchFileTrigger(ctx context.Context, req *gRPCService.FileTriggerReq) (*gRPCService.FileTriggerReq, error) {
-	// Get type for drive payload
 	var header http.Header
 	if json.Unmarshal(req.Headers, &header) != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
 	}
 
-	actionID := header.Get("X-Goog-Channel-ID")
-	act, err := google.driveDb.GetByChannelID(actionID)
+	act, err := google.driveDb.GetActionByID(strconv.Itoa(int(req.ActionId)))
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -112,14 +113,12 @@ func (google *GoogleService) WatchFileTrigger(ctx context.Context, req *gRPCServ
 }
 
 func (google *GoogleService) WatchChangesTrigger(ctx context.Context, req *gRPCService.ChangesTriggerReq) (*gRPCService.ChangesTriggerReq, error) {
-	// Get type for drive payload
 	var header http.Header
 	if json.Unmarshal(req.Headers, &header) != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
 	}
 
-	actionID := header.Get("X-Goog-Channel-ID")
-	act, err := google.driveDb.GetByChannelID(actionID)
+	act, err := google.driveDb.GetActionByID(strconv.Itoa(int(req.ActionId)))
 	if err != nil {
 		log.Println(err)
 		return nil, err

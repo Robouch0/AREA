@@ -41,6 +41,19 @@ func (google *GoogleDriveDB) StoreNewGWatch(newData *models.Drive) (*models.Driv
 	return newData, nil
 }
 
+func (google *GoogleDriveDB) GetActionByID(action_id string) (*models.Drive, error) {
+	allDatas := new(models.Drive)
+	err := google.Db.NewSelect().
+		Model(allDatas).
+		Where("action_id = ?", action_id).
+		Scan(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return allDatas, nil
+}
+
 func (google *GoogleDriveDB) GetByChannelID(channelID string) (*models.Drive, error) {
 	allDatas := new(models.Drive)
 	err := google.Db.NewSelect().

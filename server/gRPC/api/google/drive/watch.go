@@ -22,10 +22,11 @@ const (
 )
 
 type DriveChannel struct {
-	Payload bool   `json:"payload,omitempty"`
-	ID      string `json:"id,omitempty"`
-	Address string `json:"address,omitempty"`
-	Type    string `json:"type,omitempty"`
+	Payload    bool   `json:"payload,omitempty"`
+	ID         string `json:"id,omitempty"`
+	ResourceId string `json:"resourceId,omitempty"`
+	Address    string `json:"address,omitempty"`
+	Type       string `json:"type,omitempty"`
 }
 
 // Faire les types et les fonctions
@@ -72,7 +73,7 @@ func WatchChanges(accessToken, channelID string, actionID uint) (*DriveChannel, 
 	if err != nil {
 		return nil, err
 	}
-	wURL := fmt.Sprintf(rawURL, "google", "watchFile", actionID)
+	wURL := fmt.Sprintf(rawURL, "google", "watchChanges", actionID)
 
 	watchBody := &DriveChannel{
 		Payload: true,
@@ -92,6 +93,10 @@ func WatchChanges(accessToken, channelID string, actionID uint) (*DriveChannel, 
 	}
 	postRequest.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
 	postRequest.Header.Add("Accept", "application/json")
+	q := postRequest.URL.Query()
+	q.Set("pageToken", "100")
+	postRequest.URL.RawQuery = q.Encode()
+
 	resp, err := http_utils.SendHttpRequest(postRequest, 200)
 	if err != nil {
 		return nil, err
