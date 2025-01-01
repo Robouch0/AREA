@@ -21,10 +21,19 @@ export default function ServicesLayout({children,}: Readonly<{
                         AREA
                     </Button>
                 </div>
+
                 <div>
                     <Button
                         className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-32 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
-                        onClick={() : void => (router.push("/services/create/"))}
+                        onClick={(): void => (router.push("/services/myareas/"))}
+                    >
+                        My Areas
+                    </Button>
+                </div>
+                <div>
+                    <Button
+                        className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-32 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
+                        onClick={(): void => (router.push("/services/create/"))}
                     >
                         Create
                     </Button>
@@ -37,13 +46,13 @@ export default function ServicesLayout({children,}: Readonly<{
                         Explore
                     </Button>
                 </div>
-                    <div className="">
-                        <Navbar
-                            prop={user}
-                        >
+                <div className="">
+                    <Navbar
+                        prop={user}
+                    >
 
-                        </Navbar>
-                    </div>
+                    </Navbar>
+                </div>
             </header>
 
             <main className="grow">
