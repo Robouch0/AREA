@@ -167,11 +167,7 @@ func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCServic
 		return nil, err
 	}
 
-	b, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-	pathRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
+	pathRequest, err := http.NewRequest("POST", url, nil)
 	pathRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
 	q := pathRequest.URL.Query()
 	q.Set("access_token", tokenInfo.AccessToken)
