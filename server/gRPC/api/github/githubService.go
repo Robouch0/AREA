@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"google.golang.org/grpc"
 )
 
 type GithubService struct {
@@ -35,6 +37,9 @@ func NewGithubService() (*GithubService, error) {
 	return &GithubService{tokenDb: tokenDb, reactService: nil}, err
 }
 
+func (git *GithubService) InitReactClient(conn *grpc.ClientConn) {
+	git.reactService = gRPCService.NewReactionServiceClient(conn)
+}
 
 // Update a repository content
 func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {
