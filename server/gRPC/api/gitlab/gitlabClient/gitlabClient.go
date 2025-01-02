@@ -41,7 +41,7 @@ func (git *GitlabClient) createFile(ingredients map[string]any, prevOutput []byt
 	if err != nil {
 		return nil, err
 	}
-	var updateReq gRPCService.CreateLabRepoFile
+	var updateReq gRPCService.CreateLabRepoFileReq
 	err = json.Unmarshal(jsonString, &updateReq)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (git *GitlabClient) updateFile(ingredients map[string]any, prevOutput []byt
 	if err != nil {
 		return nil, err
 	}
-	var updateReq gRPCService.UpdateLabRepoFile
+	var updateReq gRPCService.UpdateLabRepoFileReq
 	err = json.Unmarshal(jsonString, &updateReq)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (git *GitlabClient) deleteFile(ingredients map[string]any, prevOutput []byt
 	if err != nil {
 		return nil, err
 	}
-	var updateReq gRPCService.DeleteLabRepoFile
+	var updateReq gRPCService.DeleteLabRepoFileReq
 	err = json.Unmarshal(jsonString, &updateReq)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (git *GitlabClient) markItemDone(ingredients map[string]any, prevOutput []b
 	if err != nil {
 		return nil, err
 	}
-	var updateReq gRPCService.TodoLabItemDone
+	var updateReq gRPCService.TodoLabItemDoneReq
 	err = json.Unmarshal(jsonString, &updateReq)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (git *GitlabClient) markAllItemDone(ingredients map[string]any, prevOutput 
 	if err != nil {
 		return nil, err
 	}
-	var updateReq gRPCService.AllTodoLabItemDone
+	var updateReq gRPCService.AllTodoLabItemDoneReq
 	err = json.Unmarshal(jsonString, &updateReq)
 	if err != nil {
 		return nil, err

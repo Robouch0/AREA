@@ -5,18 +5,18 @@ package gitlab;
 option go_package = "github.com/area/grpc-go/service";
 
 service GitlabService {
-  rpc CreateFile(CreateLabRepoFile) returns(CreateLabRepoFile) {}
+  rpc CreateFile(CreateLabRepoFileReq) returns(CreateLabRepoFileReq) {}
 
-  rpc UpdateFile(UpdateLabRepoFile) returns(UpdateLabRepoFile) {}
+  rpc UpdateFile(UpdateLabRepoFileReq) returns(UpdateLabRepoFileReq) {}
 
-  rpc DeleteFile(DeleteLabRepoFile) returns(DeleteLabRepoFile) {}
+  rpc DeleteFile(DeleteLabRepoFileReq) returns(DeleteLabRepoFileReq) {}
 
-  rpc MarkItemAsDone(TodoLabItemDone) returns(TodoLabItemDone) {}
+  rpc MarkItemAsDone(TodoLabItemDoneReq) returns(TodoLabItemDoneReq) {}
 
-  rpc MarkAllItemAsDone(AllTodoLabItemDone) returns(AllTodoLabItemDone) {}
+  rpc MarkAllItemAsDone(AllTodoLabItemDoneReq) returns(AllTodoLabItemDoneReq) {}
 }
 
-message CreateLabRepoFile {
+message CreateLabRepoFileReq {
   string file_path = 1; /* Path parameter */
   string id = 2; /* Path parameter */
 
@@ -25,7 +25,12 @@ message CreateLabRepoFile {
   string content = 5;
 }
 
-message UpdateLabRepoFile {
+message CreateLabRepoFileResp {
+  string file_path = 1;
+  string branch = 2;
+}
+
+message UpdateLabRepoFileReq {
   string file_path = 1; /* Path parameter */
   string id = 2; /* Path parameter */
 
@@ -34,7 +39,12 @@ message UpdateLabRepoFile {
   string content = 5;
 }
 
-message DeleteLabRepoFile {
+message UpdateLabRepoFileResp {
+  string file_path = 1;
+  string branch = 2;
+}
+
+message DeleteLabRepoFileReq {
   string file_path = 1; /* Path parameter */
   string id = 2; /* Path parameter */
 
@@ -42,9 +52,18 @@ message DeleteLabRepoFile {
   string commit_message = 4;
 }
 
-message TodoLabItemDone {
+message DeleteLabRepoFileResp {
+}
+
+message TodoLabItemDoneReq {
   string id = 1;
 }
 
-message AllTodoLabItemDone {
+message TodoLabItemDoneResp {
+}
+
+message AllTodoLabItemDoneReq {
+}
+
+message AllTodoLabItemDoneResp {
 }

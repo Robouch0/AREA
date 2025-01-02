@@ -43,7 +43,7 @@ func (git *GitlabService) InitReactClient(conn *grpc.ClientConn) {
 	git.reactService = gRPCService.NewReactionServiceClient(conn)
 }
 
-func (git *GitlabService) CreateFile(ctx context.Context, req *gRPCService.CreateLabRepoFile) (*gRPCService.CreateLabRepoFile, error) {
+func (git *GitlabService) CreateFile(ctx context.Context, req *gRPCService.CreateLabRepoFileReq) (*gRPCService.CreateLabRepoFileReq, error) {
 	if req.Branch == "" || req.CommitMessage == "" || req.FilePath == "" || req.Id == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
@@ -72,7 +72,7 @@ func (git *GitlabService) CreateFile(ctx context.Context, req *gRPCService.Creat
 	return req, nil
 }
 
-func (git *GitlabService) UpdateFile(ctx context.Context, req *gRPCService.UpdateLabRepoFile) (*gRPCService.UpdateLabRepoFile, error) {
+func (git *GitlabService) UpdateFile(ctx context.Context, req *gRPCService.UpdateLabRepoFileReq) (*gRPCService.UpdateLabRepoFileReq, error) {
 	if req.Branch == "" || req.CommitMessage == "" || req.FilePath == "" || req.Id == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
@@ -101,7 +101,7 @@ func (git *GitlabService) UpdateFile(ctx context.Context, req *gRPCService.Updat
 	return req, nil
 }
 
-func (git *GitlabService) DeleteFile(ctx context.Context, req *gRPCService.DeleteLabRepoFile) (*gRPCService.DeleteLabRepoFile, error) {
+func (git *GitlabService) DeleteFile(ctx context.Context, req *gRPCService.DeleteLabRepoFileReq) (*gRPCService.DeleteLabRepoFileReq, error) {
 	if req.Branch == "" || req.CommitMessage == "" || req.FilePath == "" || req.Id == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
@@ -130,7 +130,7 @@ func (git *GitlabService) DeleteFile(ctx context.Context, req *gRPCService.Delet
 	return req, nil
 }
 
-func (git *GitlabService) MarkItemAsDone(ctx context.Context, req *gRPCService.TodoLabItemDone) (*gRPCService.TodoLabItemDone, error) {
+func (git *GitlabService) MarkItemAsDone(ctx context.Context, req *gRPCService.TodoLabItemDoneReq) (*gRPCService.TodoLabItemDoneReq, error) {
 	if req.Id == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
@@ -160,7 +160,7 @@ func (git *GitlabService) MarkItemAsDone(ctx context.Context, req *gRPCService.T
 }
 
 
-func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCService.AllTodoLabItemDone) (*gRPCService.AllTodoLabItemDone, error) {
+func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCService.AllTodoLabItemDoneReq) (*gRPCService.AllTodoLabItemDoneReq, error) {
 	url := fmt.Sprintf("https://www.gitlab.com/api/v4/todos/mark_as_done")
 	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
 	if err != nil {
