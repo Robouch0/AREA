@@ -4,7 +4,6 @@ package dateTime;
 
 option go_package = "github.com/area/grpc-go/service";
 
-
 service DateTimeService {
   rpc LaunchCronJob(TriggerTimeRequest) returns (TriggerTimeResponse) {}
 }

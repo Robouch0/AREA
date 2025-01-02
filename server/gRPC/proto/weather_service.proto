@@ -1,14 +1,8 @@
 syntax = "proto3";
 
-package gitlab;
+package weather;
 
 option go_package = "github.com/area/grpc-go/service";
-
-/**
- * Cool microservices:
- *  -> Each hour, when temperature exceed a certain amount, do this
- *  -> Each Hour, when it is night, do this
- */
 
 service WeatherService {
   // Each hour, when temperature exceed a certain amount, do this

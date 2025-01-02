@@ -60,7 +60,10 @@ service GoogleService {
   // Watch email of the user currently logged
   rpc WatchGmailEmail (EmailTriggerReq) returns (EmailTriggerReq) {}
 
+  // Watch drive file changes of the current user currently logged in
   rpc WatchDriveFile (WatchFileReq) returns (WatchFileReq) {}
+
+  // Watch drive any changes of the current user currently logged in
   rpc WatchDriveChanges (WatchChangesReq) returns (WatchChangesReq) {}
 
   /* WebHooks Microservice Handlers */
@@ -68,8 +71,10 @@ service GoogleService {
   // Function that handle the payload sent by google gmail
   rpc WatchMeTrigger (GmailTriggerReq) returns (GmailTriggerReq) {}
 
+  // Function that handle the payload sent by google drive for file watch
   rpc WatchFileTrigger (FileTriggerReq) returns (FileTriggerReq) {}
 
+  // Function that handle the payload sent by google drive for any changes
   rpc WatchChangesTrigger (ChangesTriggerReq) returns (ChangesTriggerReq) {}
 }
 
