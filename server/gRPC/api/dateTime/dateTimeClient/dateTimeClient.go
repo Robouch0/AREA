@@ -5,7 +5,7 @@
 // dateTimeClient
 //
 
-package dateTime
+package dateTime_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"

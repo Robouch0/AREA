@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dateTime;
+package date_time;
 
 option go_package = "github.com/area/grpc-go/service";
 

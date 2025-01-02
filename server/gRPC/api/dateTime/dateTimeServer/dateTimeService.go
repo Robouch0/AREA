@@ -5,10 +5,11 @@
 // dateTimeService
 //
 
-package dateTime
+package dateTime_server
 
 import (
 	"area/db"
+	Dt_Types "area/gRPC/api/dateTime/dateTimeTypes"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
@@ -63,7 +64,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 		return
 	}
 
-	var dateData AimylogicDateTime
+	var dateData Dt_Types.AimylogicDateTime
 	err = json.Unmarshal(bytesBody, &dateData)
 	if err != nil {
 		log.Println(err)

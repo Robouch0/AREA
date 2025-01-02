@@ -52,9 +52,6 @@ service GoogleService {
   // Copy a file
   rpc CopyFile (CopyFileReq) returns (CopyFileReq) {}
 
-  // Create a file with datas
-  // rpc CreateFile(CreateEmptyFileReq) returns (CreateEmptyFileReq) {}
-
   /* WebHooks Microservice Creation */
 
   // Watch email of the user currently logged

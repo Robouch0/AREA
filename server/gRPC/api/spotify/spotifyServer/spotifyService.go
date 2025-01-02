@@ -5,7 +5,7 @@
 // spotifyService
 //
 
-package spotify
+package spotify_server
 
 import (
 	"area/db"

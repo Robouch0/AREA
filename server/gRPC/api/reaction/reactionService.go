@@ -9,14 +9,14 @@ package reaction
 
 import (
 	"area/db"
-	"area/gRPC/api/dateTime"
-	"area/gRPC/api/discord"
+	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
+	discord_client "area/gRPC/api/discord/discordClient"
 	"area/gRPC/api/github"
 	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
 	IServ "area/gRPC/api/serviceInterface"
-	"area/gRPC/api/spotify"
+	spotify_client "area/gRPC/api/spotify/spotifyClient"
 	weather_client "area/gRPC/api/weather/weatherClient"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
@@ -58,13 +58,13 @@ func NewReactionService() (*ReactionService, error) {
 }
 
 func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
-	react.clients["dt"] = dateTime.NewDateTimeServiceClient(conn)
+	react.clients["dt"] = dateTime_client.NewDateTimeServiceClient(conn)
 	react.clients["hf"] = huggingFace_client.NewHuggingFaceClient(conn)
 	react.clients["github"] = github.NewGithubClient(conn)
 	react.clients["gitlab"] = gitlab_client.NewGitlabClient(conn)
-	react.clients["discord"] = discord.NewDiscordClient(conn)
+	react.clients["discord"] = discord_client.NewDiscordClient(conn)
 	react.clients["google"] = google_client.NewGoogleClient(conn)
-	react.clients["spotify"] = spotify.NewSpotifyClient(conn)
+	react.clients["spotify"] = spotify_client.NewSpotifyClient(conn)
 	react.clients["weather"] = weather_client.NewWeatherClient(conn)
 }
 

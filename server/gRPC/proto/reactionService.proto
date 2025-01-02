@@ -50,5 +50,5 @@ message LaunchResponse {
 ////
 
 message AreaDeactivator {
-  uint32 action_id = 1;
+  uint32 area_id = 1;
 }

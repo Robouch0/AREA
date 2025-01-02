@@ -13,7 +13,8 @@ service GithubService {
 
   rpc CreatePushWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 
-  rpc TriggerWebHook (GithubWebHookTriggerReq) returns (GithubWebHookTriggerReq) {}
+  rpc TriggerWebHook (GithubWebHookTriggerReq)
+    returns (GithubWebHookTriggerReq) {}
 
   rpc DeactivateAction(DeactivateGithub) returns (DeactivateGithub) {}
 }

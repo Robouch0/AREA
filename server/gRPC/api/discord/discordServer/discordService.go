@@ -5,7 +5,7 @@
 // discordService
 //
 
-package discord
+package discord_server
 
 import (
 	"area/db"
