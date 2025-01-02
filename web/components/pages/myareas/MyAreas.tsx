@@ -6,15 +6,19 @@ import Image from "next/image";
 import {AreaServicesWithId} from "@/api/types/areaStatus";
 import {MyAreaCard} from "@/components/ui/services/MyAreaCard";
 
-export default function MyAreas({ userAreas }: { userAreas: AreaServicesWithId[] }) {
+export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }) {
     const [searchField, setSearchField] = useState("");
-
-    const filteredAreas : AreaServicesWithId[] = userAreas.filter(area => {
-        const actionNameMatch : boolean = area.Action.name.toLowerCase().includes(searchField.toLowerCase());
-        const reactionNameMatch : boolean = area.Reactions?.[0]?.name.toLowerCase().includes(searchField.toLowerCase());
-        const areaName:  boolean|undefined = area.Action.microservices?.at(0)?.name.toLowerCase().includes(searchField.toLowerCase());
-        return actionNameMatch || reactionNameMatch || areaName;
-    })
+    let filteredAreas;
+    if (userAreas != undefined) {
+        filteredAreas = userAreas.filter(area => {
+            const actionNameMatch: boolean = area.Action.name.toLowerCase().includes(searchField.toLowerCase());
+            const reactionNameMatch: boolean = area.Reactions?.[0]?.name.toLowerCase().includes(
+                searchField.toLowerCase());
+            const areaName: boolean | undefined = area.Action.microservices?.at(0)?.name.toLowerCase().includes(
+                searchField.toLowerCase());
+            return actionNameMatch || reactionNameMatch || areaName;
+        })
+    }
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchField(e.target.value);
     };
@@ -74,19 +78,30 @@ export default function MyAreas({ userAreas }: { userAreas: AreaServicesWithId[]
                         onChange={handleChange}
                     />
                 </div>
-                <div className="mx-64 h-1/2 w-3/4 flex flex-wrap items-center justify-center">
-                    {filteredAreas.map(area => (
-                        <div key={area.ID} className="">
-                            <MyAreaCard
-                                action={area.Action} reaction={area.Reactions?.at(0)} areaID={parseInt(area.ID)}
-                            />
-                        </div>
-                    ))}
-                </div>
-                <div className="p-16">
 
-                </div>
+
+                {filteredAreas == undefined ?
+                    <h1 className={"text-3xl font-bold mt-2 p-16"}> Nothing to see for the moment, go create some AREAS ! </h1>
+                    :
+                    (
+                        <>
+                            <div className="mx-64 h-1/2 w-3/4 flex flex-wrap items-center justify-center">
+                                {filteredAreas.map(area => (
+                                    <div key={area.ID} className="">
+                                        <MyAreaCard
+                                            action={area.Action} reaction={area.Reactions?.at(0)}
+                                            areaID={parseInt(area.ID)}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="p-16">
+                            </div>
+                        </>
+                    )
+                }
             </div>
+
         </>
     )
 }
