@@ -25,7 +25,7 @@ class AppRouter {
       final isSignupPage = state.matchedLocation == RouteNames.signup;
       final isAuthPage = isLoginPage || isSignupPage;
 
-      if (!isLoggedIn && isAuthPage) {
+      if (!isLoggedIn && !isAuthPage) {
         return RouteNames.login;
       }
       return null;

@@ -9,7 +9,7 @@ import 'package:my_area_flutter/api/types/area_create_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
-  final Future<UserInfoData> userInfo;
+  final Future<UserInfoBody> userInfo;
 
   const CreateAreaPage({
     super.key,
@@ -92,7 +92,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
-  late UserInfoData userInfo;
+  late UserInfoBody userInfo;
 
   @override
   void initState() {
