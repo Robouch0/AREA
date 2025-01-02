@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 
@@ -40,68 +40,143 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		Name:    "Discord",
 		RefName: "discord",
 
-		Microservices: []IServ.MicroserviceStatus{
-			IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
+			{
 				Name:    "Create a message in a channel",
 				RefName: "createMsg",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"channel": "string",
-					"content": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"channel": {
+						Value:       "",
+						Type:        "string",
+						Description: "Channel Discord where to put this message",
+						Required:    true,
+					},
+					"content": {
+						Value:       "",
+						Type:        "string",
+						Description: "Content of the new message",
+						Required:    true,
+					},
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Edit a message",
 				RefName: "editMsg",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"channel":    "string",
-					"message_id": "string",
-					"content":    "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"channel": {
+						Value:       "",
+						Type:        "string",
+						Description: "Channel Discord where to edit the message",
+						Required:    true,
+					},
+					"message_id": {
+						Value:       "",
+						Type:        "string",
+						Description: "Message Identifier (available in discord app)",
+						Required:    true,
+					},
+					"content": {
+						Value:       "",
+						Type:        "string",
+						Description: "Content of the message",
+						Required:    true,
+					},
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Delete a message",
 				RefName: "deleteMsg",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"channel":    "string",
-					"message_id": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"channel": {
+						Value:       "",
+						Type:        "string",
+						Description: "Channel Discord where to delete the message",
+						Required:    true,
+					},
+					"message_id": {
+						Value:       "",
+						Type:        "string",
+						Description: "Message Identifier (available in discord app)",
+						Required:    true,
+					},
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Create a reaction on a message",
 				RefName: "createReact",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"channel":    "string",
-					"message_id": "string",
-					"emoji":      "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"channel": {
+						Value:       "",
+						Type:        "string",
+						Description: "Channel Discord where to create a reaction",
+						Required:    true,
+					},
+					"message_id": {
+						Value:       "",
+						Type:        "string",
+						Description: "Message Identifier (available in discord app)",
+						Required:    true,
+					},
+					"emoji": {
+						Value:       "",
+						Type:        "string",
+						Description: "Emoji to send",
+						Required:    true,
+					},
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Delete all reactions on a message",
 				RefName: "deleteAllreacts",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"channel":    "string",
-					"message_id": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"channel": {
+						Value:       "",
+						Type:        "string",
+						Description: "Channel Discord where to delete the reactions",
+						Required:    true,
+					},
+					"message_id": {
+						Value:       "",
+						Type:        "string",
+						Description: "Message Identifier (available in discord app)",
+						Required:    true,
+					},
 				},
 			},
-			IServ.MicroserviceStatus{
+			{
 				Name:    "Delete selected reactions on a message",
 				RefName: "deleteReact",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"channel":    "string",
-					"message_id": "string",
-					"emoji":      "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"channel": {
+						Value:       "",
+						Type:        "string",
+						Description: "Channel Discord where to delete the reactions",
+						Required:    true,
+					},
+					"message_id": {
+						Value:       "",
+						Type:        "string",
+						Description: "Message Identifier (available in discord app)",
+						Required:    true,
+					},
+					"emoji": {
+						Value:       "",
+						Type:        "string",
+						Description: "Emoji to send",
+						Required:    true,
+					},
 				},
 			},
 		},
@@ -120,7 +195,7 @@ func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.CreateMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -140,7 +215,7 @@ func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput 
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.EditMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -160,7 +235,7 @@ func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.DeleteMessage(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -180,7 +255,7 @@ func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.CreateReaction(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -200,7 +275,7 @@ func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prev
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.DeleteAllReactions(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -220,7 +295,7 @@ func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := disCli.cc.DeleteReactions(ctx, &updateReq)
 	if err != nil {
 		return nil, err
@@ -238,4 +313,8 @@ func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microse
 		return micro(ingredients, prevOutput, userID)
 	}
 	return nil, errors.New("No such microservice")
+}
+
+func (_ *DiscordClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }

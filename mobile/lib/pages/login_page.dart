@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:my_area_flutter/services/auth_service.dart';
+import 'package:my_area_flutter/services/api/auth_service.dart';
 import 'package:my_area_flutter/widgets/auth_input_field.dart';
 import 'package:my_area_flutter/widgets/auth_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
@@ -24,9 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   void _performLogin(String email, String pass) async {
     final success = await _authService.login(email, pass);
 
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content:

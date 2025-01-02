@@ -4,7 +4,7 @@ import { FormData, UserSchema, ValidFieldNames } from "@/lib/typeLogin";
 import FormField from "@/components/ui/utils/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import {FaEye, FaEyeSlash, FaFacebook, FaSpotify} from "react-icons/fa";
+import {FaDiscord, FaEye, FaEyeSlash, FaGithub, FaSpotify} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
@@ -129,43 +129,42 @@ function LoginForm() {
                                 </div>
                             </div>
                             <div className="max-w-md w-full space-y-4">
-                                <Button
-                                    className="focus-visible:border-slate-500  focus-visible:border-8 flex items-center justify-start px-6 bg-blue-800 hover:bg-blue-800 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    type="button"
-                                    arial-label="Facebook"
-                                >
-                                    <FaFacebook className="w-12 h-12" />
-                                    <p className=" mx-3 text-2xl font-semibold"> Continuer avec Facebook </p>
-                                </Button>
 
-
-                                {/* <OauthButton
-                                    arial-label="Google"
-                                    service="google"
-                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGoogle className="w-12 h-12" />}
-                                /> */}
-
-                                {<OauthButton
+                                <OauthButton
                                     arial-label="Spotify"
                                     service="spotify"
-                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaSpotify className="w-12 h-12" />}
-                                />}
+                                    login={true}
+                                    textButton="Continuer avec Spotify"
+                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaSpotify className="w-12 h-12"/>}
+                                />
 
-                                {/*<OauthButton*/}
-                                {/*    arial-label="Discord"*/}
-                                {/*    service="discord"*/}
-                                {/*    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-purple-500 hover:bg-purple-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"*/}
-                                {/*    ServiceIcon={<FaDiscord className="w-12 h-12" />}*/}
-                                {/*/>*/}
+                                {/* {<OauthButton
+                                    arial-label="Hugging Face"
+                                    service="hf"
+                                    login={true}
+                                    textButton={"Continuer avec Hugging Face"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaSpotify />}
+                                />} */}
 
-                                {/*<OauthButton
+                                <OauthButton
+                                    arial-label="Discord"
+                                    service="discord"
+                                    login={true}
+                                    textButton={"Continuer avec Discord"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-purple-500 hover:bg-purple-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaDiscord />}
+                                />
+
+                                {<OauthButton
                                     arial-label="Github"
                                     service="github"
-                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGithub className="w-12 h-12" />}
-                                />*/}
+                                    login={true}
+                                    textButton={"Continuer avec Github"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaGithub />}
+                                />}
 
                                 <div className="flex flex-row font-bold">
                                     <p>

@@ -5,20 +5,56 @@ import {Input} from "@/components/ui/utils/Input";
 import {Button} from "@/components/ui/utils/Button";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
 import {ScrollArea} from "@/components/ui/utils/Scroll-area"
-import {useState} from "react";
+import {ChangeEvent, useState} from "react";
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
+import {OauthButton} from "@/components/ui/services/OauthButton";
+import {unlinkOauthProvider} from "@/api/unlinkOauth";
+import {updateUserInfos} from "@/api/updateUserInfos";
+import {useToast} from "@/hooks/use-toast";
 
-export default function ProfilePage({email, first_name, last_name, password}: userInfo) {
+
+
+
+export default function ProfilePage({email, first_name, last_name, password, providers}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
+    const [firstName, setFirstName] = useState(first_name);
+    const [lastName, setLastName] = useState(last_name);
+    const [passw, setPassword] = useState(password);
+    const [passwTooShort, setTooShort] = useState(false);
+    const { toast } = useToast()
 
     const tags : string[] = [
-        "Github",
-        "Google",
-        "Twitter",
-        "Discord",
+        "github",
+        "google",
+        "discord",
+        "spotify",
     ]
 
+    function handleDisconnectProvider(provider: string) {
+        unlinkOauthProvider(provider);
+    }
+    function handleDataUpdate() {
+        updateUserInfos(firstName, lastName, passw).then(() => {
+        toast({
+            title: "Update sucessful",
+            description: "Your new datas have been updated on our server.",
+            variant: 'default',
+            duration: 2500,
+        })}
+        ).catch(() => {
+        toast({
+            title: "Update failed",
+            description: "Your new datas have not been updated on our server.",
+            variant: 'destructive',
+            duration: 2500,
+        })}
+        )
+    }
+
+    const reloadPage = () => {
+        window.location.reload()
+    }
 
     return (
         <>
@@ -42,49 +78,71 @@ export default function ProfilePage({email, first_name, last_name, password}: us
                         <Input
                             type="email"
                             id="mail"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="Email"
                             value={email}
                             disabled
                         />
                         <h2 className=" text-white text-2xl font-bold my-2"> First name </h2>
                         <Input
-                            type="email"
-                            id="mail"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            type="text"
+                            id="firstname"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
-                            value={first_name}
-                            disabled
+                            value={firstName}
+                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                                setFirstName(e.target.value);
+                            }}
                         />
                         <h2 className="p-2 text-white text-2xl font-bold"> Last name </h2>
                         <Input
-                            type="email"
-                            id="mail"
-                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                            type="text"
+                            id="lastname"
+                            className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
-                            value={last_name}
-                            disabled
+                            value={lastName}
+                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                                setLastName(e.target.value);
+                            }}
                         />
                         <h2 className="p-2 text-white text-2xl font-bold"> Password </h2>
                         <div className="w-full flex flex-row justify-center relative mb-6">
                             <Input
                                 type={showPassword ? "text" : "password"}
                                 id="password"
-                                className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                                className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 aria-label="text"
-                                value={password}
-                                disabled
+                                value={passw}
+                                onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                                    setPassword(e.target.value);
+                                    if (passw.length < 6) {
+                                        setTooShort(true);
+                                    } else {
+                                        setTooShort(false);
+                                    }
+                                }}
                             />
                             <Button
                                 type="button"
                                 onClick={() : void => setShowPassword(!showPassword)}
-                                className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent border-none outline-none focus-visible:outline-none hover:bg-transparent ring-0 shadow-none p-2"
+                                className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent focus-visible:!border-black focus-visible::border focus-visible:!border-8 hover:bg-transparent shadow-none p-2"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
+                                tabIndex={0}
                             >
                                 {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl"/> :
                                     <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
                             </Button>
                         </div>
+                        {passwTooShort &&
+                                <p className={"text-xl text-red-600 font-bold"}> Your password must be longer than 6 characters</p>
+                        }
+                            <Button
+                                className="text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
+                                onClick={handleDataUpdate}
+                                disabled={passw.length < 6}
+                            >
+                                Save & Update Profile
+                            </Button>
                     </div>
                     userData
                     userData
@@ -109,12 +167,32 @@ export default function ProfilePage({email, first_name, last_name, password}: us
                                                     <ServiceIcon className="text-2xl" tag={tag}/>
                                                 </div>
                                                 <div className="mx-4 lg:mx-8 text-2xl text-black font-semibold">
-                                                    {tag}
+                                                    {tag.charAt(0).toUpperCase() + tag.slice(1)}
                                                 </div>
                                             </div>
-                                            <Button className="my-2 mr-6 lg:mr-2">
-                                                Connect
-                                            </Button>
+                                            <div className={"ml-auto"}>
+                                                {providers.includes(tag) ?
+                                                    <Button
+                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-red-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
+                                                        onClick={() => {
+                                                            handleDisconnectProvider(tag);
+                                                            setTimeout(() => {
+                                                                reloadPage()
+                                                            }, 500);
+                                                        }}
+                                                    >
+                                                        Unlink
+                                                    </Button> :
+                                                    <OauthButton
+                                                        arial-label={`${tag}`}
+                                                        service={`${tag}`}
+                                                        login={false}
+                                                        textButton={"Link"}
+                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-green-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
+                                                        ServiceIcon={null}
+                                                    />
+                                                }
+                                            </div>
                                         </div>
                                         <hr className="w-72 h-px bg-black border-0 dark:bg-gray-700"/>
                                     </div>

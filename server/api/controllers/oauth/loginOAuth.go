@@ -8,7 +8,6 @@
 package oauth
 
 import (
-	"area/utils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -17,6 +16,7 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 
 	_ "area/api/controllers/log_types"
+	http_utils "area/utils/httpUtils"
 )
 
 // Sign-up OAuth godoc
@@ -36,7 +36,7 @@ func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string]OAuthURLs) http.Han
 		err := json.NewDecoder(r.Body).Decode(&OAuthCode)
 
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 400, err.Error())
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			log.Println("Cannot parse JSON OAuth Request")
 			return
 		}
@@ -44,17 +44,17 @@ func LoginOAuth(JwtTok *jwtauth.JWTAuth, OAuthURL map[string]OAuthURLs) http.Han
 			toks, err := oauth.OAuth.GetAccessToken(OAuthCode)
 			if err != nil {
 				log.Println(err)
-				utils.WriteHTTPResponseErr(&w, 500, err.Error())
+				http_utils.WriteHTTPResponseErr(&w, 500, err.Error())
 				return
 			}
 			log.Println("Token: ", toks.AccessToken)
 			if err = oauth.OAuth.HandleUserTokens(*toks, &w, JwtTok); err != nil {
 				log.Println(err)
-				utils.WriteHTTPResponseErr(&w, 500, err.Error())
+				http_utils.WriteHTTPResponseErr(&w, 500, err.Error())
 				return
 			}
 			return
 		}
-		utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthCode.Service))
+		http_utils.WriteHTTPResponseErr(&w, 404, fmt.Sprintf("Service %s not found", OAuthCode.Service))
 	}
 }

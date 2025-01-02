@@ -11,7 +11,8 @@ import (
 	api "area/api"
 	gRPCapi "area/gRPC/api/serviceInterface"
 	"area/models"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
+	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -48,9 +49,9 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		serviceParam := chi.URLParam(r, "service")
-		userID, err := utils.GetUserIDClaim(r.Context())
+		userID, err := grpcutils.GetUserIDClaim(r.Context())
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 401, "Invalid claims in jwt tokens.")
+			http_utils.WriteHTTPResponseErr(&w, 401, "Invalid claims in jwt tokens.")
 			log.Println("Invalid claims in jwt tokens", err)
 			return
 		}
@@ -59,33 +60,33 @@ func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
 
 			err := json.NewDecoder(r.Body).Decode(&scenario)
 			if err != nil {
-				utils.WriteHTTPResponseErr(&w, 401, "Incorrect body is sent.")
+				http_utils.WriteHTTPResponseErr(&w, 401, "Incorrect body is sent.")
 				log.Printf("Json Error: %v\n", err)
 				return
 			}
 
 			msg, err := sendToService(gateway.Clients["react"], scenario, DEFAULT_ACTION_ID, int(userID))
 			if err != nil {
-				utils.WriteHTTPResponseErr(&w, 401, err.Error())
-				log.Println(err)
+				http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
+				log.Println("ReactionService error: ", err)
 				return
 			}
 			msg, err = sendToService(service, scenario, msg.ActionID, int(userID))
 			if err != nil {
-				utils.WriteHTTPResponseErr(&w, 401, err.Error())
-				log.Println(err)
+				http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
+				log.Println("ActionService error: ", err)
 				return
 			}
 
 			res, err := json.Marshal(msg)
 			if err != nil {
-				utils.WriteHTTPResponseErr(&w, 401, err.Error())
+				http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 				log.Println(err)
 				return
 			}
 			w.Write([]byte(res))
 		} else {
-			utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("No such Service: %v", serviceParam))
+			http_utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("No such Service: %v", serviceParam))
 		}
 	}
 }

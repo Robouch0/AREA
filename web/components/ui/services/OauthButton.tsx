@@ -1,64 +1,120 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
-import { oauhLogin } from "@/api/authentification";
+import { connectOauth, oauthLogin } from "@/api/authentification";
 import { Button } from '@/components/ui/utils/Button';
 import redirectURI from '@/lib/redirectUri';
+import { useToast } from "@/hooks/use-toast"
 
 interface IOAuthButton {
     className: string,
     service: string,
-    ServiceIcon?: React.ReactNode,
+    ServiceIcon?: React.ReactNode | null,
+    textButton: string,
+    login: boolean,
 }
 
 async function redirectToService(service: string) {
     try {
         const response = await axiosInstance.get(`oauth/${service}`, {
             params: {
-                "redirect_uri": redirectURI
+                "redirect_uri": redirectURI,
             }
         });
-        window.location.href = response.data;
+        return response.data;
     } catch (error) {
-        console.error(error);
+        throw error;
     }
 }
+// http://127.0.0.1:8081
+async function askForToken(service: string, code: string | null, login: boolean) {
 
-async function askForToken(service: string, code: string | null) {
     try {
         if (redirectURI == undefined)
             throw Error("env variable redirectURI is undefined")
-        await oauhLogin({ service: service, code: code, redirect_uri: redirectURI })
-
+        console.log(login)
+        if (login) {
+            await oauthLogin({ service: service, code: code, redirect_uri: redirectURI })
+        } else {
+            await connectOauth(service, code)
+        }
         return true;
     } catch (error) {
         console.error(error);
     }
 }
 
-export function OauthButton({ service, className, ServiceIcon }: IOAuthButton) {
-    const serviceDisplayName = service.charAt(0).toUpperCase() + service.slice(1);
+export function OauthButton({ service, className, ServiceIcon, textButton, login }: IOAuthButton) {
     const router = useRouter();
+    const [code, setPopupCode] = useState<string | null>("");
+    const { toast } = useToast()
+    const [channel, setChannel] = useState<BroadcastChannel | null>(null);
+    console.log(service)
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (!event || !event.data.code) {
+                return;
+            }
+            // maybe we will later need to check for message origin, for security purposes
+            const eventValues: string[] = event.data.code.split(",")
+            const code: string = eventValues[0];
+            const msgService: string = eventValues[1];
+            if (event.data.type === "message" && msgService === service) {
+                setPopupCode(code);
+            }
+        }
+
+        if (channel == null) {
+            return
+        }
+        channel.onmessage = handleMessage
+    }, [channel, service])
+
+    const openPopup = useCallback(async (service: string) => {
+        try {
+            const url = await redirectToService(service);
+            if (typeof window !== 'undefined' && url !== "") {
+                window.open(url, "popup", "width=1200,height=800,left=400,top=700,popup=true");
+            }
+            setChannel(new BroadcastChannel(`oauth-${service}`))
+        } catch (err) {
+            toast({
+                title: "ERROR : Area server are down for the moment",
+                description: "Failed to get the Oauth provider URL. Please try again later.",
+                variant: 'destructive',
+                duration: 2000,
+            });
+            console.log("ERROR trying to reach server" + err);
+        }
+    }, [toast]);
 
     useEffect(() => {
-        const url = new URL(window.location.href);
-        const code: string | null = url.searchParams.get('code');
-
         if (code) {
-            console.log(service, code)
-            askForToken(service, code)
-                .then(() => router.push("/services"))
+            askForToken(service, code, login)
+                .then(() => {
+                    if (login) {
+                        router.push("/services")
+                    } else {
+                        router.push("/services/profile")
+                    }
+                })
                 .catch((error) => console.log(error));
         }
-    }, [router, service]);
+    }, [code, router, service, login]);
 
     return (
         <Button
             className={className}
-            onClick={() => { redirectToService(service) }}
+            onClick={() => { openPopup(service) }}
         >
-            {ServiceIcon}
-            <p className="mx-3 text-2xl font-semibold">Continuer avec {serviceDisplayName}</p>
+            {ServiceIcon == null ?
+                <></>
+                :
+                <div className={"mx-3"}>
+                    {ServiceIcon}
+                </div>
+            }
+            <p >{textButton}</p>
         </Button>
     );
 }

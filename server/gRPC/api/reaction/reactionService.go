@@ -12,13 +12,15 @@ import (
 	"area/gRPC/api/dateTime"
 	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
-	"area/gRPC/api/google"
-	huggingFace "area/gRPC/api/hugging_face"
+	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
+	google_client "area/gRPC/api/google/googleClient"
+	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
 	IServ "area/gRPC/api/serviceInterface"
 	"area/gRPC/api/spotify"
+	weather_client "area/gRPC/api/weather/weatherClient"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 
 	"cmp"
 	"context"
@@ -57,15 +59,17 @@ func NewReactionService() (*ReactionService, error) {
 
 func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["dt"] = dateTime.NewDateTimeServiceClient(conn)
-	react.clients["hf"] = huggingFace.NewHuggingFaceClient(conn)
+	react.clients["hf"] = huggingFace_client.NewHuggingFaceClient(conn)
 	react.clients["github"] = github.NewGithubClient(conn)
+	react.clients["gitlab"] = gitlab_client.NewGitlabClient(conn)
 	react.clients["discord"] = discord.NewDiscordClient(conn)
-	react.clients["google"] = google.NewGoogleClient(conn)
+	react.clients["google"] = google_client.NewGoogleClient(conn)
 	react.clients["spotify"] = spotify.NewSpotifyClient(conn)
+	react.clients["weather"] = weather_client.NewWeatherClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "ReactionService")
 	if errClaim != nil {
 		return nil, errClaim
 	}
@@ -93,7 +97,7 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 }
 
 func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCService.ReactionRequest) (*gRPCService.ReactionResponse, error) {
-	userID, errClaim := utils.GetUserIdFromContext(ctx, "ReactionService")
+	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "ReactionService")
 	if errClaim != nil {
 		return nil, errClaim
 	}

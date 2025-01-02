@@ -49,7 +49,7 @@ func MoveEmail(tokenAccess string, googleUserID string, messageID string, trash 
 		io.Copy(os.Stderr, resp.Body)
 		return nil, status.Errorf(codes.Aborted, resp.Status)
 	}
-	message, err := utils.ResponseToStruct[GmailMessage](resp)
+	message, err := utils.IoReaderToStruct[GmailMessage](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

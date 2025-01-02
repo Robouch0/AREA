@@ -11,7 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
-	"area/utils"
+	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
 	"log"
@@ -42,23 +42,38 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		Name:    "Spotify",
 		RefName: "spotify",
 
-		Microservices: []IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
 			{
 				Name:    "Stop the current song playing on the last device connected",
 				RefName: "stopSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Create a spotify playlist",
 				RefName: "createPlaylist",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"playlistName":        "string",
-					"playlistDescription": "string",
-					"public":              "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"playlistName": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the playlist",
+						Required:    true,
+					},
+					"playlistDescription": {
+						Value:       "",
+						Type:        "string",
+						Description: "Description of the playlist",
+						Required:    true,
+					},
+					"public": {
+						Value:       "",
+						Type:        "string",
+						Description: "Is the playlist public or private",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -66,22 +81,27 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "nextSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Launch the previous song",
 				RefName: "previousSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Change the playback Volume",
 				RefName: "setPlaybackVolume",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"volume": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"volume": {
+						Value:       "",
+						Type:        "string",
+						Description: "New volume for the song",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -89,9 +109,19 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "launchSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"songUrl":              "string",
-					"millisecondsPosition": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"songUrl": {
+						Value:       "",
+						Type:        "string",
+						Description: "URL of the song to launch",
+						Required:    true,
+					},
+					"millisecondsPosition": {
+						Value:       "",
+						Type:        "string",
+						Description: "Delay for the song",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -99,7 +129,7 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "addSongToPlaylist",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 		},
 	}
@@ -117,7 +147,7 @@ func (spot *SpotifyClient) stopSong(ingredients map[string]any, _ []byte, userID
 		return nil, err
 	}
 
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	_, err = spot.cc.StopSong(ctx, &gRPCService.SpotifyStopInfo{})
 	if err != nil {
 		log.Println("Error when running stopSong service", err)
@@ -137,7 +167,7 @@ func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, _ []byte, 
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	_, err = spot.cc.CreatePlaylist(ctx, &createReq)
 	if err != nil {
 		return nil, err
@@ -152,7 +182,7 @@ func (spot *SpotifyClient) nextSong(ingredients map[string]any, _ []byte, userID
 		log.Println("Ingredients problems", err)
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.NextSong(ctx, &gRPCService.SpotifyNextInfo{})
 	if err != nil {
@@ -169,7 +199,7 @@ func (spot *SpotifyClient) previousSong(ingredients map[string]any, _ []byte, us
 		log.Println("Ingredients problems", err)
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.PreviousSong(ctx, &gRPCService.SpotifyPreviousInfo{})
 	if err != nil {
@@ -190,7 +220,7 @@ func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, _ []byt
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.SetPlaybackVolume(ctx, &setPlaybackVolume)
 	if err != nil {
@@ -210,7 +240,7 @@ func (spot *SpotifyClient) launchSong(ingredients map[string]any, _ []byte, user
 	if err != nil {
 		return nil, err
 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 
 	_, err = spot.cc.LaunchSong(ctx, &launchSong)
 	if err != nil {
@@ -230,7 +260,7 @@ func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, _ []byt
 	// 	if err != nil {
 	// 		return nil, err
 	// 	}
-	ctx := utils.CreateContextFromUserID(userID)
+	ctx := grpcutils.CreateContextFromUserID(userID)
 	var addSong gRPCService.SpotifyAddSongToPlaylist
 	_, err := spot.cc.AddSongToPlaylist(ctx, &addSong)
 	if err != nil {
@@ -246,4 +276,8 @@ func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microserv
 	}
 	log.Println(microservice)
 	return nil, errors.New("No such microservice")
+}
+
+func (_ *SpotifyClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
 }
