@@ -10,6 +10,7 @@ import 'package:my_area_flutter/services/api/profile_service.dart';
 
 import 'package:my_area_flutter/pages/login_page.dart';
 import 'package:my_area_flutter/pages/home_page.dart';
+import 'package:my_area_flutter/pages/user_areas_page.dart';
 import 'package:my_area_flutter/pages/page_not_found.dart';
 import 'package:my_area_flutter/widgets/bottom_navbar.dart';
 
@@ -53,7 +54,7 @@ class AppRouter {
         routes: [
           GoRoute(
             path: RouteNames.home,
-            builder: (context, state) => const HomePage(),
+            builder: (context, state) => UserAreasPage(userAreas: AreaService.instance.listUserAreas()),
           ),
           GoRoute(
             path: RouteNames.create,
