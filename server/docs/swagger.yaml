@@ -1,10 +1,28 @@
 definitions:
+  controllers.TokenInformations:
+    properties:
+      provider:
+        type: string
+      user_id:
+        type: string
+    type: object
   controllers.credentials:
     properties:
       email:
         type: string
       password:
         type: string
+    type: object
+  controllers.userArea:
+    properties:
+      action:
+        $ref: '#/definitions/serviceinterface.ServiceStatus'
+      id:
+        type: integer
+      reactions:
+        items:
+          $ref: '#/definitions/serviceinterface.ServiceStatus'
+        type: array
     type: object
   controllers.userSignUp:
     properties:
@@ -135,6 +153,46 @@ definitions:
       description:
         type: string
     type: object
+  serviceinterface.IngredientDescriptor:
+    properties:
+      description:
+        type: string
+      required:
+        type: boolean
+      type:
+        type: string
+      value: {}
+    type: object
+  serviceinterface.Ingredients:
+    additionalProperties:
+      $ref: '#/definitions/serviceinterface.IngredientDescriptor'
+    type: object
+  serviceinterface.MicroserviceDescriptor:
+    properties:
+      ingredients:
+        $ref: '#/definitions/serviceinterface.Ingredients'
+      name:
+        description: Name of the microservice
+        type: string
+      ref_name:
+        description: Reference Name of the microservice as it is named in the server
+        type: string
+      type:
+        type: string
+    type: object
+  serviceinterface.ServiceStatus:
+    properties:
+      microservices:
+        items:
+          $ref: '#/definitions/serviceinterface.MicroserviceDescriptor'
+        type: array
+      name:
+        description: Name of the service
+        type: string
+      ref_name:
+        description: Reference Name of the service as it is named in the server
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a the document of the Backend routes of the application AREA
@@ -152,6 +210,29 @@ paths:
       summary: List of handled services
       tags:
       - Utils
+  /area/list:
+    get:
+      consumes:
+      - application/json
+      description: List all user's area
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.userArea'
+            type: array
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: List User's area
+      tags:
+      - Area
   /create/{service}:
     get:
       consumes:
@@ -183,6 +264,29 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Create a new Area
+      tags:
+      - Area
+  /create/list:
+    get:
+      consumes:
+      - application/json
+      description: List all user's area
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/serviceinterface.ServiceStatus'
+            type: array
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: List User's area
       tags:
       - Area
   /login/:
@@ -312,10 +416,41 @@ paths:
       tags:
       - Account
   /token/:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a token from a user_id and a provider
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenInformations'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete a token
+      tags:
+      - Token
     post:
       consumes:
       - application/json
       description: Get the tokens from a user_id and a provider
+      parameters:
+      - description: Id of the user
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Provider of the Remote Service
+        in: path
+        name: provider
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -337,6 +472,12 @@ paths:
       consumes:
       - application/json
       description: Get all the tokens from a user_id
+      parameters:
+      - description: Id of the user
+        in: path
+        name: user_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:

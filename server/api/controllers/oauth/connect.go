@@ -18,8 +18,8 @@ import (
 )
 
 // Sign-up OAuth godoc
-// @Summary      Create account with oauth
-// @Description  Create account with code from redirect url
+// @Summary      Oauth connect
+// @Description  Permit provider oauth connection for already logged in user
 // @Tags         Account
 // @Accept       json
 // @Produce      json
@@ -28,7 +28,6 @@ import (
 // @Failure      500  {object}  error
 // @Failure      404  {object}  error
 // @Router       /oauth/ [post]
-
 func Connect(OAuthURL map[string]OAuthURLs) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, err := grpcutils.GetUserIDClaim(r.Context())
@@ -57,7 +56,7 @@ func Connect(OAuthURL map[string]OAuthURLs) http.HandlerFunc {
 		if oauth, ok := OAuthURL[OAuthCode.Service]; ok {
 			toks, err := oauth.OAuth.GetAccessToken(OAuthCode)
 			if err != nil {
-				log.Println(err)
+				log.Println("Error while getting token", err)
 				http_utils.WriteHTTPResponseErr(&w, 500, err.Error())
 				return
 			}
