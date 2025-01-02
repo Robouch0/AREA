@@ -4,13 +4,14 @@ import {Button} from "@/components/ui/utils/Button";
 // import { useRouter } from 'next/navigation';
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {getColorForService} from "@/lib/utils";
-import {AreaMicroservices, AreaServices} from "@/api/types/areaStatus";
+import {AreaServices} from "@/api/types/areaStatus";
 
 export function MyAreaCard({action, reaction, areaID}: {
     action: AreaServices,
     reaction: AreaServices|undefined,
     areaID: number,
 }) {
+    console.log(areaID)
     if (reaction === undefined) {
         return <h1 className="text-black text-7xl mt-20"> ERROR with the Reaction </h1>
     }

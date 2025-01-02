@@ -1,5 +1,4 @@
 'use client';
-import { AreaCard } from "@/components/ui/services/AreaCard"
 import {Input} from "@/components/ui/utils/Input";
 import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
@@ -7,7 +6,7 @@ import Image from "next/image";
 import {AreaServicesWithId} from "@/api/types/areaStatus";
 import {MyAreaCard} from "@/components/ui/services/MyAreaCard";
 
-export default function Myareas({ userAreas }: { userAreas: AreaServicesWithId[] }) {
+export default function MyAreas({ userAreas }: { userAreas: AreaServicesWithId[] }) {
     const [searchField, setSearchField] = useState("");
 
     const filteredAreas = userAreas.filter(area => {
@@ -80,7 +79,7 @@ export default function Myareas({ userAreas }: { userAreas: AreaServicesWithId[]
                         <div key={area.ID} className="">
                             <MyAreaCard
                                 action={area.Action} reaction={area.Reactions?.at(0)} areaID={parseInt(area.ID)}
-                            > </MyAreaCard>
+                            />
                         </div>
                     ))}
                 </div>
