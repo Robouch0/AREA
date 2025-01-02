@@ -138,8 +138,8 @@ func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservic
 	return nil, errors.New("No such microservice")
 }
 
-func (git *GithubClient) TriggerWebhook(payload map[string]any, _ string, actionID int) (*IServ.WebHookResponseStatus, error) {
-	payloadBytes, err := json.Marshal(payload)
+func (git *GithubClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, actionID int) (*IServ.WebHookResponseStatus, error) {
+	payloadBytes, err := json.Marshal(webhook.Payload)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
 	}

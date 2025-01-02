@@ -89,6 +89,6 @@ func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID, us
 	return &IServ.ActionResponseStatus{Description: "Done", ActionID: actionID}, nil
 }
 
-func (_ *DTServiceClient) TriggerWebhook(_ map[string]any, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+func (_ *DTServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
 }

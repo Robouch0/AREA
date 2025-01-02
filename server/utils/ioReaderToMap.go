@@ -10,9 +10,13 @@ package utils
 import (
 	"encoding/json"
 	"io"
+	"net/http"
 )
 
 func IoReaderToMap(body *io.ReadCloser) (map[string]any, error) {
+	if *body == http.NoBody {
+		return map[string]any{}, nil
+	}
 	b, err := io.ReadAll(*body)
 	if err != nil {
 		return map[string]any{}, err
