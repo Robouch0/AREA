@@ -29,6 +29,11 @@ func InitReactionsDb() (*ReactionDb, error) {
 	return &ReactionDb{Db: db}, err
 }
 
+func GetReactionDb() *ReactionDb {
+	db := initDB()
+	return &ReactionDb{Db: db}
+}
+
 func (reaction *ReactionDb) SubmitNewReactions(newReaction []*models.Reactions) ([]*models.Reactions, error) {
 	_, err := reaction.Db.NewInsert().
 		Model(newReaction).

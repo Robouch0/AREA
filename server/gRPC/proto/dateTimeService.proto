@@ -18,8 +18,6 @@ message TriggerTimeRequest {
 
   int64 day_month = 5;
   int64 month = 6;
-
-  int64 day_week = 7;
 }
 
 message TriggerTimeResponse {

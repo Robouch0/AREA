@@ -5,7 +5,7 @@
 // huggingFaceService
 //
 
-package huggingFace
+package huggingFace_server
 
 import (
 	"area/db"

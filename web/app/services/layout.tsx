@@ -9,7 +9,6 @@ import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapte
 export default async function InAppLayout({children,}: Readonly<{
     children: React.ReactNode;
 }>) {
-
     const cookieStore:ReadonlyRequestCookies = await cookies();
     const token:string|undefined = cookieStore.get('token')?.value;
     const isAuthenticated:boolean = await checkAuthentification(token);
