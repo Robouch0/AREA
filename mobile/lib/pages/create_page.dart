@@ -30,8 +30,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   Map<String, dynamic> actionIngredients = {};
   Map<String, dynamic> reactionIngredients = {};
 
-  dynamic convertIngredientValue(String value, IngredientType type) {
-    switch (type) {
+  dynamic convertIngredientValue(String value, Ingredient ingredient) {
+    switch (ingredient.type) {
       case IngredientType.int:
         return int.tryParse(value) ?? 0;
       case IngredientType.float:
@@ -41,12 +41,12 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
       case IngredientType.time:
         return value;
       case IngredientType.string:
+        return value;
     }
   }
 
-  void _handleIngredientChange(
-      bool isAction, String key, String value, IngredientType type) {
-    final convertedValue = convertIngredientValue(value, type);
+  void _handleIngredientChange(bool isAction, String key, String value, Ingredient ingredient) {
+    final convertedValue = convertIngredientValue(value, ingredient);
     setState(() {
       if (isAction) {
         actionIngredients[key] = convertedValue;
@@ -387,7 +387,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }
 
   Widget _buildIngredientsForm({
-    required Map<String, IngredientType> ingredients,
+    required Map<String, Ingredient> ingredients,
     required Map<String, dynamic> values,
     required bool isAction,
   }) {
@@ -415,12 +415,13 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: ingredients.entries.map((entry) {
+                final ingredient = entry.value;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: TextField(
                     decoration: InputDecoration(
-                      labelText: entry.key,
-                      hintText: 'Enter ${entry.key}',
+                      labelText: '${entry.key}${ingredient.required ? ' *' : ''}',
+                      hintText: ingredient.description,
                       labelStyle: const TextStyle(color: Colors.white70),
                       hintStyle: const TextStyle(color: Colors.white30),
                       border: OutlineInputBorder(
@@ -431,7 +432,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                     ),
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) => _handleIngredientChange(
-                        isAction, entry.key, value, entry.value),
+                        isAction, entry.key, value, ingredient),
                     key: ValueKey(entry.key),
                     controller: null,
                     onTapOutside: (event) => FocusScope.of(context).unfocus(),
