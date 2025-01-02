@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GitlabService_CreateFile_FullMethodName     = "/gitlab.GitlabService/CreateFile"
-	GitlabService_UpdateFile_FullMethodName     = "/gitlab.GitlabService/UpdateFile"
-	GitlabService_DeleteFile_FullMethodName     = "/gitlab.GitlabService/DeleteFile"
-	GitlabService_MarkItemAsDone_FullMethodName = "/gitlab.GitlabService/MarkItemAsDone"
+	GitlabService_CreateFile_FullMethodName        = "/gitlab.GitlabService/CreateFile"
+	GitlabService_UpdateFile_FullMethodName        = "/gitlab.GitlabService/UpdateFile"
+	GitlabService_DeleteFile_FullMethodName        = "/gitlab.GitlabService/DeleteFile"
+	GitlabService_MarkItemAsDone_FullMethodName    = "/gitlab.GitlabService/MarkItemAsDone"
+	GitlabService_MarkAllItemAsDone_FullMethodName = "/gitlab.GitlabService/MarkAllItemAsDone"
 )
 
 // GitlabServiceClient is the client API for GitlabService service.
@@ -33,6 +34,7 @@ type GitlabServiceClient interface {
 	UpdateFile(ctx context.Context, in *UpdateLabRepoFile, opts ...grpc.CallOption) (*UpdateLabRepoFile, error)
 	DeleteFile(ctx context.Context, in *DeleteLabRepoFile, opts ...grpc.CallOption) (*DeleteLabRepoFile, error)
 	MarkItemAsDone(ctx context.Context, in *TodoLabItemDone, opts ...grpc.CallOption) (*TodoLabItemDone, error)
+	MarkAllItemAsDone(ctx context.Context, in *AllTodoLabItemDone, opts ...grpc.CallOption) (*AllTodoLabItemDone, error)
 }
 
 type gitlabServiceClient struct {
@@ -83,6 +85,16 @@ func (c *gitlabServiceClient) MarkItemAsDone(ctx context.Context, in *TodoLabIte
 	return out, nil
 }
 
+func (c *gitlabServiceClient) MarkAllItemAsDone(ctx context.Context, in *AllTodoLabItemDone, opts ...grpc.CallOption) (*AllTodoLabItemDone, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AllTodoLabItemDone)
+	err := c.cc.Invoke(ctx, GitlabService_MarkAllItemAsDone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GitlabServiceServer is the server API for GitlabService service.
 // All implementations must embed UnimplementedGitlabServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type GitlabServiceServer interface {
 	UpdateFile(context.Context, *UpdateLabRepoFile) (*UpdateLabRepoFile, error)
 	DeleteFile(context.Context, *DeleteLabRepoFile) (*DeleteLabRepoFile, error)
 	MarkItemAsDone(context.Context, *TodoLabItemDone) (*TodoLabItemDone, error)
+	MarkAllItemAsDone(context.Context, *AllTodoLabItemDone) (*AllTodoLabItemDone, error)
 	mustEmbedUnimplementedGitlabServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedGitlabServiceServer) DeleteFile(context.Context, *DeleteLabRe
 }
 func (UnimplementedGitlabServiceServer) MarkItemAsDone(context.Context, *TodoLabItemDone) (*TodoLabItemDone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MarkItemAsDone not implemented")
+}
+func (UnimplementedGitlabServiceServer) MarkAllItemAsDone(context.Context, *AllTodoLabItemDone) (*AllTodoLabItemDone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkAllItemAsDone not implemented")
 }
 func (UnimplementedGitlabServiceServer) mustEmbedUnimplementedGitlabServiceServer() {}
 func (UnimplementedGitlabServiceServer) testEmbeddedByValue()                       {}
@@ -206,6 +222,24 @@ func _GitlabService_MarkItemAsDone_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GitlabService_MarkAllItemAsDone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AllTodoLabItemDone)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitlabServiceServer).MarkAllItemAsDone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitlabService_MarkAllItemAsDone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitlabServiceServer).MarkAllItemAsDone(ctx, req.(*AllTodoLabItemDone))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GitlabService_ServiceDesc is the grpc.ServiceDesc for GitlabService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var GitlabService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MarkItemAsDone",
 			Handler:    _GitlabService_MarkItemAsDone_Handler,
+		},
+		{
+			MethodName: "MarkAllItemAsDone",
+			Handler:    _GitlabService_MarkAllItemAsDone_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

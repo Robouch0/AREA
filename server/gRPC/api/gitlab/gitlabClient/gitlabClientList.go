@@ -139,6 +139,13 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					},
 				},
 			},
+			{
+				Name:    "Mark all Items of your todo list as done",
+				RefName: "markAllItemDone",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+			},
 		},
 	}
 	return status, nil

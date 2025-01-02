@@ -32,6 +32,7 @@ func NewGitlabClient(conn *grpc.ClientConn) *GitlabClient {
 	(*gitlab.MicroservicesLauncher)["updateFile"] = gitlab.updateFile
 	(*gitlab.MicroservicesLauncher)["deleteFile"] = gitlab.deleteFile
 	(*gitlab.MicroservicesLauncher)["markItemDone"] = gitlab.markItemDone
+	(*gitlab.MicroservicesLauncher)["markAllItemDone"] = gitlab.markAllItemDone
 	return gitlab
 }
 
@@ -113,6 +114,26 @@ func (git *GitlabClient) markItemDone(ingredients map[string]any, prevOutput []b
 	}
 
 	return &IServ.ReactionResponseStatus{Description: res.Id}, nil
+}
+
+func (git *GitlabClient) markAllItemDone(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+	var updateReq gRPCService.AllTodoLabItemDone
+	err = json.Unmarshal(jsonString, &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = git.cc.MarkAllItemAsDone(ctx, &updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Done"}, nil
 }
 
 func (git *GitlabClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {

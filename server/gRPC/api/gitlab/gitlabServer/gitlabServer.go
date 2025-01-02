@@ -44,17 +44,12 @@ func (git *GitlabService) InitReactClient(conn *grpc.ClientConn) {
 }
 
 func (git *GitlabService) CreateFile(ctx context.Context, req *gRPCService.CreateLabRepoFile) (*gRPCService.CreateLabRepoFile, error) {
-	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GitlabService")
-	if errClaim != nil {
-		return nil, errClaim
-	}
-
 	if req.Branch == "" || req.CommitMessage == "" || req.FilePath == "" || req.Id == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
 
 	url := fmt.Sprintf("https://www.gitlab.com/api/v4/projects/%v/repository/files/%v", req.Id, req.FilePath)
-	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "gitlab")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
 	if err != nil {
 		return nil, err
 	}
@@ -64,33 +59,26 @@ func (git *GitlabService) CreateFile(ctx context.Context, req *gRPCService.Creat
 		return nil, err
 	}
 	pathRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
-	pathRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+	pathRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	q := pathRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	pathRequest.URL.RawQuery = q.Encode()
 
-	cli := &http.Client{}
-	resp, err := cli.Do(pathRequest)
+	resp, err := http_utils.SendHttpRequest(pathRequest, 201);
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "200 OK" {
-		return nil, errors.New(resp.Status)
-	}
-
 	log.Println(resp.Body)
 	return req, nil
 }
 
 func (git *GitlabService) UpdateFile(ctx context.Context, req *gRPCService.UpdateLabRepoFile) (*gRPCService.UpdateLabRepoFile, error) {
-	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GitlabService")
-	if errClaim != nil {
-		return nil, errClaim
-	}
-
 	if req.Branch == "" || req.CommitMessage == "" || req.FilePath == "" || req.Id == "" || req.Content == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
 
 	url := fmt.Sprintf("https://www.gitlab.com/api/v4/projects/%v/repository/files/%v", req.Id, req.FilePath)
-	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "gitlab")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
 	if err != nil {
 		return nil, err
 	}
@@ -100,33 +88,26 @@ func (git *GitlabService) UpdateFile(ctx context.Context, req *gRPCService.Updat
 		return nil, err
 	}
 	pathRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer(b))
-	pathRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+	pathRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	q := pathRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	pathRequest.URL.RawQuery = q.Encode()
 
-	cli := &http.Client{}
-	resp, err := cli.Do(pathRequest)
+	resp, err := http_utils.SendHttpRequest(pathRequest, 200);
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "200 OK" {
-		return nil, errors.New(resp.Status)
-	}
-
 	log.Println(resp.Body)
 	return req, nil
 }
 
 func (git *GitlabService) DeleteFile(ctx context.Context, req *gRPCService.DeleteLabRepoFile) (*gRPCService.DeleteLabRepoFile, error) {
-	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GitlabService")
-	if errClaim != nil {
-		return nil, errClaim
-	}
-
 	if req.Branch == "" || req.CommitMessage == "" || req.FilePath == "" || req.Id == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
 
 	url := fmt.Sprintf("https://www.gitlab.com/api/v4/projects/%v/repository/files/%v", req.Id, req.FilePath)
-	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "gitlab")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
 	if err != nil {
 		return nil, err
 	}
@@ -136,33 +117,26 @@ func (git *GitlabService) DeleteFile(ctx context.Context, req *gRPCService.Delet
 		return nil, err
 	}
 	pathRequest, err := http.NewRequest("DELETE", url, bytes.NewBuffer(b))
-	pathRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+	pathRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	q := pathRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	pathRequest.URL.RawQuery = q.Encode()
 
-	cli := &http.Client{}
-	resp, err := cli.Do(pathRequest)
+	resp, err := http_utils.SendHttpRequest(pathRequest, 204);
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "200 OK" {
-		return nil, errors.New(resp.Status)
-	}
-
 	log.Println(resp.Body)
 	return req, nil
 }
 
 func (git *GitlabService) MarkItemAsDone(ctx context.Context, req *gRPCService.TodoLabItemDone) (*gRPCService.TodoLabItemDone, error) {
-	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GitlabService")
-	if errClaim != nil {
-		return nil, errClaim
-	}
-
 	if req.Id == "" {
 		return nil, errors.New("Some required parameters are empty")
 	}
 
 	url := fmt.Sprintf("https://www.gitlab.com/api/v4/todos/%v/mark_as_done", req.Id)
-	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "gitlab")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
 	if err != nil {
 		return nil, err
 	}
@@ -172,17 +146,41 @@ func (git *GitlabService) MarkItemAsDone(ctx context.Context, req *gRPCService.T
 		return nil, err
 	}
 	pathRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
-	pathRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+	pathRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	q := pathRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	pathRequest.URL.RawQuery = q.Encode()
 
-	cli := &http.Client{}
-	resp, err := cli.Do(pathRequest)
+	resp, err := http_utils.SendHttpRequest(pathRequest, 201);
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != "200 OK" {
-		return nil, errors.New(resp.Status)
+	log.Println(resp.Body)
+	return req, nil
+}
+
+
+func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCService.AllTodoLabItemDone) (*gRPCService.AllTodoLabItemDone, error) {
+	url := fmt.Sprintf("https://www.gitlab.com/api/v4/todos/mark_as_done")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
+	if err != nil {
+		return nil, err
 	}
 
+	b, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+	pathRequest, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
+	pathRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	q := pathRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	pathRequest.URL.RawQuery = q.Encode()
+
+	resp, err := http_utils.SendHttpRequest(pathRequest, 204);
+	if err != nil {
+		return nil, err
+	}
 	log.Println(resp.Body)
 	return req, nil
 }

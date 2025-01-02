@@ -12,6 +12,8 @@ service GitlabService {
   rpc DeleteFile(DeleteLabRepoFile) returns(DeleteLabRepoFile) {}
 
   rpc MarkItemAsDone(TodoLabItemDone) returns(TodoLabItemDone) {}
+
+  rpc MarkAllItemAsDone(AllTodoLabItemDone) returns(AllTodoLabItemDone) {}
 }
 
 message CreateLabRepoFile {
@@ -42,4 +44,7 @@ message DeleteLabRepoFile {
 
 message TodoLabItemDone {
   string id = 1;
+}
+
+message AllTodoLabItemDone {
 }
