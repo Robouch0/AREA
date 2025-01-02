@@ -5,12 +5,11 @@ import '../core/router/route_names.dart';
 import '../widgets/main_app_scaffold.dart';
 
 class NotFoundPage extends StatelessWidget {
-  const NotFoundPage({Key? key}) : super(key: key);
+  const NotFoundPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MainAppScaffold(
-      title: 'Page Not Found',
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
