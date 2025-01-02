@@ -1,5 +1,5 @@
 // lib/api/types/area_body.dart
-enum IngredientType { string, int, bool, time }
+enum IngredientType { string, int, bool, time, float }
 
 class AreaServiceData {
   final String name;
@@ -58,6 +58,8 @@ IngredientType _stringToIngredientType(String value) {
       return IngredientType.bool;
     case 'time':
       return IngredientType.time;
+    case 'float':
+      return IngredientType.float;
     default:
       throw Exception('Unknown ingredient type: $value');
   }
