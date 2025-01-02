@@ -23,14 +23,14 @@ import (
 )
 
 type GoogleClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	ActionLauncher        *IServ.ActionLauncher
 
 	cc gRPCService.GoogleServiceClient
 }
 
 func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	actions := &IServ.ActionLauncher{}
 	google := &GoogleClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewGoogleServiceClient(conn)}
 	(*google.MicroservicesLauncher)["gmail/sendEmailMe"] = google.sendEmailMe

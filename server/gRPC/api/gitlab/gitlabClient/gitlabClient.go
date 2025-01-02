@@ -17,14 +17,14 @@ import (
 )
 
 type GitlabClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	ActionLauncher        *IServ.ActionLauncher
 
 	cc gRPCService.GitlabServiceClient
 }
 
 func NewGitlabClient(conn *grpc.ClientConn) *GitlabClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	actions := &IServ.ActionLauncher{}
 	gitlab := &GitlabClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewGitlabServiceClient(conn)}
 	return gitlab

@@ -19,12 +19,12 @@ import (
 )
 
 type DiscordClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	cc                    gRPCService.DiscordServiceClient
 }
 
 func NewDiscordClient(conn *grpc.ClientConn) *DiscordClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	disCli := &DiscordClient{MicroservicesLauncher: micros, cc: gRPCService.NewDiscordServiceClient(conn)}
 	(*disCli.MicroservicesLauncher)["createMsg"] = disCli.createMessage
 	(*disCli.MicroservicesLauncher)["editMsg"] = disCli.editMessage

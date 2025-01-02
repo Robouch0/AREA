@@ -17,7 +17,8 @@ type WebhookInfos struct {
 	Header  http.Header    `json:"header,omitempty"`
 }
 
-type MicroserviceLauncher = map[string]func(ingredients map[string]any, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
+// Alias for maps of reactions functions
+type ReactionLauncher = map[string]func(ingredients map[string]any, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
 type ActionLauncher = map[string]func(scenario models.AreaScenario, actionId, userID int) (*ActionResponseStatus, error)
 
 type ClientService interface {

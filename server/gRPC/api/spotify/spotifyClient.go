@@ -20,12 +20,12 @@ import (
 )
 
 type SpotifyClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	cc                    gRPCService.SpotifyServiceClient
 }
 
 func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	spotify := &SpotifyClient{MicroservicesLauncher: micros, cc: gRPCService.NewSpotifyServiceClient(conn)}
 	(*spotify.MicroservicesLauncher)["stopSong"] = spotify.stopSong
 	(*spotify.MicroservicesLauncher)["createPlaylist"] = spotify.createPlaylist
