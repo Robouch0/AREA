@@ -422,7 +422,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.1),
+                      fillColor: Colors.white.withAlpha(25),
                     ),
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) => _handleIngredientChange(
