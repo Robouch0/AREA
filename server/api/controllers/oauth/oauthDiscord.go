@@ -44,7 +44,7 @@ func (discord *DiscordOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAcce
 	values.Set("code", OAuthCode.Code)
 	values.Set("redirect_uri", OAuthCode.RedirectURI)
 
-q	response, resperr := http.PostForm(discord.AccessTokenURL, values)
+	response, resperr := http.PostForm(discord.AccessTokenURL, values)
 
 	if resperr != nil {
 		return nil, resperr
