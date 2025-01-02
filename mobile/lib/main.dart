@@ -2,14 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/core/router/app_router.dart';
 import 'package:my_area_flutter/services/api/auth_service.dart';
+import 'package:my_area_flutter/services/storage/auth_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  await AuthService.instance.initializeAuth();
-
+  await initializeAll();
   runApp(const MyApp());
+}
+
+Future<void> initializeAll() async {
+  await dotenv.load(fileName: '.env');
+  await AuthService.instance.initializeAuth();
 }
 
 class MyApp extends StatelessWidget {
