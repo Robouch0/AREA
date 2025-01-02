@@ -49,6 +49,6 @@ func (weather *WeatherClient) TriggerReaction(
 	return nil, errors.New("No microservice Reaction yet")
 }
 
-func (weather *WeatherClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+func (weather *WeatherClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }
