@@ -9,10 +9,10 @@ import {MyAreaCard} from "@/components/ui/services/MyAreaCard";
 export default function MyAreas({ userAreas }: { userAreas: AreaServicesWithId[] }) {
     const [searchField, setSearchField] = useState("");
 
-    const filteredAreas = userAreas.filter(area => {
-        const actionNameMatch = area.Action.name.toLowerCase().includes(searchField.toLowerCase());
-        const reactionNameMatch = area.Reactions?.[0]?.name.toLowerCase().includes(searchField.toLowerCase());
-        const areaName = area.Action.microservices?.at(0)?.name.toLowerCase().includes(searchField.toLowerCase());
+    const filteredAreas : AreaServicesWithId[] = userAreas.filter(area => {
+        const actionNameMatch : boolean = area.Action.name.toLowerCase().includes(searchField.toLowerCase());
+        const reactionNameMatch : boolean = area.Reactions?.[0]?.name.toLowerCase().includes(searchField.toLowerCase());
+        const areaName:  boolean|undefined = area.Action.microservices?.at(0)?.name.toLowerCase().includes(searchField.toLowerCase());
         return actionNameMatch || reactionNameMatch || areaName;
     })
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
