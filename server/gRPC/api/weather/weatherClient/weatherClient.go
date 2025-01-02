@@ -52,3 +52,7 @@ func (weather *WeatherClient) TriggerReaction(
 func (weather *WeatherClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }
+
+func (weather *WeatherClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, nil
+}

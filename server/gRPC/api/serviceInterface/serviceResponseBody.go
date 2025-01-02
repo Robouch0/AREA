@@ -20,3 +20,6 @@ type ReactionResponseStatus struct {
 type WebHookResponseStatus struct {
 	Description string `json:"description"`
 }
+
+type DeactivateResponseStatus struct {
+}

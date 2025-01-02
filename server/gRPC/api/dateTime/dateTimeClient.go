@@ -92,3 +92,7 @@ func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID, us
 func (_ *DTServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
 }
+
+func (dt *DTServiceClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, nil
+}

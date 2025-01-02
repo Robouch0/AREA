@@ -294,3 +294,7 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 	}
 	return nil, status.Errorf(codes.NotFound, "Microservice: %v not found", microservice)
 }
+
+func (google *GoogleClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, nil
+}

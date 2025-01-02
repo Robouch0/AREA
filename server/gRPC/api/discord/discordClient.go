@@ -318,3 +318,7 @@ func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microse
 func (_ *DiscordClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
 }
+
+func (disCli *DiscordClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, nil
+}

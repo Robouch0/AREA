@@ -281,3 +281,7 @@ func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microserv
 func (_ *SpotifyClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
 }
+
+func (spot *SpotifyClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, nil
+}

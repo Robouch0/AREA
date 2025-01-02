@@ -73,3 +73,7 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 	}
 	return &IServ.ActionResponseStatus{Description: res.Description, ActionID: int(res.ActionId)}, nil
 }
+
+func (react *ReactionServiceClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, nil
+}
