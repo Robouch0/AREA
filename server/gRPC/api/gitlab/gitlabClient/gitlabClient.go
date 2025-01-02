@@ -155,6 +155,6 @@ func (git *GitlabClient) TriggerReaction(
 	return nil, errors.New("No such microservice")
 }
 
-func (git *GitlabClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }

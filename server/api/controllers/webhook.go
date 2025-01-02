@@ -10,6 +10,7 @@ package controllers
 import (
 	"area/api"
 	"area/db"
+	serviceinterface "area/gRPC/api/serviceInterface"
 	"area/utils"
 	http_utils "area/utils/httpUtils"
 	"net/http"
@@ -47,7 +48,7 @@ func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
 			return
 		}
 		if cli, ok := gateway.Clients[service]; ok {
-			cli.TriggerWebhook(payload, microservice, actionId)
+			cli.TriggerWebhook(&serviceinterface.WebhookInfos{Payload: payload, Header: r.Header}, microservice, actionId)
 			w.WriteHeader(204)
 			return
 		}
