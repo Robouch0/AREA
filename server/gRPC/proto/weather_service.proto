@@ -10,6 +10,10 @@ service WeatherService {
 
   // Each Hour, when it is night, do this
   rpc NewIsDayTrigger(IsDayTriggerReq) returns(IsDayTriggerReq) {}
+
+  // Deactivate weather trigger
+  rpc DeactivateWeatherAction(DeactivateWeather)
+    returns (DeactivateWeather) {}
 }
 
 message TempTriggerReq {
@@ -27,4 +31,8 @@ message IsDayTriggerReq {
 
   string timezone = 3; /* Timezone of the trigger */
   string region = 4; /* Will be converted to latitude and longitude */
+}
+
+message DeactivateWeather {
+  uint32 action_id = 1;
 }

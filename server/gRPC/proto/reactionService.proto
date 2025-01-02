@@ -5,9 +5,14 @@ package reaction;
 option go_package = "github.com/area/grpc-go/service";
 
 service ReactionService {
+  // Register an area in the database
   rpc RegisterAction(ReactionRequest) returns (ReactionResponse) {}
 
+  // Launch the reactions associated with the action
   rpc LaunchReaction(LaunchRequest) returns (LaunchResponse) {}
+
+  // Deactivate an area with the id given
+  rpc DeactivateArea(AreaDeactivator) returns (AreaDeactivator) {}
 }
 
 message Action {
@@ -40,4 +45,10 @@ message LaunchRequest {
 }
 
 message LaunchResponse {
+}
+
+////
+
+message AreaDeactivator {
+  uint32 action_id = 1;
 }

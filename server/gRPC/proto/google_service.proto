@@ -76,6 +76,12 @@ service GoogleService {
 
   // Function that handle the payload sent by google drive for any changes
   rpc WatchChangesTrigger (ChangesTriggerReq) returns (ChangesTriggerReq) {}
+
+  // Deactivate Gmail watch trigger
+  rpc DeactivateGmailAction(DeactivateGmail) returns (DeactivateGmail) {}
+
+  // Deactivate Drive watch trigger
+  rpc DeactivateDriveAction(DeactivateDrive) returns (DeactivateDrive) {}
 }
 
 message EmailRequestMe {
@@ -195,5 +201,13 @@ message WatchFileReq {
 }
 
 message WatchChangesReq {
+  uint32 action_id = 1;
+}
+
+message DeactivateGmail {
+  uint32 action_id = 1;
+}
+
+message DeactivateDrive {
   uint32 action_id = 1;
 }

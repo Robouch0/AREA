@@ -5,7 +5,10 @@ package dateTime;
 option go_package = "github.com/area/grpc-go/service";
 
 service DateTimeService {
+  // Launch a cron job that check each minutes if the trigger must be activated
   rpc LaunchCronJob(TriggerTimeRequest) returns (TriggerTimeResponse) {}
+
+  rpc DeactivateAction(DeactivateTime) returns (DeactivateTime) {}
 }
 
 message TriggerTimeRequest {
@@ -20,4 +23,8 @@ message TriggerTimeRequest {
 }
 
 message TriggerTimeResponse {
+}
+
+message DeactivateTime {
+  uint32 action_id = 1;
 }

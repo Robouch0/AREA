@@ -12,6 +12,8 @@ service SpotifyService {
   rpc SetPlaybackVolume(SpotifySetPlaybackVolumeInfo) returns(SpotifySetPlaybackVolumeInfo) {}
   rpc LaunchSong(SpotifyLauchSongInfo) returns(SpotifyLauchSongInfo) {}
   rpc AddSongToPlaylist(SpotifyAddSongToPlaylist) returns(SpotifyAddSongToPlaylist) {}
+
+  rpc DeactivateSpotAction(DeactivateSpot) returns (DeactivateSpot) {}
 }
 
 message SpotifyStopInfo {
@@ -38,5 +40,10 @@ message SpotifyLauchSongInfo {
 }
 
 message SpotifyAddSongToPlaylist {
+}
 
+////
+
+message DeactivateSpot {
+  uint32 action_id = 1;
 }
