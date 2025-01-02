@@ -14,7 +14,42 @@ class ProfileService {
   final _apiUrl = dotenv.get('NEXT_PUBLIC_GATEWAY_URL');
   final _authStorage = AuthStorage.instance;
 
-  Future<UserInfoData> getUserInfo() async {
+  Future<bool> updateUserInfo(String firstName, String lastName, String password) async {
+    final UserEditBody userEditBody = UserEditBody(
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+
+    try {
+      final token = await _authStorage.getToken();
+      final userId = await _authStorage.getUserId();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.put(
+        Uri.parse('$_apiUrl/users/$userId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-type': 'application/json',
+        },
+        body: json.encode(userEditBody.toJson())
+      );
+
+      if (response.statusCode == 200) {
+        developer.log('Account edited successfully!');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      developer.log('Failed to edit user infos: $e', name: 'my_network_log');
+      return false;
+    }
+  }
+
+  Future<UserInfoBody> getUserInfo() async {
     try {
       final token = await _authStorage.getToken();
       final userId = await _authStorage.getUserId();
@@ -37,7 +72,7 @@ class ProfileService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
-        return UserInfoData.fromJson(jsonData);
+        return UserInfoBody.fromJson(jsonData);
       }
       throw Exception('Failed to load user infos: ${response.statusCode}');
     } catch (e) {

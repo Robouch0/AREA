@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_area_flutter/core/router/route_names.dart';
+import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 
 class ProfilePage extends StatefulWidget {
-  final Future<UserInfoData> userInfo;
+  final Future<UserInfoBody> userInfo;
 
   const ProfilePage({
     super.key,
@@ -25,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final _passwordController = TextEditingController();
   bool isEditing = false;
 
-  late UserInfoData userInfo;
+  late UserInfoBody userInfo;
 
   @override
   void initState() {
@@ -57,12 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _handleUpdate() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    bool success = true;
+  void _performUpdate(String firstName, String lastName, String password) async {
+    bool success = await ProfileService.instance.updateUserInfo(firstName, lastName, password);
 
     if (!mounted) return;
     if (success) {
@@ -70,12 +69,18 @@ class _ProfilePageState extends State<ProfilePage> {
         content: Text('Profile updated successfully'),
         backgroundColor: Colors.green,
       ));
-      setState(() => isEditing = false);
+      context.push(RouteNames.profile);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Update failed'),
         backgroundColor: Colors.red,
       ));
+    }
+  }
+
+  void _handleUpdate() {
+    if (_formKey.currentState!.validate()) {
+      _performUpdate(_firstNameController.text, _lastNameController.text, _passwordController.text);
     }
   }
 
