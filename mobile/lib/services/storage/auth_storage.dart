@@ -1,33 +1,38 @@
 // lib/services/storage/auth_storage.dart
-import 'package:my_area_flutter/services/storage/secure_storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthStorage {
   static final AuthStorage _instance = AuthStorage._internal();
   AuthStorage._internal();
   static AuthStorage get instance => _instance;
 
-  final _storage = SecureStorageService.instance;
   static const _tokenKey = 'auth_token';
   static const _userIdKey = 'user_id';
 
-  Future<void> saveToken(String token) async {
-    await _storage.write(_tokenKey, token);
+  late SharedPreferences _prefs;
+
+  Future<void> initialize() async {
+    _prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> saveUserId(String userId) async {
-    await _storage.write(_userIdKey, userId);
+  void saveToken(String token) {
+    _prefs.setString(_tokenKey, token);
   }
 
-  Future<String?> getToken() async {
-    return await _storage.read(_tokenKey);
+  void saveUserId(String userId) {
+    _prefs.setString(_userIdKey, userId);
   }
 
-  Future<String?> getUserId() async {
-    return await _storage.read(_userIdKey);
+  String? getToken() {
+    return _prefs.getString(_tokenKey);
   }
 
-  Future<void> clearAuth() async {
-    await _storage.delete(_tokenKey);
-    await _storage.delete(_userIdKey);
+  String? getUserId() {
+    return _prefs.getString(_userIdKey);
+  }
+
+  void clearAuth() {
+    _prefs.remove(_tokenKey);
+    _prefs.remove(_userIdKey);
   }
 }
