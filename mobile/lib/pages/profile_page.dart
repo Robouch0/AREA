@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_area_flutter/core/router/route_names.dart';
+import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
+import 'package:my_area_flutter/api/types/profile_body.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String password;
+  final Future<UserInfoBody> userInfo;
 
   const ProfilePage({
     super.key,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.password,
+    required this.userInfo
   });
 
   @override
@@ -21,7 +19,71 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool userInfosLoaded = false;
   bool showPassword = false;
+
+  final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool isEditing = false;
+
+  late UserInfoBody userInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfos();
+  }
+
+  Future<void> _loadUserInfos() async {
+    try {
+      final loadedUserInfos = await widget.userInfo;
+      setState(() {
+        userInfosLoaded = true;
+        userInfo = loadedUserInfos;
+      });
+      _firstNameController.text = userInfo.firstName;
+      _lastNameController.text = userInfo.lastName;
+    } catch (e) {
+      debugPrint('Error loading user infos: $e');
+    }
+  }
+
+  void _toggleEdit() {
+    setState(() {
+      if (isEditing) {
+        _firstNameController.text = userInfo.firstName;
+        _lastNameController.text = userInfo.lastName;
+      }
+      isEditing = !isEditing;
+    });
+  }
+
+  void _performUpdate(String firstName, String lastName, String password) async {
+    bool success = await ProfileService.instance.updateUserInfo(firstName, lastName, password);
+
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Profile updated successfully'),
+        backgroundColor: Colors.green,
+      ));
+      context.push(RouteNames.profile);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Update failed'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  void _handleUpdate() {
+    if (_formKey.currentState!.validate()) {
+      _performUpdate(_firstNameController.text, _lastNameController.text, _passwordController.text);
+    }
+  }
+
   final List<Map<String, dynamic>> services = [
     {"name": "Github", "icon": FontAwesomeIcons.github},
     {"name": "Google", "icon": FontAwesomeIcons.google},
@@ -31,18 +93,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (userInfosLoaded == false) {
+      return const MainAppScaffold(
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
     return MainAppScaffold(
       child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeader(),
-              _buildDivider(),
-              _buildMainContent(),
-              const SizedBox(height: 40),
-            ],
-          )
-      ),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeader(),
+          _buildDivider(),
+          _buildMainContent(),
+          const SizedBox(height: 40),
+        ],
+      )),
     );
   }
 
@@ -108,20 +174,72 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildUserInfoSection() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[700],
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Column(
-        children: [
-          _buildProfilePicture(),
-          _buildInfoField('Email', widget.email),
-          _buildInfoField('First name', widget.firstName),
-          _buildInfoField('Last name', widget.lastName),
-          _buildPasswordField(),
-        ],
+    return Form(
+      key: _formKey,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[700],
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Column(
+          children: [
+            _buildProfilePicture(),
+            _buildInfoField('Email', userInfo.email),
+            _buildInfoField('First name', userInfo.firstName,
+                controller: _firstNameController),
+            _buildInfoField('Last name', userInfo.lastName,
+                controller: _lastNameController),
+            _buildPasswordField(),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _toggleEdit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[900],
+                      padding: const EdgeInsets.symmetric(vertical: 17),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      isEditing ? 'Cancel' : 'Edit Profile',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: isEditing ? Colors.red : Colors.white),
+                    ),
+                  ),
+                ),
+                if (isEditing) ...[
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _handleUpdate,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(vertical: 17),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -139,7 +257,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildInfoField(String label, String value) {
+  Widget _buildInfoField(String label, String value,
+      {TextEditingController? controller}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -162,13 +281,32 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.black, width: 4),
             ),
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            child: isEditing && controller != null
+                ? TextFormField(
+                    controller: controller,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field cannot be empty';
+                      }
+                      return null;
+                    },
+                  )
+                : Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -198,13 +336,38 @@ class _ProfilePageState extends State<ProfilePage> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.black, width: 4),
               ),
-              child: Text(
-                showPassword ? widget.password : '•' * widget.password.length,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+              child: isEditing
+                  ? TextFormField(
+                      controller: _passwordController,
+                      obscureText: !showPassword,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password cannot be empty';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                    )
+                  : Text(
+                      showPassword
+                          ? userInfo.password
+                          : '•' * userInfo.password.length,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
             ),
             Positioned(
               right: 16,

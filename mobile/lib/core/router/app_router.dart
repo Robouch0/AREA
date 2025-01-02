@@ -6,6 +6,8 @@ import 'package:my_area_flutter/pages/register_page.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 
 import 'package:my_area_flutter/services/api/auth_service.dart';
+import 'package:my_area_flutter/services/api/profile_service.dart';
+
 import 'package:my_area_flutter/pages/login_page.dart';
 import 'package:my_area_flutter/pages/home_page.dart';
 import 'package:my_area_flutter/pages/page_not_found.dart';
@@ -23,7 +25,7 @@ class AppRouter {
       final isSignupPage = state.matchedLocation == RouteNames.signup;
       final isAuthPage = isLoginPage || isSignupPage;
 
-      if (!isLoggedIn && isAuthPage) {
+      if (!isLoggedIn && !isAuthPage) {
         return RouteNames.login;
       }
       return null;
@@ -42,6 +44,7 @@ class AppRouter {
           final isLoginPage = state.matchedLocation == RouteNames.login;
           final isSignupPage = state.matchedLocation == RouteNames.signup;
           final isAuthPage = isLoginPage || isSignupPage;
+
           if (isAuthPage) {
             return child;
           }
@@ -54,16 +57,12 @@ class AppRouter {
           ),
           GoRoute(
             path: RouteNames.create,
-            builder: (context, state) => CreateAreaPage(services: AreaService.instance.listAreas(), uid: 12345),
+            builder: (context, state) => CreateAreaPage(services: AreaService.instance.listAreas(), userInfo: ProfileService.instance.getUserInfo()),
           ),
           GoRoute(
-              path: RouteNames.profile,
-              builder: (context, state) => const ProfilePage(
-                  email: 'axeltacheau@live.fr',
-                  firstName: 'Axel',
-                  lastName: 'Tacheau',
-                  password: 'axel1208')
-          )
+            path: RouteNames.profile,
+            builder: (context, state) => ProfilePage(userInfo: ProfileService.instance.getUserInfo()),
+          ),
         ],
       ),
     ],

@@ -1,18 +1,20 @@
 // lib/pages/create_page.dart
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
+import 'package:my_area_flutter/api/types/profile_body.dart';
+import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
-  final int uid;
+  final Future<UserInfoBody> userInfo;
 
   const CreateAreaPage({
     super.key,
     required this.services,
-    required this.uid,
+    required this.userInfo,
   });
 
   @override
@@ -56,7 +58,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   void _handleSubmit() async {
     final newArea = AreaCreateBody(
-      userId: widget.uid,
+      userId: userInfo.userId,
       action: Service(
         service: actionName,
         microservice: microActionName,
@@ -90,6 +92,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
+  late UserInfoBody userInfo;
 
   @override
   void initState() {
@@ -100,8 +103,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   Future<void> _loadServices() async {
     try {
       final loadedServices = await widget.services;
+      final loadedUserInfo = await widget.userInfo;
       setState(() {
         services = loadedServices;
+        userInfo = loadedUserInfo;
         actions = _filterAreaByType(loadedServices, 'action');
         reactions = _filterAreaByType(loadedServices, 'reaction');
       });
