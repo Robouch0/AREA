@@ -17,7 +17,7 @@ class AreaService {
 
   Future<List<AreaServiceData>> listAreas() async {
     try {
-      final token = await _authStorage.getToken();
+      final token = _authStorage.getToken();
 
       if (token == null) {
         throw Exception('Token is undefined');
@@ -43,9 +43,41 @@ class AreaService {
     }
   }
 
+  Future<List<UserAreaData>> listUserAreas() async {
+    try {
+      final token = _authStorage.getToken();
+
+      if (token == null) {
+        throw Exception('Token is undefined');
+      }
+
+      final response = await http.get(
+        Uri.parse('$_apiUrl/areas/list'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic jsonData = json.decode(response.body);
+        if (jsonData == null) return [];
+        final areas = (jsonData as List)
+            .map((json) => UserAreaData.fromJson(json))
+            .toList();
+        return areas;
+      }
+
+      throw Exception('Failed to load user areas: ${response.statusCode}');
+    } catch (e) {
+      developer.log('Failed to list user areas: $e', name: 'my_network_log');
+      rethrow;
+    }
+  }
+
   Future<bool> createArea(AreaCreateBody newArea) async {
     try {
-      final token = await _authStorage.getToken();
+      final token = _authStorage.getToken();
 
       if (token == null) {
         throw Exception('Token is undefined');

@@ -1,18 +1,20 @@
 // lib/pages/create_page.dart
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
+import 'package:my_area_flutter/api/types/profile_body.dart';
+import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
-  final int uid;
+  final Future<UserInfoBody> userInfo;
 
   const CreateAreaPage({
     super.key,
     required this.services,
-    required this.uid,
+    required this.userInfo,
   });
 
   @override
@@ -28,8 +30,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   Map<String, dynamic> actionIngredients = {};
   Map<String, dynamic> reactionIngredients = {};
 
-  dynamic convertIngredientValue(String value, IngredientType type) {
-    switch (type) {
+  dynamic convertIngredientValue(String value, Ingredient ingredient) {
+    switch (ingredient.type) {
       case IngredientType.int:
         return int.tryParse(value) ?? 0;
       case IngredientType.float:
@@ -39,12 +41,12 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
       case IngredientType.time:
         return value;
       case IngredientType.string:
+        return value;
     }
   }
 
-  void _handleIngredientChange(
-      bool isAction, String key, String value, IngredientType type) {
-    final convertedValue = convertIngredientValue(value, type);
+  void _handleIngredientChange(bool isAction, String key, String value, Ingredient ingredient) {
+    final convertedValue = convertIngredientValue(value, ingredient);
     setState(() {
       if (isAction) {
         actionIngredients[key] = convertedValue;
@@ -56,7 +58,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   void _handleSubmit() async {
     final newArea = AreaCreateBody(
-      userId: widget.uid,
+      userId: userInfo.userId,
       action: Service(
         service: actionName,
         microservice: microActionName,
@@ -90,6 +92,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
+  late UserInfoBody userInfo;
 
   @override
   void initState() {
@@ -100,8 +103,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   Future<void> _loadServices() async {
     try {
       final loadedServices = await widget.services;
+      final loadedUserInfo = await widget.userInfo;
       setState(() {
         services = loadedServices;
+        userInfo = loadedUserInfo;
         actions = _filterAreaByType(loadedServices, 'action');
         reactions = _filterAreaByType(loadedServices, 'reaction');
       });
@@ -382,7 +387,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }
 
   Widget _buildIngredientsForm({
-    required Map<String, IngredientType> ingredients,
+    required Map<String, Ingredient> ingredients,
     required Map<String, dynamic> values,
     required bool isAction,
   }) {
@@ -410,23 +415,24 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: ingredients.entries.map((entry) {
+                final ingredient = entry.value;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: TextField(
                     decoration: InputDecoration(
-                      labelText: entry.key,
-                      hintText: 'Enter ${entry.key}',
+                      labelText: '${entry.key}${ingredient.required ? ' *' : ''}',
+                      hintText: ingredient.description,
                       labelStyle: const TextStyle(color: Colors.white70),
                       hintStyle: const TextStyle(color: Colors.white30),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.1),
+                      fillColor: Colors.white.withAlpha(25),
                     ),
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) => _handleIngredientChange(
-                        isAction, entry.key, value, entry.value),
+                        isAction, entry.key, value, ingredient),
                     key: ValueKey(entry.key),
                     controller: null,
                     onTapOutside: (event) => FocusScope.of(context).unfocus(),
