@@ -24,9 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   void _performLogin(String email, String pass) async {
     final success = await _authService.login(email, pass);
 
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content:

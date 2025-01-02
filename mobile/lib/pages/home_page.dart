@@ -17,7 +17,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return MainAppScaffold(
-      title: 'Home',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -32,7 +31,7 @@ class _HomePageState extends State<HomePage> {
               final authService = AuthService.instance;
               await authService.logout();
 
-              if (mounted) {
+              if (context.mounted && mounted) {
                 context.go(RouteNames.login);
               }
             },

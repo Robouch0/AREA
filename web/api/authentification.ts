@@ -3,6 +3,7 @@ import {cookies} from 'next/headers';
 import axiosInstance from "@/lib/axios"
 import {AxiosResponse} from 'axios';
 import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import RedirectUri from "@/lib/redirectUri";
 
 export async function login(emailValue: string, passwordValue: string): Promise<boolean> {
     try {
@@ -49,6 +50,7 @@ export async function connectOauth(service: string, code: string|null): Promise<
         const response = await axiosInstance.post("oauth/connect/   ", {
             service: service,
             code: code,
+            redirect_uri: RedirectUri
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`

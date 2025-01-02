@@ -1,7 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/core/router/app_router.dart';
-import 'package:my_area_flutter/services/storage/secure_storage_service.dart';
 import 'package:my_area_flutter/services/api/auth_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -23,6 +22,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
         fontFamily: 'AvenirNextCyr',
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.white,
+          brightness: Brightness.light,
+        ),
       ),
       routerConfig: AppRouter.router,
     );
