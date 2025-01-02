@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
+import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
@@ -426,7 +427,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.1),
+                      fillColor: Colors.white.withAlpha(25),
                     ),
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) => _handleIngredientChange(

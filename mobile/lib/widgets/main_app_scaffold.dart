@@ -2,12 +2,10 @@
 import 'package:flutter/material.dart';
 
 class MainAppScaffold extends StatelessWidget {
-  final String title;
   final Widget child;
 
   const MainAppScaffold({
     super.key,
-    this.title = 'AREA',
     required this.child,
   });
 
@@ -17,8 +15,9 @@ class MainAppScaffold extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-            child: child),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: child
+        ),
       ),
     );
   }

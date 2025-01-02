@@ -13,7 +13,7 @@ import (
 	"area/gRPC/api/github"
 	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
-	huggingFace "area/gRPC/api/hugging_face"
+	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
 	"area/gRPC/api/reaction"
 	"area/gRPC/api/spotify"
 	weather_server "area/gRPC/api/weather/weatherServer"
@@ -38,7 +38,7 @@ func LaunchServices() {
 
 	dtService, errDt := dateTime.NewDateTimeService()
 	reactService, errReact := reaction.NewReactionService()
-	huggingFaceService, errHf := huggingFace.NewHuggingFaceService()
+	huggingFaceService, errHf := huggingFace_server.NewHuggingFaceService()
 	githubService, errGit := github.NewGithubService()
 	gitlabService, errGitlab := gitlab_server.NewGitlabService()
 	discordService, errDiscord := discord.NewDiscordService()

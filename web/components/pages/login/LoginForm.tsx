@@ -4,7 +4,7 @@ import { FormData, UserSchema, ValidFieldNames } from "@/lib/typeLogin";
 import FormField from "@/components/ui/utils/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { FaDiscord, FaEye, FaEyeSlash, FaGithub, FaSpotify } from "react-icons/fa";
+import { FaDiscord, FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
@@ -130,23 +130,23 @@ function LoginForm() {
                             </div>
                             <div className="max-w-md w-full space-y-4">
 
-                                {/* {<OauthButton
+                                <OauthButton
                                     arial-label="Google"
                                     service="google"
                                     login={true}
                                     textButton="Continuer avec Google"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGoogle className="w-12 h-12" />}
-                                />} */}
+                                />
 
-                                {<OauthButton
-                                    arial-label="Hf"
+                                {/* {<OauthButton
+                                    arial-label="Hugging Face"
                                     service="hf"
                                     login={true}
-                                    textButton={"Continuer avec HuggingFace"}
+                                    textButton={"Continuer avec Hugging Face"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaSpotify />}
-                                />}
+                                />} */}
 
                                 <OauthButton
                                     arial-label="Discord"

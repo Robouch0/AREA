@@ -20,6 +20,10 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	HuggingFaceService_LaunchTextGeneration_FullMethodName       = "/huggingface.HuggingFaceService/LaunchTextGeneration"
+	HuggingFaceService_CreateRepository_FullMethodName           = "/huggingface.HuggingFaceService/CreateRepository"
+	HuggingFaceService_DeleteRepository_FullMethodName           = "/huggingface.HuggingFaceService/DeleteRepository"
+	HuggingFaceService_ChangeRepoVisibility_FullMethodName       = "/huggingface.HuggingFaceService/ChangeRepoVisibility"
+	HuggingFaceService_MoveRepo_FullMethodName                   = "/huggingface.HuggingFaceService/MoveRepo"
 	HuggingFaceService_CreateRepoUpdateWebHook_FullMethodName    = "/huggingface.HuggingFaceService/CreateRepoUpdateWebHook"
 	HuggingFaceService_CreateNewPRWebHook_FullMethodName         = "/huggingface.HuggingFaceService/CreateNewPRWebHook"
 	HuggingFaceService_CreateNewDiscussionWebHook_FullMethodName = "/huggingface.HuggingFaceService/CreateNewDiscussionWebHook"
@@ -31,6 +35,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HuggingFaceServiceClient interface {
 	LaunchTextGeneration(ctx context.Context, in *TextGenerationReq, opts ...grpc.CallOption) (*TextGenerationRes, error)
+	CreateRepository(ctx context.Context, in *CreateHFRepoReq, opts ...grpc.CallOption) (*CreateHFRepoReq, error)
+	DeleteRepository(ctx context.Context, in *DeleteHFRepoReq, opts ...grpc.CallOption) (*DeleteHFRepoReq, error)
+	ChangeRepoVisibility(ctx context.Context, in *ChangeHFRepoReq, opts ...grpc.CallOption) (*ChangeHFRepoReq, error)
+	MoveRepo(ctx context.Context, in *MoveHFRepoReq, opts ...grpc.CallOption) (*MoveHFRepoReq, error)
 	CreateRepoUpdateWebHook(ctx context.Context, in *HFWebHookInfo, opts ...grpc.CallOption) (*HFWebHookInfo, error)
 	CreateNewPRWebHook(ctx context.Context, in *HFWebHookInfo, opts ...grpc.CallOption) (*HFWebHookInfo, error)
 	CreateNewDiscussionWebHook(ctx context.Context, in *HFWebHookInfo, opts ...grpc.CallOption) (*HFWebHookInfo, error)
@@ -49,6 +57,46 @@ func (c *huggingFaceServiceClient) LaunchTextGeneration(ctx context.Context, in 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TextGenerationRes)
 	err := c.cc.Invoke(ctx, HuggingFaceService_LaunchTextGeneration_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *huggingFaceServiceClient) CreateRepository(ctx context.Context, in *CreateHFRepoReq, opts ...grpc.CallOption) (*CreateHFRepoReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateHFRepoReq)
+	err := c.cc.Invoke(ctx, HuggingFaceService_CreateRepository_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *huggingFaceServiceClient) DeleteRepository(ctx context.Context, in *DeleteHFRepoReq, opts ...grpc.CallOption) (*DeleteHFRepoReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteHFRepoReq)
+	err := c.cc.Invoke(ctx, HuggingFaceService_DeleteRepository_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *huggingFaceServiceClient) ChangeRepoVisibility(ctx context.Context, in *ChangeHFRepoReq, opts ...grpc.CallOption) (*ChangeHFRepoReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangeHFRepoReq)
+	err := c.cc.Invoke(ctx, HuggingFaceService_ChangeRepoVisibility_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *huggingFaceServiceClient) MoveRepo(ctx context.Context, in *MoveHFRepoReq, opts ...grpc.CallOption) (*MoveHFRepoReq, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MoveHFRepoReq)
+	err := c.cc.Invoke(ctx, HuggingFaceService_MoveRepo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,6 +148,10 @@ func (c *huggingFaceServiceClient) TriggerWebHook(ctx context.Context, in *WebHo
 // for forward compatibility.
 type HuggingFaceServiceServer interface {
 	LaunchTextGeneration(context.Context, *TextGenerationReq) (*TextGenerationRes, error)
+	CreateRepository(context.Context, *CreateHFRepoReq) (*CreateHFRepoReq, error)
+	DeleteRepository(context.Context, *DeleteHFRepoReq) (*DeleteHFRepoReq, error)
+	ChangeRepoVisibility(context.Context, *ChangeHFRepoReq) (*ChangeHFRepoReq, error)
+	MoveRepo(context.Context, *MoveHFRepoReq) (*MoveHFRepoReq, error)
 	CreateRepoUpdateWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error)
 	CreateNewPRWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error)
 	CreateNewDiscussionWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error)
@@ -116,6 +168,18 @@ type UnimplementedHuggingFaceServiceServer struct{}
 
 func (UnimplementedHuggingFaceServiceServer) LaunchTextGeneration(context.Context, *TextGenerationReq) (*TextGenerationRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LaunchTextGeneration not implemented")
+}
+func (UnimplementedHuggingFaceServiceServer) CreateRepository(context.Context, *CreateHFRepoReq) (*CreateHFRepoReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRepository not implemented")
+}
+func (UnimplementedHuggingFaceServiceServer) DeleteRepository(context.Context, *DeleteHFRepoReq) (*DeleteHFRepoReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRepository not implemented")
+}
+func (UnimplementedHuggingFaceServiceServer) ChangeRepoVisibility(context.Context, *ChangeHFRepoReq) (*ChangeHFRepoReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeRepoVisibility not implemented")
+}
+func (UnimplementedHuggingFaceServiceServer) MoveRepo(context.Context, *MoveHFRepoReq) (*MoveHFRepoReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MoveRepo not implemented")
 }
 func (UnimplementedHuggingFaceServiceServer) CreateRepoUpdateWebHook(context.Context, *HFWebHookInfo) (*HFWebHookInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRepoUpdateWebHook not implemented")
@@ -164,6 +228,78 @@ func _HuggingFaceService_LaunchTextGeneration_Handler(srv interface{}, ctx conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HuggingFaceServiceServer).LaunchTextGeneration(ctx, req.(*TextGenerationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HuggingFaceService_CreateRepository_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateHFRepoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HuggingFaceServiceServer).CreateRepository(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HuggingFaceService_CreateRepository_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HuggingFaceServiceServer).CreateRepository(ctx, req.(*CreateHFRepoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HuggingFaceService_DeleteRepository_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteHFRepoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HuggingFaceServiceServer).DeleteRepository(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HuggingFaceService_DeleteRepository_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HuggingFaceServiceServer).DeleteRepository(ctx, req.(*DeleteHFRepoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HuggingFaceService_ChangeRepoVisibility_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeHFRepoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HuggingFaceServiceServer).ChangeRepoVisibility(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HuggingFaceService_ChangeRepoVisibility_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HuggingFaceServiceServer).ChangeRepoVisibility(ctx, req.(*ChangeHFRepoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HuggingFaceService_MoveRepo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MoveHFRepoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HuggingFaceServiceServer).MoveRepo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HuggingFaceService_MoveRepo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HuggingFaceServiceServer).MoveRepo(ctx, req.(*MoveHFRepoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -250,6 +386,22 @@ var HuggingFaceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LaunchTextGeneration",
 			Handler:    _HuggingFaceService_LaunchTextGeneration_Handler,
+		},
+		{
+			MethodName: "CreateRepository",
+			Handler:    _HuggingFaceService_CreateRepository_Handler,
+		},
+		{
+			MethodName: "DeleteRepository",
+			Handler:    _HuggingFaceService_DeleteRepository_Handler,
+		},
+		{
+			MethodName: "ChangeRepoVisibility",
+			Handler:    _HuggingFaceService_ChangeRepoVisibility_Handler,
+		},
+		{
+			MethodName: "MoveRepo",
+			Handler:    _HuggingFaceService_MoveRepo_Handler,
 		},
 		{
 			MethodName: "CreateRepoUpdateWebHook",

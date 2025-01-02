@@ -1,6 +1,5 @@
 // lib/core/router/app_router.dart
 import 'package:go_router/go_router.dart';
-import 'package:my_area_flutter/core/router/scaffold_navbar_widget.dart';
 import 'package:my_area_flutter/pages/create_page.dart';
 import 'package:my_area_flutter/pages/profile_page.dart';
 import 'package:my_area_flutter/pages/register_page.dart';
@@ -12,6 +11,7 @@ import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/pages/login_page.dart';
 import 'package:my_area_flutter/pages/home_page.dart';
 import 'package:my_area_flutter/pages/page_not_found.dart';
+import 'package:my_area_flutter/widgets/bottom_navbar.dart';
 
 import 'route_names.dart';
 
@@ -48,7 +48,7 @@ class AppRouter {
           if (isAuthPage) {
             return child;
           }
-          return ScaffoldWithNavBar(child: child);
+          return BottomNavbar(child: child);
         },
         routes: [
           GoRoute(

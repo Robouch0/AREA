@@ -75,17 +75,17 @@ class _AuthInputFieldState extends State<AuthInputField> {
       suffixIcon: suffixIcon,
       contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       hintStyle: TextStyle(
-        color: Colors.black.withOpacity(0.15),
+        color: Colors.black.withAlpha(38),
         fontWeight: FontWeight.w800,
         fontSize: 20,
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.black.withOpacity(0.07), width: 4),
+        borderSide: BorderSide(color: Colors.black.withAlpha(18), width: 4),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.black.withOpacity(0.07), width: 4),
+        borderSide: BorderSide(color: Colors.black.withAlpha(18), width: 4),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),

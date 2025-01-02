@@ -7,6 +7,11 @@ option go_package = "github.com/area/grpc-go/service";
 service HuggingFaceService {
   rpc LaunchTextGeneration(TextGenerationReq) returns (TextGenerationRes) {}
 
+  rpc CreateRepository(CreateHFRepoReq) returns (CreateHFRepoReq) {}
+  rpc DeleteRepository(DeleteHFRepoReq) returns (DeleteHFRepoReq) {}
+  rpc ChangeRepoVisibility(ChangeHFRepoReq) returns (ChangeHFRepoReq) {}
+  rpc MoveRepo(MoveHFRepoReq) returns (MoveHFRepoReq) {}
+
   rpc CreateRepoUpdateWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
   rpc CreateNewPRWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
   rpc CreateNewDiscussionWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
@@ -37,4 +42,54 @@ message HFWebHookInfo {
 message WebHookTriggerReq {
   uint32 action_id = 1;
   bytes payload = 2;
+}
+
+message CreateHFRepoReq {
+  // Type of repo (model, dataset, etc)
+  string type = 1;
+
+  // Name of the new Repository
+  string name = 2;
+
+  // To which organisation this repo is for
+  string organisation = 3;
+
+  // Whether this repo is private or not
+  bool private = 4;
+
+  // SDK not supported yet
+}
+
+message DeleteHFRepoReq {
+  // Type of repo (model, dataset, etc)
+  string type = 1;
+
+  // Name of the new Repository
+  string name = 2;
+  
+  // To which organisation this repo is for
+  string organisation = 3;
+}
+
+message ChangeHFRepoReq {
+  // Type of repo (model, dataset, etc)
+  string type = 1;
+
+  // Identifier of the repo: The name of the namespace and the name of repo
+  // Example: username/name
+  string repo_id = 2;
+
+  // Whether this repo is private or not
+  bool private = 3;
+}
+
+message MoveHFRepoReq {
+  // Origin repo
+  string fromRepo = 1;
+
+  // Destination repo
+  string toRepo = 2;
+
+  // Type of repo (model, dataset, etc)
+  string type = 3;
 }

@@ -1,15 +1,16 @@
 'use client';
-import {MicroServiceCard} from "@/components/ui/services/MicroserviceCard";
+import { MicroServiceCard } from "@/components/ui/services/MicroserviceCard";
 import * as React from "react";
-import {useEffect, useState, useMemo, ChangeEvent} from "react";
-import {Input} from "@/components/ui/utils/Input";
-import {Button} from "@/components/ui/utils/Button";
-import {create} from "@/api/createArea";
+import { useEffect, useState, useMemo, ChangeEvent } from "react";
+import { Input } from "@/components/ui/utils/Input";
+import { Button } from "@/components/ui/utils/Button";
+import { create } from "@/api/createArea";
 import Form from 'next/form';
 import MicroserviceCreateZone from "@/components/ui/services/MicroserviceCreateZone";
-import {getColorForService} from "@/lib/utils";
-import {AreaServices, AreaMicroservices, IngredientPossible} from "@/api/types/areaStatus";
-import {AreaCreateBody} from "@/api/types/areaCreateBody";
+import { getColorForService } from "@/lib/utils";
+import { AreaServices, AreaMicroservices, Ingredient } from "@/api/types/areaStatus";
+import { AreaCreateBody } from "@/api/types/areaCreateBody";
+import { getUserTokens } from "@/api/getUserInfos";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -17,10 +18,10 @@ export function renderMicroservices(service: AreaServices | undefined, setMicros
     }
     return (
         <div className="flex flex-wrap py-4 justify-center items-center">
-            {service.microservices.map((micro:AreaMicroservices) =>
+            {service.microservices.map((micro: AreaMicroservices) =>
                 <div key={`${micro.name}-${micro.ref_name}`} className="flex flex-row">
                     <MicroServiceCard
-                        setMicroserviceAction={():void => {
+                        setMicroserviceAction={(): void => {
                             setMicroservice(micro.ref_name)
                         }}
                         microServicesColor={getColorForService(service.ref_name)}
@@ -35,7 +36,7 @@ export function renderMicroservices(service: AreaServices | undefined, setMicros
 }
 
 export function renderIngredientsInput(
-    ingredients: Map<string, string> | undefined, values: string[],
+    ingredients: Map<string, Ingredient> | undefined, values: string[],
     setValues: React.Dispatch<React.SetStateAction<string[]>>) {
     if (ingredients === undefined) {
         return <div></div>
@@ -44,10 +45,11 @@ export function renderIngredientsInput(
     return (
         <>
             <div className="pt-3"></div>
-            {Object.keys(ingredients).map((ingredient:string, index:number) => (
+            {Object.keys(ingredients).map((ingredient: string, index: number) => (
                 <div key={index} className="flex flex-col justify-center items-center">
-                    <p className="p-2 left-0 text-2xl text-white">  {ingredient.charAt(
-                        0).toUpperCase() + ingredient.slice(1)} </p>
+                    <p className="p-2 left-0 text-2xl text-white">
+                        {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}
+                    </p>
                     <Input
                         type="text"
                         name={`${ingredient}`}
@@ -55,8 +57,8 @@ export function renderIngredientsInput(
                         className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                         aria-label="text"
                         value={values[index] || ''} // ChangeEvent<HTMLInputElement>
-                        onChange={(e: ChangeEvent<HTMLInputElement>):void => {
-                            const newValues:string[] = [...values];
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
+                            const newValues: string[] = [...values];
                             newValues[index] = e.target.value;
                             setValues(newValues);
                         }}
@@ -71,14 +73,14 @@ export function renderIngredientsInput(
 
 const filterAreaByType = (services: AreaServices[], type: string) => {
     return services.filter((service: AreaServices): boolean => {
-        return service.microservices.find((micro : AreaMicroservices):boolean => {
+        return service.microservices.find((micro: AreaMicroservices): boolean => {
             return micro.type == type
         }) != undefined
     }).map((service: AreaServices) => {
         return {
             name: service.name,
             ref_name: service.ref_name,
-            microservices: service.microservices.filter((micro:AreaMicroservices): boolean => {
+            microservices: service.microservices.filter((micro: AreaMicroservices): boolean => {
                 return micro.type == type
             })
         }
@@ -87,11 +89,12 @@ const filterAreaByType = (services: AreaServices[], type: string) => {
 
 // /!\ Disabling any error check because an ingredient can be of any type /!\
 // eslint-disable-next-line
-const convertIngredient = (ingredient: string | undefined, type: IngredientPossible): any => {
+const convertIngredient = (ingredient: string | undefined, obj: Ingredient): any => {
     if (ingredient === undefined) {
         return null
     }
-    switch (type) {
+
+    switch (obj.type) {
         case "int":
             return parseInt(ingredient)
         case "float":
@@ -106,10 +109,13 @@ const convertIngredient = (ingredient: string | undefined, type: IngredientPossi
 }
 
 const filterServiceByRefName = (services: AreaServices[], refName: string): AreaServices | undefined => {
-    return services.find((service: AreaServices) : boolean => service.ref_name === refName)
+    return services.find((service: AreaServices): boolean => service.ref_name === refName)
 }
 
-export default function CreatePage({services, uid}: { services: AreaServices[], uid: number }) {
+export default function CreatePage({ services, uid }: { services: AreaServices[], uid: number }) {
+    const [isTokenActionPresent, setTokenAction] = useState(true);
+    const [isTokenReactionPresent, setTokenReaction] = useState(true);
+
     const actions: AreaServices[] = useMemo(() => {
         return filterAreaByType(services, "action")
     }, [services])
@@ -117,7 +123,7 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
     const [actionName, setActionName] = React.useState("");
     const [microActionName, setMicroActionName] = React.useState("");
 
-    const actionServiceChosen : AreaServices | undefined = useMemo((): AreaServices | undefined => {
+    const actionServiceChosen: AreaServices | undefined = useMemo((): AreaServices | undefined => {
         return filterServiceByRefName(actions, actionName)
     }, [actions, actionName])
 
@@ -128,13 +134,31 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
     const [reactionName, setReactionName] = React.useState(""); // Later it will be an array of strings
     const [microReactionName, setMicroReactionName] = React.useState("");
 
-    const reactionServiceChosen: AreaServices | undefined = useMemo(() : AreaServices | undefined => {
+    const reactionServiceChosen: AreaServices | undefined = useMemo((): AreaServices | undefined => {
         // Loop here with an array of reactionServiceChosen
         return filterServiceByRefName(reactions, reactionName)
     }, [reactions, reactionName])
 
     const [ingredientValuesActions, setIngredientValuesActions] = useState<string[]>([]);
     const [ingredientValuesReactions, setIngredientValuesReactions] = useState<string[]>([]);
+
+    useEffect((): void => {
+        if (actionName != "" && reactionName != "") {
+            getUserTokens().then((res) => {
+                let actionToken = false;
+                if (actionName != "dt") {
+                    actionToken = res.includes(actionName);
+                } else {
+                    actionToken = true;
+                }
+                const reactionToken = res.includes(reactionName);
+                setTokenAction(actionToken)
+                setTokenReaction(reactionToken)
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    }, [actionName, reactionName])
 
     useEffect((): void => {
         setMicroActionName("")
@@ -164,8 +188,8 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
             }
         }
 
-        const microAction : AreaMicroservices | undefined = actionServiceChosen.microservices.find((ms : AreaMicroservices) : boolean => ms.ref_name === microActionName)
-        const microReaction : AreaMicroservices | undefined = reactionServiceChosen.microservices.find((ms: AreaMicroservices) : boolean => ms.ref_name === microReactionName)
+        const microAction: AreaMicroservices | undefined = actionServiceChosen.microservices.find((ms: AreaMicroservices): boolean => ms.ref_name === microActionName)
+        const microReaction: AreaMicroservices | undefined = reactionServiceChosen.microservices.find((ms: AreaMicroservices): boolean => ms.ref_name === microReactionName)
 
         if (microAction === undefined || microReaction === undefined) {
             console.error("No microservice chosen.");
@@ -173,15 +197,15 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
         }
 
         console.log("Micro action ing: ", microAction.ingredients)
-        Object.entries(microAction.ingredients).forEach(([key, type] ) : void => {
+        Object.entries(microAction.ingredients).forEach(([key, type]): void => {
             payload.action.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type)
         })
 
         console.log("Micro reaction ing: ", microReaction.ingredients)
-        Object.entries(microReaction.ingredients).forEach(([key, type]) : void => {
+        Object.entries(microReaction.ingredients).forEach(([key, type]): void => {
             payload.reaction.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type)
         })
-        create(payload).catch(error => { console.log(error)});
+        create(payload).catch(error => { console.log(error) });
     };
 
     // Create a redirect to the applets page or other
@@ -199,7 +223,7 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                         textColor={"text-blue-500"}
                     />
                 </div>
-                <hr className="h-32 w-4 bg-gray-300"/>
+                <hr className="h-32 w-4 bg-gray-300" />
                 <div // Later for multiple reactions this will be a loop
                     className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
                 >
@@ -211,10 +235,24 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                         textColor={"text-red-500"}
                     />
                 </div>
+                {(!isTokenActionPresent || !isTokenReactionPresent) && (
+                    <div className={"font-bold mt-4 text-xl "}>
+                        <p>You cannot create this area</p>
+                        <p>There is no account linked to AREA for the following services </p>
+                        {!isTokenActionPresent && (
+                            <p className={"font-bold mx-4"}> Action : {actionName}</p>
+                        )}
+                        {!isTokenReactionPresent && (
+                            <p className={"font-bold mx-4"}> Reaction :  {reactionName}</p>
+                        )}
+                    </div>
+                )}
+
+
                 <Button
                     type="submit"
                     className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold"
-                    disabled={microActionName === "" || microReactionName === ""}
+                    disabled={microActionName === "" || microReactionName === "" || !isTokenActionPresent || !isTokenReactionPresent}
                 >
                     Create AREA
                 </Button>

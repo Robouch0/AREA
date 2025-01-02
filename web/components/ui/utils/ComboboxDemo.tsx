@@ -68,7 +68,7 @@ export function ComboboxDemo({services, serviceName, setValueAction}: {
                                             serviceName === service.ref_name ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {service.ref_name}
+                                    {service.name}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

@@ -17,7 +17,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return MainAppScaffold(
-      title: 'Home',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -38,7 +38,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 	}
 
 	oauthUrls["github"] = OAuthURLs{
-		RedirectURL: "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email,repo,workflow", // Mettre plus de droits précis
+		RedirectURL: "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email,repo,workflow&state=github", // Mettre plus de droits précis
 		OAuth: &GithubOAuth{
 			AccessTokenURL:  "https://github.com/login/oauth/access_token",
 			EmailRequestURL: "https://api.github.com/user/emails",
@@ -46,14 +46,14 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 	}
 	oauthUrls["google"] = OAuthURLs{ // Look again which scope is good for google for user
 		RedirectURL: fmt.Sprintf(
-			"https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&scope=%s&response_type=code", "%s", "%s", googleScopes),
+			"https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&scope=%s&response_type=code&state=google", "%s", "%s", googleScopes),
 		OAuth: &GoogleOAuth{
 			AccessTokenURL:  "https://oauth2.googleapis.com/token",
 			EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo", // https://www.googleapis.com/plus/v1/people/me
 		},
 	}
 	oauthUrls["discord"] = OAuthURLs{
-		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email+bot+applications.commands+guilds",
+		RedirectURL: "https://discord.com/oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=identify+email+bot+applications.commands+guilds&state=discord",
 		OAuth: &DiscordOAuth{
 			AccessTokenURL:  "https://discord.com/api/oauth2/token",
 			EmailRequestURL: "https://discord.com/api/users/@me",
@@ -61,7 +61,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 	}
 	oauthUrls["spotify"] = OAuthURLs{
 		RedirectURL: `https://accounts.spotify.com/authorize?
-			client_id=%s&response_type=code&redirect_uri=%s&scope=user-modify-playback-state playlist-modify-public playlist-modify-private`, // Maybe add state later
+			client_id=%s&response_type=code&redirect_uri=%s&scope=user-modify-playback-state playlist-modify-public playlist-modify-private&state=spotify`, // Maybe add state later
 		OAuth: &SpotifyOAuth{
 			AccessTokenURL:  "https://accounts.spotify.com/api/token",
 			EmailRequestURL: "https://api.spotify.com/v1/me",
@@ -69,7 +69,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 	}
 	oauthUrls["hf"] = OAuthURLs{
 		RedirectURL: fmt.Sprintf(
-			`https://huggingface.co/oauth/authorize?client_id=%s&response_type=code&prompt=consent&redirect_uri=%s&scope=%s&state=STATE`, "%s", "%s", hfScopes),
+			`https://huggingface.co/oauth/authorize?client_id=%s&response_type=code&prompt=consent&redirect_uri=%s&scope=%s&state=hf`, "%s", "%s", hfScopes),
 		OAuth: &HFOAuth{
 			AccessTokenURL:  "https://huggingface.co/oauth/token",
 			EmailRequestURL: "https://huggingface.co/api/whoami-v2",
@@ -77,7 +77,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 	}
 	oauthUrls["gitlab"] = OAuthURLs{
 		RedirectURL: fmt.Sprintf(
-			`https://gitlab.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code&state=STATE&scope=%s`, "%s", "%s", gitlabScopes),
+			`https://gitlab.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code&state=gitlab&scope=%s`, "%s", "%s", gitlabScopes),
 		OAuth: &GitlabOAuth{
 			AccessTokenURL:  "https://gitlab.com/oauth/token",
 			EmailRequestURL: "https://gitlab.com/oauth/userinfo",

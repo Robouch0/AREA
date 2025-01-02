@@ -14,7 +14,7 @@ import (
 	"area/gRPC/api/github"
 	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
-	huggingFace "area/gRPC/api/hugging_face"
+	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
 	"area/gRPC/api/spotify"
@@ -43,7 +43,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 
 	m := make(map[string]IServ.ClientService)
 	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
-	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
+	m["hf"] = huggingFace_client.NewHuggingFaceClient(conn)
 	m["github"] = github.NewGithubClient(conn)
 	m["gitlab"] = gitlab_client.NewGitlabClient(conn)
 	m["google"] = google_client.NewGoogleClient(conn)

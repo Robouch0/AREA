@@ -129,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Container(
           width: MediaQuery.of(context).size.width / 3,
           height: 1,
-          color: Colors.grey.withOpacity(0.2),
+          color: Colors.grey.withAlpha(51),
         ),
       ),
     );
@@ -272,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withAlpha(204),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.black, width: 4),
             ),
@@ -327,7 +327,7 @@ class _ProfilePageState extends State<ProfilePage> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withAlpha(204),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.black, width: 4),
               ),
@@ -429,7 +429,7 @@ class _ProfilePageState extends State<ProfilePage> {
       height: 280,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withAlpha(230),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
       ),

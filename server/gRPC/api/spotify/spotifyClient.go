@@ -42,23 +42,38 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 		Name:    "Spotify",
 		RefName: "spotify",
 
-		Microservices: []IServ.MicroserviceStatus{
+		Microservices: []IServ.MicroserviceDescriptor{
 			{
 				Name:    "Stop the current song playing on the last device connected",
 				RefName: "stopSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Create a spotify playlist",
 				RefName: "createPlaylist",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"playlistName":        "string",
-					"playlistDescription": "string",
-					"public":              "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"playlistName": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the playlist",
+						Required:    true,
+					},
+					"playlistDescription": {
+						Value:       "",
+						Type:        "string",
+						Description: "Description of the playlist",
+						Required:    true,
+					},
+					"public": {
+						Value:       "",
+						Type:        "string",
+						Description: "Is the playlist public or private",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -66,22 +81,27 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "nextSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Launch the previous song",
 				RefName: "previousSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Change the playback Volume",
 				RefName: "setPlaybackVolume",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"volume": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"volume": {
+						Value:       "",
+						Type:        "string",
+						Description: "New volume for the song",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -89,9 +109,19 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "launchSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{
-					"songUrl":              "string",
-					"millisecondsPosition": "string",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"songUrl": {
+						Value:       "",
+						Type:        "string",
+						Description: "URL of the song to launch",
+						Required:    true,
+					},
+					"millisecondsPosition": {
+						Value:       "",
+						Type:        "string",
+						Description: "Delay for the song",
+						Required:    true,
+					},
 				},
 			},
 			{
@@ -99,7 +129,7 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "addSongToPlaylist",
 				Type:    "reaction",
 
-				Ingredients: map[string]string{},
+				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 		},
 	}
