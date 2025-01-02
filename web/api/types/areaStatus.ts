@@ -42,3 +42,12 @@ export interface AreaServices {
 
     microservices: AreaMicroservices[]
 }
+
+export interface AreaServicesWithId extends AreaServices {
+    /** Unique identifier for the user Area */
+    ID: string;
+    /** Object containing the Area actions  */
+    Action: AreaServices;
+    /** Object containing the Area reactions  */
+    Reactions: AreaServices[];
+}

@@ -29,33 +29,45 @@ export default function Explore() {
                 <Image
                     className="opacity-40"
                     src="/bg.png"
-                    alt="bg Social Networks"
+                    alt="Explore AREAs"
                     width="350"
                     height="350"
                 />
-                <div className="hidden flex-col sm:block sm:flex-col justify-center items-center p-4 text-2xl font-bold">
+                <div
+                    className="hidden flex-col sm:block sm:flex-col justify-center items-center p-4 text-2xl font-bold"
+                >
                     <h1 className="mx-16 my-8 py-2">
-                        Le monde de l&#39;automatisation s&#39;ouvre pour vous
+                        Discover a world of ready-to-use automation
                     </h1>
-                    <h2 className="mx-20 flex flex-row">
-                        Il est l&#39;heure de passer à l&#39;
-                        <p className="mx-1 my-1 font-bold text-blue-500 animate-bounce ease-in-out">
-                            ACTION
+                    <h2 className="mx-20 flex flex-row items-center">
+                        Explore our
+                        <p className="mx-2 font-bold text-green-500 animate-pulse ease-in-out duration-1000">
+                            Pre-defined AREAs
                         </p>
                     </h2>
-                    <h3 className="mx-20 flex flex-row">
-                        Nous avons hâte de voir vos
-                        <p className="mx-2 font-bold text-red-500 animate-pulse">
-                            REACTIONS
+                    <h3 className="mx-20 flex flex-row items-center">
+                        From
+                        <p className="mx-1 font-bold text-blue-500 animate-bounce ease-in-out">
+                            ACTION
                         </p>
+                        to
+                        <p className="mx-1 font-bold text-red-500 animate-pulse">
+                            REACTION
+                        </p>
+                         everything is set up for you
                     </h3>
+                    <p className="mx-20 mt-4 text-xl font-normal text-gray-600">
+                        Choose, customize, and activate with just a few clicks
+                    </p>
                 </div>
             </div>
+
             <div className="bg-gray-50 flex flex-col items-center justify-center">
                 <h6 className="my-8 text-5xl text-black font-extrabold"> Explore </h6>
                 <div
-                    className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus-visible:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60">
-                    <FaSearch className="text-gray-400 text-3xl" />
+                    className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus-visible:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
+                >
+                    <FaSearch className="text-gray-400 text-3xl"/>
                     <Input
                         placeholder="Cherchez des Areas ici"
                         id="Search"
@@ -67,7 +79,10 @@ export default function Explore() {
                 <div className="mx-64 h-1/2 w-3/4 flex flex-wrap items-center justify-center">
                     {areas.map(area => (
                         <div key={area.id} className="">
-                            <AreaCard areaColor={area.areaColor} category={area.areaCategory} areaTitle={area.areaTitle} action={area.areaCategory} reaction ={area.reactionCategory} />
+                            <AreaCard
+                                areaColor={area.areaColor} category={area.areaCategory} areaTitle={area.areaTitle}
+                                action={area.areaCategory} reaction={area.reactionCategory}
+                            />
                         </div>
                     ))}
                 </div>

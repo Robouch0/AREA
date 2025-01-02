@@ -38,7 +38,7 @@ export default function MicroserviceCreateZone({
 
                 microServiceName === "" && name !== "" && (
                     <div className={textColor}>
-                        <h1 className="p-6 text-5xl">Veuillez sélectionner une {microServiceType}</h1>
+                        <h1 className="p-6 text-5xl">  Select your {microServiceType}</h1>
                     </div>
                 )
             }
