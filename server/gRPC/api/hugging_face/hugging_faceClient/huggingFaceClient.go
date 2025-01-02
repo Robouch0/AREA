@@ -91,8 +91,8 @@ func (hf *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, 
 }
 
 // No need to check microservice here but later there will be a map for multiple type of actions (like actions and reactions)
-func (hf *HuggingFaceServiceClient) TriggerWebhook(payload map[string]any, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
-	payloadBytes, err := json.Marshal(payload)
+func (hf *HuggingFaceServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
+	payloadBytes, err := json.Marshal(webhook.Payload)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
 	}

@@ -83,7 +83,7 @@ func (hfServ *HuggingFaceService) CreateRepoUpdateWebHook(ctx context.Context, r
 
 	err = hfServ.createWebHook(tokenInfo, &hfType.HFWebHookRequest{
 		Watched: []hfType.HFRepo{{Type: req.Type, Name: req.Name}},
-		Url:     fmt.Sprintf(envWebhookUrl, "hf", req.ActionId),
+		Url:     fmt.Sprintf(envWebhookUrl, "hf", "", req.ActionId),
 		Domains: []string{"repo"},
 	})
 	if err != nil {
@@ -110,7 +110,7 @@ func (hfServ *HuggingFaceService) CreateNewPRWebHook(ctx context.Context, req *g
 
 	err = hfServ.createWebHook(tokenInfo, &hfType.HFWebHookRequest{
 		Watched: []hfType.HFRepo{{Type: req.Type, Name: req.Name}},
-		Url:     fmt.Sprintf(envWebhookUrl, "hf", req.ActionId),
+		Url:     fmt.Sprintf(envWebhookUrl, "hf", "", req.ActionId),
 		Domains: []string{"discussion"},
 	})
 	if err != nil {
@@ -137,7 +137,7 @@ func (hfServ *HuggingFaceService) CreateNewDiscussionWebHook(ctx context.Context
 
 	err = hfServ.createWebHook(tokenInfo, &hfType.HFWebHookRequest{
 		Watched: []hfType.HFRepo{{Type: req.Type, Name: req.Name}},
-		Url:     fmt.Sprintf(envWebhookUrl, "hf", req.ActionId),
+		Url:     fmt.Sprintf(envWebhookUrl, "hf", "", req.ActionId),
 		Domains: []string{"discussion"},
 	})
 	if err != nil {

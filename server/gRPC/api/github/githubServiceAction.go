@@ -36,12 +36,12 @@ func (hfServ *GithubService) storeNewWebHook(
 	repoAction string,
 ) error {
 	_, err := hfServ.GithubDb.StoreNewGithub(&models.Github{
-		ActionID:      uint(req.ActionId),
-		UserID:        uint(tokenInfo.UserID),
-		Activated:     true,
-		RepoOwner:      req.Owner,
-		RepoName:      req.Repo,
-		RepoAction:    repoAction,
+		ActionID:   uint(req.ActionId),
+		UserID:     uint(tokenInfo.UserID),
+		Activated:  true,
+		RepoOwner:  req.Owner,
+		RepoName:   req.Repo,
+		RepoAction: repoAction,
 	})
 	return err
 }
@@ -81,8 +81,8 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	}
 
 	err = git.createWebHook(tokenInfo, &githubtypes.GitWebHookRequest{
-		Event: []string{"push"},
-		Config: githubtypes.GithubConfig{Url: fmt.Sprintf(envWebhookUrl, "github", req.ActionId), Content: "json" },
+		Event:  []string{"push"},
+		Config: githubtypes.GithubConfig{Url: fmt.Sprintf(envWebhookUrl, "github", "", req.ActionId), Content: "json"},
 	}, req.Owner, req.Repo)
 	if err != nil {
 		return nil, err
@@ -113,8 +113,8 @@ func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 		&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: req.Payload},
 	)
 	if err != nil {
-			return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
-		}
+		return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+	}
 	// }
 	return req, nil
 }
