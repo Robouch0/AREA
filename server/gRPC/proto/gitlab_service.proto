@@ -5,8 +5,65 @@ package gitlab;
 option go_package = "github.com/area/grpc-go/service";
 
 service GitlabService {
-  rpc Test(TestReq) returns(TestReq) {}
+  rpc CreateFile(CreateLabRepoFileReq) returns(CreateLabRepoFileReq) {}
+
+  rpc UpdateFile(UpdateLabRepoFileReq) returns(UpdateLabRepoFileReq) {}
+
+  rpc DeleteFile(DeleteLabRepoFileReq) returns(DeleteLabRepoFileReq) {}
+
+  rpc MarkItemAsDone(TodoLabItemDoneReq) returns(TodoLabItemDoneReq) {}
+
+  rpc MarkAllItemAsDone(AllTodoLabItemDoneReq) returns(AllTodoLabItemDoneReq) {}
 }
 
-message TestReq {
+message CreateLabRepoFileReq {
+  string file_path = 1; /* Path parameter */
+  string id = 2; /* Path parameter */
+
+  string branch = 3;
+  string commit_message = 4;
+  string content = 5;
+}
+
+message CreateLabRepoFileResp {
+  string file_path = 1;
+  string branch = 2;
+}
+
+message UpdateLabRepoFileReq {
+  string file_path = 1; /* Path parameter */
+  string id = 2; /* Path parameter */
+
+  string branch = 3;
+  string commit_message = 4;
+  string content = 5;
+}
+
+message UpdateLabRepoFileResp {
+  string file_path = 1;
+  string branch = 2;
+}
+
+message DeleteLabRepoFileReq {
+  string file_path = 1; /* Path parameter */
+  string id = 2; /* Path parameter */
+
+  string branch = 3;
+  string commit_message = 4;
+}
+
+message DeleteLabRepoFileResp {
+}
+
+message TodoLabItemDoneReq {
+  string id = 1;
+}
+
+message TodoLabItemDoneResp {
+}
+
+message AllTodoLabItemDoneReq {
+}
+
+message AllTodoLabItemDoneResp {
 }
