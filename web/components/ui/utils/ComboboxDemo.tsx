@@ -38,7 +38,7 @@ export function ComboboxDemo({services, serviceName, setValueAction}: {
                 >
                     {serviceName !== ""
                         ? services.find((service: AreaServices): boolean => service.ref_name === serviceName)?.ref_name
-                        : "Sélectionnez un service"}
+                        : "Select a Service"}
                     <ChevronsUpDown className="text-white h-4 shrink-0 opacity-50"/>
                 </Button>
             </PopoverTrigger>
@@ -46,7 +46,7 @@ export function ComboboxDemo({services, serviceName, setValueAction}: {
                 <Command className="bg-slate-800">
                     <CommandInput
                         className="focus-visible:!opacity-100 font-bold !text-white bg-slate-800 text-xl"
-                        placeholder="Cherchez un service..."
+                        placeholder="Search a service..."
                     />
                     <CommandList className="border-t-2 border-slate-700">
                         <CommandEmpty className="items-center justify-center mx-8 text-xl font-bold text-white">Aucun
