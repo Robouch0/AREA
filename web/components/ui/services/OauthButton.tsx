@@ -41,7 +41,6 @@ async function askForToken(service: string, code: string | null, login: boolean)
         return true;
     } catch (error) {
         console.error(error);
-
     }
 }
 
@@ -50,7 +49,7 @@ export function OauthButton({ service, className, ServiceIcon, textButton, login
     const [code, setPopupCode] = useState<string | null>("");
     const { toast } = useToast()
     const [channel, setChannel] = useState<BroadcastChannel | null>(null);
-
+    console.log(service)
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             if (!event || !event.data.code) {

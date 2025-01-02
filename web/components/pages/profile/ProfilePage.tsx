@@ -133,9 +133,8 @@ export default function ProfilePage({email, first_name, last_name, password, pro
                                     <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
                             </Button>
                         </div>
-                        {passwTooShort ?
+                        {passwTooShort &&
                                 <p className={"text-xl text-red-600 font-bold"}> Your password must be longer than 6 characters</p>
-                            : <></>
                         }
                             <Button
                                 className="text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"

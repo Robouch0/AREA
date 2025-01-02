@@ -65,8 +65,7 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 		},
 	}
 	oauthUrls["spotify"] = OAuthURLs{
-		RedirectURL: `https://accounts.spotify.com/authorize?
-			client_id=%s&response_type=code&redirect_uri=%s&scope=user-modify-playback-state playlist-modify-public playlist-modify-private&state=spotify`, // Maybe add state later
+		RedirectURL: `https://accounts.spotify.com/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=user-modify-playback-state playlist-modify-public playlist-modify-private&state=spotify`, // Maybe add state later
 		OAuth: &SpotifyOAuth{
 			AccessTokenURL:  "https://accounts.spotify.com/api/token",
 			EmailRequestURL: "https://api.spotify.com/v1/me",
