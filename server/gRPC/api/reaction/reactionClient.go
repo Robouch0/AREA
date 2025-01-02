@@ -37,6 +37,10 @@ func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, 
 	return nil, errors.New("No reaction available for this service")
 }
 
+func (_ *ReactionServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
+	return &IServ.WebHookResponseStatus{}, nil
+}
+
 func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
 	bytesActIngredients, err := json.Marshal(scenario.Action.Ingredients)
 	if err != nil {
@@ -68,8 +72,4 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 		return nil, err
 	}
 	return &IServ.ActionResponseStatus{Description: res.Description, ActionID: int(res.ActionId)}, nil
-}
-
-func (_ *ReactionServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
-	return &IServ.WebHookResponseStatus{}, nil
 }
