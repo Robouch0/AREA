@@ -5,7 +5,7 @@
 // areas
 //
 
-package controllers
+package areas
 
 import (
 	api "area/api"
@@ -27,7 +27,7 @@ type userArea struct {
 	ID        uint                  `json:"id,omitempty"`
 	Action    IServ.ServiceStatus   `json:"action,omitempty"`
 	Reactions []IServ.ServiceStatus `json:"reactions,omitempty"`
-	Activated bool                  `json:"activated,omitempty"`
+	Activated bool                  `json:"activated"`
 }
 
 func getCorrectMicroservice(gateway *api.ApiGateway, serviceStatus *IServ.ServiceStatus, microservice string) (*IServ.MicroserviceDescriptor, error) {

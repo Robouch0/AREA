@@ -21,6 +21,8 @@ import (
 
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -121,9 +123,11 @@ func (dt *DateTimeService) SetActivateAction(ctx context.Context, req *gRPCServi
 	if err != nil {
 		return nil, err
 	}
-	_, err = dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
+	resp, err := dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, status.Errorf(codes.Internal, "Could not set activated for time action")
 	}
+	log.Printf("Time Action with action ID: %v has activated state: %v", resp.ActionID, resp.Activated)
 	return req, nil
 }

@@ -323,14 +323,14 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Watch email received by an user",
-				RefName: "gmail/watchme",
+				RefName: "watchme", // No subdomain because of google cloud inner functionning
 				Type:    "action",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Watch a specific file",
-				RefName: "drive/watchFile",
+				RefName: "watchFile",
 				Type:    "action",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -344,7 +344,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Watch Changes for all file ressources",
-				RefName: "drive/watchChanges",
+				RefName: "watchChanges",
 				Type:    "action",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{},

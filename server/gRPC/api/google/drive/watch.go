@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 const (
@@ -27,6 +28,7 @@ type DriveChannel struct {
 	ResourceId string `json:"resourceId,omitempty"`
 	Address    string `json:"address,omitempty"`
 	Type       string `json:"type,omitempty"`
+	Expiration int64  `json:"expiration,string,omitempty"`
 }
 
 // Faire les types et les fonctions
@@ -39,11 +41,14 @@ func WatchFile(accessToken, fileID, channelID string, actionID uint) (*DriveChan
 	}
 	wURL := fmt.Sprintf(rawURL, "google", "watchFile", actionID)
 
+	t := time.Now()
+	tAfter := t.AddDate(0, 0, 7)
 	watchBody := &DriveChannel{
-		Payload: true,
-		ID:      channelID,
-		Address: wURL,
-		Type:    "web_hook",
+		Payload:    true,
+		ID:         channelID,
+		Address:    wURL,
+		Type:       "web_hook",
+		Expiration: tAfter.UnixMilli(),
 	}
 
 	b, err := json.Marshal(&watchBody)
@@ -75,11 +80,14 @@ func WatchChanges(accessToken, channelID string, actionID uint) (*DriveChannel, 
 	}
 	wURL := fmt.Sprintf(rawURL, "google", "watchChanges", actionID)
 
+	t := time.Now()
+	tAfter := t.AddDate(0, 0, 7)
 	watchBody := &DriveChannel{
-		Payload: true,
-		ID:      channelID,
-		Address: wURL,
-		Type:    "web_hook",
+		Payload:    true,
+		ID:         channelID,
+		Address:    wURL,
+		Type:       "web_hook",
+		Expiration: tAfter.UnixMilli(),
 	}
 
 	b, err := json.Marshal(&watchBody)

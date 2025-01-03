@@ -31,6 +31,48 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/area/activate": {
+            "put": {
+                "description": "Activate/Deactivate user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "Activate/Deactivate an area",
+                "parameters": [
+                    {
+                        "description": "Informations about the activation of an area",
+                        "name": "area",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/areas.areaActivateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serviceinterface.SetActivatedResponseStatus"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/area/list": {
             "get": {
                 "description": "List all user's area",
@@ -50,7 +92,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/controllers.userArea"
+                                "$ref": "#/definitions/areas.userArea"
                             }
                         }
                     },
@@ -537,6 +579,37 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "areas.areaActivateRequest": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "type": "boolean"
+                },
+                "area_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "areas.userArea": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                },
+                "activated": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                    }
+                }
+            }
+        },
         "controllers.TokenInformations": {
             "type": "object",
             "properties": {
@@ -556,26 +629,6 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
-                }
-            }
-        },
-        "controllers.userArea": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "$ref": "#/definitions/serviceinterface.ServiceStatus"
-                },
-                "activated": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "reactions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/serviceinterface.ServiceStatus"
-                    }
                 }
             }
         },
@@ -833,6 +886,20 @@ const docTemplate = `{
                 },
                 "ref_name": {
                     "description": "Reference Name of the service as it is named in the server",
+                    "type": "string"
+                }
+            }
+        },
+        "serviceinterface.SetActivatedResponseStatus": {
+            "type": "object",
+            "properties": {
+                "action_id": {
+                    "type": "integer"
+                },
+                "activated": {
+                    "type": "boolean"
+                },
+                "description": {
                     "type": "string"
                 }
             }

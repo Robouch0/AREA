@@ -46,6 +46,7 @@ func (google *GoogleGmailDB) GetByEmail(email string) (*models.Gmail, error) {
 	err := google.Db.NewSelect().
 		Model(allDatas).
 		Where("email_address = ?", email).
+		Where("activated = TRUE").
 		Scan(context.Background())
 
 	if err != nil {

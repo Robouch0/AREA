@@ -52,9 +52,9 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	(*google.MicroservicesLauncher)["drive/updateFile"] = google.updateFile
 	(*google.MicroservicesLauncher)["drive/copyFile"] = google.copyFile
 
-	(*google.ActionLauncher)["gmail/watchme"] = google.watchEmail
-	(*google.ActionLauncher)["drive/watchFile"] = google.watchFile
-	(*google.ActionLauncher)["drive/watchChanges"] = google.watchChanges
+	(*google.ActionLauncher)["watchme"] = google.watchEmail // No subdomain because of google cloud inner functionning
+	(*google.ActionLauncher)["watchFile"] = google.watchFile
+	(*google.ActionLauncher)["watchChanges"] = google.watchChanges
 	return google
 }
 
@@ -270,14 +270,14 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
 	}
 	log.Println(microservice)
-	if microservice == "gmail/watchme" {
+	if microservice == "watchme" {
 		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
 		if err != nil {
 			return nil, err
 		}
 		return &IServ.WebHookResponseStatus{}, nil
 	}
-	if microservice == "drive/watchFile" {
+	if microservice == "watchFile" {
 		log.Println(microservice)
 		_, err = google.cc.WatchFileTrigger(context.Background(), &gRPCService.FileTriggerReq{Headers: bHeader, ActionId: uint32(actionID)})
 		if err != nil {
@@ -286,7 +286,7 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 		}
 		return &IServ.WebHookResponseStatus{}, nil
 	}
-	if microservice == "drive/watchChanges" {
+	if microservice == "watchChanges" {
 		_, err = google.cc.WatchChangesTrigger(context.Background(), &gRPCService.ChangesTriggerReq{Headers: bHeader, ActionId: uint32(actionID)})
 		if err != nil {
 			return nil, err
@@ -298,7 +298,7 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 
 func (google *GoogleClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	if microservice == "gmail/watchme" {
+	if microservice == "watchme" {
 		if _, err := google.cc.SetActivateGmailAction(ctx, &gRPCService.SetActivateGmail{
 			ActionId:  uint32(id),
 			Activated: activated,
@@ -306,10 +306,10 @@ func (google *GoogleClient) SetActivate(microservice string, id uint, userID int
 			return nil, err
 		}
 	}
-	if microservice == "drive/watchChanges" || microservice == "drive/watchFile" {
+	if microservice == "drive/watchChanges" || microservice == "watchFile" {
 		if _, err := google.cc.SetActivateDriveAction(ctx, &gRPCService.SetActivateDrive{
-			ActionId:  uint32(id),
-			Activated: activated,
+			ActionId:     uint32(id),
+			Activated:    activated,
 			Microservice: microservice,
 		}); err != nil {
 			return nil, err

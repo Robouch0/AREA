@@ -45,6 +45,7 @@ func watchFile(
 	if err != nil {
 		return nil, err
 	}
+	log.Println("New WatchFile for drive")
 	return req, nil
 }
 
@@ -86,6 +87,7 @@ func (google *GoogleService) WatchDriveChanges(ctx context.Context, req *gRPCSer
 	if err != nil {
 		return nil, err
 	}
+	log.Println("New WatchChanges for drive")
 	return req, nil
 }
 
@@ -151,7 +153,7 @@ func (google *GoogleService) SetActivateDriveAction(ctx context.Context, req *gR
 	if !req.Activated {
 		err = drive.StopWatchDrive(tokenInfo, act.ChannelID, act.ResourceID)
 	} else {
-		if req.Microservice == "drive/watchChanges" {
+		if req.Microservice == "watchChanges" {
 			_, err = drive.WatchChanges(tokenInfo.AccessToken, act.ChannelID, act.ActionID)
 		} else {
 			_, err = drive.WatchFile(tokenInfo.AccessToken, act.FileName, act.ChannelID, act.ActionID)

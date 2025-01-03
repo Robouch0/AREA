@@ -1,4 +1,24 @@
 definitions:
+  areas.areaActivateRequest:
+    properties:
+      activated:
+        type: boolean
+      area_id:
+        type: integer
+    type: object
+  areas.userArea:
+    properties:
+      action:
+        $ref: '#/definitions/serviceinterface.ServiceStatus'
+      activated:
+        type: boolean
+      id:
+        type: integer
+      reactions:
+        items:
+          $ref: '#/definitions/serviceinterface.ServiceStatus'
+        type: array
+    type: object
   controllers.TokenInformations:
     properties:
       provider:
@@ -12,19 +32,6 @@ definitions:
         type: string
       password:
         type: string
-    type: object
-  controllers.userArea:
-    properties:
-      action:
-        $ref: '#/definitions/serviceinterface.ServiceStatus'
-      activated:
-        type: boolean
-      id:
-        type: integer
-      reactions:
-        items:
-          $ref: '#/definitions/serviceinterface.ServiceStatus'
-        type: array
     type: object
   controllers.userSignUp:
     properties:
@@ -197,6 +204,15 @@ definitions:
         description: Reference Name of the service as it is named in the server
         type: string
     type: object
+  serviceinterface.SetActivatedResponseStatus:
+    properties:
+      action_id:
+        type: integer
+      activated:
+        type: boolean
+      description:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a the document of the Backend routes of the application AREA
@@ -214,6 +230,34 @@ paths:
       summary: List of handled services
       tags:
       - Utils
+  /area/activate:
+    put:
+      consumes:
+      - application/json
+      description: Activate/Deactivate user's area
+      parameters:
+      - description: Informations about the activation of an area
+        in: body
+        name: area
+        required: true
+        schema:
+          $ref: '#/definitions/areas.areaActivateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serviceinterface.SetActivatedResponseStatus'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Activate/Deactivate an area
+      tags:
+      - Area
   /area/list:
     get:
       consumes:
@@ -226,7 +270,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/controllers.userArea'
+              $ref: '#/definitions/areas.userArea'
             type: array
         "401":
           description: Unauthorized

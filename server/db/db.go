@@ -50,7 +50,7 @@ func GetByID[T any](Db bun.IDB, ID uint) (*T, error) {
 func SetActivateByActionID[T any](Db bun.IDB, activated bool, userID, actionID uint) (*T, error) {
 	data := new(T)
 	_, err := Db.NewUpdate().
-		Model(&data).
+		Model(data).
 		Set("activated = ?", activated).
 		Where("user_id = ?", userID).
 		Where("action_id = ?", actionID).

@@ -85,6 +85,7 @@ func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.E
 		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
 	}
 
+	log.Println("Email sent to: ", req.To)
 	postRequest, err := http.NewRequest("POST", sendMessageMeURL, bytes.NewBuffer(b))
 	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
 	postRequest.Header.Add("Content-Type", "message/rfc822")
@@ -99,7 +100,6 @@ func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.E
 		io.Copy(os.Stderr, resp.Body)
 		return nil, status.Errorf(codes.Aborted, resp.Status)
 	}
-
 	log.Println(resp.Body)
 	return nil, nil
 }
@@ -128,6 +128,7 @@ func (google *GoogleService) WatchGmailEmail(ctx context.Context, req *gRPCServi
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Cannot store new data in DB: %v", err)
 	}
+	log.Println("New Watch for gmail")
 	return req, nil
 }
 
@@ -147,6 +148,7 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 		return nil, err
 	}
 	if act.Activated {
+		log.Println("Action (GmailWatchMe) is activated so redirect to reaction Service")
 		ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
 		_, err := google.reactService.LaunchReaction(
 			ctx,
@@ -157,6 +159,7 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 			return nil, err
 		}
 	}
+	log.Println("Watchme trigger !")
 	return req, nil
 }
 

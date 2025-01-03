@@ -46,8 +46,9 @@ func (area *AreaDB) SubmitNewArea(newArea *models.Area) (*models.Area, error) {
 
 func (area *AreaDB) InsertNewArea(UserID uint, OneShot bool) (*models.Area, error) {
 	newArea := &models.Area{
-		UserID:  UserID,
-		OneShot: OneShot,
+		UserID:    UserID,
+		OneShot:   OneShot,
+		Activated: true,
 	}
 	_, err := area.Db.NewInsert().
 		Model(newArea).
@@ -59,8 +60,18 @@ func (area *AreaDB) InsertNewArea(UserID uint, OneShot bool) (*models.Area, erro
 }
 
 // Activate or desactivate an action based on actionID and the boolean activated
-func (area *AreaDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.Area, error) {
-	return SetActivateByActionID[models.Area](area.Db, activated, userID, actionID)
+func (area *AreaDB) SetActivateByAreaID(activated bool, userID, areaID uint) (*models.Area, error) {
+	data := new(models.Area)
+	_, err := area.Db.NewUpdate().
+		Model(data).
+		Set("activated = ?", activated).
+		Where("user_id = ?", userID).
+		Where("area.id = ?", areaID).
+		Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 
 func (area *AreaDB) GetFullAreaByUserID(userID uint) (*[]models.Area, error) {
@@ -68,6 +79,22 @@ func (area *AreaDB) GetFullAreaByUserID(userID uint) (*[]models.Area, error) {
 	err := area.Db.NewSelect().
 		Model(us).
 		Where("user_id = ?", userID).
+		Relation("Action").
+		Relation("Reactions").
+		Scan(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return us, nil
+}
+
+func (area *AreaDB) GetUserAreaByID(userID, areaID uint) (*models.Area, error) {
+	us := new(models.Area)
+	err := area.Db.NewSelect().
+		Model(us).
+		Where("user_id = ?", userID).
+		Where("area.id = ?", areaID).
 		Relation("Action").
 		Relation("Reactions").
 		Scan(context.Background())
