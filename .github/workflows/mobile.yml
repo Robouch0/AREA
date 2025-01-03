@@ -3,15 +3,32 @@ name: Check-Mobile-Compilation
 #on: [workflow_call]
 on: [push]
 
+#jobs:
+#  check-compilation:
+#    runs-on:  ghcr.io/cirruslabs/flutter:stable
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: Install dependencies
+#        run: flutter pub get
+#      - name: Build mobile apk
+#        run: flutter build apk --release
+#      - name: Display directory with builded apk
+#        run: ls
+#        working-directory: ./mobile
+
 jobs:
-  check-compilation:
-    runs-on:  ghcr.io/cirruslabs/flutter:stable
+  build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Build mobile apk
-        run: flutter build apk --release
-      - name: Display directory with builded apk
-        run: ls
-        working-directory: ./mobile
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.x'
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter build apk --release
