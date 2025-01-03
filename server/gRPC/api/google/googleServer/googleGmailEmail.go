@@ -165,7 +165,11 @@ func (google *GoogleService) SetActivateGmailAction(ctx context.Context, req *gR
 	if err != nil {
 		return nil, err
 	}
-	err = gmail.StopPubSub(tokenInfo)
+	if !req.Activated {
+		err = gmail.StopPubSub(tokenInfo)
+	} else {
+		_, err = gmail.SendWatchMeRequest(tokenInfo)
+	}
 	if err != nil {
 		return nil, err
 	}
