@@ -160,7 +160,18 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 	return req, nil
 }
 
-func (google *GoogleService) DeactivateGmailAction(ctx context.Context, req *gRPCService.SetActivateGmail) (*gRPCService.SetActivateGmail, error) {
-	// Stop the watch and deactivate
+func (google *GoogleService) SetActivateGmailAction(ctx context.Context, req *gRPCService.SetActivateGmail) (*gRPCService.SetActivateGmail, error) {
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, google.tokenDb, "GoogleGmailService", "google")
+	if err != nil {
+		return nil, err
+	}
+	err = gmail.StopPubSub(tokenInfo)
+	if err != nil {
+		return nil, err
+	}
+	_, err = google.gmailDb.SetActivateByActionID(req.Activated, uint(tokenInfo.UserID), uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
 	return req, nil
 }

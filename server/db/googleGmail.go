@@ -54,6 +54,11 @@ func (google *GoogleGmailDB) GetByEmail(email string) (*models.Gmail, error) {
 	return allDatas, nil
 }
 
+// Activate or desactivate an action based on actionID and the boolean activated
+func (google *GoogleGmailDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.Gmail, error) {
+	return SetActivateByActionID[models.Gmail](google.Db, activated, userID, actionID)
+}
+
 func (google *GoogleGmailDB) GetAllActionsActivated() (*[]models.Gmail, error) {
 	allDatas := new([]models.Gmail)
 	err := google.Db.NewSelect().

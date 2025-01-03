@@ -209,4 +209,5 @@ message SetActivateGmail {
 message SetActivateDrive {
   uint32 action_id = 1;
   bool activated = 2;
+  string microservice = 3;
 }

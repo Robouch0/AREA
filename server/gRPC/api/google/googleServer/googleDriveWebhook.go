@@ -40,6 +40,7 @@ func watchFile(
 		Activated:  true,
 		ChannelID:  channelID,
 		ResourceID: respWatch.ResourceId,
+		FileName:   req.FileName,
 	})
 	if err != nil {
 		return nil, err
@@ -80,6 +81,7 @@ func (google *GoogleService) WatchDriveChanges(ctx context.Context, req *gRPCSer
 		Activated:  true,
 		ChannelID:  channelID,
 		ResourceID: respWatch.ResourceId,
+		FileName:   "",
 	})
 	if err != nil {
 		return nil, err
@@ -137,7 +139,30 @@ func (google *GoogleService) WatchChangesTrigger(ctx context.Context, req *gRPCS
 	return req, nil
 }
 
-func (google *GoogleService) DeactivateDriveAction(ctx context.Context, req *gRPCService.SetActivateDrive) (*gRPCService.SetActivateDrive, error) {
-	// Stop the watch and deactivate
+func (google *GoogleService) SetActivateDriveAction(ctx context.Context, req *gRPCService.SetActivateDrive) (*gRPCService.SetActivateDrive, error) {
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, google.tokenDb, "GoogleGmailService", "google")
+	if err != nil {
+		return nil, err
+	}
+	act, err := google.driveDb.GetUserActionByID(uint(tokenInfo.UserID), uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	if !req.Activated {
+		err = drive.StopWatchDrive(tokenInfo, act.ChannelID, act.ResourceID)
+	} else {
+		if req.Microservice == "drive/watchChanges" {
+			_, err = drive.WatchChanges(tokenInfo.AccessToken, act.ChannelID, act.ActionID)
+		} else {
+			_, err = drive.WatchFile(tokenInfo.AccessToken, act.FileName, act.ChannelID, act.ActionID)
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	_, err = google.gmailDb.SetActivateByActionID(req.Activated, uint(tokenInfo.UserID), uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
 	return req, nil
 }

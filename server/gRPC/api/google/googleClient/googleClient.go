@@ -310,6 +310,7 @@ func (google *GoogleClient) SetActivate(microservice string, id uint, userID int
 		if _, err := google.cc.SetActivateDriveAction(ctx, &gRPCService.SetActivateDrive{
 			ActionId:  uint32(id),
 			Activated: activated,
+			Microservice: microservice,
 		}); err != nil {
 			return nil, err
 		}
