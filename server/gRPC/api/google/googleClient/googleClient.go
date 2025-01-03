@@ -306,7 +306,7 @@ func (google *GoogleClient) SetActivate(microservice string, id uint, userID int
 			return nil, err
 		}
 	}
-	if microservice == "drive/watchChanges" || microservice == "watchFile" {
+	if microservice == "watchChanges" || microservice == "watchFile" {
 		if _, err := google.cc.SetActivateDriveAction(ctx, &gRPCService.SetActivateDrive{
 			ActionId:     uint32(id),
 			Activated:    activated,
