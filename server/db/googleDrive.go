@@ -54,6 +54,20 @@ func (google *GoogleDriveDB) GetActionByID(action_id string) (*models.Drive, err
 	return allDatas, nil
 }
 
+func (google *GoogleDriveDB) GetUserActionByID(userID, action_id uint) (*models.Drive, error) {
+	allDatas := new(models.Drive)
+	err := google.Db.NewSelect().
+		Model(allDatas).
+		Where("action_id = ?", action_id).
+		Where("user_id = ?", userID).
+		Scan(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return allDatas, nil
+}
+
 func (google *GoogleDriveDB) GetByChannelID(channelID string) (*models.Drive, error) {
 	allDatas := new(models.Drive)
 	err := google.Db.NewSelect().
@@ -65,6 +79,11 @@ func (google *GoogleDriveDB) GetByChannelID(channelID string) (*models.Drive, er
 		return nil, err
 	}
 	return allDatas, nil
+}
+
+// Activate or desactivate an action based on actionID and the boolean activated
+func (google *GoogleDriveDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.Drive, error) {
+	return SetActivateByActionID[models.Drive](google.Db, activated, userID, actionID)
 }
 
 func (google *GoogleDriveDB) GetAllActionsActivated() (*[]models.Drive, error) {

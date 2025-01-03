@@ -22,7 +22,7 @@ import (
 )
 
 type HuggingFaceServiceClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	ActionsLauncher       *IServ.ActionLauncher
 
 	cc gRPCService.HuggingFaceServiceClient
@@ -33,7 +33,7 @@ type WebHookRepoSendFunction = func(ctx context.Context, in *gRPCService.HFWebHo
 
 func NewHuggingFaceClient(conn *grpc.ClientConn) *HuggingFaceServiceClient {
 	hf := &HuggingFaceServiceClient{
-		MicroservicesLauncher: &IServ.MicroserviceLauncher{},
+		MicroservicesLauncher: &IServ.ReactionLauncher{},
 		ActionsLauncher:       &IServ.ActionLauncher{},
 		cc:                    gRPCService.NewHuggingFaceServiceClient(conn),
 	}
@@ -100,4 +100,8 @@ func (hf *HuggingFaceServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, 
 		return nil, err
 	}
 	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil
+}
+
+func (hf *HuggingFaceServiceClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
+	return nil, nil
 }

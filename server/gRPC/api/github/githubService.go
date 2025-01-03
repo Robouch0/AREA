@@ -25,7 +25,7 @@ import (
 
 type GithubService struct {
 	tokenDb      *db.TokenDb
-	GithubDb         *db.GithubDB
+	GithubDb     *db.GithubDB
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedGithubServiceServer

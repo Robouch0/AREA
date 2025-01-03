@@ -1,14 +1,8 @@
 syntax = "proto3";
 
-package gitlab;
+package weather;
 
 option go_package = "github.com/area/grpc-go/service";
-
-/**
- * Cool microservices:
- *  -> Each hour, when temperature exceed a certain amount, do this
- *  -> Each Hour, when it is night, do this
- */
 
 service WeatherService {
   // Each hour, when temperature exceed a certain amount, do this
@@ -16,6 +10,10 @@ service WeatherService {
 
   // Each Hour, when it is night, do this
   rpc NewIsDayTrigger(IsDayTriggerReq) returns(IsDayTriggerReq) {}
+
+  // Deactivate weather trigger
+  rpc SetActivate(SetActivateWeather)
+    returns (SetActivateWeather) {}
 }
 
 message TempTriggerReq {
@@ -33,4 +31,9 @@ message IsDayTriggerReq {
 
   string timezone = 3; /* Timezone of the trigger */
   string region = 4; /* Will be converted to latitude and longitude */
+}
+
+message SetActivateWeather {
+  uint32 action_id = 1;
+  bool activated = 2;
 }

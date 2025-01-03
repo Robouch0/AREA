@@ -5,10 +5,11 @@
 // dateTimeService
 //
 
-package dateTime
+package dateTime_server
 
 import (
 	"area/db"
+	Dt_Types "area/gRPC/api/dateTime/dateTimeTypes"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
@@ -20,6 +21,8 @@ import (
 
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -63,13 +66,13 @@ func (dt *DateTimeService) checkTimeTrigger() {
 		return
 	}
 
-	var dateData AimylogicDateTime
+	var dateData Dt_Types.AimylogicDateTime
 	err = json.Unmarshal(bytesBody, &dateData)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	bytesBody, err = json.Marshal(&dateData) // Check but not really uselful
+	bytesBody, err = json.Marshal(&dateData) // Check but not really usefull
 	if err != nil {
 		log.Println(err)
 		return
@@ -113,4 +116,18 @@ func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.T
 		return nil, err
 	}
 	return &gRPCService.TriggerTimeResponse{}, nil
+}
+
+func (dt *DateTimeService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateTime) (*gRPCService.SetActivateTime, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "dt")
+	if err != nil {
+		return nil, err
+	}
+	resp, err := dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
+	if err != nil {
+		log.Println(err)
+		return nil, status.Errorf(codes.Internal, "Could not set activated for time action")
+	}
+	log.Printf("Time Action with action ID: %v has activated state: %v", resp.ActionID, resp.Activated)
+	return req, nil
 }

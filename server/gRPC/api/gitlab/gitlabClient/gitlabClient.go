@@ -16,16 +16,19 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GitlabClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	ActionLauncher        *IServ.ActionLauncher
 
 	cc gRPCService.GitlabServiceClient
 }
+
 func NewGitlabClient(conn *grpc.ClientConn) *GitlabClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	actions := &IServ.ActionLauncher{}
 	gitlab := &GitlabClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewGitlabServiceClient(conn)}
 	(*gitlab.MicroservicesLauncher)["createFile"] = gitlab.createFile
@@ -157,4 +160,8 @@ func (git *GitlabClient) TriggerReaction(
 
 func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
 	return nil, errors.New("No microservice TriggerWebhook yet")
+}
+
+func (git *GitlabClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
 }

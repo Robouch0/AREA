@@ -69,6 +69,7 @@ func (wDb *WeatherConditionDB) UpdateUserIsDay(actionID, IsDay int) error {
 	return nil
 }
 
-// Do enable/disable
-// GetAll
-// ...
+// Activate or desactivate an action based on actionID and the boolean activated
+func (weather *WeatherConditionDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.WeatherCondition, error) {
+	return SetActivateByActionID[models.WeatherCondition](weather.Db, activated, userID, actionID)
+}

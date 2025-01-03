@@ -22,7 +22,7 @@ import (
 )
 
 type GithubClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	ActionsLauncher       *IServ.ActionLauncher
 	cc                    gRPCService.GithubServiceClient
 }
@@ -30,7 +30,7 @@ type GithubClient struct {
 type WebHookRepoSendFunction = func(ctx context.Context, in *gRPCService.GitWebHookInfo, opts ...grpc.CallOption) (*gRPCService.GitWebHookInfo, error)
 
 func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	launcher := &IServ.ActionLauncher{}
 	git := &GithubClient{MicroservicesLauncher: micros, ActionsLauncher: launcher, cc: gRPCService.NewGithubServiceClient(conn)}
 	(*git.MicroservicesLauncher)["updateRepo"] = git.updateRepository
@@ -147,4 +147,8 @@ func (git *GithubClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, a
 		return nil, err
 	}
 	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil
+}
+
+func (git *GithubClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
+	return nil, nil
 }

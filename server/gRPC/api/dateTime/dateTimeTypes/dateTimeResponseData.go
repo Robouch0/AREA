@@ -5,7 +5,7 @@
 // dateTimeResponseData
 //
 
-package dateTime
+package Dt_Types
 
 type AimylogicDateTime struct {
 	Timezone  string `json:"timezone"`

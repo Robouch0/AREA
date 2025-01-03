@@ -12,37 +12,33 @@ import (
 	"net/http"
 )
 
-type ActionResponseStatus struct {
-	Description string `json:"description"`
-	ActionID    int    `json:"action_id"`
-}
-
-type ReactionResponseStatus struct {
-	Description string `json:"description"`
-	ReactionID  int    `json:"reaction_id"`
-}
-
-type WebHookResponseStatus struct {
-	Description string `json:"description"`
-}
-
+// Datas sent by a remote service to the app (as a webhook callback)
 type WebhookInfos struct {
 	Payload map[string]any `json:"payload,omitempty"`
 	Header  http.Header    `json:"header,omitempty"`
 }
 
-type MicroserviceLauncher = map[string]func(ingredients map[string]any, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
+// Alias for maps of reactions functions
+type ReactionLauncher = map[string]func(ingredients map[string]any, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
+
+// Alias for maps of actions functions
 type ActionLauncher = map[string]func(scenario models.AreaScenario, actionId, userID int) (*ActionResponseStatus, error)
 
 type ClientService interface {
+	// List the status of the current service, including the microservice currently supported
 	ListServiceStatus() (*ServiceStatus, error)
 
+	// Send an action that a service should watch
 	SendAction(body models.AreaScenario, actionId, userID int) (*ActionResponseStatus, error)
 
-	// prevOutput is an array of byte because output can be raw
+	// Deactivate an area
+	//
+	// Parameter id must be used to identify the area, and userID identifies the user
+	SetActivate(microservice string, id uint, userID int, activated bool) (*SetActivatedResponseStatus, error)
+
+	// Trigger a specific reaction of an user
 	TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
 
+	// Trigger the webhook callback sent by a remote service
 	TriggerWebhook(webhook *WebhookInfos, microservice string, action_id int) (*WebHookResponseStatus, error)
-
-	// TriggerWebhook(ingredients map[string]any, microservice string, action_id int) (*WebHookResponseStatus, error)
 }
