@@ -28,6 +28,7 @@ jobs:
 #        working-directory: mobile/
       - name: Create mockup env file
         run: touch .env.prod
+        working-directory: mobile/
       - name: Build the apk
         run: flutter build apk --release
         working-directory: mobile/
