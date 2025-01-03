@@ -26,11 +26,6 @@ jobs:
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
         working-directory: ./server
 
-      # - name: Test
-      #   run: |
-      #     echo $GO_PATH
-      #     echo $PATH
-
       - name: Generate protogen files
         run: |
           protoc --go_out=./protogen \
