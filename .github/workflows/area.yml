@@ -21,13 +21,17 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip CI]')"
     name: Compile go server
     uses: ./.github/workflows/server.yml
+  check-mobile-compilation:
+    if: "!contains(github.event.head_commit.message, '[skip CI]')"
+    name: Compile mobile page frontend
+    uses: ./.github/workflows/mobile.yml
 
 
 
   push_to_mirror:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip CI]')
     runs-on: ubuntu-latest
-    needs: [check-web-compilation, check-server-compilation]
+    needs: [check-web-compilation, check-server-compilation, check-mobile-compilation]
     steps:
       - uses: actions/checkout@v4
         with:
