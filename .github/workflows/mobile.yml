@@ -29,6 +29,10 @@ jobs:
         with:
           flutter-version: '2.x'
           channel: 'stable'
+      - run: |
+          flutter upgrade
+          flutter channel stable
+          flutter upgrade
       - run: flutter pub get
         working-directory: mobile/
       - run: flutter analyze
