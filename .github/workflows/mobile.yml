@@ -3,19 +3,6 @@ name: Check-Mobile-Compilation
 #on: [workflow_call]
 on: [push]
 
-#jobs:
-#  check-compilation:
-#    runs-on:  ghcr.io/cirruslabs/flutter:stable
-#    steps:
-#      - uses: actions/checkout@v4
-#      - name: Install dependencies
-#        run: flutter pub get
-#      - name: Build mobile apk
-#        run: flutter build apk --release
-#      - name: Display directory with builded apk
-#        run: ls
-#        working-directory: ./mobile
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,13 +16,16 @@ jobs:
         with:
           flutter-version: '2.x'
           channel: 'stable'
-      - run: |
+      - name: Upgrade Flutter version to match the project target
+        run: |
           flutter upgrade
           flutter channel stable
           flutter upgrade
-      - run: flutter pub get
+      - name: Get flutter dependecies
+        run: flutter pub get
         working-directory: mobile/
-      - run: flutter analyze
-        working-directory: mobile/
-      - run: flutter build apk --release
+#      - run: flutter analyze
+#        working-directory: mobile/
+      - name: Build the apk
+        run: flutter build apk --release
         working-directory: mobile/
