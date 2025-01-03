@@ -1,7 +1,6 @@
 name: Check-Mobile-Compilation
 
-#on: [workflow_call]
-on: [push]
+on: [workflow_call]
 
 jobs:
   build:
