@@ -17,6 +17,8 @@ definitions:
     properties:
       action:
         $ref: '#/definitions/serviceinterface.ServiceStatus'
+      activated:
+        type: boolean
       id:
         type: integer
       reactions:
@@ -66,6 +68,8 @@ definitions:
     properties:
       action:
         $ref: '#/definitions/models.Actions'
+      activated:
+        type: boolean
       id:
         type: integer
       one_shot:
@@ -270,7 +274,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: List all user's area
+      description: List all available areas
       produces:
       - application/json
       responses:
@@ -286,7 +290,7 @@ paths:
         "500":
           description: Internal Server Error
           schema: {}
-      summary: List User's area
+      summary: List available areas
       tags:
       - Area
   /login/:
@@ -348,7 +352,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get the oauth redirect url for a service
+      description: Get the oauth redirect url for a service
       parameters:
       - description: Redirect URL for the oauth
         in: query
@@ -373,7 +377,7 @@ paths:
         "404":
           description: Not Found
           schema: {}
-      summary: get Oauth url by service
+      summary: Get an oauth url for a service
       tags:
       - Account
   /ping:
@@ -464,7 +468,7 @@ paths:
         "500":
           description: Internal Server Error
           schema: {}
-      summary: Get a token
+      summary: Get user's token
       tags:
       - Token
   /token/{user_id}:
@@ -521,7 +525,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: WebHook Enpoint for the remote services payloads
+      description: Webhook Endpoint for the remote services payloads
       parameters:
       - description: Service Name
         in: path
@@ -548,7 +552,7 @@ paths:
         "401":
           description: Unauthorized
           schema: {}
-      summary: WebHook Enpoint
+      summary: Webhook Endpoint
       tags:
       - Area
 swagger: "2.0"

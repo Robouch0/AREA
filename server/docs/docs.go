@@ -67,7 +67,7 @@ const docTemplate = `{
         },
         "/create/list": {
             "get": {
-                "description": "List all user's area",
+                "description": "List all available areas",
                 "consumes": [
                     "application/json"
                 ],
@@ -77,7 +77,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "List User's area",
+                "summary": "List available areas",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -231,7 +231,7 @@ const docTemplate = `{
         },
         "/oauth/{service}": {
             "get": {
-                "description": "get the oauth redirect url for a service",
+                "description": "Get the oauth redirect url for a service",
                 "consumes": [
                     "application/json"
                 ],
@@ -241,7 +241,7 @@ const docTemplate = `{
                 "tags": [
                     "Account"
                 ],
-                "summary": "get Oauth url by service",
+                "summary": "Get an oauth url for a service",
                 "parameters": [
                     {
                         "type": "string",
@@ -347,7 +347,7 @@ const docTemplate = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "Get a token",
+                "summary": "Get user's token",
                 "parameters": [
                     {
                         "type": "string",
@@ -487,7 +487,7 @@ const docTemplate = `{
         },
         "/webhook/{service}/{microservice}/{action_id}": {
             "post": {
-                "description": "WebHook Enpoint for the remote services payloads",
+                "description": "Webhook Endpoint for the remote services payloads",
                 "consumes": [
                     "application/json"
                 ],
@@ -497,7 +497,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "WebHook Enpoint",
+                "summary": "Webhook Endpoint",
                 "parameters": [
                     {
                         "type": "string",
@@ -564,6 +564,9 @@ const docTemplate = `{
             "properties": {
                 "action": {
                     "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                },
+                "activated": {
+                    "type": "boolean"
                 },
                 "id": {
                     "type": "integer"
@@ -639,6 +642,9 @@ const docTemplate = `{
             "properties": {
                 "action": {
                     "$ref": "#/definitions/models.Actions"
+                },
+                "activated": {
+                    "type": "boolean"
                 },
                 "id": {
                     "type": "integer"

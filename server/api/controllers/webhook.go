@@ -19,9 +19,9 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// WebHook Enpoint godoc
-// @Summary      WebHook Enpoint
-// @Description  WebHook Enpoint for the remote services payloads
+// Webhook Enpoint godoc
+// @Summary      Webhook Endpoint
+// @Description  Webhook Endpoint for the remote services payloads
 // @Tags         Area
 // @Accept       json
 // @Produce      json
@@ -55,8 +55,6 @@ func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
 		http_utils.WriteHTTPResponseErr(&w, 401, "Invalid payload sent")
 	}
 }
-
-// Créer une db google gmail
 
 func WebHookRoutes(gateway *api.ApiGateway) chi.Router {
 	WebHooks := chi.NewRouter()

@@ -61,7 +61,7 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 }
 
 // Get token godoc
-// @Summary      Get a token
+// @Summary      Get user's token
 // @Description  Get the tokens from a user_id and a provider
 // @Tags         Token
 // @Accept       json

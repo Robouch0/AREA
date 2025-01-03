@@ -92,8 +92,8 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 
 // Sign-up OAuth godoc
 //
-// @Summary      get Oauth url by service
-// @Description  get the oauth redirect url for a service
+// @Summary      Get an oauth url for a service
+// @Description  Get the oauth redirect url for a service
 // @Tags         Account
 // @Accept       json
 // @Produce      json
