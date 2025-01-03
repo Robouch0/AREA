@@ -102,6 +102,6 @@ func (hf *HuggingFaceServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, 
 	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil
 }
 
-func (hf *HuggingFaceServiceClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	return nil, nil
 }

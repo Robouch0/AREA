@@ -16,7 +16,7 @@ service GithubService {
   rpc TriggerWebHook (GithubWebHookTriggerReq)
     returns (GithubWebHookTriggerReq) {}
 
-  rpc DeactivateAction(DeactivateGithub) returns (DeactivateGithub) {}
+  rpc SetActivateAction(SetActivateGithub) returns (SetActivateGithub) {}
 }
 
 message GitWebHookInfo {
@@ -66,6 +66,7 @@ message GithubWebHookTriggerReq {
   bytes payload = 2;
 }
 
-message DeactivateGithub {
+message SetActivateGithub {
   uint32 action_id = 1;
+  bool activated = 2;
 }

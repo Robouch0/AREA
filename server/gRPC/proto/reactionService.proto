@@ -12,7 +12,7 @@ service ReactionService {
   rpc LaunchReaction(LaunchRequest) returns (LaunchResponse) {}
 
   // Deactivate an area with the id given
-  rpc DeactivateArea(AreaDeactivator) returns (AreaDeactivator) {}
+  rpc SetActivate(AreaDeactivator) returns (AreaDeactivator) {}
 }
 
 message Action {
@@ -51,4 +51,5 @@ message LaunchResponse {
 
 message AreaDeactivator {
   uint32 area_id = 1;
+  bool activated = 2;
 }

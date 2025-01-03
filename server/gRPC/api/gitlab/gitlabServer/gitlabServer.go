@@ -182,6 +182,6 @@ func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCServic
 	return req, nil
 }
 
-func (git *GitlabService) DeactivateAction(ctx context.Context, req *gRPCService.DeactivateGitlab) (*gRPCService.DeactivateGitlab, error) {
+func (git *GitlabService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateGitlab) (*gRPCService.SetActivateGitlab, error) {
 	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
 }

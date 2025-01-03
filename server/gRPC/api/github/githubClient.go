@@ -149,6 +149,6 @@ func (git *GithubClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, a
 	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil
 }
 
-func (git *GithubClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+func (git *GithubClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	return nil, nil
 }

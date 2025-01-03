@@ -172,6 +172,6 @@ func (_ *DiscordClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ 
 	return &IServ.WebHookResponseStatus{}, nil
 }
 
-func (disCli *DiscordClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+func (disCli *DiscordClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
 }

@@ -116,12 +116,12 @@ func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.T
 	return &gRPCService.TriggerTimeResponse{}, nil
 }
 
-func (dt *DateTimeService) DeactivateAction(ctx context.Context, req *gRPCService.DeactivateTime) (*gRPCService.DeactivateTime, error) {
+func (dt *DateTimeService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateTime) (*gRPCService.SetActivateTime, error) {
 	userID, err := grpcutils.GetUserIdFromContext(ctx, "dt")
 	if err != nil {
 		return nil, err
 	}
-	_, err = dt.dtDb.SetActivateByActionID(false, userID, uint(req.ActionId))
+	_, err = dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
 	if err != nil {
 		return nil, err
 	}

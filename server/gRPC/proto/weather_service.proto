@@ -12,8 +12,8 @@ service WeatherService {
   rpc NewIsDayTrigger(IsDayTriggerReq) returns(IsDayTriggerReq) {}
 
   // Deactivate weather trigger
-  rpc DeactivateWeatherAction(DeactivateWeather)
-    returns (DeactivateWeather) {}
+  rpc SetActivate(SetActivateWeather)
+    returns (SetActivateWeather) {}
 }
 
 message TempTriggerReq {
@@ -33,6 +33,7 @@ message IsDayTriggerReq {
   string region = 4; /* Will be converted to latitude and longitude */
 }
 
-message DeactivateWeather {
+message SetActivateWeather {
   uint32 action_id = 1;
+  bool activated = 2;
 }

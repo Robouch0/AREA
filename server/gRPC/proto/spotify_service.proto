@@ -13,7 +13,7 @@ service SpotifyService {
   rpc LaunchSong(SpotifyLauchSongInfo) returns(SpotifyLauchSongInfo) {}
   rpc AddSongToPlaylist(SpotifyAddSongToPlaylist) returns(SpotifyAddSongToPlaylist) {}
 
-  rpc DeactivateSpotAction(DeactivateSpot) returns (DeactivateSpot) {}
+  rpc SetActivate(SetActivateSpotify) returns (SetActivateSpotify) {}
 }
 
 message SpotifyStopInfo {
@@ -44,6 +44,7 @@ message SpotifyAddSongToPlaylist {
 
 ////
 
-message DeactivateSpot {
+message SetActivateSpotify {
   uint32 action_id = 1;
+  bool activated = 2;
 }

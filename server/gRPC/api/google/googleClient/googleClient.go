@@ -296,19 +296,25 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 	return nil, status.Errorf(codes.NotFound, "Microservice: %v not found", microservice)
 }
 
-func (google *GoogleClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+func (google *GoogleClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	ctx := grpcutils.CreateContextFromUserID(userID)
 	if microservice == "gmail/watchme" {
-		if _, err := google.cc.DeactivateGmailAction(ctx, &gRPCService.DeactivateGmail{ActionId: uint32(id)}); err != nil {
+		if _, err := google.cc.SetActivateGmailAction(ctx, &gRPCService.SetActivateGmail{
+			ActionId:  uint32(id),
+			Activated: activated,
+		}); err != nil {
 			return nil, err
 		}
 	}
 	if microservice == "drive/watchChanges" || microservice == "drive/watchFile" {
-		if _, err := google.cc.DeactivateDriveAction(ctx, &gRPCService.DeactivateDrive{ActionId: uint32(id)}); err != nil {
+		if _, err := google.cc.SetActivateDriveAction(ctx, &gRPCService.SetActivateDrive{
+			ActionId:  uint32(id),
+			Activated: activated,
+		}); err != nil {
 			return nil, err
 		}
 	}
-	return &IServ.DeactivateResponseStatus{
+	return &IServ.SetActivatedResponseStatus{
 		ActionID:    id,
 		Description: "",
 	}, nil

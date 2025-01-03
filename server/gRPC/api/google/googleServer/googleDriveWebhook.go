@@ -137,7 +137,7 @@ func (google *GoogleService) WatchChangesTrigger(ctx context.Context, req *gRPCS
 	return req, nil
 }
 
-func (google *GoogleService) DeactivateDriveAction(ctx context.Context, req *gRPCService.DeactivateDrive) (*gRPCService.DeactivateDrive, error) {
+func (google *GoogleService) DeactivateDriveAction(ctx context.Context, req *gRPCService.SetActivateDrive) (*gRPCService.SetActivateDrive, error) {
 	// Stop the watch and deactivate
 	return req, nil
 }

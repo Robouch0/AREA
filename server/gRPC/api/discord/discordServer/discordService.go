@@ -220,6 +220,6 @@ func (discord *DiscordService) DeleteReactions(ctx context.Context, req *gRPCSer
 	return req, nil
 }
 
-func (discord *DiscordService) DeactivateAction(ctx context.Context, req *gRPCService.DeactivateDiscord) (*gRPCService.DeactivateDiscord, error) {
+func (discord *DiscordService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateDiscord) (*gRPCService.SetActivateDiscord, error) {
 	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
 }

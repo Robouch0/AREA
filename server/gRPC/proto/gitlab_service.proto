@@ -15,7 +15,7 @@ service GitlabService {
 
   rpc MarkAllItemAsDone(AllTodoLabItemDoneReq) returns(AllTodoLabItemDoneReq) {}
 
-  rpc DeactivateAction(DeactivateGitlab) returns (DeactivateGitlab) {}
+  rpc SetActivateAction(SetActivateGitlab) returns (SetActivateGitlab) {}
 }
 
 message CreateLabRepoFileReq {
@@ -70,6 +70,7 @@ message AllTodoLabItemDoneReq {
 message AllTodoLabItemDoneResp {
 }
 
-message DeactivateGitlab {
+message SetActivateGitlab {
   uint32 action_id = 1;
+  bool activated = 2;
 }

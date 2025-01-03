@@ -17,7 +17,7 @@ service DiscordService {
 
   rpc DeleteReactions(DeleteReact) returns(DeleteReact) {}
 
-  rpc DeactivateAction(DeactivateDiscord) returns (DeactivateDiscord) {}
+  rpc SetActivateAction(SetActivateDiscord) returns (SetActivateDiscord) {}
 }
 
 message CreateMsg {
@@ -53,6 +53,7 @@ message DeleteReact {
   string emoji = 3;
 }
 
-message DeactivateDiscord {
+message SetActivateDiscord {
   uint32 action_id = 1;
+  bool activated = 2;
 }

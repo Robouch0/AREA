@@ -119,7 +119,7 @@ func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 	return req, nil
 }
 
-func (github *GithubService) DeactivateAction(ctx context.Context, req *gRPCService.DeactivateGithub) (*gRPCService.DeactivateGithub, error) {
+func (github *GithubService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateGithub) (*gRPCService.SetActivateGithub, error) {
 	userID, err := grpcutils.GetUserIdFromContext(ctx, "github")
 	if err != nil {
 		return nil, err

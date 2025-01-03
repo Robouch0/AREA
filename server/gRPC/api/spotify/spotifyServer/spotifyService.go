@@ -301,6 +301,6 @@ func (spot *SpotifyService) AddSongToPlaylist(ctx context.Context, req *gRPCServ
 	return req, nil
 }
 
-func (spot *SpotifyService) DeactivateSpotAction(ctx context.Context, req *gRPCService.DeactivateSpot) (*gRPCService.DeactivateSpot, error) {
+func (spot *SpotifyService) DeactivateSpotAction(ctx context.Context, req *gRPCService.SetActivateSpotify) (*gRPCService.SetActivateSpotify, error) {
 	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify")
 }

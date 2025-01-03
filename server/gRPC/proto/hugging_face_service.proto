@@ -18,7 +18,7 @@ service HuggingFaceService {
   rpc CreateNewDiscussionWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
   rpc TriggerWebHook (WebHookTriggerReq) returns (WebHookTriggerReq) {}
 
-  rpc DeactivateHFAction(DeactivateHF) returns (DeactivateHF) {}
+  rpc SetActivate(SetActivateHF) returns (SetActivateHF) {}
 }
 
 message TextGenerationReq {
@@ -96,6 +96,7 @@ message MoveHFRepoReq {
   string type = 3;
 }
 
-message DeactivateHF {
+message SetActivateHF {
   uint32 action_id = 1;
+  bool activated = 2;
 }

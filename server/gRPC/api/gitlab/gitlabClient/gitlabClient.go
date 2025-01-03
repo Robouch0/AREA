@@ -162,6 +162,6 @@ func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservic
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }
 
-func (git *GitlabClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+func (git *GitlabClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
 }

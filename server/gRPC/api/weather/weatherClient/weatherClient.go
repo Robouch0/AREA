@@ -54,15 +54,16 @@ func (weather *WeatherClient) TriggerWebhook(webhook *IServ.WebhookInfos, micros
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }
 
-func (weather *WeatherClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+func (weather *WeatherClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	_, err := weather.cc.DeactivateWeatherAction(ctx, &gRPCService.DeactivateWeather{
-		ActionId: uint32(id),
+	_, err := weather.cc.SetActivate(ctx, &gRPCService.SetActivateWeather{
+		ActionId:  uint32(id),
+		Activated: activated,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &IServ.DeactivateResponseStatus{
+	return &IServ.SetActivatedResponseStatus{
 		ActionID:    id,
 		Description: "DateTime Deactivated",
 	}, nil

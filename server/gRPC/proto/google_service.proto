@@ -75,10 +75,10 @@ service GoogleService {
   rpc WatchChangesTrigger (ChangesTriggerReq) returns (ChangesTriggerReq) {}
 
   // Deactivate Gmail watch trigger
-  rpc DeactivateGmailAction(DeactivateGmail) returns (DeactivateGmail) {}
+  rpc SetActivateGmailAction(SetActivateGmail) returns (SetActivateGmail) {}
 
   // Deactivate Drive watch trigger
-  rpc DeactivateDriveAction(DeactivateDrive) returns (DeactivateDrive) {}
+  rpc SetActivateDriveAction(SetActivateDrive) returns (SetActivateDrive) {}
 }
 
 message EmailRequestMe {
@@ -201,10 +201,12 @@ message WatchChangesReq {
   uint32 action_id = 1;
 }
 
-message DeactivateGmail {
+message SetActivateGmail {
   uint32 action_id = 1;
+  bool activated = 2;
 }
 
-message DeactivateDrive {
+message SetActivateDrive {
   uint32 action_id = 1;
+  bool activated = 2;
 }

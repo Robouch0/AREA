@@ -142,12 +142,12 @@ func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCServi
 	return &gRPCService.ReactionResponse{Description: "Done", ActionId: int64(act.ID)}, nil
 }
 
-func (react *ReactionService) DeactivateArea(ctx context.Context, req *gRPCService.AreaDeactivator) (*gRPCService.AreaDeactivator, error) {
+func (react *ReactionService) SetActivate(ctx context.Context, req *gRPCService.AreaDeactivator) (*gRPCService.AreaDeactivator, error) {
 	userID, err := grpcutils.GetUserIdFromContext(ctx, "reaction")
 	if err != nil {
 		return nil, err
 	}
-	_, err = react.AreaDB.SetActivateByActionID(false, userID, uint(req.AreaId))
+	_, err = react.AreaDB.SetActivateByActionID(req.Activated, userID, uint(req.AreaId))
 	if err != nil {
 		return nil, err
 	}

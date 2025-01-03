@@ -185,6 +185,6 @@ func (_ *SpotifyClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ 
 	return &IServ.WebHookResponseStatus{}, nil
 }
 
-func (spot *SpotifyClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+func (spot *SpotifyClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify")
 }
