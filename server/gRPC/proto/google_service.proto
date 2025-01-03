@@ -1,0 +1,194 @@
+syntax = "proto3";
+
+package google;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service GoogleService {
+  // Send an email with the current user email
+  rpc SendEmailMe (EmailRequestMe) returns (EmailRequestMe) {}
+
+  // Delete one of user's email based on the subject of the mail
+  rpc DeleteEmailMe (DeleteEmailRequestMe) returns (DeleteEmailRequestMe) {}
+
+  // Move to trash an email
+  rpc MoveToTrash (TrashEmailRequestMe) returns (TrashEmailRequestMe) {}
+
+  // Move out of trash an email
+  rpc MoveFromTrash (TrashEmailRequestMe) returns (TrashEmailRequestMe) {}
+
+  // Create a new label
+  rpc CreateLabel (CreateLabelReq) returns (CreateLabelReq) {}
+
+  // Delete a label
+  rpc DeleteLabel (DeleteLabelReq) returns (DeleteLabelReq) {}
+
+  // Update a label
+  rpc UpdateLabel (UpdateLabelReq) returns (UpdateLabelReq) {}
+
+  // Usage is not free
+  rpc CreateSharedDrive (CreateSharedDriveReq) returns (CreateSharedDriveReq) {}
+  rpc DeleteSharedDrive (DeleteSharedDriveReq) returns (DeleteSharedDriveReq) {}
+  rpc UpdateSharedDrive (UpdateSharedDriveReq) returns (UpdateSharedDriveReq) {}
+
+  // Create a comment on a file
+  rpc CreateCommentOnFile (CreateCommentReq) returns (CreateCommentReq) {}
+
+  // Delete a comment on a file
+  rpc DeleteCommentOnFile(DeleteCommentReq) returns (DeleteCommentReq) {}
+
+  // Update a comment on a file
+  rpc UpdateCommentOnFile (UpdateCommentReq) returns (UpdateCommentReq) {}
+
+  // Create an empty file
+  rpc CreateEmptyFile(CreateEmptyFileReq) returns (CreateEmptyFileReq) {}
+
+  // Delete a file
+  rpc DeleteFile (DeleteFileReq) returns (DeleteFileReq) {}
+
+  // Update a file's metadata
+  rpc UpdateFileMetadata (UpdateFileMetaReq) returns (UpdateFileMetaReq) {}
+
+  // Copy a file
+  rpc CopyFile (CopyFileReq) returns (CopyFileReq) {}
+
+  // Create a file with datas
+  // rpc CreateFile(CreateEmptyFileReq) returns (CreateEmptyFileReq) {}
+
+  /* WebHooks Microservice Creation */
+
+  // Watch email of the user currently logged
+  rpc WatchGmailEmail (EmailTriggerReq) returns (EmailTriggerReq) {}
+
+  rpc WatchDriveFile (WatchFileReq) returns (WatchFileReq) {}
+  rpc WatchDriveChanges (WatchChangesReq) returns (WatchChangesReq) {}
+
+  /* WebHooks Microservice Handlers */
+
+  // Function that handle the payload sent by google gmail
+  rpc WatchMeTrigger (GmailTriggerReq) returns (GmailTriggerReq) {}
+
+  rpc WatchFileTrigger (FileTriggerReq) returns (FileTriggerReq) {}
+
+  rpc WatchChangesTrigger (ChangesTriggerReq) returns (ChangesTriggerReq) {}
+}
+
+message EmailRequestMe {
+  string to = 1;
+  // string from = 2; // Will be the user email registered
+  string subject = 2;
+
+  string body_message = 3;
+}
+
+message DeleteEmailRequestMe {
+  string subject = 1;
+}
+
+message TrashEmailRequestMe {
+  string subject = 1;
+}
+
+message EmailTriggerReq {
+  uint32 action_id = 1;
+}
+
+message GmailTriggerReq {
+  uint32 action_id = 1;
+  bytes payload = 2;
+}
+
+message FileTriggerReq {
+  uint32 action_id = 1;
+  bytes headers = 2;
+}
+
+message ChangesTriggerReq {
+  uint32 action_id = 1;
+  bytes headers = 2;
+}
+
+message CreateLabelReq {
+  string name = 1;
+  string messageListVisibility = 2;
+  string LabelListVisibility = 3;
+  string type = 4;
+}
+
+message UpdateLabelReq {
+  string old_name = 1;
+
+  string new_name = 2;
+  string messageListVisibility = 3;
+  string LabelListVisibility = 4;
+  string type = 5;
+}
+
+message DeleteLabelReq {
+  string name = 1;
+}
+
+message CreateSharedDriveReq {
+  string name = 1;
+}
+
+message DeleteSharedDriveReq {
+  string name = 1;
+  bool useDomainAdminAccess = 2;
+}
+
+message UpdateSharedDriveReq {
+  string old_name = 1;
+
+  string new_name = 2;
+  bool useDomainAdminAccess = 3;
+  bool hidden = 4;
+  // Add more datas
+}
+
+message CreateCommentReq {
+  string file_name = 1;
+  string content = 2;
+}
+
+message DeleteCommentReq {
+  string file_name = 1;
+  string content = 2;
+}
+
+message UpdateCommentReq {
+  string file_name = 1;
+  string old_content = 2;
+  string new_content = 3;
+}
+
+message CreateEmptyFileReq {
+  string file_name = 1;
+  string description = 2;
+}
+
+message DeleteFileReq {
+  string file_name = 1;
+}
+
+message UpdateFileMetaReq {
+  string old_file_name = 1;
+  string new_file_name = 2;
+
+  string description = 3;
+}
+
+message CopyFileReq {
+  string src_file_name = 1;
+  string dest_file_name = 2;
+  string description = 3;
+}
+
+message WatchFileReq {
+  uint32 action_id = 1;
+  string file_name = 2;
+}
+
+message WatchChangesReq {
+  uint32 action_id = 1;
+}

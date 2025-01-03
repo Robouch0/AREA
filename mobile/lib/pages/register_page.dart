@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:my_area_flutter/services/auth_service.dart';
+import 'package:my_area_flutter/services/api/auth_service.dart';
 import 'package:my_area_flutter/widgets/auth_input_field.dart';
 import 'package:my_area_flutter/widgets/auth_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
@@ -18,22 +18,22 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _authService = AuthService.instance;
   final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _performRegister(String email, String pass) async {
-    final success = await _authService.createAccount(email, pass);
+  void _performRegister(String email, String pass, String firstName, String lastName) async {
+    final success = await _authService.createAccount(email, pass, firstName, lastName);
 
     if (!mounted) {
       return;
     }
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
-            backgroundColor: Colors.green
-          )
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
+          backgroundColor: Colors.green));
       context.go(RouteNames.home);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -46,7 +46,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _register() {
     if (_formKey.currentState!.validate()) {
-      _performRegister(_emailController.text, _passwordController.text);
+      _performRegister(
+        _emailController.text,
+        _passwordController.text,
+        _firstNameController.text,
+        _lastNameController.text,
+      );
     }
   }
 
@@ -68,6 +73,10 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
             const SizedBox(height: 30),
+            _buildFirstNameField(),
+            const SizedBox(height: 17),
+            _buildLastNameField(),
+            const SizedBox(height: 17),
             _buildEmailField(),
             const SizedBox(height: 17),
             _buildPasswordField(),
@@ -83,17 +92,47 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  Widget _buildFirstNameField() {
+    return AuthInputField(
+      controller: _firstNameController,
+      hintText: 'First name',
+      obscureText: false,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'First name is required.';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildLastNameField() {
+    return AuthInputField(
+      controller: _lastNameController,
+      hintText: 'Last name',
+      obscureText: false,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Last name is required.';
+        }
+        return null;
+      },
+    );
+  }
+
   Widget _buildEmailField() {
     return AuthInputField(
-        controller: _emailController,
-        hintText: 'Email',
-        obscureText: false,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'You need to enter a valid email.';
-          }
-          return null;
-        });
+      controller: _emailController,
+      hintText: 'Email',
+      obscureText: false,
+      keyboardType: TextInputType.emailAddress,
+      validator: (value) {
+        if (value == null || value.isEmpty || !value.contains('@')) {
+          return 'Invalid email address.';
+        }
+        return null;
+      },
+    );
   }
 
   Widget _buildPasswordField() {
@@ -106,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
           return 'Please enter a password.';
         }
         if (value.length < 6) {
-          return 'Password must be at least 6 characters.';
+          return 'Password must be at least 6 characters long.';
         }
         return null;
       },

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package spotify;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service SpotifyService {
+  rpc StopSong(SpotifyStopInfo) returns(SpotifyStopInfo) {}
+  rpc CreatePlaylist(SpotifyCreatePlaylist) returns(SpotifyCreatePlaylist) {}
+  rpc NextSong(SpotifyNextInfo) returns(SpotifyNextInfo) {}
+  rpc PreviousSong(SpotifyPreviousInfo) returns(SpotifyPreviousInfo) {}
+  rpc SetPlaybackVolume(SpotifySetPlaybackVolumeInfo) returns(SpotifySetPlaybackVolumeInfo) {}
+  rpc LaunchSong(SpotifyLauchSongInfo) returns(SpotifyLauchSongInfo) {}
+  rpc AddSongToPlaylist(SpotifyAddSongToPlaylist) returns(SpotifyAddSongToPlaylist) {}
+}
+
+message SpotifyStopInfo {
+}
+
+message SpotifyCreatePlaylist {
+  string playlistName = 1;
+  string playlistDescription = 2;
+  string public = 3;
+}
+
+message SpotifyNextInfo {
+}
+
+message SpotifyPreviousInfo {
+}
+
+message SpotifySetPlaybackVolumeInfo {
+  string volume = 1;
+}
+message SpotifyLauchSongInfo {
+  string songUrl = 1;
+  string millisecondsPosition = 2;
+}
+
+message SpotifyAddSongToPlaylist {
+
+}

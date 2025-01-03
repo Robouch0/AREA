@@ -16,6 +16,17 @@ services:
      - /app/node_modules
      - front:/web/front
 
+  mobile:
+    build: ./mobile
+    depends_on:
+      client_web:
+        condition: service_started
+    networks:
+      - public
+    volumes:
+      - ./mobile:/app
+      - front:/output
+
   server:
     build: ./server
     env_file:

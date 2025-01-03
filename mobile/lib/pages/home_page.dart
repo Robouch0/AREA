@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:my_area_flutter/services/auth_service.dart';
+import 'package:my_area_flutter/services/api/auth_service.dart';
 import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 
@@ -17,7 +17,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return MainAppScaffold(
-      title: 'Home',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -32,7 +31,7 @@ class _HomePageState extends State<HomePage> {
               final authService = AuthService.instance;
               await authService.logout();
 
-              if (mounted) {
+              if (context.mounted && mounted) {
                 context.go(RouteNames.login);
               }
             },

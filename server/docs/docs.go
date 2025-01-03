@@ -31,6 +31,74 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/area/list": {
+            "get": {
+                "description": "List all user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "List User's area",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controllers.userArea"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/create/list": {
+            "get": {
+                "description": "List all user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "List User's area",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/create/{service}": {
             "get": {
                 "description": "Register a new Area in the application",
@@ -108,7 +176,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserLogInfos"
+                            "$ref": "#/definitions/log_types.UserLogInfos"
                         }
                     },
                     "401": {
@@ -143,11 +211,15 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jwtauth.JWTAuth"
+                            "$ref": "#/definitions/log_types.UserLogInfos"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {}
                     },
                     "500": {
@@ -170,6 +242,22 @@ const docTemplate = `{
                     "Account"
                 ],
                 "summary": "get Oauth url by service",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Redirect URL for the oauth",
+                        "name": "redirect_uri",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Name of the service to use oauth with",
+                        "name": "service",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -179,6 +267,10 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {}
                     }
                 }
@@ -256,11 +348,56 @@ const docTemplate = `{
                     "Token"
                 ],
                 "summary": "Get a token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of the user",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Provider of the Remote Service",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Token"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a token from a user_id and a provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Token"
+                ],
+                "summary": "Delete a token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenInformations"
                         }
                     },
                     "400": {
@@ -318,6 +455,15 @@ const docTemplate = `{
                     "Token"
                 ],
                 "summary": "Get all the tokens from a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of the user",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -338,17 +484,67 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/webhook/{service}/{microservice}/{action_id}": {
+            "post": {
+                "description": "WebHook Enpoint for the remote services payloads",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "WebHook Enpoint",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service Name",
+                        "name": "service",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Microservice Name",
+                        "name": "microservice",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Action ID for the reaction service",
+                        "name": "action_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "controllers.UserLogInfos": {
+        "controllers.TokenInformations": {
             "type": "object",
             "properties": {
-                "token": {
+                "provider": {
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -360,6 +556,23 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "controllers.userArea": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                    }
                 }
             }
         },
@@ -380,8 +593,16 @@ const docTemplate = `{
                 }
             }
         },
-        "jwtauth.JWTAuth": {
-            "type": "object"
+        "log_types.UserLogInfos": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
         },
         "models.Action": {
             "type": "object",
@@ -444,9 +665,6 @@ const docTemplate = `{
                 },
                 "reaction": {
                     "$ref": "#/definitions/models.Reaction"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -550,6 +768,65 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "serviceinterface.IngredientDescriptor": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {}
+            }
+        },
+        "serviceinterface.Ingredients": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/serviceinterface.IngredientDescriptor"
+            }
+        },
+        "serviceinterface.MicroserviceDescriptor": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "$ref": "#/definitions/serviceinterface.Ingredients"
+                },
+                "name": {
+                    "description": "Name of the microservice",
+                    "type": "string"
+                },
+                "ref_name": {
+                    "description": "Reference Name of the microservice as it is named in the server",
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "serviceinterface.ServiceStatus": {
+            "type": "object",
+            "properties": {
+                "microservices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/serviceinterface.MicroserviceDescriptor"
+                    }
+                },
+                "name": {
+                    "description": "Name of the service",
+                    "type": "string"
+                },
+                "ref_name": {
+                    "description": "Reference Name of the service as it is named in the server",
                     "type": "string"
                 }
             }

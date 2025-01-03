@@ -10,11 +10,15 @@ package api
 import (
 	areaMiddleware "area/api/middleware"
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
-	"area/gRPC/api/hello"
-	huggingFace "area/gRPC/api/hugging_face"
+	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
+	google_client "area/gRPC/api/google/googleClient"
+	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
+	"area/gRPC/api/spotify"
+	weather_client "area/gRPC/api/weather/weatherClient"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
@@ -38,11 +42,15 @@ func CreateApiGateway() (*ApiGateway, error) {
 	}
 
 	m := make(map[string]IServ.ClientService)
-	m["hello"] = hello.NewHelloServiceClient(conn)
 	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
-	m["hf"] = huggingFace.NewHuggingFaceClient(conn)
+	m["hf"] = huggingFace_client.NewHuggingFaceClient(conn)
 	m["github"] = github.NewGithubClient(conn)
+	m["gitlab"] = gitlab_client.NewGitlabClient(conn)
+	m["google"] = google_client.NewGoogleClient(conn)
+	m["discord"] = discord.NewDiscordClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
+	m["spotify"] = spotify.NewSpotifyClient(conn)
+	m["weather"] = weather_client.NewWeatherClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),

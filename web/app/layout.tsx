@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import '../styles/global.css'
+import {NextFontWithVariable} from "next/dist/compiled/@next/font";
+import {Toaster} from "@/components/ui/toaster";
 
 
 
-const avenirNext = localFont({
+const avenirNext : NextFontWithVariable = localFont({
     src: [
         {
             path: '../public/fonts/AvenirNextLTPro-Regular.otf',
@@ -40,6 +42,7 @@ export default function RootLayout({
             className={`${avenirNext.variable} antialiased bg-white`}
           >
             {children}
+            <Toaster />
           </body>
         </html>
   );

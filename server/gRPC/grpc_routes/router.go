@@ -9,10 +9,14 @@ package grpc_routes
 
 import (
 	"area/gRPC/api/dateTime"
+	"area/gRPC/api/discord"
 	"area/gRPC/api/github"
-	"area/gRPC/api/hello"
-	huggingFace "area/gRPC/api/hugging_face"
+	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
+	google_server "area/gRPC/api/google/googleServer"
+	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
 	"area/gRPC/api/reaction"
+	"area/gRPC/api/spotify"
+	weather_server "area/gRPC/api/weather/weatherServer"
 	services "area/protogen/gRPC/proto"
 	"cmp"
 	"log"
@@ -24,7 +28,7 @@ import (
 )
 
 func LaunchServices() {
-	const addr = "0.0.0.0:50051"
+	const addr = "localhost:50051"
 
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -32,21 +36,29 @@ func LaunchServices() {
 	}
 	s := grpc.NewServer()
 
-	helloService := hello.NewHelloService(nil)
 	dtService, errDt := dateTime.NewDateTimeService()
 	reactService, errReact := reaction.NewReactionService()
-	huggingFaceService := huggingFace.NewHuggingFaceService()
-	githubService := github.NewGithubService()
+	huggingFaceService, errHf := huggingFace_server.NewHuggingFaceService()
+	githubService, errGit := github.NewGithubService()
+	gitlabService, errGitlab := gitlab_server.NewGitlabService()
+	discordService, errDiscord := discord.NewDiscordService()
+	googleService, errGoogle := google_server.NewGoogleService()
+	spotifyService, errSpotify := spotify.NewSpotifyService()
+	weatherService, errWeather := weather_server.NewWeatherService()
 
-	if err = cmp.Or(errDt, errReact); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather); err != nil {
 		log.Println(err)
 		return
 	}
-	services.RegisterHelloWorldServiceServer(s, &helloService)
 	services.RegisterDateTimeServiceServer(s, dtService)
-	services.RegisterHuggingFaceServiceServer(s, &huggingFaceService)
-	services.RegisterGithubServiceServer(s, &githubService)
+	services.RegisterHuggingFaceServiceServer(s, huggingFaceService)
+	services.RegisterGithubServiceServer(s, githubService)
+	services.RegisterGitlabServiceServer(s, gitlabService)
+	services.RegisterDiscordServiceServer(s, discordService)
+	services.RegisterGoogleServiceServer(s, googleService)
+	services.RegisterSpotifyServiceServer(s, spotifyService)
 	services.RegisterReactionServiceServer(s, reactService)
+	services.RegisterWeatherServiceServer(s, weatherService)
 
 	var wg sync.WaitGroup
 
@@ -68,6 +80,9 @@ func LaunchServices() {
 
 	reactService.InitServiceClients(conn)
 	dtService.InitReactClient(conn)
+	huggingFaceService.InitReactClient(conn)
+	googleService.InitReactClient(conn)
+	weatherService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

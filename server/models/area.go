@@ -21,7 +21,14 @@ type Area struct {
 }
 
 type AreaScenario struct {
-	UserId   int      `json:"user_id"`
 	Action   Action   `json:"action"`
 	Reaction Reaction `json:"reaction"`
 }
+
+/*
+	-> Liste du create => Objet avec metadata + Value
+	-> Liste du user/getAreas => Objet avec metadata + Value (vraie valeur)
+		==> Get les areas
+		==> Pour chaque area, ListStatus
+		==> Croisement des informations, on remplit la value de l'objet de list status avec la value de database
+*/

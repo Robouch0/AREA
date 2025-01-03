@@ -8,10 +8,11 @@
 package controllers
 
 import (
+	"area/api/controllers/log_types"
 	"area/api/middleware"
 	"area/db"
 	"area/models"
-	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"context"
 	"log"
 
@@ -28,12 +29,6 @@ type credentials struct {
 	Password string `bun:"password" json:"password"`
 }
 
-// User logins infos send to the client as a login response
-type UserLogInfos struct {
-	Token  string `json:"token"`
-	UserID uint   `json:"user_id"`
-}
-
 // Account godoc
 // @Summary      Sign-In
 // @Description  Login a user if he has the correct credentials and returns the tokens and the user_id
@@ -41,7 +36,7 @@ type UserLogInfos struct {
 // @Accept       json
 // @Produce      json
 // @Param 		 credentials body	credentials	true 	"Credentials of the user who wants to connect"
-// @Success      200  {object}  UserLogInfos
+// @Success      200  {object}  log_types.UserLogInfos
 // @Failure      401  {object}  string
 // @Failure      500  {object}  string
 // @Router       /login/ [post]
@@ -52,7 +47,7 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&cred)
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 401, "Incorrect body is sent.")
+			http_utils.WriteHTTPResponseErr(&w, 401, "Incorrect body is sent.")
 			log.Printf("Json Error: %v\n", err)
 			return
 		}
@@ -66,13 +61,13 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 			Scan(context.Background())
 
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("No user known with email: %s\n", cred.Email))
+			http_utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("No user known with email: %s\n", cred.Email))
 			log.Printf("Error: %v\n", err)
 			return
 		}
-		b, err := json.Marshal(UserLogInfos{Token: middleware.CreateToken(jwtauth, us.ID), UserID: us.ID})
+		b, err := json.Marshal(log_types.UserLogInfos{Token: middleware.CreateToken(jwtauth, us.ID), UserID: us.ID})
 		if err != nil {
-			utils.WriteHTTPResponseErr(&w, 401, err.Error())
+			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
 		w.WriteHeader(200)
