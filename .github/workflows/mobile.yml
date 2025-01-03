@@ -28,6 +28,7 @@ jobs:
 #        working-directory: mobile/
       - name: Create mockup env.prod file
         run: touch .env.prod
+        working-directory: mobile/
       - name: Create mockup env file
         run: touch .env
         working-directory: mobile/
