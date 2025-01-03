@@ -33,6 +33,7 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	micros := &IServ.ReactionLauncher{}
 	actions := &IServ.ActionLauncher{}
 	google := &GoogleClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewGoogleServiceClient(conn)}
+
 	(*google.MicroservicesLauncher)["gmail/sendEmailMe"] = google.sendEmailMe
 	(*google.MicroservicesLauncher)["gmail/deleteEmailMe"] = google.deleteEmailMe
 	(*google.MicroservicesLauncher)["gmail/moveToTrash"] = google.moveToTrash
@@ -43,17 +44,17 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	// (*google.MicroservicesLauncher)["gmail/deleteDrive"] = google.deleteDrive // Not free
 	// (*google.MicroservicesLauncher)["gmail/updateDrive"] = google.updateDrive
 	// (*google.MicroservicesLauncher)["gmail/createDrive"] = google.createDrive
-	(*google.MicroservicesLauncher)["gmail/createComment"] = google.createComment
-	(*google.MicroservicesLauncher)["gmail/deleteComment"] = google.deleteComment
-	(*google.MicroservicesLauncher)["gmail/updateComment"] = google.updateComment
-	(*google.MicroservicesLauncher)["gmail/createEmptyFile"] = google.createEmptyFile
-	(*google.MicroservicesLauncher)["gmail/deleteFile"] = google.deleteFile
-	(*google.MicroservicesLauncher)["gmail/updateFile"] = google.updateFile
-	(*google.MicroservicesLauncher)["gmail/copyFile"] = google.copyFile
+	(*google.MicroservicesLauncher)["drive/createComment"] = google.createComment
+	(*google.MicroservicesLauncher)["drive/deleteComment"] = google.deleteComment
+	(*google.MicroservicesLauncher)["drive/updateComment"] = google.updateComment
+	(*google.MicroservicesLauncher)["drive/createEmptyFile"] = google.createEmptyFile
+	(*google.MicroservicesLauncher)["drive/deleteFile"] = google.deleteFile
+	(*google.MicroservicesLauncher)["drive/updateFile"] = google.updateFile
+	(*google.MicroservicesLauncher)["drive/copyFile"] = google.copyFile
 
-	(*google.ActionLauncher)["watchme"] = google.watchEmail
-	(*google.ActionLauncher)["watchFile"] = google.watchFile
-	(*google.ActionLauncher)["watchChanges"] = google.watchChanges
+	(*google.ActionLauncher)["gmail/watchme"] = google.watchEmail
+	(*google.ActionLauncher)["drive/watchFile"] = google.watchFile
+	(*google.ActionLauncher)["drive/watchChanges"] = google.watchChanges
 	return google
 }
 
@@ -269,14 +270,14 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
 	}
 	log.Println(microservice)
-	if microservice == "watchme" {
+	if microservice == "gmail/watchme" {
 		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
 		if err != nil {
 			return nil, err
 		}
 		return &IServ.WebHookResponseStatus{}, nil
 	}
-	if microservice == "watchFile" {
+	if microservice == "drive/watchFile" {
 		log.Println(microservice)
 		_, err = google.cc.WatchFileTrigger(context.Background(), &gRPCService.FileTriggerReq{Headers: bHeader, ActionId: uint32(actionID)})
 		if err != nil {
@@ -285,7 +286,7 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 		}
 		return &IServ.WebHookResponseStatus{}, nil
 	}
-	if microservice == "watchChanges" {
+	if microservice == "drive/watchChanges" {
 		_, err = google.cc.WatchChangesTrigger(context.Background(), &gRPCService.ChangesTriggerReq{Headers: bHeader, ActionId: uint32(actionID)})
 		if err != nil {
 			return nil, err
@@ -295,6 +296,20 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 	return nil, status.Errorf(codes.NotFound, "Microservice: %v not found", microservice)
 }
 
-func (google *GoogleClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
-	return nil, nil
+func (google *GoogleClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	if microservice == "gmail/watchme" {
+		if _, err := google.cc.DeactivateGmailAction(ctx, &gRPCService.DeactivateGmail{ActionId: uint32(id)}); err != nil {
+			return nil, err
+		}
+	}
+	if microservice == "drive/watchChanges" || microservice == "drive/watchFile" {
+		if _, err := google.cc.DeactivateDriveAction(ctx, &gRPCService.DeactivateDrive{ActionId: uint32(id)}); err != nil {
+			return nil, err
+		}
+	}
+	return &IServ.DeactivateResponseStatus{
+		ActionID:    id,
+		Description: "",
+	}, nil
 }

@@ -54,6 +54,11 @@ func (hf *GithubDB) GetGithubByActionID(actionID uint) (*models.Github, error) {
 	return allDatas, nil
 }
 
+// Activate or desactivate an action based on actionID and the boolean activated
+func (git *GithubDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.Github, error) {
+	return SetActivateByActionID[models.Github](git.Db, activated, userID, actionID)
+}
+
 func (hf *GithubDB) GetAllActionsActivated() (*[]models.Github, error) {
 	allDatas := new([]models.Github)
 	err := hf.Db.NewSelect().

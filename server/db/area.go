@@ -58,6 +58,11 @@ func (area *AreaDB) InsertNewArea(UserID uint, OneShot bool) (*models.Area, erro
 	return newArea, nil
 }
 
+// Activate or desactivate an action based on actionID and the boolean activated
+func (area *AreaDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.Area, error) {
+	return SetActivateByActionID[models.Area](area.Db, activated, userID, actionID)
+}
+
 func (area *AreaDB) GetFullAreaByUserID(userID uint) (*[]models.Area, error) {
 	us := new([]models.Area)
 	err := area.Db.NewSelect().

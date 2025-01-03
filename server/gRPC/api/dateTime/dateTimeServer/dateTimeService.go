@@ -70,7 +70,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 		log.Println(err)
 		return
 	}
-	bytesBody, err = json.Marshal(&dateData) // Check but not really uselful
+	bytesBody, err = json.Marshal(&dateData) // Check but not really usefull
 	if err != nil {
 		log.Println(err)
 		return
@@ -114,4 +114,16 @@ func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.T
 		return nil, err
 	}
 	return &gRPCService.TriggerTimeResponse{}, nil
+}
+
+func (dt *DateTimeService) DeactivateAction(ctx context.Context, req *gRPCService.DeactivateTime) (*gRPCService.DeactivateTime, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "dt")
+	if err != nil {
+		return nil, err
+	}
+	_, err = dt.dtDb.SetActivateByActionID(false, userID, uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
 }

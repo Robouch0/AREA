@@ -93,6 +93,16 @@ func (_ *DTServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, 
 	return &IServ.WebHookResponseStatus{}, nil
 }
 
-func (dt *DTServiceClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
-	return nil, nil
+func (dt *DTServiceClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := dt.DeactivateAction(ctx, &gRPCService.DeactivateTime{
+		ActionId: uint32(id),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeactivateResponseStatus{
+		ActionID:    id,
+		Description: "DateTime Deactivated",
+	}, nil
 }

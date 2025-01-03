@@ -18,6 +18,9 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type SpotifyService struct {
@@ -296,4 +299,8 @@ func (spot *SpotifyService) AddSongToPlaylist(ctx context.Context, req *gRPCServ
 	// 		return nil, errors.New(resp.Status)
 	// 	}
 	return req, nil
+}
+
+func (spot *SpotifyService) DeactivateSpotAction(ctx context.Context, req *gRPCService.DeactivateSpot) (*gRPCService.DeactivateSpot, error) {
+	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify")
 }

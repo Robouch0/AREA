@@ -22,4 +22,6 @@ type WebHookResponseStatus struct {
 }
 
 type DeactivateResponseStatus struct {
+	ActionID    uint   `json:"action_id,omitempty"`
+	Description string `json:"description"`
 }

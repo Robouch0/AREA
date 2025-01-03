@@ -8,6 +8,7 @@ service DateTimeService {
   // Launch a cron job that check each minutes if the trigger must be activated
   rpc LaunchCronJob(TriggerTimeRequest) returns (TriggerTimeResponse) {}
 
+  // Deactivate the cron job for the specific action_id given
   rpc DeactivateAction(DeactivateTime) returns (DeactivateTime) {}
 }
 

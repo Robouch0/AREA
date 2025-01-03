@@ -17,6 +17,8 @@ import (
 	"log"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type SpotifyClient struct {
@@ -183,6 +185,6 @@ func (_ *SpotifyClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ 
 	return &IServ.WebHookResponseStatus{}, nil
 }
 
-func (spot *SpotifyClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
-	return nil, nil
+func (spot *SpotifyClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify")
 }

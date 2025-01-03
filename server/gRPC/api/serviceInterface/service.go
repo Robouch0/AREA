@@ -34,7 +34,7 @@ type ClientService interface {
 	// Deactivate an area
 	//
 	// Parameter id must be used to identify the area, and userID identifies the user
-	DeactivateArea(id, userID int) (*DeactivateResponseStatus, error)
+	DeactivateArea(microservice string, id uint, userID int) (*DeactivateResponseStatus, error)
 
 	// Trigger a specific reaction of an user
 	TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*ReactionResponseStatus, error)

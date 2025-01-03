@@ -82,7 +82,7 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 	}
 
 	log.Println("AreaID Launch: ", area.ID)
-	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID)
+	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID) // Check if it is activated ?
 	for _, re := range *reactions {
 		if cliService, ok := react.clients[re.Reaction.Service]; ok {
 			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, req.PrevOutput, int(area.UserID))
@@ -140,4 +140,16 @@ func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCServi
 		return nil, err
 	}
 	return &gRPCService.ReactionResponse{Description: "Done", ActionId: int64(act.ID)}, nil
+}
+
+func (react *ReactionService) DeactivateArea(ctx context.Context, req *gRPCService.AreaDeactivator) (*gRPCService.AreaDeactivator, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "reaction")
+	if err != nil {
+		return nil, err
+	}
+	_, err = react.AreaDB.SetActivateByActionID(false, userID, uint(req.AreaId))
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
 }

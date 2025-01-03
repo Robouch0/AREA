@@ -16,6 +16,8 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GitlabClient struct {
@@ -24,6 +26,7 @@ type GitlabClient struct {
 
 	cc gRPCService.GitlabServiceClient
 }
+
 func NewGitlabClient(conn *grpc.ClientConn) *GitlabClient {
 	micros := &IServ.ReactionLauncher{}
 	actions := &IServ.ActionLauncher{}
@@ -159,6 +162,6 @@ func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservic
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }
 
-func (git *GitlabClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
-	return nil, nil
+func (git *GitlabClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
 }

@@ -74,6 +74,16 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 	return &IServ.ActionResponseStatus{Description: res.Description, ActionID: int(res.ActionId)}, nil
 }
 
-func (react *ReactionServiceClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
-	return nil, nil
+func (react *ReactionServiceClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := react.ReactionServiceClient.DeactivateArea(ctx, &gRPCService.AreaDeactivator{
+		AreaId: uint32(id),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeactivateResponseStatus{
+		ActionID:    id,
+		Description: "DateTime Deactivated",
+	}, nil
 }

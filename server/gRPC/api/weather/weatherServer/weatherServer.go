@@ -133,3 +133,15 @@ func (weather *WeatherService) NewIsDayTrigger(ctx context.Context, req *gRPCSer
 	}
 	return req, nil
 }
+
+func (weather *WeatherService) DeactivateWeatherAction(ctx context.Context, req *gRPCService.DeactivateWeather) (*gRPCService.DeactivateWeather, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "weather")
+	if err != nil {
+		return nil, err
+	}
+	_, err = weather.weatherDb.SetActivateByActionID(false, userID, uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
+}

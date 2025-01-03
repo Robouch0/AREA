@@ -159,3 +159,8 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 	}
 	return req, nil
 }
+
+func (google *GoogleService) DeactivateGmailAction(ctx context.Context, req *gRPCService.DeactivateGmail) (*gRPCService.DeactivateGmail, error) {
+	// Stop the watch and deactivate
+	return req, nil
+}

@@ -16,6 +16,8 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type DiscordClient struct {
@@ -170,6 +172,6 @@ func (_ *DiscordClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ 
 	return &IServ.WebHookResponseStatus{}, nil
 }
 
-func (disCli *DiscordClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
-	return nil, nil
+func (disCli *DiscordClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
 }

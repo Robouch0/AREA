@@ -171,7 +171,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Create a comment in a file",
-				RefName: "gmail/createComment",
+				RefName: "drive/createComment",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -191,7 +191,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Delete a comment in a file",
-				RefName: "gmail/deleteComment",
+				RefName: "drive/deleteComment",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -211,7 +211,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Update a comment in a file",
-				RefName: "gmail/updateComment",
+				RefName: "drive/updateComment",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -237,7 +237,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Create an empty file",
-				RefName: "gmail/createEmptyFile",
+				RefName: "drive/createEmptyFile",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -257,7 +257,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Delete a file",
-				RefName: "gmail/deleteFile",
+				RefName: "drive/deleteFile",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -271,7 +271,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Update a file",
-				RefName: "gmail/updateFile",
+				RefName: "drive/updateFile",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -297,7 +297,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Copy a file",
-				RefName: "gmail/copyFile",
+				RefName: "drive/copyFile",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -323,14 +323,14 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Watch email received by an user",
-				RefName: "watchme",
+				RefName: "gmail/watchme",
 				Type:    "action",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 			{
 				Name:    "Watch a specific file",
-				RefName: "watchFile",
+				RefName: "drive/watchFile",
 				Type:    "action",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
@@ -344,7 +344,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Watch Changes for all file ressources",
-				RefName: "watchChanges",
+				RefName: "drive/watchChanges",
 				Type:    "action",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{},

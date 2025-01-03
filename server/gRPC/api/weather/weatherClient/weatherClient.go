@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	grpcutils "area/utils/grpcUtils"
 	"errors"
 
 	"google.golang.org/grpc"
@@ -53,6 +54,16 @@ func (weather *WeatherClient) TriggerWebhook(webhook *IServ.WebhookInfos, micros
 	return nil, errors.New("No microservice TriggerWebhook yet")
 }
 
-func (weather *WeatherClient) DeactivateArea(id, userID int) (*IServ.DeactivateResponseStatus, error) {
-	return nil, nil
+func (weather *WeatherClient) DeactivateArea(microservice string, id uint, userID int) (*IServ.DeactivateResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := weather.cc.DeactivateWeatherAction(ctx, &gRPCService.DeactivateWeather{
+		ActionId: uint32(id),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeactivateResponseStatus{
+		ActionID:    id,
+		Description: "DateTime Deactivated",
+	}, nil
 }
