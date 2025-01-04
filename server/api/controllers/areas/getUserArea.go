@@ -5,7 +5,7 @@
 // areas
 //
 
-package controllers
+package areas
 
 import (
 	api "area/api"
@@ -24,9 +24,10 @@ import (
 )
 
 type userArea struct {
-	ID        uint
-	Action    IServ.ServiceStatus
-	Reactions []IServ.ServiceStatus
+	ID        uint                  `json:"id,omitempty"`
+	Action    IServ.ServiceStatus   `json:"action,omitempty"`
+	Reactions []IServ.ServiceStatus `json:"reactions,omitempty"`
+	Activated bool                  `json:"activated"`
 }
 
 func getCorrectMicroservice(gateway *api.ApiGateway, serviceStatus *IServ.ServiceStatus, microservice string) (*IServ.MicroserviceDescriptor, error) {
@@ -115,6 +116,7 @@ func formatUsersArea(gateway *api.ApiGateway, areas *[]models.Area) ([]userArea,
 			ID:        area.ID,
 			Action:    action,
 			Reactions: reactions,
+			Activated: area.Activated,
 		})
 	}
 	return allAreas, nil

@@ -1,6 +1,29 @@
 // lib/api/types/area_body.dart
 enum IngredientType { string, int, bool, time, float }
 
+class Ingredient {
+  final IngredientType type;
+  final dynamic value;
+  final String description;
+  final bool required;
+
+  Ingredient({
+    required this.type,
+    required this.value,
+    required this.description,
+    required this.required,
+  });
+
+  factory Ingredient.fromJson(Map<String, dynamic> json) {
+    return Ingredient(
+      type: _stringToIngredientType(json['type']),
+      value: json['value'],
+      description: json['description'],
+      required: json['required'],
+    );
+  }
+}
+
 class AreaServiceData {
   final String name;
   final String refName;
@@ -27,7 +50,7 @@ class MicroServiceBody {
   final String name;
   final String refName;
   final String type;
-  final Map<String, IngredientType> ingredients;
+  final Map<String, Ingredient> ingredients;
 
   MicroServiceBody({
     required this.name,
@@ -42,7 +65,8 @@ class MicroServiceBody {
       refName: json['ref_name'],
       type: json['type'],
       ingredients: (json['ingredients'] as Map<String, dynamic>).map(
-        (key, value) => MapEntry(key, _stringToIngredientType(value)),
+          (key, value) => MapEntry(key, Ingredient.fromJson(value as Map<String, dynamic>)
+        ),
       ),
     );
   }
@@ -62,5 +86,27 @@ IngredientType _stringToIngredientType(String value) {
       return IngredientType.float;
     default:
       throw Exception('Unknown ingredient type: $value');
+  }
+}
+
+class UserAreaData {
+  final int id;
+  final AreaServiceData action;
+  final List<AreaServiceData> reactions;
+
+  UserAreaData({
+    required this.id,
+    required this.action,
+    required this.reactions,
+  });
+
+  factory UserAreaData.fromJson(Map<String, dynamic> json) {
+    return UserAreaData(
+      id: json['ID'],
+      action: AreaServiceData.fromJson(json['Action']),
+      reactions: (json['Reactions'] as List)
+          .map((r) => AreaServiceData.fromJson(r))
+          .toList(),
+    );
   }
 }

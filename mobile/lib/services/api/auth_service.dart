@@ -17,6 +17,8 @@ class AuthService {
   bool get isLoggedInSync => _isLoggedIn;
 
   Future<void> initializeAuth() async {
+    await AuthStorage.instance.initialize();
+
     if (await checkAuthentification()) {
       _isLoggedIn = true;
     }
@@ -72,8 +74,8 @@ class AuthService {
         final Map<String, dynamic> jsonData = json.decode(response.body);
         final UserLogInfosBody responseData = UserLogInfosBody.fromJson(jsonData);
 
-        await _authStorage.saveToken(responseData.token);
-        await _authStorage.saveUserId(responseData.userId.toString());
+        _authStorage.saveToken(responseData.token);
+        _authStorage.saveUserId(responseData.userId.toString());
 
         _isLoggedIn = true;
         developer.log('Connected with token: ${responseData.token}, userId: ${responseData.userId}', name: 'my_network_log');
@@ -89,7 +91,7 @@ class AuthService {
 
   Future<bool> checkAuthentification() async {
     try {
-      final token = await _authStorage.getToken();
+      final token = _authStorage.getToken();
       final response = await http.get(
         Uri.parse('$_apiUrl/ping'),
         headers: {
@@ -108,7 +110,7 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    await _authStorage.clearAuth();
+    _authStorage.clearAuth();
     _isLoggedIn = false;
   }
 }

@@ -5,7 +5,7 @@
 // discordService
 //
 
-package discord
+package discord_server
 
 import (
 	"area/db"
@@ -23,6 +23,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type DiscordService struct {
@@ -215,4 +218,8 @@ func (discord *DiscordService) DeleteReactions(ctx context.Context, req *gRPCSer
 	}
 	log.Println("Here: ", resp.Body) // Do something with it
 	return req, nil
+}
+
+func (discord *DiscordService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateDiscord) (*gRPCService.SetActivateDiscord, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
 }

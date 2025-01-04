@@ -8,14 +8,14 @@
 package grpc_routes
 
 import (
-	"area/gRPC/api/dateTime"
-	"area/gRPC/api/discord"
+	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
+	discord_server "area/gRPC/api/discord/discordServer"
 	"area/gRPC/api/github"
 	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
 	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
 	"area/gRPC/api/reaction"
-	"area/gRPC/api/spotify"
+	spotify_server "area/gRPC/api/spotify/spotifyServer"
 	weather_server "area/gRPC/api/weather/weatherServer"
 	services "area/protogen/gRPC/proto"
 	"cmp"
@@ -36,14 +36,14 @@ func LaunchServices() {
 	}
 	s := grpc.NewServer()
 
-	dtService, errDt := dateTime.NewDateTimeService()
+	dtService, errDt := dateTime_server.NewDateTimeService()
 	reactService, errReact := reaction.NewReactionService()
 	huggingFaceService, errHf := huggingFace_server.NewHuggingFaceService()
 	githubService, errGit := github.NewGithubService()
 	gitlabService, errGitlab := gitlab_server.NewGitlabService()
-	discordService, errDiscord := discord.NewDiscordService()
+	discordService, errDiscord := discord_server.NewDiscordService()
 	googleService, errGoogle := google_server.NewGoogleService()
-	spotifyService, errSpotify := spotify.NewSpotifyService()
+	spotifyService, errSpotify := spotify_server.NewSpotifyService()
 	weatherService, errWeather := weather_server.NewWeatherService()
 
 	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather); err != nil {

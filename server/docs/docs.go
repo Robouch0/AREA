@@ -31,6 +31,48 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/area/activate": {
+            "put": {
+                "description": "Activate/Deactivate user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "Activate/Deactivate an area",
+                "parameters": [
+                    {
+                        "description": "Informations about the activation of an area",
+                        "name": "area",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/areas.areaActivateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serviceinterface.SetActivatedResponseStatus"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/area/list": {
             "get": {
                 "description": "List all user's area",
@@ -50,7 +92,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/controllers.userArea"
+                                "$ref": "#/definitions/areas.userArea"
                             }
                         }
                     },
@@ -67,7 +109,7 @@ const docTemplate = `{
         },
         "/create/list": {
             "get": {
-                "description": "List all user's area",
+                "description": "List all available areas",
                 "consumes": [
                     "application/json"
                 ],
@@ -77,7 +119,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "List User's area",
+                "summary": "List available areas",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -231,7 +273,7 @@ const docTemplate = `{
         },
         "/oauth/{service}": {
             "get": {
-                "description": "get the oauth redirect url for a service",
+                "description": "Get the oauth redirect url for a service",
                 "consumes": [
                     "application/json"
                 ],
@@ -241,7 +283,7 @@ const docTemplate = `{
                 "tags": [
                     "Account"
                 ],
-                "summary": "get Oauth url by service",
+                "summary": "Get an oauth url for a service",
                 "parameters": [
                     {
                         "type": "string",
@@ -347,7 +389,7 @@ const docTemplate = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "Get a token",
+                "summary": "Get user's token",
                 "parameters": [
                     {
                         "type": "string",
@@ -487,7 +529,7 @@ const docTemplate = `{
         },
         "/webhook/{service}/{microservice}/{action_id}": {
             "post": {
-                "description": "WebHook Enpoint for the remote services payloads",
+                "description": "Webhook Endpoint for the remote services payloads",
                 "consumes": [
                     "application/json"
                 ],
@@ -497,7 +539,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "WebHook Enpoint",
+                "summary": "Webhook Endpoint",
                 "parameters": [
                     {
                         "type": "string",
@@ -537,6 +579,37 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "areas.areaActivateRequest": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "type": "boolean"
+                },
+                "area_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "areas.userArea": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                },
+                "activated": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/serviceinterface.ServiceStatus"
+                    }
+                }
+            }
+        },
         "controllers.TokenInformations": {
             "type": "object",
             "properties": {
@@ -556,23 +629,6 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
-                }
-            }
-        },
-        "controllers.userArea": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "$ref": "#/definitions/serviceinterface.ServiceStatus"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "reactions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/serviceinterface.ServiceStatus"
-                    }
                 }
             }
         },
@@ -639,6 +695,9 @@ const docTemplate = `{
             "properties": {
                 "action": {
                     "$ref": "#/definitions/models.Actions"
+                },
+                "activated": {
+                    "type": "boolean"
                 },
                 "id": {
                     "type": "integer"
@@ -827,6 +886,20 @@ const docTemplate = `{
                 },
                 "ref_name": {
                     "description": "Reference Name of the service as it is named in the server",
+                    "type": "string"
+                }
+            }
+        },
+        "serviceinterface.SetActivatedResponseStatus": {
+            "type": "object",
+            "properties": {
+                "action_id": {
+                    "type": "integer"
+                },
+                "activated": {
+                    "type": "boolean"
+                },
+                "description": {
                     "type": "string"
                 }
             }

@@ -13,15 +13,16 @@ import (
 	serviceinterface "area/gRPC/api/serviceInterface"
 	"area/utils"
 	http_utils "area/utils/httpUtils"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
 
-// WebHook Enpoint godoc
-// @Summary      WebHook Enpoint
-// @Description  WebHook Enpoint for the remote services payloads
+// Webhook Enpoint godoc
+// @Summary      Webhook Endpoint
+// @Description  Webhook Endpoint for the remote services payloads
 // @Tags         Area
 // @Accept       json
 // @Produce      json
@@ -48,15 +49,18 @@ func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
 			return
 		}
 		if cli, ok := gateway.Clients[service]; ok {
-			cli.TriggerWebhook(&serviceinterface.WebhookInfos{Payload: payload, Header: r.Header}, microservice, actionId)
+			_, err := cli.TriggerWebhook(&serviceinterface.WebhookInfos{Payload: payload, Header: r.Header}, microservice, actionId)
+			if err != nil {
+				log.Println(err)
+				http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
+				return
+			}
 			w.WriteHeader(204)
 			return
 		}
 		http_utils.WriteHTTPResponseErr(&w, 401, "Invalid payload sent")
 	}
 }
-
-// Créer une db google gmail
 
 func WebHookRoutes(gateway *api.ApiGateway) chi.Router {
 	WebHooks := chi.NewRouter()

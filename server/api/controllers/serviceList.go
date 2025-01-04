@@ -16,8 +16,8 @@ import (
 )
 
 // Area godoc
-// @Summary      List User's area
-// @Description  List all user's area
+// @Summary      List available areas
+// @Description  List all available areas
 // @Tags         Area
 // @Accept       json
 // @Produce      json

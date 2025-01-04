@@ -176,3 +176,9 @@ func (hfServ *HuggingFaceService) TriggerWebHook(ctx context.Context, req *gRPCS
 	}
 	return req, nil
 }
+
+func (hfServ *HuggingFaceService) DeactivateHFAction(ctx context.Context, req *gRPCService.SetActivateHF) (*gRPCService.SetActivateHF, error) {
+	// Deactivate webhook and delete in database
+	// Action are not used because not available in hugging face
+	return req, nil
+}

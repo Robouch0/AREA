@@ -5,7 +5,7 @@
 // dateTimeClient
 //
 
-package dateTime
+package dateTime_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
@@ -91,4 +91,19 @@ func (dt *DTServiceClient) SendAction(scenario models.AreaScenario, actionID, us
 
 func (_ *DTServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
+}
+
+func (dt *DTServiceClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := dt.SetActivateAction(ctx, &gRPCService.SetActivateTime{
+		ActionId:  uint32(id),
+		Activated: activated,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.SetActivatedResponseStatus{
+		ActionID:    id,
+		Description: "DateTime Deactivated",
+	}, nil
 }

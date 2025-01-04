@@ -22,8 +22,8 @@ class ProfileService {
     );
 
     try {
-      final token = await _authStorage.getToken();
-      final userId = await _authStorage.getUserId();
+      final token = _authStorage.getToken();
+      final userId = _authStorage.getUserId();
 
       if (token == null) {
         return false;
@@ -51,8 +51,8 @@ class ProfileService {
 
   Future<UserInfoBody> getUserInfo() async {
     try {
-      final token = await _authStorage.getToken();
-      final userId = await _authStorage.getUserId();
+      final token = _authStorage.getToken();
+      final userId = _authStorage.getUserId();
 
       if (token == null) {
         throw Exception('Token is undefined');

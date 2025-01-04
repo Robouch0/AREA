@@ -43,24 +43,8 @@ func (dt *DateTimeDB) InsertNewDTAction(dtAction *models.DateTime) (*models.Date
 }
 
 // Activate or desactivate an action based on actionID and the boolean activated
-func (dt *DateTimeDB) SetDTActionState(actionID uint, activated bool) (*models.DateTime, error) {
-	var activatedStr string
-	if activated {
-		activatedStr = "TRUE"
-	} else {
-		activatedStr = "FALSE"
-	}
-
-	var dtAction models.DateTime
-	_, err := dt.Db.NewUpdate().
-		Model(&dtAction).
-		Set("activated = ?", activatedStr).
-		Where("action_id = ?", actionID).
-		Exec(context.Background())
-	if err != nil {
-		return nil, err
-	}
-	return &dtAction, nil
+func (dt *DateTimeDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.DateTime, error) {
+	return SetActivateByActionID[models.DateTime](dt.Db, activated, userID, actionID)
 }
 
 func (dt *DateTimeDB) GetAllDTActionsActivated() (*[]models.DateTime, error) {

@@ -5,7 +5,7 @@
 // discordClient
 //
 
-package discord
+package discord_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
@@ -16,15 +16,17 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type DiscordClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	cc                    gRPCService.DiscordServiceClient
 }
 
 func NewDiscordClient(conn *grpc.ClientConn) *DiscordClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	disCli := &DiscordClient{MicroservicesLauncher: micros, cc: gRPCService.NewDiscordServiceClient(conn)}
 	(*disCli.MicroservicesLauncher)["createMsg"] = disCli.createMessage
 	(*disCli.MicroservicesLauncher)["editMsg"] = disCli.editMessage
@@ -33,155 +35,6 @@ func NewDiscordClient(conn *grpc.ClientConn) *DiscordClient {
 	(*disCli.MicroservicesLauncher)["deleteAllreacts"] = disCli.deleteAllReactions
 	(*disCli.MicroservicesLauncher)["deleteReact"] = disCli.deleteReaction
 	return disCli
-}
-
-func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
-	status := &IServ.ServiceStatus{
-		Name:    "Discord",
-		RefName: "discord",
-
-		Microservices: []IServ.MicroserviceDescriptor{
-			{
-				Name:    "Create a message in a channel",
-				RefName: "createMsg",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"channel": {
-						Value:       "",
-						Type:        "string",
-						Description: "Channel Discord where to put this message",
-						Required:    true,
-					},
-					"content": {
-						Value:       "",
-						Type:        "string",
-						Description: "Content of the new message",
-						Required:    true,
-					},
-				},
-			},
-			{
-				Name:    "Edit a message",
-				RefName: "editMsg",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"channel": {
-						Value:       "",
-						Type:        "string",
-						Description: "Channel Discord where to edit the message",
-						Required:    true,
-					},
-					"message_id": {
-						Value:       "",
-						Type:        "string",
-						Description: "Message Identifier (available in discord app)",
-						Required:    true,
-					},
-					"content": {
-						Value:       "",
-						Type:        "string",
-						Description: "Content of the message",
-						Required:    true,
-					},
-				},
-			},
-			{
-				Name:    "Delete a message",
-				RefName: "deleteMsg",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"channel": {
-						Value:       "",
-						Type:        "string",
-						Description: "Channel Discord where to delete the message",
-						Required:    true,
-					},
-					"message_id": {
-						Value:       "",
-						Type:        "string",
-						Description: "Message Identifier (available in discord app)",
-						Required:    true,
-					},
-				},
-			},
-			{
-				Name:    "Create a reaction on a message",
-				RefName: "createReact",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"channel": {
-						Value:       "",
-						Type:        "string",
-						Description: "Channel Discord where to create a reaction",
-						Required:    true,
-					},
-					"message_id": {
-						Value:       "",
-						Type:        "string",
-						Description: "Message Identifier (available in discord app)",
-						Required:    true,
-					},
-					"emoji": {
-						Value:       "",
-						Type:        "string",
-						Description: "Emoji to send",
-						Required:    true,
-					},
-				},
-			},
-			{
-				Name:    "Delete all reactions on a message",
-				RefName: "deleteAllreacts",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"channel": {
-						Value:       "",
-						Type:        "string",
-						Description: "Channel Discord where to delete the reactions",
-						Required:    true,
-					},
-					"message_id": {
-						Value:       "",
-						Type:        "string",
-						Description: "Message Identifier (available in discord app)",
-						Required:    true,
-					},
-				},
-			},
-			{
-				Name:    "Delete selected reactions on a message",
-				RefName: "deleteReact",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"channel": {
-						Value:       "",
-						Type:        "string",
-						Description: "Channel Discord where to delete the reactions",
-						Required:    true,
-					},
-					"message_id": {
-						Value:       "",
-						Type:        "string",
-						Description: "Message Identifier (available in discord app)",
-						Required:    true,
-					},
-					"emoji": {
-						Value:       "",
-						Type:        "string",
-						Description: "Emoji to send",
-						Required:    true,
-					},
-				},
-			},
-		},
-	}
-	return status, nil
 }
 
 func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -317,4 +170,8 @@ func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microse
 
 func (_ *DiscordClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ int) (*IServ.WebHookResponseStatus, error) {
 	return &IServ.WebHookResponseStatus{}, nil
+}
+
+func (disCli *DiscordClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
 }
