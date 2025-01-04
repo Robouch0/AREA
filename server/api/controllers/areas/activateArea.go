@@ -25,6 +25,7 @@ type areaActivateRequest struct {
 // Area godoc
 // @Summary      Activate/Deactivate an area
 // @Description  Activate/Deactivate user's area
+// @Security ApiKeyAuth
 // @Tags         Area
 // @Accept       json
 // @Produce      json

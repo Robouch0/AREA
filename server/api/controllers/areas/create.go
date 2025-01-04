@@ -36,6 +36,7 @@ func sendToService(cliService gRPCapi.ClientService, scenario models.AreaScenari
 // Area godoc
 // @Summary      Create a new Area
 // @Description  Register a new Area in the application
+// @Security ApiKeyAuth
 // @Tags         Area
 // @Accept       json
 // @Produce      json

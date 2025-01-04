@@ -33,6 +33,11 @@ const docTemplate = `{
         },
         "/area/activate": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Activate/Deactivate user's area",
                 "consumes": [
                     "application/json"
@@ -75,6 +80,11 @@ const docTemplate = `{
         },
         "/area/create/list": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List all available areas",
                 "consumes": [
                     "application/json"
@@ -109,6 +119,11 @@ const docTemplate = `{
         },
         "/area/create/{service}": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Register a new Area in the application",
                 "consumes": [
                     "application/json"
@@ -158,6 +173,11 @@ const docTemplate = `{
         },
         "/area/list": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List all user's area",
                 "consumes": [
                     "application/json"
@@ -320,6 +340,11 @@ const docTemplate = `{
         },
         "/ping": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Pong",
                 "produces": [
                     "application/json"
@@ -381,7 +406,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth @Tags         Token": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Get all the tokens of the current logged user",

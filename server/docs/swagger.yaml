@@ -207,6 +207,8 @@ paths:
         "500":
           description: Internal Server Error
           schema: {}
+      security:
+      - ApiKeyAuth: []
       summary: Activate/Deactivate an area
       tags:
       - Area
@@ -240,6 +242,8 @@ paths:
         "500":
           description: Internal Server Error
           schema: {}
+      security:
+      - ApiKeyAuth: []
       summary: Create a new Area
       tags:
       - Area
@@ -263,6 +267,8 @@ paths:
         "500":
           description: Internal Server Error
           schema: {}
+      security:
+      - ApiKeyAuth: []
       summary: List available areas
       tags:
       - Area
@@ -286,6 +292,8 @@ paths:
         "500":
           description: Internal Server Error
           schema: {}
+      security:
+      - ApiKeyAuth: []
       summary: List User's area
       tags:
       - Area
@@ -384,6 +392,8 @@ paths:
       responses:
         "200":
           description: pong
+      security:
+      - ApiKeyAuth: []
       summary: Prints pong
       tags:
       - Ping
@@ -436,7 +446,7 @@ paths:
           description: Internal Server Error
           schema: {}
       security:
-      - ApiKeyAuth @Tags         Token: []
+      - ApiKeyAuth: []
       summary: Get all the tokens from a user
       tags:
       - Token

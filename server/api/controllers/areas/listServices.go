@@ -18,6 +18,7 @@ import (
 // Area godoc
 // @Summary      List available areas
 // @Description  List all available areas
+// @Security ApiKeyAuth
 // @Tags         Area
 // @Accept       json
 // @Produce      json

@@ -46,7 +46,7 @@ func convertTokensToPublicInfos(tokens *[]models.Token) []TokenInformations {
 // Get tokens godoc
 // @Summary      Get all the tokens from a user
 // @Description  Get all the tokens of the current logged user
-// @Security ApiKeyAuth @Tags         Token
+// @Security ApiKeyAuth
 // @Tags         Token
 // @Accept       json
 // @Produce      json
