@@ -7,3 +7,6 @@
 
 package githubtypes
 
+type GithubWebHookResponse struct {
+	Event      []string    `json:"event"`
+}

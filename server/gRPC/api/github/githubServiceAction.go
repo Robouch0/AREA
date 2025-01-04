@@ -58,9 +58,9 @@ func (git *GithubService) createWebHook(tokenInfo *models.Token, webhookReq *git
 		return err
 	}
 	log.Println("Bearer " + tokenInfo.AccessToken)
-	postRequest.Header.Set("authorization", "Bearer "+tokenInfo.AccessToken)
+	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
 	postRequest.Header.Add("Accept", "application/vnd.github+json")
-	_, err = http_utils.SendHttpRequest(postRequest, 200)
+	_, err = http_utils.SendHttpRequest(postRequest, 201)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 
 	err = git.createWebHook(tokenInfo, &githubtypes.GitWebHookRequest{
 		Event:  []string{"push"},
-		Config: githubtypes.GithubConfig{Url: fmt.Sprintf(envWebhookUrl, "github", "", req.ActionId), Content: "json"},
+		Config: githubtypes.GithubConfig{Url: fmt.Sprintf(envWebhookUrl, "github", req.ActionId), Content: "json"},
 	}, req.Owner, req.Repo)
 	if err != nil {
 		return nil, err
@@ -99,22 +99,19 @@ func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 		return nil, status.Errorf(codes.InvalidArgument, "No such action with id %d", req.ActionId)
 	}
 
-	// var hfPayload hfType.HFWebHookResponse
-	// if json.Unmarshal(req.Payload, &hfPayload) != nil {
-	// 	return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
-	// }
-	// if hfPayload.Event.Action == act.RepoAction && hfPayload.Event.Scope == act.RepoScope {
-	// 	if hfPayload.Event.Action == "discussion" && hfPayload.Discussion.IsPullRequest != act.IsPullRequest {
-	// 		return nil, status.Errorf(codes.InvalidArgument, "Received Discussion event with incorrect value for IsPullRequest")
-	// 	}
-	reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
-	_, err = git.reactService.LaunchReaction(
-		reactCtx,
-		&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: req.Payload},
-	)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+	var gitpayload githubtypes.GithubWebHookResponse
+	if json.Unmarshal(req.Payload, &gitpayload) != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
 	}
-	// }
+	if gitpayload.Event[0] == act.RepoAction {
+		reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
+		_, err = git.reactService.LaunchReaction(
+			reactCtx,
+			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: req.Payload},
+		)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+		}
+	}
 	return req, nil
 }
