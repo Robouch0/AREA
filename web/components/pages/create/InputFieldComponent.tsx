@@ -23,12 +23,14 @@ export function InputFieldComponent({
     const [selectedDayAndMonth, setSelectedDayAndMonth] = useState<Date | undefined>(new Date());
 
     useEffect(() => {
-        setValues(prevValues => {
-            const newValues = [...prevValues];
-            newValues[index] = selectedDate.toISOString();
-            console.log(newValues[index])
-            return newValues;
-        });
+        if (details.type === "date" && selectedDate) {
+            setValues(prevValues => {
+                const newValues = [...prevValues];
+                newValues[index] = selectedDate.toISOString();
+                console.log(newValues[index])
+                return newValues;
+            });
+        }
     }, [selectedDate])
 
     const updateDate = useCallback((dateInput: Date) => {
@@ -103,5 +105,4 @@ export function InputFieldComponent({
                 />
             )
     }
-
 }

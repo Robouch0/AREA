@@ -2,7 +2,6 @@
 import { MicroServiceCard } from "@/components/ui/services/MicroserviceCard";
 import * as React from "react";
 import { useEffect, useState, useMemo } from "react";
-import { Input } from "@/components/ui/utils/Input";
 import { Button } from "@/components/ui/utils/Button";
 import { create } from "@/api/createArea";
 import Form from 'next/form';
@@ -160,7 +159,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
         if (actionName != "" && reactionName != "") {
             getUserTokens().then((res) => {
                 let actionToken = false;
-                if (actionName != "dt") {
+                if (actionName != "dt" && actionName != "weather") {
                     actionToken = res.includes(actionName);
                 } else {
                     actionToken = true;
@@ -231,7 +230,6 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
         create(payload).catch(error => { console.log(error) });
     };
 
-    // Create a redirect to the applets page or other
     return (
         <Form action={handleSubmit}>
             <div className="pt-20 my-16 bg-white h-full w-full flex flex-col justify-center items-center p-8">
