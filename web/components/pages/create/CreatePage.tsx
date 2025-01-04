@@ -11,6 +11,8 @@ import { getColorForService } from "@/lib/utils";
 import { AreaServices, AreaMicroservices, Ingredient } from "@/api/types/areaStatus";
 import { AreaCreateBody } from "@/api/types/areaCreateBody";
 import { getUserTokens } from "@/api/getUserInfos";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import { getInputField } from "@/components/pages/create/getInputField";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -41,29 +43,30 @@ export function renderIngredientsInput(
     if (ingredients === undefined) {
         return <div></div>
     }
-
+    if (ingredients) {
+        const ingredientsMap = new Map(Object.entries(ingredients));
+        ingredientsMap.forEach((ingredient, key) => {
+            console.log(ingredient.type)
+        })
+    }
     return (
         <>
             <div className="pt-3"></div>
-            {Object.keys(ingredients).map((ingredient: string, index: number) => (
+            {Object.entries(ingredients).map(([ingredient, details] : [string, Ingredient], index: number) => (
                 <div key={index} className="flex flex-col justify-center items-center">
-                    <p className="p-2 left-0 text-2xl text-white">
-                        {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}
-                    </p>
-                    <Input
-                        type="text"
-                        name={`${ingredient}`}
-                        id={`text-${index}`}
-                        className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                        aria-label="text"
-                        value={values[index] || ''} // ChangeEvent<HTMLInputElement>
-                        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-                            const newValues: string[] = [...values];
-                            newValues[index] = e.target.value;
-                            setValues(newValues);
-                        }}
-                        required
-                    />
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <p className="p-2 left-0 text-2xl text-white">
+                                    {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}
+                                </p>
+                            </TooltipTrigger>
+                            <TooltipContent className={"text-xl bg-white text-black font-bold border-4 border-black"}>
+                                {details.description}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                    {getInputField(ingredient, details, index, values, setValues)}
                 </div>
             ))}
             <div className="pb-12"></div>
