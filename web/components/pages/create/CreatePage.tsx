@@ -1,7 +1,7 @@
 'use client';
 import { MicroServiceCard } from "@/components/ui/services/MicroserviceCard";
 import * as React from "react";
-import { useEffect, useState, useMemo, ChangeEvent } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/utils/Input";
 import { Button } from "@/components/ui/utils/Button";
 import { create } from "@/api/createArea";
@@ -13,6 +13,8 @@ import { AreaCreateBody } from "@/api/types/areaCreateBody";
 import { getUserTokens } from "@/api/getUserInfos";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import { InputFieldComponent} from "@/components/pages/create/InputFieldComponent";
+import {useRouter} from "next/navigation";
+import {useToast} from "@/hooks/use-toast";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -124,6 +126,9 @@ const filterServiceByRefName = (services: AreaServices[], refName: string): Area
 export default function CreatePage({ services, uid }: { services: AreaServices[], uid: number }) {
     const [isTokenActionPresent, setTokenAction] = useState(true);
     const [isTokenReactionPresent, setTokenReaction] = useState(true);
+    const router = useRouter();
+    const { toast } = useToast()
+
 
     const actions: AreaServices[] = useMemo(() => {
         return filterAreaByType(services, "action")
@@ -182,6 +187,15 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
             console.error("Both action and reaction must be selected");
             return;
         }
+        toast({
+            title: "Area creation was sucessful",
+            description: "Your new area is now running and available on this page.",
+            variant: 'default',
+            duration: 3000,
+        })
+        setTimeout((): void => {
+            router.push("myareas/")
+        }, 800);
 
         const payload: AreaCreateBody = {
             user_id: uid,

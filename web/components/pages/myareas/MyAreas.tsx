@@ -11,7 +11,6 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
     let filteredAreas;
     if (userAreas != undefined) {
         filteredAreas = userAreas.filter(area => {
-            console.log(area)
             const actionNameMatch: boolean = area.action.name.toLowerCase().includes(searchField.toLowerCase());
             const reactionNameMatch: boolean = area.reactions?.[0]?.name.toLowerCase().includes(
                 searchField.toLowerCase());
