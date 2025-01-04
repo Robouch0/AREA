@@ -16,11 +16,8 @@ message TriggerTimeRequest {
   bool activated = 1;
   int32 action_id = 2;
 
-  int32 minutes = 3;
-  int32 hours = 4;
-
-  int64 day_month = 5;
-  int64 month = 6;
+  // Format: "DD/MM/HH:mm"
+  string datetimeString = 3;
 }
 
 message TriggerTimeResponse {

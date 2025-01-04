@@ -12,7 +12,7 @@ import { AreaServices, AreaMicroservices, Ingredient } from "@/api/types/areaSta
 import { AreaCreateBody } from "@/api/types/areaCreateBody";
 import { getUserTokens } from "@/api/getUserInfos";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import { getInputField } from "@/components/pages/create/getInputField";
+import { GetInputField } from "@/components/pages/create/GetInputField";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -66,7 +66,7 @@ export function renderIngredientsInput(
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                    {getInputField(ingredient, details, index, values, setValues)}
+                    {GetInputField(ingredient, details, index, values, setValues)}
                 </div>
             ))}
             <div className="pb-12"></div>
@@ -106,6 +106,8 @@ const convertIngredient = (ingredient: string | undefined, obj: Ingredient): any
             return ingredient.toLowerCase() === "true"
         case "time":
             return ""
+        case "date":
+            return ingredient
         default:
             return ingredient
     }

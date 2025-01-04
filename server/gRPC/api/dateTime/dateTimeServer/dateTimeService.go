@@ -18,6 +18,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
@@ -95,28 +97,67 @@ func (dt *DateTimeService) checkTimeTrigger() {
 }
 
 func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.TriggerTimeRequest) (*gRPCService.TriggerTimeResponse, error) {
-	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "DateTimeService")
-	if errClaim != nil {
-		log.Println(ctx)
-		return nil, errClaim
-	}
-	log.Println("Starting cron job")
-	_, err := dt.dtDb.InsertNewDTAction(&models.DateTime{
-		ActionID: uint(req.ActionId),
-		UserID:   userID,
+    userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "DateTimeService")
+    if errClaim != nil {
+        log.Println(ctx)
+        return nil, errClaim
+    }
 
-		Activated: true,
-		Minutes:   req.Minutes,
-		Hours:     req.Hours,
-		DayMonth:  req.DayMonth,
-		Month:     req.Month,
-	})
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	return &gRPCService.TriggerTimeResponse{}, nil
+    log.Println(req)
+    parts := strings.Split(req.DatetimeString, "/")
+    if len(parts) != 3 {
+        log.Println(req.DatetimeString)
+        log.Println("Error while parsing string dateTime, not enough arguments")
+        return nil, nil
+    }
+
+    dayMonth, err := strconv.Atoi(parts[0])
+    if err != nil {
+        log.Println("Error while parsing month part")
+        return nil, err
+    }
+
+    month, err := strconv.Atoi(parts[1])
+    if err != nil {
+        log.Println("Error while parsing day part")
+        return nil, err
+    }
+
+    timeParts := strings.Split(parts[2], ":")
+    if len(timeParts) != 2 {
+        log.Println("Error while parsing hours part, no arguments")
+        return nil, err
+    }
+
+    hours, err := strconv.Atoi(timeParts[0])
+    if err != nil {
+        log.Println("Error while parsing hours part")
+        return nil, err
+    }
+
+    minutes, err := strconv.Atoi(timeParts[1])
+    if err != nil {
+        log.Println("Error while parsing minutes part")
+        return nil, err
+    }
+
+    log.Println("Starting cron job")
+    _, err = dt.dtDb.InsertNewDTAction(&models.DateTime{
+        ActionID:  uint(req.ActionId),
+        UserID:    userID,
+        Activated: true,
+        Minutes:   int32(minutes),
+        Hours:     int32(hours),
+        DayMonth:  int64(dayMonth),
+        Month:     int64(month),
+    })
+    if err != nil {
+        log.Println(err)
+        return nil, err
+    }
+    return &gRPCService.TriggerTimeResponse{}, nil
 }
+
 
 func (dt *DateTimeService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateTime) (*gRPCService.SetActivateTime, error) {
 	userID, err := grpcutils.GetUserIdFromContext(ctx, "dt")
