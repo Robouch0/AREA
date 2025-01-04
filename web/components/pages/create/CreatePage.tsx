@@ -12,7 +12,7 @@ import { AreaServices, AreaMicroservices, Ingredient } from "@/api/types/areaSta
 import { AreaCreateBody } from "@/api/types/areaCreateBody";
 import { getUserTokens } from "@/api/getUserInfos";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import { GetInputField } from "@/components/pages/create/GetInputField";
+import { InputFieldComponent} from "@/components/pages/create/InputFieldComponent";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -38,17 +38,14 @@ export function renderMicroservices(service: AreaServices | undefined, setMicros
 }
 
 export function renderIngredientsInput(
-    ingredients: Map<string, Ingredient> | undefined, values: string[],
-    setValues: React.Dispatch<React.SetStateAction<string[]>>) {
+    ingredients: Map<string, Ingredient> | undefined,
+    values: string[],
+    setValues: React.Dispatch<React.SetStateAction<string[]>>
+) {
     if (ingredients === undefined) {
-        return <div></div>
+        return <div></div>;
     }
-    if (ingredients) {
-        const ingredientsMap = new Map(Object.entries(ingredients));
-        ingredientsMap.forEach((ingredient, key) => {
-            console.log(ingredient.type)
-        })
-    }
+
     return (
         <>
             <div className="pt-3"></div>
@@ -66,13 +63,20 @@ export function renderIngredientsInput(
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                    {GetInputField(ingredient, details, index, values, setValues)}
+                    <InputFieldComponent
+                        ingredient={ingredient}
+                        details={details}
+                        index={index}
+                        values={values}
+                        setValues={setValues}
+                    />
                 </div>
             ))}
             <div className="pb-12"></div>
         </>
     );
 }
+
 
 const filterAreaByType = (services: AreaServices[], type: string) => {
     return services.filter((service: AreaServices): boolean => {

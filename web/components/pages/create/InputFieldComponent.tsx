@@ -5,13 +5,19 @@ import { TimePickerDemo } from "@/components/ui/utils/TimePicker";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/utils/Input";
 
-export function GetInputField(
-    ingredient: string,
-    details: Ingredient,
-    index: number,
-    values: string[],
-    setValues: React.Dispatch<React.SetStateAction<string[]>>
-) {
+export function InputFieldComponent({
+    ingredient,
+    details,
+    index,
+    values,
+    setValues
+}: {
+    ingredient: string;
+    details: Ingredient;
+    index: number;
+    values: string[];
+    setValues: React.Dispatch<React.SetStateAction<string[]>>;
+}) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedTime, setSelectedTime] = useState<Date | undefined>(new Date());
     const [selectedDayAndMonth, setSelectedDayAndMonth] = useState<Date | undefined>(new Date());
@@ -36,8 +42,8 @@ export function GetInputField(
 
     const updateTime = useCallback((dateInput: Date) => {
         const time = new Date(selectedDate);
-        time.setHours(dateInput.getHours());
-        time.setMinutes(dateInput.getMinutes());
+        time.setUTCHours(dateInput.getUTCHours() + 1);
+        time.setUTCMinutes(dateInput.getUTCMinutes());
 
         setSelectedDate(time);
     }, [selectedDate, setSelectedDate])
