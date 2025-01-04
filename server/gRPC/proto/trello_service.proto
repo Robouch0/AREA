@@ -12,8 +12,8 @@ service TrelloService {
 
 
 message CreateBoardReq {
-  string channel = 1;
-  string content = 2;
+  string boardName = 1;
+  string boardDescription = 2;
 }
 
 message CreateBoardResp {

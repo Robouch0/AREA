@@ -18,92 +18,24 @@ func (trelloCli *TrelloClient) ListServiceStatus() (*IServ.ServiceStatus, error)
 
 		Microservices: []IServ.MicroserviceDescriptor{
 			{
-				Name:    "Stop the current song playing on the last device connected",
-				RefName: "stopSong",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{},
-			},
-			{
-				Name:    "Create a spotify playlist",
-				RefName: "createPlaylist",
+				Name:    "Create a Board on Trello",
+				RefName: "createBoard",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
-					"playlistName": {
+					"boardName": {
 						Value:       "",
 						Type:        "string",
-						Description: "Name of the playlist",
+						Description: "The name of the board you want to create",
 						Required:    true,
 					},
-					"playlistDescription": {
+					"boardDescription": {
 						Value:       "",
 						Type:        "string",
-						Description: "Description of the playlist",
-						Required:    true,
-					},
-					"public": {
-						Value:       "",
-						Type:        "string",
-						Description: "Is the playlist public or private",
+						Description: "A small description of the board",
 						Required:    true,
 					},
 				},
-			},
-			{
-				Name:    "Launch the next song",
-				RefName: "nextSong",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{},
-			},
-			{
-				Name:    "Launch the previous song",
-				RefName: "previousSong",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{},
-			},
-			{
-				Name:    "Change the playback Volume",
-				RefName: "setPlaybackVolume",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"volume": {
-						Value:       "",
-						Type:        "string",
-						Description: "New volume for the song",
-						Required:    true,
-					},
-				},
-			},
-			{
-				Name:    "Launch a specific track",
-				RefName: "launchSong",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{
-					"songUrl": {
-						Value:       "",
-						Type:        "string",
-						Description: "URL of the song to launch",
-						Required:    true,
-					},
-					"millisecondsPosition": {
-						Value:       "",
-						Type:        "string",
-						Description: "Delay for the song",
-						Required:    true,
-					},
-				},
-			},
-			{
-				Name:    "Add a song to a playlist",
-				RefName: "addSongToPlaylist",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
 		},
 	}
