@@ -24,7 +24,7 @@ func TokenRoutes() chi.Router {
 
 	tokenRouter.Post("/create/", controllers.CreateTkn(tokenDb))
 
-	tokenRouter.Delete("/{user_id}/{provider}", controllers.DeleteUserToken(tokenDb))
+	tokenRouter.Delete("/{provider}", controllers.DeleteUserToken(tokenDb))
 
 	return tokenRouter
 }

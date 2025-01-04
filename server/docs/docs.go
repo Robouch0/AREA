@@ -401,7 +401,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Token"
+                                "$ref": "#/definitions/controllers.TokenInformations"
                             }
                         }
                     },
@@ -434,6 +434,15 @@ const docTemplate = `{
                     "Token"
                 ],
                 "summary": "Delete a token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Remote Service Name",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -485,7 +494,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Token"
+                            "$ref": "#/definitions/controllers.TokenInformations"
                         }
                     },
                     "400": {
@@ -500,13 +509,13 @@ const docTemplate = `{
             }
         },
         "/token/{provider}": {
-            "post": {
+            "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get the tokens from the current userID and a provider",
+                "description": "Get a the token associated to the remote provider of the user",
                 "consumes": [
                     "application/json"
                 ],
@@ -530,7 +539,135 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Token"
+                            "$ref": "#/definitions/controllers.TokenInformations"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/users/": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new user in database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User's information",
+                        "name": "userInfos",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserInformations"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserInformations"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get user's information based on his ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get User By ID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserInformations"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update some informations about the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update User datas",
+                "parameters": [
+                    {
+                        "description": "Updatable user's informations",
+                        "name": "updatableDatas",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatableUserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatableUserData"
                         }
                     },
                     "400": {
@@ -652,6 +789,26 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.UserInformations": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.credentials": {
             "type": "object",
             "properties": {
@@ -706,47 +863,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Actions": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "$ref": "#/definitions/models.Action"
-                },
-                "area_id": {
-                    "description": "No anotation here !",
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Area": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "$ref": "#/definitions/models.Actions"
-                },
-                "activated": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "one_shot": {
-                    "type": "boolean"
-                },
-                "reactions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Reactions"
-                    }
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.AreaScenario": {
             "type": "object",
             "properties": {
@@ -773,80 +889,16 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Reactions": {
+        "models.UpdatableUserData": {
             "type": "object",
             "properties": {
-                "area_id": {
-                    "description": "No anotation here !",
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "prev_out": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "reaction": {
-                    "$ref": "#/definitions/models.Reaction"
-                }
-            }
-        },
-        "models.Token": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "provider": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "areas": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Area"
-                    }
-                },
-                "created_at": {
-                    "description": "Useful for log and security purposes",
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
                 "first_name": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "last_name": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "tokens": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Token"
-                    }
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }

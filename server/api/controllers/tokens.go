@@ -31,6 +31,18 @@ type TokenCreateRequest struct {
 	Token    string `json:"token"`
 }
 
+func convertTokensToPublicInfos(tokens *[]models.Token) []TokenInformations {
+	var allTokens []TokenInformations
+
+	for _, tok := range *tokens {
+		allTokens = append(allTokens, TokenInformations{
+			UserID:   strconv.FormatInt(tok.UserID, 10),
+			Provider: tok.Provider,
+		})
+	}
+	return allTokens
+}
+
 // Get tokens godoc
 // @Summary      Get all the tokens from a user
 // @Description  Get all the tokens of the current logged user
@@ -38,7 +50,7 @@ type TokenCreateRequest struct {
 // @Tags         Token
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  []models.Token
+// @Success      200  {object}  []TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
 // @Router       /token [get]
@@ -55,27 +67,28 @@ func GetTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 			http_utils.WriteHTTPResponseErr(&w, 500, err.Error())
 			return
 		}
+		allToks := convertTokensToPublicInfos(tokens)
 		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(tokens) // Create a different body
+		json.NewEncoder(w).Encode(&allToks)
 	}
 }
 
 // Get token godoc
 // @Summary      Get user's token
-// @Description  Get the tokens from the current userID and a provider
+// @Description  Get a the token associated to the remote provider of the user
 // @Security ApiKeyAuth
 // @Tags         Token
 // @Accept       json
 // @Produce      json
 // @Param 		 provider path	string	true 	"Remote Service Name"
-// @Success      200  {object}  models.Token
+// @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /token/{provider} [post]
+// @Router       /token/{provider} [get]
 func GetToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		TokenReq := new(TokenInformations)
-		TokenReq.Provider = chi.URLParam(r, "provider")
+		tokenReq := new(TokenInformations)
+		tokenReq.Provider = chi.URLParam(r, "provider")
 
 		userID, err := grpcutils.GetUserIDClaim(r.Context())
 		if err != nil {
@@ -83,13 +96,16 @@ func GetToken(tokenDb *db.TokenDb) http.HandlerFunc {
 			return
 		}
 
-		tokens, err := tokenDb.GetUserTokenByProvider(int64(userID), TokenReq.Provider)
+		token, err := tokenDb.GetUserTokenByProvider(int64(userID), tokenReq.Provider)
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
 		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(tokens)
+		json.NewEncoder(w).Encode(&TokenInformations{
+			UserID:   strconv.FormatInt(token.UserID, 10),
+			Provider: token.Provider,
+		})
 	}
 }
 
@@ -101,7 +117,7 @@ func GetToken(tokenDb *db.TokenDb) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param 		 tokenCreateRequest body	TokenCreateRequest	true 	"Token creation request informations"
-// @Success      200  {object}  models.Token
+// @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
 // @Router       /token/create/ [post]
@@ -133,11 +149,17 @@ func CreateTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 				return
 			}
 			w.WriteHeader(200)
-			json.NewEncoder(w).Encode(&token)
+			json.NewEncoder(w).Encode(&TokenInformations{
+				UserID:   strconv.FormatInt(int64(userID), 10),
+				Provider: token.Provider,
+			})
 		} else {
-			oldToken.AccessToken = createReq.Token // That does not work
+			tokenDb.UpdateUserTokenByProvider(int64(userID), createReq.Provider, createReq.Token)
 			w.WriteHeader(200)
-			json.NewEncoder(w).Encode(&oldToken)
+			json.NewEncoder(w).Encode(&TokenInformations{
+				UserID:   strconv.FormatInt(int64(userID), 10),
+				Provider: oldToken.Provider,
+			})
 		}
 	}
 }
@@ -149,29 +171,31 @@ func CreateTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 // @Tags         Token
 // @Accept       json
 // @Produce      json
+// @Param 		 provider path	string	true 	"Remote Service Name"
 // @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
 // @Router       /token/ [delete]
 func DeleteUserToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userStrID := chi.URLParam(r, "user_id")
 		provider := chi.URLParam(r, "provider")
 
-		userId, err := strconv.Atoi(userStrID)
+		userID, err := grpcutils.GetUserIDClaim(r.Context())
 		if err != nil {
-			http_utils.WriteHTTPResponseErr(&w, 401, "Invalid userID given")
-			log.Println(err)
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
 
-		_, err = tokenDb.DeleteUserTokenByProvider(int64(userId), provider)
+		_, err = tokenDb.DeleteUserTokenByProvider(int64(userID), provider)
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 401, "Error while deleting token")
 			log.Println(err)
 			return
 		}
 		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(&TokenInformations{UserID: userStrID, Provider: provider})
+		json.NewEncoder(w).Encode(&TokenInformations{
+			UserID:   strconv.FormatInt(int64(userID), 10),
+			Provider: provider,
+		})
 	}
 }

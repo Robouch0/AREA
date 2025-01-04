@@ -35,6 +35,19 @@ definitions:
       user_id:
         type: string
     type: object
+  controllers.UserInformations:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
   controllers.credentials:
     properties:
       email:
@@ -70,33 +83,6 @@ definitions:
       service:
         type: string
     type: object
-  models.Actions:
-    properties:
-      action:
-        $ref: '#/definitions/models.Action'
-      area_id:
-        description: No anotation here !
-        type: integer
-      id:
-        type: integer
-    type: object
-  models.Area:
-    properties:
-      action:
-        $ref: '#/definitions/models.Actions'
-      activated:
-        type: boolean
-      id:
-        type: integer
-      one_shot:
-        type: boolean
-      reactions:
-        items:
-          $ref: '#/definitions/models.Reactions'
-        type: array
-      user_id:
-        type: integer
-    type: object
   models.AreaScenario:
     properties:
       action:
@@ -114,56 +100,13 @@ definitions:
       service:
         type: string
     type: object
-  models.Reactions:
+  models.UpdatableUserData:
     properties:
-      area_id:
-        description: No anotation here !
-        type: integer
-      id:
-        type: integer
-      prev_out:
-        additionalProperties: true
-        type: object
-      reaction:
-        $ref: '#/definitions/models.Reaction'
-    type: object
-  models.Token:
-    properties:
-      access_token:
-        type: string
-      id:
-        type: integer
-      provider:
-        type: string
-      user:
-        $ref: '#/definitions/models.User'
-      user_id:
-        type: integer
-    type: object
-  models.User:
-    properties:
-      areas:
-        items:
-          $ref: '#/definitions/models.Area'
-        type: array
-      created_at:
-        description: Useful for log and security purposes
-        type: string
-      email:
-        type: string
       first_name:
         type: string
-      id:
-        type: integer
       last_name:
         type: string
       password:
-        type: string
-      tokens:
-        items:
-          $ref: '#/definitions/models.Token'
-        type: array
-      updated_at:
         type: string
     type: object
   serviceinterface.ActionResponseStatus:
@@ -484,7 +427,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Token'
+              $ref: '#/definitions/controllers.TokenInformations'
             type: array
         "400":
           description: Bad Request
@@ -502,6 +445,12 @@ paths:
       consumes:
       - application/json
       description: Delete a token from a user_id and a provider
+      parameters:
+      - description: Remote Service Name
+        in: path
+        name: provider
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -521,10 +470,10 @@ paths:
       tags:
       - Token
   /token/{provider}:
-    post:
+    get:
       consumes:
       - application/json
-      description: Get the tokens from the current userID and a provider
+      description: Get a the token associated to the remote provider of the user
       parameters:
       - description: Remote Service Name
         in: path
@@ -537,7 +486,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Token'
+            $ref: '#/definitions/controllers.TokenInformations'
         "400":
           description: Bad Request
           schema: {}
@@ -567,7 +516,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Token'
+            $ref: '#/definitions/controllers.TokenInformations'
         "400":
           description: Bad Request
           schema: {}
@@ -579,6 +528,88 @@ paths:
       summary: Create a token
       tags:
       - Token
+  /users/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user in database
+      parameters:
+      - description: User's information
+        in: body
+        name: userInfos
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UserInformations'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.UserInformations'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new user
+      tags:
+      - User
+  /users/me:
+    get:
+      consumes:
+      - application/json
+      description: Get user's information based on his ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.UserInformations'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get User By ID
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update some informations about the user
+      parameters:
+      - description: Updatable user's informations
+        in: body
+        name: updatableDatas
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatableUserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UpdatableUserData'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update User datas
+      tags:
+      - User
   /webhook/{service}/{microservice}/{action_id}:
     post:
       consumes:

@@ -13,7 +13,7 @@ export const listAreas = async (): Promise<AreaServices[]> => {
         if (token == undefined) {
             throw Error("Token is undefined")
         }
-        const response = await axiosInstance.get<AreaServices[]>(`create/list`, {
+        const response = await axiosInstance.get<AreaServices[]>(`areas/create/list`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
