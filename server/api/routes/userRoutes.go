@@ -19,9 +19,9 @@ func UserRoutes() chi.Router {
 	userDb := db.InitUserDb()
 
 	userRouter.Post("/", controllers.CreateNewUser(userDb))
-	userRouter.Get("/", controllers.GetAllUsers(userDb))
-	userRouter.Get("/{id}", controllers.GetUserByID(userDb))
+	// userRouter.Get("/all/", controllers.GetAllUsers(userDb))
+	userRouter.Get("/me", controllers.GetUserByID(userDb))
 
-	userRouter.Put("/{id}", controllers.UpdateUserDatas(userDb))
+	userRouter.Put("/me", controllers.UpdateUserDatas(userDb))
 	return userRouter
 }
