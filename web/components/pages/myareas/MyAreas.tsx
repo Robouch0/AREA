@@ -11,10 +11,11 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
     let filteredAreas;
     if (userAreas != undefined) {
         filteredAreas = userAreas.filter(area => {
-            const actionNameMatch: boolean = area.Action.name.toLowerCase().includes(searchField.toLowerCase());
-            const reactionNameMatch: boolean = area.Reactions?.[0]?.name.toLowerCase().includes(
+            console.log(area)
+            const actionNameMatch: boolean = area.action.name.toLowerCase().includes(searchField.toLowerCase());
+            const reactionNameMatch: boolean = area.reactions?.[0]?.name.toLowerCase().includes(
                 searchField.toLowerCase());
-            const areaName: boolean | undefined = area.Action.microservices?.at(0)?.name.toLowerCase().includes(
+            const areaName: boolean | undefined = area.action.microservices?.at(0)?.name.toLowerCase().includes(
                 searchField.toLowerCase());
             return actionNameMatch || reactionNameMatch || areaName;
         })
@@ -87,10 +88,10 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
                         <>
                             <div className="mx-64 h-1/2 w-3/4 flex flex-wrap items-center justify-center">
                                 {filteredAreas.map(area => (
-                                    <div key={area.ID} className="">
+                                    <div key={area.id} className="">
                                         <MyAreaCard
-                                            action={area.Action} reaction={area.Reactions?.at(0)}
-                                            areaID={parseInt(area.ID)}
+                                            action={area.action} reaction={area.reactions?.at(0)}
+                                            areaID={parseInt(area.id)}
                                         />
                                     </div>
                                 ))}
