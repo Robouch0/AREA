@@ -125,6 +125,7 @@ func formatUsersArea(gateway *api.ApiGateway, areas *[]models.Area) ([]userArea,
 // Area godoc
 // @Summary      List User's area
 // @Description  List all user's area
+// @Security ApiKeyAuth
 // @Tags         Area
 // @Accept       json
 // @Produce      json

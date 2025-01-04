@@ -12,7 +12,7 @@ export async function unlinkOauthProvider(provider: string): Promise<void> {
         if (!uid) {
             throw new Error("User ID not found in cookies");
         }
-        const response = await axiosInstance.delete(`token/${uid}/${provider}`, {
+        await axiosInstance.delete(`token/${provider}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
