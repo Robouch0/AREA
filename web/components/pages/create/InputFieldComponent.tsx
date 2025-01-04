@@ -31,7 +31,7 @@ export function InputFieldComponent({
                 return newValues;
             });
         }
-    }, [selectedDate])
+    }, [selectedDate, details.type, index, setValues])
 
     const updateDate = useCallback((dateInput: Date) => {
         const date = new Date(selectedDate);
