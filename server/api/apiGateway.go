@@ -18,6 +18,7 @@ import (
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
 	spotify_client "area/gRPC/api/spotify/spotifyClient"
+	trello_client "area/gRPC/api/trello/trelloClient"
 	weather_client "area/gRPC/api/weather/weatherClient"
 
 	"github.com/go-chi/chi/v5"
@@ -51,6 +52,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["react"] = reaction.NewReactionServiceClient(conn)
 	m["spotify"] = spotify_client.NewSpotifyClient(conn)
 	m["weather"] = weather_client.NewWeatherClient(conn)
+	m["trello"] = trello_client.NewTrelloClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),

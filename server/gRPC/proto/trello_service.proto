@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package trello;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service TrelloService {
+  // Reaction to create a Trello Board
+  rpc CreateBoard(CreateBoardReq) returns(CreateBoardReq) {}
+
+}
+
+
+message CreateBoardReq {
+  string channel = 1;
+  string content = 2;
+}
+
+message CreateBoardResp {
+
+}
+
+///////////////
