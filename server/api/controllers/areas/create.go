@@ -5,7 +5,7 @@
 // createRoutes
 //
 
-package controllers
+package areas
 
 import (
 	api "area/api"
@@ -44,9 +44,8 @@ func sendToService(cliService gRPCapi.ClientService, scenario models.AreaScenari
 // @Success      200  {object}  gRPCapi.ActionResponseStatus
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error
-// @Router       /create/{service} [get]
-func CreateRoute(gateway *api.ApiGateway) http.HandlerFunc {
-
+// @Router       /area/create/{service} [post]
+func CreateArea(gateway *api.ApiGateway) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		serviceParam := chi.URLParam(r, "service")
 		userID, err := grpcutils.GetUserIDClaim(r.Context())

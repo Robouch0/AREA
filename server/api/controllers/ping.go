@@ -13,9 +13,9 @@ import (
 )
 
 // Ping godoc
-// @Summary      prints pong
-// @Description  pong
-// @Tags         ping
+// @Summary      Prints pong
+// @Description  Pong
+// @Tags         Ping
 // @Produce      json
 // @Success      200  "pong"
 // @Router       /ping [get]

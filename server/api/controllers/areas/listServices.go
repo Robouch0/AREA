@@ -5,7 +5,7 @@
 // serviceList
 //
 
-package controllers
+package areas
 
 import (
 	api "area/api"
@@ -24,7 +24,7 @@ import (
 // @Success      200  {object}  []IServ.ServiceStatus
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error
-// @Router       /create/list [get]
+// @Router       /area/create/list [get]
 func ListService(gateway *api.ApiGateway) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var services []IServ.ServiceStatus

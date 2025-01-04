@@ -73,41 +73,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/area/list": {
-            "get": {
-                "description": "List all user's area",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Area"
-                ],
-                "summary": "List User's area",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/areas.userArea"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
-        "/create/list": {
+        "/area/create/list": {
             "get": {
                 "description": "List all available areas",
                 "consumes": [
@@ -141,8 +107,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/create/{service}": {
-            "get": {
+        "/area/create/{service}": {
+            "post": {
                 "description": "Register a new Area in the application",
                 "consumes": [
                     "application/json"
@@ -177,6 +143,40 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/serviceinterface.ActionResponseStatus"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/area/list": {
+            "get": {
+                "description": "List all user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "List User's area",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/areas.userArea"
+                            }
                         }
                     },
                     "401": {
@@ -320,14 +320,14 @@ const docTemplate = `{
         },
         "/ping": {
             "get": {
-                "description": "pong",
+                "description": "Pong",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ping"
+                    "Ping"
                 ],
-                "summary": "prints pong",
+                "summary": "Prints pong",
                 "responses": {
                     "200": {
                         "description": "pong"
@@ -377,9 +377,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/token/": {
-            "post": {
-                "description": "Get the tokens from a user_id and a provider",
+        "/token": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth @Tags         Token": []
+                    }
+                ],
+                "description": "Get all the tokens of the current logged user",
                 "consumes": [
                     "application/json"
                 ],
@@ -389,28 +394,15 @@ const docTemplate = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "Get user's token",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Id of the user",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Provider of the Remote Service",
-                        "name": "provider",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Get all the tokens from a user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Token"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Token"
+                            }
                         }
                     },
                     "400": {
@@ -422,8 +414,15 @@ const docTemplate = `{
                         "schema": {}
                     }
                 }
-            },
+            }
+        },
+        "/token/": {
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete a token from a user_id and a provider",
                 "consumes": [
                     "application/json"
@@ -455,6 +454,11 @@ const docTemplate = `{
         },
         "/token/create/": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a token from a user_id and a provider",
                 "consumes": [
                     "application/json"
@@ -466,6 +470,17 @@ const docTemplate = `{
                     "Token"
                 ],
                 "summary": "Create a token",
+                "parameters": [
+                    {
+                        "description": "Token creation request informations",
+                        "name": "tokenCreateRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenCreateRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -484,9 +499,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/token/{user_id}": {
-            "get": {
-                "description": "Get all the tokens from a user_id",
+        "/token/{provider}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get the tokens from the current userID and a provider",
                 "consumes": [
                     "application/json"
                 ],
@@ -496,12 +516,12 @@ const docTemplate = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "Get all the tokens from a user",
+                "summary": "Get user's token",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Id of the user",
-                        "name": "user_id",
+                        "description": "Remote Service Name",
+                        "name": "provider",
                         "in": "path",
                         "required": true
                     }
@@ -510,10 +530,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Token"
-                            }
+                            "$ref": "#/definitions/models.Token"
                         }
                     },
                     "400": {
@@ -607,6 +624,20 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/serviceinterface.ServiceStatus"
                     }
+                }
+            }
+        },
+        "controllers.TokenCreateRequest": {
+            "type": "object",
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },
@@ -903,6 +934,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
