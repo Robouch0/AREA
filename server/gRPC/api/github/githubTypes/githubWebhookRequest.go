@@ -13,6 +13,7 @@ type GithubConfig struct {
 }
 
 type GitWebHookRequest struct {
-	Event  []string       `json:"events"`
+	Event  []string     `json:"events"`
+	Active bool         `json:"active"`
 	Config GithubConfig `json:"config"`
 }
