@@ -10,7 +10,7 @@ package grpc_routes
 import (
 	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
 	discord_server "area/gRPC/api/discord/discordServer"
-	"area/gRPC/api/github"
+	"area/gRPC/api/github/githubServer"
 	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
 	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
@@ -86,6 +86,8 @@ func LaunchServices() {
 	huggingFaceService.InitReactClient(conn)
 	googleService.InitReactClient(conn)
 	weatherService.InitReactClient(conn)
+	githubService.InitReactClient(conn)
+	gitlabService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }
