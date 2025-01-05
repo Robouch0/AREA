@@ -131,8 +131,8 @@ function LoginForm() {
                             <div className="max-w-md w-full space-y-4">
 
                                 <OauthButton
-                                    arial-label="Google"
-                                    service="google"
+                                    arial-label="Miro"
+                                    service="miro"
                                     login={true}
                                     textButton="Continuer avec Google"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
