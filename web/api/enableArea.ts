@@ -3,8 +3,8 @@ import { cookies } from 'next/headers';
 import axiosInstance from "@/lib/axios"
 
 interface ActivateAreaRequest {
-    AreaID: number;
-    Activated: boolean;
+    area_id: number;
+    activated: boolean;
 }
 
 export const activateArea = async (areaId: number, activated: boolean): Promise<void> => {
@@ -18,8 +18,8 @@ export const activateArea = async (areaId: number, activated: boolean): Promise<
         console.log(areaId)
         const response = await axiosInstance.put<void>("/areas/activate",
             {
-                AreaID: areaId,
-                Activated: activated
+                area_id: areaId,
+                activated: activated
             } as ActivateAreaRequest,
             {
                 headers: {
