@@ -23,7 +23,7 @@ export function MyAreaCard({action, reaction, areaID, areaActivate}: {
     const handleSwitchToggle = async () => {
         setSwitchOn(!switchOn)
         console.log(areaID)
-        activateArea(areaID, switchOn).then((res) => {
+        activateArea(areaID, !switchOn).then((res) => {
             console.log(res)
         }).catch((err) => console.log(err));
     };
