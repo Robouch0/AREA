@@ -11,10 +11,11 @@ import (
 	"area/db"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
-	"area/gRPC/api/github/githubClient"
+	github "area/gRPC/api/github/githubClient"
 	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
+	miro_client "area/gRPC/api/miro/miroClient"
 	IServ "area/gRPC/api/serviceInterface"
 	spotify_client "area/gRPC/api/spotify/spotifyClient"
 	weather_client "area/gRPC/api/weather/weatherClient"
@@ -68,6 +69,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["google"] = google_client.NewGoogleClient(conn)
 	react.clients["spotify"] = spotify_client.NewSpotifyClient(conn)
 	react.clients["weather"] = weather_client.NewWeatherClient(conn)
+	react.clients["miro"] = miro_client.NewMiroClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {

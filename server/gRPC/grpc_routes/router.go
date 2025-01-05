@@ -10,10 +10,11 @@ package grpc_routes
 import (
 	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
 	discord_server "area/gRPC/api/discord/discordServer"
-	"area/gRPC/api/github/githubServer"
+	github "area/gRPC/api/github/githubServer"
 	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
 	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
+	miro_server "area/gRPC/api/miro/miroServer"
 	"area/gRPC/api/reaction"
 	spotify_server "area/gRPC/api/spotify/spotifyServer"
 	weather_server "area/gRPC/api/weather/weatherServer"
@@ -45,8 +46,9 @@ func LaunchServices() {
 	googleService, errGoogle := google_server.NewGoogleService()
 	spotifyService, errSpotify := spotify_server.NewSpotifyService()
 	weatherService, errWeather := weather_server.NewWeatherService()
+	miroService, errMiro := miro_server.NewMiroService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errMiro); err != nil {
 		log.Println(err)
 		return
 	}
@@ -59,6 +61,7 @@ func LaunchServices() {
 	services.RegisterSpotifyServiceServer(s, spotifyService)
 	services.RegisterReactionServiceServer(s, reactService)
 	services.RegisterWeatherServiceServer(s, weatherService)
+	services.RegisterMiroServiceServer(s, miroService)
 
 	var wg sync.WaitGroup
 
@@ -85,6 +88,7 @@ func LaunchServices() {
 	weatherService.InitReactClient(conn)
 	githubService.InitReactClient(conn)
 	gitlabService.InitReactClient(conn)
+	miroService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

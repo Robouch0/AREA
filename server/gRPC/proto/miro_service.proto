@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package miro;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service MiroService {
+  // Add a webhook that will only watch items created
+  // Response is same because we don't need a particular response yet
+  rpc WatchItemCreated(ItemCreatedReq) returns (ItemCreatedReq) {}
+
+  // Webhook callback when receiving the payload
+  rpc TriggerItemCreated(ItemCreatedTriggerReq) returns (ItemCreatedResp) {}
+}
+
+message ItemCreatedReq {
+  string boardId = 1; /* Id of the board that can be retrieved in the board page */
+  bool status = 2; /* Enable or disable webhook */
+  uint32 action_id = 3; /* ActionID */
+}
+
+message ItemCreatedTriggerReq {
+  uint32 action_id = 1;
+  bytes payload = 2;
+}
+
+message ItemCreatedResp {
+  string type = 1;
+  string content = 2;
+}
+
+/////

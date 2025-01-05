@@ -11,10 +11,11 @@ import (
 	areaMiddleware "area/api/middleware"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
-	"area/gRPC/api/github/githubClient"
+	github "area/gRPC/api/github/githubClient"
 	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
+	miro_client "area/gRPC/api/miro/miroClient"
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
 	spotify_client "area/gRPC/api/spotify/spotifyClient"
@@ -51,6 +52,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["react"] = reaction.NewReactionServiceClient(conn)
 	m["spotify"] = spotify_client.NewSpotifyClient(conn)
 	m["weather"] = weather_client.NewWeatherClient(conn)
+	m["miro"] = miro_client.NewMiroClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),
