@@ -25,7 +25,7 @@ func NewAsanaClient(conn *grpc.ClientConn) *AsanaClient {
 	micros := &IServ.ReactionLauncher{}
 	asana := &AsanaClient{MicroservicesLauncher: micros, cc: gRPCService.NewAsanaServiceClient(conn)}
 
-	(*asana.MicroservicesLauncher)["createBoard"] = asana.createBoard
+	(*asana.MicroservicesLauncher)["createProject"] = asana.createProject
 	return asana
 }
 

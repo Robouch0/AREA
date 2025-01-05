@@ -18,21 +18,33 @@ func (asana *AsanaClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 		Microservices: []IServ.MicroserviceDescriptor{
 			{
-				Name:    "Create a Board on Asana",
-				RefName: "createBoard",
+				Name:    "Create a Project on Asana",
+				RefName: "createProject",
 				Type:    "reaction",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
-					"boardName": {
+					"projectName": {
 						Value:       "",
 						Type:        "string",
-						Description: "The name of the board you want to create",
+						Description: "The name of the project you want to create",
 						Required:    true,
 					},
-					"boardDescription": {
+					"color": {
 						Value:       "",
 						Type:        "string",
-						Description: "A small description of the board",
+						Description: "The background color theme of your project",
+						Required:    true,
+					},
+					"defaultView": {
+						Value:       "",
+						Type:        "string",
+						Description: "The default view apply to your project (ex: board)",
+						Required:    true,
+					},
+					"workspaceName": {
+						Value:       "",
+						Type:        "string",
+						Description: "The targeted workspace name",
 						Required:    true,
 					},
 				},

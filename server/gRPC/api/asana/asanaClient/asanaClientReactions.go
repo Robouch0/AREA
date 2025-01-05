@@ -14,23 +14,23 @@ import (
 	"encoding/json"
 )
 
-func (asana *AsanaClient) createBoard(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createProject(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
 	}
 
-	var createReq gRPCService.CreateBoardReq
+	var createReq gRPCService.CreateProjectReq
 	err = json.Unmarshal(jsonString, &createReq)
 	if err != nil {
 		return nil, err
 	}
 
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	_, err = asana.cc.CreateBoard(ctx, &createReq)
+	_, err = asana.cc.CreateProject(ctx, &createReq)
 	if err != nil {
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Board created"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Project created"}, nil
 }
