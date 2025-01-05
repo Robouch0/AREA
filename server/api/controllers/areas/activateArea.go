@@ -48,6 +48,7 @@ func ActivateArea(gateway *api.ApiGateway) http.HandlerFunc {
 		}
 		resp, err := gateway.Clients["react"].SetActivate("", uint(areaReq.AreaID), int(userID), areaReq.Activated)
 		if err != nil {
+		    log.Println(areaReq.AreaID, userID, areaReq.Activated)
 			log.Println("Error in reaction service: ", err)
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
