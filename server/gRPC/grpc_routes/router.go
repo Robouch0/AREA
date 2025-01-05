@@ -83,6 +83,8 @@ func LaunchServices() {
 	huggingFaceService.InitReactClient(conn)
 	googleService.InitReactClient(conn)
 	weatherService.InitReactClient(conn)
+	githubService.InitReactClient(conn)
+	gitlabService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }
