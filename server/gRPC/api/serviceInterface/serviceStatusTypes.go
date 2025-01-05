@@ -21,7 +21,7 @@ type Ingredients = map[string]IngredientDescriptor
 type MicroserviceDescriptor struct {
 	Name    string `json:"name"`     /* Name of the microservice */
 	RefName string `json:"ref_name"` /* Reference Name of the microservice as it is named in the server */
-	Type    string `json:"type"`
+	Type    string `json:"type"`     /* Type of service action or reaction */
 
 	Ingredients Ingredients `json:"ingredients"`
 }
