@@ -69,7 +69,7 @@ func AccessTokenPost(
 		return nil, resperr
 	}
 	if response.StatusCode != 200 {
-		return nil, errors.New("Invalid status")
+		return nil, errors.New(response.Status)
 	}
 	return response, nil
 }

@@ -94,6 +94,13 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 			EmailRequestURL: "https://app.asana.com/api/1.0/users/me",
 		},
 	}
+	oauthUrls["miro"] = OAuthURLs{
+		RedirectURL: "https://miro.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s&state=miro",
+		OAuth: &MiroOAuth{
+			AccessTokenURL:  "https://api.miro.com/v1/oauth/token",
+			EmailRequestURL: "https://api.miro.com/v1/users/me",
+		},
+	}
 	return oauthUrls
 }
 
