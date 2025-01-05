@@ -8,10 +8,11 @@
 package oauth
 
 import (
+	"area/utils"
+	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -35,31 +36,32 @@ type miroUserInfo struct {
 }
 
 func (Miro *MiroOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccessInfos, error) {
-	requestBodyMap := map[string]string{
-		"client_id":     os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(OAuthCode.Service))),
-		"client_secret": os.Getenv(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service))),
-		"code":          OAuthCode.Code,
-		"redirect_uri":  OAuthCode.RedirectURI,
-		"grant_type":    "authorization_code",
+	req, err := http.NewRequest("POST", Miro.AccessTokenURL, nil)
+	if err != nil {
+		return nil, err
 	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
 
-	resp, err := AccessTokenPost(OAuthCode, Miro.AccessTokenURL, requestBodyMap, NewContentTypeHeader("application/json"))
+	q := req.URL.Query()
+	q.Set("client_id", os.Getenv(fmt.Sprintf("%s_ID", strings.ToUpper(OAuthCode.Service))))
+	q.Set("client_secret", os.Getenv(fmt.Sprintf("%s_SECRET", strings.ToUpper(OAuthCode.Service))))
+	q.Set("code", OAuthCode.Code)
+	q.Set("redirect_uri", OAuthCode.RedirectURI)
+	q.Set("grant_type", "authorization_code")
+	req.URL.RawQuery = q.Encode()
+
+	resp, err := http_utils.SendHttpRequest(req, 200)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	var MiroOAuthResponse miroAccessTokenResponse
-	err = json.Unmarshal(body, &MiroOAuthResponse)
+	miroOAuthResponse, err := utils.IoReaderToStruct[miroAccessTokenResponse](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
 	return &OAuthAccessInfos{
-		AccessToken: MiroOAuthResponse.AccessToken,
-		Scope:       MiroOAuthResponse.Scope,
+		AccessToken: miroOAuthResponse.AccessToken,
+		Scope:       miroOAuthResponse.Scope,
 	}, nil
 }
 

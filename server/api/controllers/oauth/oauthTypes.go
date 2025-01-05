@@ -11,7 +11,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/jwtauth/v5"
 )
@@ -69,6 +71,7 @@ func AccessTokenPost(
 		return nil, resperr
 	}
 	if response.StatusCode != 200 {
+		io.Copy(os.Stderr, response.Body)
 		return nil, errors.New(response.Status)
 	}
 	return response, nil
