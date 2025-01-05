@@ -5,7 +5,7 @@
 // trelloClientReaction
 //
 
-package trello_client
+package asana_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-func (trelloCli *TrelloClient) createBoard(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createBoard(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func (trelloCli *TrelloClient) createBoard(ingredients map[string]any, _ []byte,
 	}
 
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	_, err = trelloCli.cc.CreateBoard(ctx, &createReq)
+	_, err = asana.cc.CreateBoard(ctx, &createReq)
 	if err != nil {
 		return nil, err
 	}

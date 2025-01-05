@@ -5,20 +5,20 @@
 // trelloClientList
 //
 
-package trello_client
+package asana_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
 )
 
-func (trelloCli *TrelloClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
+func (asana *AsanaClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 	status := &IServ.ServiceStatus{
-		Name:    "Trello",
-		RefName: "trello",
+		Name:    "Asana",
+		RefName: "asana",
 
 		Microservices: []IServ.MicroserviceDescriptor{
 			{
-				Name:    "Create a Board on Trello",
+				Name:    "Create a Board on Asana",
 				RefName: "createBoard",
 				Type:    "reaction",
 

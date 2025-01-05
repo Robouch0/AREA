@@ -8,6 +8,7 @@
 package grpc_routes
 
 import (
+	asana_server "area/gRPC/api/asana/asanaServer"
 	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
 	discord_server "area/gRPC/api/discord/discordServer"
 	"area/gRPC/api/github/githubServer"
@@ -16,7 +17,6 @@ import (
 	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
 	"area/gRPC/api/reaction"
 	spotify_server "area/gRPC/api/spotify/spotifyServer"
-	trello_server "area/gRPC/api/trello/trelloServer"
 	weather_server "area/gRPC/api/weather/weatherServer"
 	services "area/protogen/gRPC/proto"
 	"cmp"
@@ -46,9 +46,9 @@ func LaunchServices() {
 	googleService, errGoogle := google_server.NewGoogleService()
 	spotifyService, errSpotify := spotify_server.NewSpotifyService()
 	weatherService, errWeather := weather_server.NewWeatherService()
-	trelloService, errTrello := trello_server.NewTrelloService()
+	asanaService, errAsana := asana_server.NewAsanaService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errTrello); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errAsana); err != nil {
 		log.Println(err)
 		return
 	}
@@ -61,7 +61,7 @@ func LaunchServices() {
 	services.RegisterSpotifyServiceServer(s, spotifyService)
 	services.RegisterReactionServiceServer(s, reactService)
 	services.RegisterWeatherServiceServer(s, weatherService)
-	services.RegisterTrelloServiceServer(s, trelloService)
+	services.RegisterAsanaServiceServer(s, asanaService)
 
 	var wg sync.WaitGroup
 

@@ -2,10 +2,10 @@
 // EPITECH PROJECT, 2024
 // AREA
 // File description:
-// trello Board service
+// asana Board service
 //
 
-package trello_server
+package asana_server
 
 import (
 	gRPCService "area/protogen/gRPC/proto"
@@ -18,8 +18,8 @@ import (
 	"net/http"
 )
 
-func (trello *TrelloService) CreateBoard(ctx context.Context, req *gRPCService.CreateBoardReq) (*gRPCService.CreateBoardResp, error) {
-	tokenInfo, err := grpcutils.GetTokenByContext(ctx, trello.tokenDb, "TrelloService", "trello")
+func (asana *AsanaService) CreateBoard(ctx context.Context, req *gRPCService.CreateBoardReq) (*gRPCService.CreateBoardResp, error) {
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, asana.tokenDb, "AsanaService", "asana")
 	if err != nil {
 		return nil, err
 	}
@@ -28,10 +28,10 @@ func (trello *TrelloService) CreateBoard(ctx context.Context, req *gRPCService.C
 		return nil, errors.New("some required parameters are empty")
 	}
 
-	url := "https://api.trello.com/1/boards"
+	url := "https://api.asana.com/1/boards"
 
 	postRequestBody := fmt.Sprintf(`{"name": "%s", "desc": "%s", "key": "%s", "token": "%s"}`,
-		req.BoardName, req.BoardDescription, /* ou chopper l'api key trello ? dans l'env ? */, tokenInfo.AccessToken)
+		req.BoardName, req.BoardDescription, nil, tokenInfo.AccessToken)
 
 	postRequest, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(postRequestBody)))
 	if err != nil {

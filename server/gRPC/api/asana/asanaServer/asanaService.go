@@ -5,22 +5,22 @@
 // trelloService
 //
 
-package trello_server
+package asana_server
 
 import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
 )
 
-type TrelloService struct {
+type AsanaService struct {
 	tokenDb      *db.TokenDb
 	reactService gRPCService.ReactionServiceClient
 
-	gRPCService.UnimplementedTrelloServiceServer
+	gRPCService.UnimplementedAsanaServiceServer
 }
 
-func NewTrelloService() (*TrelloService, error) {
+func NewAsanaService() (*AsanaService, error) {
 	tokenDb, err := db.InitTokenDb()
 
-	return &TrelloService{tokenDb: tokenDb, reactService: nil}, err
+	return &AsanaService{tokenDb: tokenDb, reactService: nil}, err
 }

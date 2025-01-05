@@ -9,6 +9,7 @@ package reaction
 
 import (
 	"area/db"
+	asana_client "area/gRPC/api/asana/asanaClient"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
 	"area/gRPC/api/github/githubClient"
@@ -17,7 +18,6 @@ import (
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
 	IServ "area/gRPC/api/serviceInterface"
 	spotify_client "area/gRPC/api/spotify/spotifyClient"
-	trello_client "area/gRPC/api/trello/trelloClient"
 	weather_client "area/gRPC/api/weather/weatherClient"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
@@ -69,7 +69,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["google"] = google_client.NewGoogleClient(conn)
 	react.clients["spotify"] = spotify_client.NewSpotifyClient(conn)
 	react.clients["weather"] = weather_client.NewWeatherClient(conn)
-	react.clients["trello"] = trello_client.NewTrelloClient(conn)
+	react.clients["asana"] = asana_client.NewAsanaClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
