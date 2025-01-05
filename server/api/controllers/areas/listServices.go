@@ -5,7 +5,7 @@
 // serviceList
 //
 
-package controllers
+package areas
 
 import (
 	api "area/api"
@@ -18,13 +18,14 @@ import (
 // Area godoc
 // @Summary      List available areas
 // @Description  List all available areas
+// @Security ApiKeyAuth
 // @Tags         Area
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  []IServ.ServiceStatus
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error
-// @Router       /create/list [get]
+// @Router       /area/create/list [get]
 func ListService(gateway *api.ApiGateway) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var services []IServ.ServiceStatus

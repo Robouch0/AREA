@@ -125,6 +125,7 @@ func formatUsersArea(gateway *api.ApiGateway, areas *[]models.Area) ([]userArea,
 // Area godoc
 // @Summary      List User's area
 // @Description  List all user's area
+// @Security ApiKeyAuth
 // @Tags         Area
 // @Accept       json
 // @Produce      json
@@ -147,7 +148,7 @@ func GetUserAreas(gateway *api.ApiGateway, areaDB *db.AreaDB) http.HandlerFunc {
 		}
 		allAreas, err := formatUsersArea(gateway, areas)
 		if err != nil {
-			log.Println("Error while formatting all of nthe user's areas", err)
+			log.Println("Error while formatting all of the user's areas", err)
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}

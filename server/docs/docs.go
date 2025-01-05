@@ -33,6 +33,11 @@ const docTemplate = `{
         },
         "/area/activate": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Activate/Deactivate user's area",
                 "consumes": [
                     "application/json"
@@ -73,42 +78,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/area/list": {
+        "/area/create/list": {
             "get": {
-                "description": "List all user's area",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Area"
-                ],
-                "summary": "List User's area",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/areas.userArea"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
+                "security": [
+                    {
+                        "ApiKeyAuth": []
                     }
-                }
-            }
-        },
-        "/create/list": {
-            "get": {
+                ],
                 "description": "List all available areas",
                 "consumes": [
                     "application/json"
@@ -141,8 +117,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/create/{service}": {
-            "get": {
+        "/area/create/{service}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Register a new Area in the application",
                 "consumes": [
                     "application/json"
@@ -177,6 +158,45 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/serviceinterface.ActionResponseStatus"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/area/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List all user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "List User's area",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/areas.userArea"
+                            }
                         }
                     },
                     "401": {
@@ -320,14 +340,19 @@ const docTemplate = `{
         },
         "/ping": {
             "get": {
-                "description": "pong",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Pong",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ping"
+                    "Ping"
                 ],
-                "summary": "prints pong",
+                "summary": "Prints pong",
                 "responses": {
                     "200": {
                         "description": "pong"
@@ -377,9 +402,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/token/": {
-            "post": {
-                "description": "Get the tokens from a user_id and a provider",
+        "/token": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all the tokens of the current logged user",
                 "consumes": [
                     "application/json"
                 ],
@@ -389,28 +419,15 @@ const docTemplate = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "Get user's token",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Id of the user",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Provider of the Remote Service",
-                        "name": "provider",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Get all the tokens from a user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Token"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controllers.TokenInformations"
+                            }
                         }
                     },
                     "400": {
@@ -422,8 +439,15 @@ const docTemplate = `{
                         "schema": {}
                     }
                 }
-            },
+            }
+        },
+        "/token/": {
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete a token from a user_id and a provider",
                 "consumes": [
                     "application/json"
@@ -435,6 +459,15 @@ const docTemplate = `{
                     "Token"
                 ],
                 "summary": "Delete a token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Remote Service Name",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -455,6 +488,11 @@ const docTemplate = `{
         },
         "/token/create/": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a token from a user_id and a provider",
                 "consumes": [
                     "application/json"
@@ -466,11 +504,22 @@ const docTemplate = `{
                     "Token"
                 ],
                 "summary": "Create a token",
+                "parameters": [
+                    {
+                        "description": "Token creation request informations",
+                        "name": "tokenCreateRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenCreateRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Token"
+                            "$ref": "#/definitions/controllers.TokenInformations"
                         }
                     },
                     "400": {
@@ -484,9 +533,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/token/{user_id}": {
+        "/token/{provider}": {
             "get": {
-                "description": "Get all the tokens from a user_id",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a the token associated to the remote provider of the user",
                 "consumes": [
                     "application/json"
                 ],
@@ -496,12 +550,12 @@ const docTemplate = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "Get all the tokens from a user",
+                "summary": "Get user's token",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Id of the user",
-                        "name": "user_id",
+                        "description": "Remote Service Name",
+                        "name": "provider",
                         "in": "path",
                         "required": true
                     }
@@ -510,10 +564,135 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Token"
-                            }
+                            "$ref": "#/definitions/controllers.TokenInformations"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/users/": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new user in database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User's information",
+                        "name": "userInfos",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserInformations"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserInformations"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get user's information based on his ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get User By ID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserInformations"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update some informations about the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update User datas",
+                "parameters": [
+                    {
+                        "description": "Updatable user's informations",
+                        "name": "updatableDatas",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatableUserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatableUserData"
                         }
                     },
                     "400": {
@@ -610,6 +789,20 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.TokenCreateRequest": {
+            "type": "object",
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.TokenInformations": {
             "type": "object",
             "properties": {
@@ -617,6 +810,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.UserInformations": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
@@ -675,47 +888,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Actions": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "$ref": "#/definitions/models.Action"
-                },
-                "area_id": {
-                    "description": "No anotation here !",
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Area": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "$ref": "#/definitions/models.Actions"
-                },
-                "activated": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "one_shot": {
-                    "type": "boolean"
-                },
-                "reactions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Reactions"
-                    }
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.AreaScenario": {
             "type": "object",
             "properties": {
@@ -742,80 +914,16 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Reactions": {
+        "models.UpdatableUserData": {
             "type": "object",
             "properties": {
-                "area_id": {
-                    "description": "No anotation here !",
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "prev_out": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "reaction": {
-                    "$ref": "#/definitions/models.Reaction"
-                }
-            }
-        },
-        "models.Token": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "provider": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "areas": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Area"
-                    }
-                },
-                "created_at": {
-                    "description": "Useful for log and security purposes",
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
                 "first_name": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "last_name": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "tokens": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Token"
-                    }
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
@@ -903,6 +1011,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
