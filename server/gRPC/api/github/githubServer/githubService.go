@@ -10,6 +10,7 @@ package github
 import (
 	"area/db"
 	gRPCService "area/protogen/gRPC/proto"
+	"area/utils"
 	grpcutils "area/utils/grpcUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
@@ -34,7 +35,8 @@ type GithubService struct {
 func NewGithubService() (*GithubService, error) {
 	tokenDb, err := db.InitTokenDb()
 
-	return &GithubService{tokenDb: tokenDb, reactService: nil}, err
+	githubDb, err := db.InitGithubDb()
+	return &GithubService{tokenDb: tokenDb, GithubDb: githubDb, reactService: nil}, err
 }
 
 func (git *GithubService) InitReactClient(conn *grpc.ClientConn) {
@@ -43,46 +45,38 @@ func (git *GithubService) InitReactClient(conn *grpc.ClientConn) {
 
 // Update a repository content
 func (git *GithubService) UpdateFile(ctx context.Context, req *gRPCService.UpdateRepoFile) (*gRPCService.UpdateRepoFile, error) {
-	userID, errClaim := grpcutils.GetUserIdFromContext(ctx, "GithubService")
-	if errClaim != nil {
-		return nil, errClaim
-	}
+    if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" || req.Content == "" {
+        return nil, errors.New("Some required parameters are empty")
+    }
 
-	if req.Owner == "" || req.Repo == "" || req.Path == "" || req.Message == "" || req.Content == "" {
-		return nil, errors.New("Some required parameters are empty")
-	}
-	tokenInfo, err := git.tokenDb.GetUserTokenByProvider(int64(userID), "github")
-	if err != nil {
-		log.Println("User is not registered to github")
-		return nil, err
-	}
+    tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GithubService", "github")
+    if err != nil {
+        log.Println("User is not registered to github")
+        return nil, err
+    }
 
-	fileInfos, err := git.getRepositoryFileInfos(tokenInfo.AccessToken, git.createFileInfos(req.Owner, req.Repo, req.Path))
-	if err != nil {
-		return nil, err
-	}
+    fileInfos, err := git.getRepositoryFileInfos(tokenInfo.AccessToken, git.createFileInfos(req.Owner, req.Repo, req.Path))
+    if err != nil {
+        return nil, err
+    }
 
-	req.Sha = fileInfos.Sha // Sha of the current state of the file
-	b, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-	url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
-	putRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer(b))
-	putRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
-	putRequest.Header.Add("Accept", "application/vnd.github+json")
+    req.Sha = fileInfos.Sha // Sha of the current state of the file
+    req.Content = utils.EncodeToBase64(req.Content)
+    b, err := json.Marshal(req)
+    if err != nil {
+        return nil, err
+    }
+    url := fmt.Sprintf("https://api.github.com/repos/%v/%v/contents/%v", req.Owner, req.Repo, req.Path)
+    putRequest, err := http.NewRequest("PUT", url, bytes.NewBuffer(b))
+    putRequest.Header = http_utils.GetDefaultBearerHTTPHeader(tokenInfo.AccessToken)
+    putRequest.Header.Add("Accept", "application/vnd.github+json")
 
-	cli := &http.Client{}
-	resp, err := cli.Do(putRequest)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != 200 {
-		log.Println("Update file error: ", resp.Status)
-		return nil, errors.New(resp.Status)
-	}
-	log.Println("Here: ", resp.Body) // Do something with it
-	return req, nil
+    resp, err := http_utils.SendHttpRequest(putRequest, 200)
+    if err != nil {
+        return nil, err
+    }
+    log.Println("Here: ", resp.Body) // Do something with it
+    return req, nil
 }
 
 func (git *GithubService) UpdateRepository(ctx context.Context, req *gRPCService.UpdateRepoInfos) (*gRPCService.UpdateRepoInfos, error) {
@@ -169,3 +163,4 @@ func (git *GithubService) DeleteFile(ctx context.Context, req *gRPCService.Delet
 	log.Println(resp.Body)
 	return req, nil
 }
+
