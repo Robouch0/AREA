@@ -34,7 +34,8 @@ type GithubService struct {
 func NewGithubService() (*GithubService, error) {
 	tokenDb, err := db.InitTokenDb()
 
-	return &GithubService{tokenDb: tokenDb, reactService: nil}, err
+	githubDb, err := db.InitGithubDb()
+	return &GithubService{tokenDb: tokenDb, GithubDb: githubDb, reactService: nil}, err
 }
 
 func (git *GithubService) InitReactClient(conn *grpc.ClientConn) {

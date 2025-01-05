@@ -7,6 +7,10 @@
 
 package githubtypes
 
+type GithubEvents struct {
+	Hook 	GithubWebHookResponse `json:"hook"`
+}
+
 type GithubWebHookResponse struct {
-	Event      []string    `json:"event"`
+	Events      []string    `json:"events"`
 }
