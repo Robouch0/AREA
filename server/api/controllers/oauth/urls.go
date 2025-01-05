@@ -28,6 +28,7 @@ const (
 		"https://www.googleapis.com/auth/drive.appdata"
 	hfScopes     = "openid profile email read-repos write-repos manage-repos write-discussions read-billing"
 	gitlabScopes = "api read_api read_user read_repository write_repository openid profile email"
+	miroScopes   = "boards-read boards-write identity:read identity:write team:read team:write"
 )
 
 func createOAuthRedirect(consentURL, provider, redirectURI string) string {
@@ -92,6 +93,14 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 		OAuth: &AsanaOAuth{
 			AccessTokenURL:  "https://app.asana.com/-/oauth_token",
 			EmailRequestURL: "https://app.asana.com/api/1.0/users/me",
+		},
+	}
+	oauthUrls["miro"] = OAuthURLs{
+		RedirectURL: fmt.Sprintf(
+			"https://miro.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s&state=miro&scope=%s", "%s", "%s", miroScopes),
+		OAuth: &MiroOAuth{
+			AccessTokenURL:  "https://api.miro.com/v1/oauth/token",
+			EmailRequestURL: "https://api.miro.com/v1/users/me",
 		},
 	}
 	return oauthUrls
