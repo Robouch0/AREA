@@ -10,7 +10,7 @@ package grpc_routes
 import (
 	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
 	discord_server "area/gRPC/api/discord/discordServer"
-	"area/gRPC/api/github"
+	"area/gRPC/api/github/githubClient"
 	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
 	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
