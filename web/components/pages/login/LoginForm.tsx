@@ -131,10 +131,10 @@ function LoginForm() {
                             <div className="max-w-md w-full space-y-4">
 
                                 <OauthButton
-                                    arial-label="Spotify"
-                                    service="spotify"
+                                    arial-label="Asana"
+                                    service="asana"
                                     login={true}
-                                    textButton="Continuer avec Spotify"
+                                    textButton="Continuer avec Asana"
                                     className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaSpotify className="w-12 h-12"/>}
                                 />
