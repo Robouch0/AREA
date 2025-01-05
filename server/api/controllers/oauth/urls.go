@@ -49,12 +49,12 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 			EmailRequestURL: "https://api.github.com/user/emails",
 		},
 	}
-	oauthUrls["google"] = OAuthURLs{ // Look again which scope is good for google for user
+	oauthUrls["google"] = OAuthURLs{
 		RedirectURL: fmt.Sprintf(
 			"https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&scope=%s&response_type=code&state=google", "%s", "%s", googleScopes),
 		OAuth: &GoogleOAuth{
 			AccessTokenURL:  "https://oauth2.googleapis.com/token",
-			EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo", // https://www.googleapis.com/plus/v1/people/me
+			EmailRequestURL: "https://www.googleapis.com/oauth2/v1/userinfo",
 		},
 	}
 	oauthUrls["discord"] = OAuthURLs{
@@ -85,6 +85,13 @@ func CreateOAuthURLS() map[string]OAuthURLs {
 		OAuth: &GitlabOAuth{
 			AccessTokenURL:  "https://gitlab.com/oauth/token",
 			EmailRequestURL: "https://gitlab.com/oauth/userinfo",
+		},
+	}
+	oauthUrls["asana"] = OAuthURLs{
+		RedirectURL: "https://app.asana.com/-/oauth_authorize?response_type=code&client_id=%s&code_challenge_method=S256&code_challenge=test&redirect_uri=%s&state=asana&scope=default", // Normally default is enough
+		OAuth: &AsanaOAuth{
+			AccessTokenURL:  "https://app.asana.com/-/oauth_token",
+			EmailRequestURL: "https://app.asana.com/api/1.0/users/me",
 		},
 	}
 	return oauthUrls
