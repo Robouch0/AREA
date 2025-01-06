@@ -158,6 +158,7 @@ func (react *ReactionService) SetActivate(ctx context.Context, req *gRPCService.
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Setting area (%v) activated to %v\n", req.AreaId, req.Activated)
 	_, err = react.clients[area.Action.Action.Service].SetActivate(area.Action.Action.Microservice, area.Action.ID, int(userID), req.Activated)
 	if err != nil {
 		log.Println("Service Action error")

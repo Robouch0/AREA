@@ -128,11 +128,12 @@ func (dt *DateTimeService) SetActivateAction(ctx context.Context, req *gRPCServi
 	if err != nil {
 		return nil, err
 	}
-	resp, err := dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
+	log.Printf("Setting Action (%v) activated to %v\n", req.ActionId, req.Activated)
+	data, err := dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
 	if err != nil {
 		log.Println(err)
 		return nil, status.Errorf(codes.Internal, "Could not set activated for time action")
 	}
-	log.Printf("Time Action with action ID: %v has activated state: %v", resp.ActionID, resp.Activated)
+	log.Printf("Time Action with action ID: %v has activated state: %v", data.ActionID, data.Activated)
 	return req, nil
 }
