@@ -24,7 +24,7 @@ class AreaService {
       }
 
       final response = await http.get(
-        Uri.parse('$_apiUrl/create/list'),
+        Uri.parse('$_apiUrl/areas/create/list'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ class AreaService {
       }
 
       final response = await http.post(
-        Uri.parse('$_apiUrl/create/${newArea.action.service}'),
+        Uri.parse('$_apiUrl/areas/create/${newArea.action.service}'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -95,6 +95,7 @@ class AreaService {
       if (response.statusCode == 200) {
         return true;
       }
+      developer.log('Error when creating area: ${response.statusCode}');
       return false;
     } catch (e) {
       developer.log('Failed to create area: $e', name: 'my_network_log');
