@@ -101,7 +101,7 @@ class UserAreaData {
   final int id;
   final AreaServiceData action;
   final List<AreaServiceData> reactions;
-  final bool activated;
+  late final bool activated;
 
   UserAreaData({
     required this.id,
