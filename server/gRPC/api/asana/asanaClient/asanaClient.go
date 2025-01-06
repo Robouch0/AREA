@@ -26,6 +26,7 @@ func NewAsanaClient(conn *grpc.ClientConn) *AsanaClient {
 	asana := &AsanaClient{MicroservicesLauncher: micros, cc: gRPCService.NewAsanaServiceClient(conn)}
 
 	(*asana.MicroservicesLauncher)["createProject"] = asana.createProject
+	(*asana.MicroservicesLauncher)["createSection"] = asana.createSection
 	return asana
 }
 

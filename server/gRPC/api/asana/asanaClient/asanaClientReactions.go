@@ -34,3 +34,24 @@ func (asana *AsanaClient) createProject(ingredients map[string]any, _ []byte, us
 
 	return &IServ.ReactionResponseStatus{Description: "Project created"}, nil
 }
+
+func (asana *AsanaClient) createSection(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	var createReq gRPCService.CreateSectionReq
+	err = json.Unmarshal(jsonString, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = asana.cc.CreateSection(ctx, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Section created"}, nil
+}

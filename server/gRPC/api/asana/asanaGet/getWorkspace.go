@@ -5,7 +5,7 @@
 // asana utils project
 //
 
-package asana_project
+package asana_get
 
 import (
 	asana_generics "area/gRPC/api/asana/asanaGenerics"

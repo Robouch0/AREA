@@ -7,6 +7,7 @@ option go_package = "github.com/area/grpc-go/service";
 service AsanaService {
   // Reaction to create a Asana Board
   rpc CreateProject(CreateProjectReq) returns(CreateProjectResp) {}
+  rpc CreateSection(CreateSectionReq) returns(CreateSectionResp) {}
 
 }
 
@@ -22,3 +23,13 @@ message CreateProjectResp {
 }
 
 ///////////////
+
+message CreateSectionReq {
+    string projectName = 1;
+    string sectionName = 2;
+}
+
+
+message CreateSectionResp {
+
+}

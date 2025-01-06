@@ -8,8 +8,9 @@
 package asana_server
 
 import (
+	"area/gRPC/api/asana/asanaCreate"
 	asana_generics "area/gRPC/api/asana/asanaGenerics"
-	asana_project "area/gRPC/api/asana/asanaProject"
+	"area/gRPC/api/asana/asanaGet"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"context"
@@ -29,20 +30,20 @@ func (asana *AsanaService) CreateProject(ctx context.Context, req *gRPCService.C
 		return nil, errors.New("project name color and default view required atleast")
 	}
 
-	list, err := asana_project.ListWorkspace(tokenInfo.AccessToken)
+	list, err := asana_get.ListWorkspace(tokenInfo.AccessToken)
 
 	if err != nil {
 		return nil, err
 	}
 
-	workspaceGid, err := asana_project.GetGidByWorkspace(req.WorkspaceName, list)
+	workspaceGid, err := asana_get.GetGidByWorkspace(req.WorkspaceName, list)
 
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := asana_project.CreateProject(tokenInfo.AccessToken, &asana_generics.AsanaBaseBody[asana_project.CreateProjectData]{
-		Data: asana_project.CreateProjectData{
+	res, err := asana_create.CreateProject(tokenInfo.AccessToken, &asana_generics.AsanaBaseBody[asana_create.CreateProjectData]{
+		Data: asana_create.CreateProjectData{
 			Name:         req.ProjectName,
 			Color:        req.Color,
 			DefaultView:  req.DefaultView,

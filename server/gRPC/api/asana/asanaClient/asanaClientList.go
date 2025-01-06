@@ -49,6 +49,26 @@ func (asana *AsanaClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					},
 				},
 			},
+			{
+				Name:    "Create a Section on an Asana Project",
+				RefName: "createSection",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"projectName": {
+						Value:       "",
+						Type:        "string",
+						Description: "The name of the project where you want to create a section",
+						Required:    true,
+					},
+					"sectionName": {
+						Value:       "",
+						Type:        "string",
+						Description: "The name of the section you want to create",
+						Required:    true,
+					},
+				},
+			},
 		},
 	}
 	return status, nil
