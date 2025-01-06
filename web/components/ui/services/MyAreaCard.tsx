@@ -1,7 +1,5 @@
 'use client';
 import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/services/Card";
-import {Button} from "@/components/ui/utils/Button";
-// import { useRouter } from 'next/navigation';
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {getColorForService} from "@/lib/utils";
 import {AreaServices} from "@/api/types/areaStatus";
