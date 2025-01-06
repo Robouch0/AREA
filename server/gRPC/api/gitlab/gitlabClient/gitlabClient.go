@@ -12,6 +12,7 @@ import (
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
+	"context"
 	"encoding/json"
 	"errors"
 
@@ -159,7 +160,14 @@ func (git *GitlabClient) TriggerReaction(
 }
 
 func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
-	return nil, errors.New("No microservice TriggerWebhook yet")
+	payloadBytes, err := json.Marshal(webhook.Payload)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
+	}
+	if _, err := git.cc.TriggerWebHook(context.Background(), &gRPCService.GitlabWebHookTriggerReq{ActionId: uint32(actionID), Payload: payloadBytes}); err != nil {
+		return nil, err
+	}
+	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil
 }
 
 func (git *GitlabClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {

@@ -18,6 +18,20 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 		Microservices: []IServ.MicroserviceDescriptor{
 			{
+				Name:    "Trigger every push",
+				RefName: "triggerPush",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"id": {
+						Value:       "",
+						Type:        "string",
+						Description: "The ID or URL-encoded path of the project",
+						Required:    true,
+					},
+				},
+			},
+			{
 				Name:    "Create a file on a repository",
 				RefName: "createFile",
 				Type:    "reaction",
