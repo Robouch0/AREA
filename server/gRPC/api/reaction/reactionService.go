@@ -9,9 +9,10 @@ package reaction
 
 import (
 	"area/db"
+	asana_client "area/gRPC/api/asana/asanaClient"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
-	"area/gRPC/api/github"
+	github "area/gRPC/api/github/githubClient"
 	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
@@ -29,6 +30,8 @@ import (
 	"log"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type ReactionService struct {
@@ -66,6 +69,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["google"] = google_client.NewGoogleClient(conn)
 	react.clients["spotify"] = spotify_client.NewSpotifyClient(conn)
 	react.clients["weather"] = weather_client.NewWeatherClient(conn)
+	react.clients["asana"] = asana_client.NewAsanaClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
@@ -83,6 +87,9 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 
 	log.Println("AreaID Launch: ", area.ID)
 	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID) // Check if it is activated ?
+	if reactions == nil {
+		return nil, status.Errorf(codes.Internal, "no associated reaction")
+	}
 	for _, re := range *reactions {
 		if cliService, ok := react.clients[re.Reaction.Service]; ok {
 			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, req.PrevOutput, int(area.UserID))
