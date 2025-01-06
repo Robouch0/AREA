@@ -27,6 +27,7 @@ func NewAsanaClient(conn *grpc.ClientConn) *AsanaClient {
 
 	(*asana.MicroservicesLauncher)["createProject"] = asana.createProject
 	(*asana.MicroservicesLauncher)["createSection"] = asana.createSection
+	(*asana.MicroservicesLauncher)["createTask"] = asana.createTask
 	return asana
 }
 

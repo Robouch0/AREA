@@ -69,6 +69,44 @@ func (asana *AsanaClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					},
 				},
 			},
+			{
+				Name:    "Create a Task on an Asana Project",
+				RefName: "createTask",
+				Type:    "reaction",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"projectName": {
+						Value:       "",
+						Type:        "string",
+						Description: "The name of the project where you want to create a task",
+						Required:    true,
+					},
+					"taskName": {
+						Value:       "",
+						Type:        "string",
+						Description: "The name of the task you want to create",
+						Required:    true,
+					},
+					"taskDescription": {
+						Value:       "",
+						Type:        "string",
+						Description: "A short description of the task you want to create",
+						Required:    true,
+					},
+					"completion": {
+						Value:       "false",
+						Type:        "bool",
+						Description: "The completion status of the task your creating",
+						Required:    true,
+					},
+					"dueOn": {
+						Value:       0,
+						Type:        "date",
+						Description: "The due date of the created task",
+						Required:    true,
+					},
+				},
+			},
 		},
 	}
 	return status, nil
