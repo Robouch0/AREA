@@ -1,11 +1,11 @@
 services:
   client_web:
     build: ./web
-    # depends_on:
-      # db:
-        # condition: service_healthy
-        # restart: true
-      ## Depend on mobile and server
+    depends_on:
+      server:
+        condition: service_started
+      client_mobile:
+        condition: service_completed_successfully
     networks:
       - backend
       - public
@@ -14,18 +14,18 @@ services:
     volumes:
      - .:/web
      - /app/node_modules
-     - front:/web/front
+     - front:/web/front # Common volume
 
-  mobile:
+  client_mobile:
     build: ./mobile
     depends_on:
-      client_web:
+      server:
         condition: service_started
     networks:
       - public
     volumes:
       - ./mobile:/app
-      - front:/output
+      - front:/output # Common volume
 
   server:
     build: ./server

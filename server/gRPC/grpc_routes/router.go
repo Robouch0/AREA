@@ -8,9 +8,10 @@
 package grpc_routes
 
 import (
+	asana_server "area/gRPC/api/asana/asanaServer"
 	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
 	discord_server "area/gRPC/api/discord/discordServer"
-	github "area/gRPC/api/github/githubServer"
+	"area/gRPC/api/github/githubServer"
 	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
 	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
@@ -47,8 +48,9 @@ func LaunchServices() {
 	spotifyService, errSpotify := spotify_server.NewSpotifyService()
 	weatherService, errWeather := weather_server.NewWeatherService()
 	miroService, errMiro := miro_server.NewMiroService()
+	asanaService, errAsana := asana_server.NewAsanaService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errMiro); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errAsana, errMiro); err != nil {
 		log.Println(err)
 		return
 	}
@@ -62,6 +64,7 @@ func LaunchServices() {
 	services.RegisterReactionServiceServer(s, reactService)
 	services.RegisterWeatherServiceServer(s, weatherService)
 	services.RegisterMiroServiceServer(s, miroService)
+	services.RegisterAsanaServiceServer(s, asanaService)
 
 	var wg sync.WaitGroup
 
@@ -88,7 +91,6 @@ func LaunchServices() {
 	weatherService.InitReactClient(conn)
 	githubService.InitReactClient(conn)
 	gitlabService.InitReactClient(conn)
-	miroService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

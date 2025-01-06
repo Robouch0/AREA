@@ -90,7 +90,7 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
                                     <div key={area.id} className="">
                                         <MyAreaCard
                                             action={area.action} reaction={area.reactions?.at(0)}
-                                            areaID={parseInt(area.id)}
+                                            areaID={area.id} areaActivate={area.activated}
                                         />
                                     </div>
                                 ))}

@@ -47,6 +47,10 @@ func (dt *DateTimeDB) SetActivateByActionID(activated bool, userID, actionID uin
 	return SetActivateByActionID[models.DateTime](dt.Db, activated, userID, actionID)
 }
 
+func (dt *DateTimeDB) GetByActionID(actionID uint) (*models.DateTime, error) {
+	return GetByActionID[models.DateTime](dt.Db, actionID)
+}
+
 func (dt *DateTimeDB) GetAllDTActionsActivated() (*[]models.DateTime, error) {
 	allDatas := new([]models.DateTime)
 	err := dt.Db.NewSelect().
