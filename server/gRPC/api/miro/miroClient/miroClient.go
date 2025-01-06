@@ -32,7 +32,7 @@ func NewMiroClient(conn *grpc.ClientConn) *MiroClient {
 	reactions := &IServ.ReactionLauncher{}
 	miro := &MiroClient{ActionLauncher: actions, ReactionLauncher: reactions, cc: gRPCService.NewMiroServiceClient(conn)}
 
-	(*miro.ActionLauncher)["watchItemCreated"] = miro.createWebhookItemCreated
+	// (*miro.ActionLauncher)["watchItemCreated"] = miro.createWebhookItemCreated
 
 	(*miro.ReactionLauncher)["createStickyNotes"] = miro.createStickyNote
 	(*miro.ReactionLauncher)["createTextNotes"] = miro.createTextNote
