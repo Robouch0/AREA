@@ -5,6 +5,7 @@ import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
+import 'package:my_area_flutter/api/types/area_activation_body.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
 
 class AreaService {
@@ -100,6 +101,26 @@ class AreaService {
     } catch (e) {
       developer.log('Failed to create area: $e', name: 'my_network_log');
       return false;
+    }
+  }
+
+  Future<void> updateAreaActivation(int areaId, bool activated) async {
+    final areaActivation = AreaActivationBody(areaId: areaId, activated: activated);
+
+    try {
+      final token = _authStorage.getToken();
+
+      final response = await http.put(
+        Uri.parse('$_apiUrl/areas/activate'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-type': 'application/json',
+        },
+        body: json.encode(areaActivation.toJson())
+      );
+    } catch (e) {
+      developer.log('Failed to update area activation: $e');
+      rethrow;
     }
   }
 }
