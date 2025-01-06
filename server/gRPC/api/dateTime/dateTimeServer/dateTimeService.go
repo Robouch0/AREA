@@ -18,6 +18,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
@@ -100,16 +101,20 @@ func (dt *DateTimeService) LaunchCronJob(ctx context.Context, req *gRPCService.T
 		log.Println(ctx)
 		return nil, errClaim
 	}
-	log.Println("Starting cron job")
-	_, err := dt.dtDb.InsertNewDTAction(&models.DateTime{
-		ActionID: uint(req.ActionId),
-		UserID:   userID,
 
+	t, err := time.Parse(time.RFC3339, req.DatetimeString)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid format for date format needed: RFC3339")
+	}
+	log.Println(t)
+	_, err = dt.dtDb.InsertNewDTAction(&models.DateTime{
+		ActionID:  uint(req.ActionId),
+		UserID:    userID,
 		Activated: true,
-		Minutes:   req.Minutes,
-		Hours:     req.Hours,
-		DayMonth:  req.DayMonth,
-		Month:     req.Month,
+		Minutes:   int32(t.Minute()),
+		Hours:     int32(t.Hour()),
+		DayMonth:  int64(t.Day()),
+		Month:     int64(t.Month()),
 	})
 	if err != nil {
 		log.Println(err)
@@ -123,11 +128,12 @@ func (dt *DateTimeService) SetActivateAction(ctx context.Context, req *gRPCServi
 	if err != nil {
 		return nil, err
 	}
-	resp, err := dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
+	log.Printf("Setting Action (%v) activated to %v\n", req.ActionId, req.Activated)
+	data, err := dt.dtDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
 	if err != nil {
 		log.Println(err)
 		return nil, status.Errorf(codes.Internal, "Could not set activated for time action")
 	}
-	log.Printf("Time Action with action ID: %v has activated state: %v", resp.ActionID, resp.Activated)
+	log.Printf("Time Action with action ID: %v has activated state: %v", data.ActionID, data.Activated)
 	return req, nil
 }

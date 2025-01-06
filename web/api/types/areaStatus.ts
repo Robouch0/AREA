@@ -45,9 +45,12 @@ export interface AreaServices {
 
 export interface AreaServicesWithId extends AreaServices {
     /** Unique identifier for the user Area */
-    ID: string;
+    id: number;
     /** Object containing the Area actions  */
-    Action: AreaServices;
+    action: AreaServices;
     /** Object containing the Area reactions  */
-    Reactions: AreaServices[];
+    reactions: AreaServices[];
+    /** Boolean to know if the area is active or not  */
+    activated: boolean;
+
 }

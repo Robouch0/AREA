@@ -38,28 +38,10 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Type:    "action",
 
 				Ingredients: map[string]IServ.IngredientDescriptor{
-					"minutes": {
+					"datetimeString": {
 						Value:       0,
-						Type:        "int",
-						Description: "Minutes",
-						Required:    true,
-					},
-					"hours": {
-						Value:       0,
-						Type:        "int",
-						Description: "Hours",
-						Required:    true,
-					},
-					"day_month": {
-						Value:       0,
-						Type:        "int",
-						Description: "Day of the current month",
-						Required:    true,
-					},
-					"month": {
-						Value:       0,
-						Type:        "int",
-						Description: "Month number",
+						Type:        "date",
+						Description: "The exact day of the month, with hours and minutes precised",
 						Required:    true,
 					},
 				},

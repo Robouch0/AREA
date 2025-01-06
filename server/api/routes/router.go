@@ -45,7 +45,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 
-	gateway.Router.Get("/about.json", controllers.AboutRoute)
+	gateway.Router.Get("/about.json", controllers.AboutRoute(gateway))
 
 	gateway.Router.Mount("/oauth/", controllers.OAuthRoutes(gateway.JwtTok))
 	gateway.Router.Post("/login/", controllers.SignIn(gateway.JwtTok))

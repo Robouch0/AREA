@@ -148,7 +148,7 @@ func GetUserAreas(gateway *api.ApiGateway, areaDB *db.AreaDB) http.HandlerFunc {
 		}
 		allAreas, err := formatUsersArea(gateway, areas)
 		if err != nil {
-			log.Println("Error while formatting all of nthe user's areas", err)
+			log.Println("Error while formatting all of the user's areas", err)
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}

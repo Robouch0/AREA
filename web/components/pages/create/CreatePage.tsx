@@ -1,8 +1,7 @@
 'use client';
 import { MicroServiceCard } from "@/components/ui/services/MicroserviceCard";
 import * as React from "react";
-import { useEffect, useState, useMemo, ChangeEvent } from "react";
-import { Input } from "@/components/ui/utils/Input";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/utils/Button";
 import { create } from "@/api/createArea";
 import Form from 'next/form';
@@ -11,6 +10,10 @@ import { getColorForService } from "@/lib/utils";
 import { AreaServices, AreaMicroservices, Ingredient } from "@/api/types/areaStatus";
 import { AreaCreateBody } from "@/api/types/areaCreateBody";
 import { getUserTokens } from "@/api/getUserInfos";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import { InputFieldComponent} from "@/components/pages/create/InputFieldComponent";
+import {useRouter} from "next/navigation";
+import {useToast} from "@/hooks/use-toast";
 
 export function renderMicroservices(service: AreaServices | undefined, setMicroservice: (microName: string) => void) {
     if (service === undefined) {
@@ -36,33 +39,37 @@ export function renderMicroservices(service: AreaServices | undefined, setMicros
 }
 
 export function renderIngredientsInput(
-    ingredients: Map<string, Ingredient> | undefined, values: string[],
-    setValues: React.Dispatch<React.SetStateAction<string[]>>) {
+    ingredients: Map<string, Ingredient> | undefined,
+    values: string[],
+    setValues: React.Dispatch<React.SetStateAction<string[]>>
+) {
     if (ingredients === undefined) {
-        return <div></div>
+        return <div></div>;
     }
 
     return (
         <>
             <div className="pt-3"></div>
-            {Object.keys(ingredients).map((ingredient: string, index: number) => (
+            {Object.entries(ingredients).map(([ingredient, details] : [string, Ingredient], index: number) => (
                 <div key={index} className="flex flex-col justify-center items-center">
-                    <p className="p-2 left-0 text-2xl text-white">
-                        {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}
-                    </p>
-                    <Input
-                        type="text"
-                        name={`${ingredient}`}
-                        id={`text-${index}`}
-                        className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                        aria-label="text"
-                        value={values[index] || ''} // ChangeEvent<HTMLInputElement>
-                        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-                            const newValues: string[] = [...values];
-                            newValues[index] = e.target.value;
-                            setValues(newValues);
-                        }}
-                        required
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <p className="p-2 left-0 text-2xl text-white">
+                                    {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}
+                                </p>
+                            </TooltipTrigger>
+                            <TooltipContent className={"text-xl bg-white text-black font-bold border-4 border-black"}>
+                                {details.description}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                    <InputFieldComponent
+                        ingredient={ingredient}
+                        details={details}
+                        index={index}
+                        values={values}
+                        setValues={setValues}
                     />
                 </div>
             ))}
@@ -70,6 +77,7 @@ export function renderIngredientsInput(
         </>
     );
 }
+
 
 const filterAreaByType = (services: AreaServices[], type: string) => {
     return services.filter((service: AreaServices): boolean => {
@@ -103,6 +111,8 @@ const convertIngredient = (ingredient: string | undefined, obj: Ingredient): any
             return ingredient.toLowerCase() === "true"
         case "time":
             return ""
+        case "date":
+            return ingredient
         default:
             return ingredient
     }
@@ -115,6 +125,9 @@ const filterServiceByRefName = (services: AreaServices[], refName: string): Area
 export default function CreatePage({ services, uid }: { services: AreaServices[], uid: number }) {
     const [isTokenActionPresent, setTokenAction] = useState(true);
     const [isTokenReactionPresent, setTokenReaction] = useState(true);
+    const router = useRouter();
+    const { toast } = useToast()
+
 
     const actions: AreaServices[] = useMemo(() => {
         return filterAreaByType(services, "action")
@@ -146,7 +159,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
         if (actionName != "" && reactionName != "") {
             getUserTokens().then((res) => {
                 let actionToken = false;
-                if (actionName != "dt") {
+                if (actionName != "dt" && actionName != "weather") {
                     actionToken = res.includes(actionName);
                 } else {
                     actionToken = true;
@@ -173,6 +186,15 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
             console.error("Both action and reaction must be selected");
             return;
         }
+        toast({
+            title: "Area creation was sucessful",
+            description: "Your new area is now running and available on this page.",
+            variant: 'default',
+            duration: 3000,
+        })
+        setTimeout((): void => {
+            router.push("myareas/")
+        }, 800);
 
         const payload: AreaCreateBody = {
             user_id: uid,
@@ -208,7 +230,6 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
         create(payload).catch(error => { console.log(error) });
     };
 
-    // Create a redirect to the applets page or other
     return (
         <Form action={handleSubmit}>
             <div className="pt-20 my-16 bg-white h-full w-full flex flex-col justify-center items-center p-8">

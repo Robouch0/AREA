@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package asana;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service AsanaService {
+  // Reaction to create a Asana Board
+  rpc CreateProject(CreateProjectReq) returns(CreateProjectResp) {}
+  rpc CreateSection(CreateSectionReq) returns(CreateSectionResp) {}
+  rpc CreateTask(CreateTaskReq) returns(CreateTaskResp) {}
+
+}
+
+message CreateProjectReq {
+  string projectName = 1;
+  string color = 2;
+  string defaultView = 3;
+  string workspaceName = 4;
+}
+
+message CreateProjectResp {
+
+}
+
+///////////////
+
+message CreateSectionReq {
+    string projectName = 1;
+    string sectionName = 2;
+}
+
+
+message CreateSectionResp {
+
+}
+
+//////////////
+
+message CreateTaskReq {
+    string projectName = 1;
+    string taskName = 2;
+    string taskDescription = 3;
+    bool completion = 4;
+    string dueOn = 5;
+}
+
+
+message CreateTaskResp {
+
+}
