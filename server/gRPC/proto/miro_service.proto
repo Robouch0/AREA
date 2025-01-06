@@ -5,6 +5,18 @@ package miro;
 option go_package = "github.com/area/grpc-go/service";
 
 service MiroService {
+  /* Sticky Notes */
+  rpc CreateStickyNote (CreateStickyNoteReq) returns (CreateStickyNoteResp) {}
+
+  /* Texts */
+  rpc CreateTextItem (CreateTextReq) returns (CreateTextResp) {}
+
+  /* Cards */
+  rpc CreateCardItem (CreateCardReq) returns (CreateCardResp) {}
+
+  /* Webhooks */
+
+  // Webhook not used, DO NOT USE IT (UNLESS YOU WANT TO FIX IT)
   // Add a webhook that will only watch items created
   // Response is same because we don't need a particular response yet
   rpc WatchItemCreated(ItemCreatedReq) returns (ItemCreatedReq) {}
@@ -27,6 +39,45 @@ message ItemCreatedTriggerReq {
 message ItemCreatedResp {
   string type = 1;
   string content = 2;
+  bytes response = 3;
 }
 
 /////
+
+message CreateStickyNoteReq {
+  string boardId = 1; /* Identifier of the board */
+  string content = 2; /* Content inside the sticky note */
+  string shape = 3; /* Square or Rectangle */
+}
+
+message CreateStickyNoteResp {
+  string id = 1; /* Identifier of the sticky note */
+  string content = 2; /* Content inside the sticky note */
+  string shape = 3; /* Square or Rectangle */
+}
+
+/////
+
+message CreateTextReq {
+  string boardId = 1; /* Identifier of the board */
+  string content = 2; /* Content inside the text note */
+}
+
+message CreateTextResp {
+  string id = 1; /* Identifier of the text note */
+  string content = 2; /* Content inside the sticky note */
+}
+
+/////
+
+message CreateCardReq {
+  string boardId = 1; /* Identifier of the board */
+  string description = 2; /* Description of the card */
+  string title = 3; /* Title of the card */
+}
+
+message CreateCardResp {
+  string id = 1; /* Identifier of the board */
+  string description = 2; /* Description of the card */
+  string title = 3; /* Title of the card */
+}

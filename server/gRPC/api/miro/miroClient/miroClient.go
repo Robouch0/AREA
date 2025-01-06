@@ -21,16 +21,23 @@ import (
 )
 
 type MiroClient struct {
-	ActionLauncher *IServ.ActionLauncher
+	ActionLauncher   *IServ.ActionLauncher
+	ReactionLauncher *IServ.ReactionLauncher
 
 	cc gRPCService.MiroServiceClient
 }
 
 func NewMiroClient(conn *grpc.ClientConn) *MiroClient {
 	actions := &IServ.ActionLauncher{}
-	miro := &MiroClient{ActionLauncher: actions, cc: gRPCService.NewMiroServiceClient(conn)}
+	reactions := &IServ.ReactionLauncher{}
+	miro := &MiroClient{ActionLauncher: actions, ReactionLauncher: reactions, cc: gRPCService.NewMiroServiceClient(conn)}
 
 	(*miro.ActionLauncher)["watchItemCreated"] = miro.createWebhookItemCreated
+
+	(*miro.ReactionLauncher)["createStickyNotes"] = miro.createStickyNote
+	(*miro.ReactionLauncher)["createTextNotes"] = miro.createTextNote
+	(*miro.ReactionLauncher)["createCardNotes"] = miro.createCardNote
+
 	return miro
 }
 
@@ -46,16 +53,20 @@ func (miro *MiroClient) SetActivate(microservice string, id uint, userID int, ac
 }
 
 func (miro *MiroClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
-	return nil, status.Errorf(codes.Internal, "No reaction yet")
+	if micro, ok := (*miro.ReactionLauncher)[microservice]; ok {
+		return micro(ingredients, prevOutput, userID)
+	}
+	return nil, errors.New("No such microservice")
 }
 
+// Webhook does not work
 func (miro *MiroClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservice string, actionID int) (*IServ.WebHookResponseStatus, error) {
 	b, err := json.Marshal(webhook.Payload)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
 	}
 	if microservice == "itemCreated" {
-		_, err = miro.cc.TriggerItemCreated(context.Background(), &gRPCService.ItemCreatedTriggerReq{Payload: b, ActionId: uint32(actionID)})
+		_, err := miro.cc.TriggerItemCreated(context.Background(), &gRPCService.ItemCreatedTriggerReq{Payload: b, ActionId: uint32(actionID)})
 		if err != nil {
 			return nil, err
 		}

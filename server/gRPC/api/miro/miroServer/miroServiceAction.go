@@ -52,7 +52,7 @@ func (miro *MiroService) WatchItemCreated(ctx context.Context, req *gRPCService.
 	_, err = miro.miroDb.StoreNewMiro(&models.Miro{
 		ActionID:  uint(req.ActionId),
 		UserID:    uint(tokenInfo.UserID),
-		Activated: false,
+		Activated: true,
 		WebhookID: res.ID,
 		Type:      models.WCreate,
 	})
@@ -62,7 +62,14 @@ func (miro *MiroService) WatchItemCreated(ctx context.Context, req *gRPCService.
 	return req, nil
 }
 
+// Trigger not working
 func (miro *MiroService) TriggerItemCreated(ctx context.Context, req *gRPCService.ItemCreatedTriggerReq) (*gRPCService.ItemCreatedResp, error) {
+	var testChallenge miro_webhook.MiroChallenge
+	if json.Unmarshal(req.Payload, &testChallenge) == nil && testChallenge.Challenge != "" {
+		log.Println("CHallenged received: ", testChallenge, string(req.Payload))
+		return &gRPCService.ItemCreatedResp{Type: "", Content: "", Response: req.Payload}, nil
+	}
+
 	var payload miro_webhook.MiroWebhookPayload
 	if json.Unmarshal(req.Payload, &payload) != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
@@ -88,7 +95,8 @@ func (miro *MiroService) TriggerItemCreated(ctx context.Context, req *gRPCServic
 		}, nil
 	}
 	return &gRPCService.ItemCreatedResp{
-		Type:    "",
-		Content: "",
+		Type:     "",
+		Content:  "",
+		Response: []byte(""),
 	}, nil
 }

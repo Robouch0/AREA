@@ -12,6 +12,7 @@ import (
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -37,6 +38,7 @@ func CreateWebhook(accessToken string, body *CreateWebhookBody) (*CreateWebhookR
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Cannot marshalize miro webhook body, %v", err)
 	}
+	log.Println(*body)
 	req, err := http.NewRequest("POST", createWebhookURL, bytes.NewBuffer(b))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Cannot create miro webhook request, %v", err)
@@ -46,6 +48,7 @@ func CreateWebhook(accessToken string, body *CreateWebhookBody) (*CreateWebhookR
 
 	resp, err := http_utils.SendHttpRequest(req, 201)
 	if err != nil {
+		log.Println("Watch error: ", err)
 		return nil, err
 	}
 	return utils.IoReaderToStruct[CreateWebhookResponse](&resp.Body)

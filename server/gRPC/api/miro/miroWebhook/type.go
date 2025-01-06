@@ -22,3 +22,7 @@ type MiroWebhookPayload struct {
 	Type    string   `json:"type"`
 	Item    MiroItem `json:"item"`
 }
+
+type MiroChallenge struct {
+	Challenge string `json:"challenge"`
+}
