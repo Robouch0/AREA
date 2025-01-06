@@ -9,6 +9,7 @@ package reaction
 
 import (
 	"area/db"
+	asana_client "area/gRPC/api/asana/asanaClient"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
 	github "area/gRPC/api/github/githubClient"
@@ -68,6 +69,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["google"] = google_client.NewGoogleClient(conn)
 	react.clients["spotify"] = spotify_client.NewSpotifyClient(conn)
 	react.clients["weather"] = weather_client.NewWeatherClient(conn)
+	react.clients["asana"] = asana_client.NewAsanaClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
