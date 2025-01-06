@@ -41,10 +41,10 @@ func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreatePushWebhook)
 	}
 	(*git.ActionsLauncher)["triggerDelete"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
-		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreatePushWebhook)
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateDeleteBranchWebhook)
 	}
 	(*git.ActionsLauncher)["triggerFork"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
-		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreatePushWebhook)
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateForkRepositoryWebhook)
 	}
 	return git
 }
@@ -149,7 +149,17 @@ func (git *GithubClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, a
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
 	}
-	if _, err := git.cc.TriggerWebHook(context.Background(), &gRPCService.GithubWebHookTriggerReq{ActionId: uint32(actionID), Payload: payloadBytes}); err != nil {
+	if webhook.Header.Get("X-GitHub-Event") == "ping" {
+		return &IServ.WebHookResponseStatus{Description: "ping"}, nil
+	}
+	headerBytes, err := json.Marshal(webhook.Header)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
+	}
+	if _, err := git.cc.TriggerWebHook(context.Background(), &gRPCService.GithubWebHookTriggerReq{
+		ActionId: uint32(actionID),
+		Payload:  payloadBytes,
+		Header:   headerBytes}); err != nil {
 		return nil, err
 	}
 	return &IServ.WebHookResponseStatus{Description: "Webhook triggered"}, nil

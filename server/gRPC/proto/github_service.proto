@@ -87,6 +87,7 @@ message DeleteRepoFile {
 message GithubWebHookTriggerReq {
   uint32 action_id = 1;
   bytes payload = 2;
+  bytes header = 3;
 }
 
 ///////

@@ -13,6 +13,7 @@ import (
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"context"
+	"log"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -38,6 +39,7 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"push"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
+		Active: true,
 	})
 	if err != nil {
 		return nil, err
@@ -56,7 +58,7 @@ func (git *GithubService) CreateDeleteBranchWebhook(ctx context.Context, req *gR
 	if err != nil {
 		return nil, err
 	}
-	formattedWebhookURL, err := git.formatWebhookCallbackURL("push", uint32(req.ActionId))
+	formattedWebhookURL, err := git.formatWebhookCallbackURL("delete", uint32(req.ActionId))
 	if err != nil {
 		return nil, err
 	}
@@ -64,6 +66,7 @@ func (git *GithubService) CreateDeleteBranchWebhook(ctx context.Context, req *gR
 	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"delete"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
+		Active: true,
 	})
 	if err != nil {
 		return nil, err
@@ -90,8 +93,10 @@ func (git *GithubService) CreateForkRepositoryWebhook(ctx context.Context, req *
 	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"fork"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
+		Active: true,
 	})
 	if err != nil {
+		log.Println("Error while sending the webhook")
 		return nil, err
 	}
 	if err := git.storeNewWebHook(tokenInfo, req, models.GFork); err != nil {
