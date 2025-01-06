@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev -p 8081",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -p 8081",
+    "lint": "next lint",
+    "docker-start": "mv /web/front/client.apk /app/public/client.apk && npm run build && npm run start"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
