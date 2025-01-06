@@ -1,6 +1,6 @@
 name: Check-Mobile-Compilation
 
-on: [workflow_call]
+on: [push]
 
 jobs:
   build:
@@ -13,13 +13,13 @@ jobs:
           distribution: 'adopt'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '2.x'
+          flutter-version: '3.27.1'
           channel: 'stable'
-      - name: Upgrade Flutter version to match the project target
-        run: |
-          flutter upgrade
-          flutter channel stable
-          flutter upgrade
+#      - name: Upgrade Flutter version to match the project target
+#        run: |
+#          flutter upgrade
+#          flutter channel stable
+#          flutter upgrade
       - name: Get flutter dependecies
         run: flutter pub get
         working-directory: mobile/
