@@ -1,10 +1,12 @@
 // lib/services/api/auth_service.dart
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_area_flutter/api/types/auth_body.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
+import 'package:my_area_flutter/widgets/oauth_webview.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -42,7 +44,6 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        developer.log('Account created successfully!');
         return login(email, password);
       }
       developer.log('Error while creating an account : ${response.statusCode}');
@@ -85,6 +86,58 @@ class AuthService {
       return false;
     } catch (e) {
       developer.log('Failed to login: $e', name: 'my_network_log');
+      return false;
+    }
+  }
+
+  Future<bool> loginWithOAuth(BuildContext context, String service) async {
+    try {
+      final response = await Navigator.of(context).push<String>(
+        MaterialPageRoute(
+          builder: (context) => OAuthWebViewPage(
+            service: service.toLowerCase(),
+            apiUrl: _apiUrl,
+            redirectUrl: 'http://localhost:8081/loadOauth',
+            isLogin: true,
+          ),
+        ),
+      );
+
+      if (response != null) {
+        final parsedResponse = jsonDecode(response);
+        final token = parsedResponse['token'];
+        final userId = parsedResponse['user_id'];
+
+        _authStorage.saveToken(token);
+        _authStorage.saveUserId(userId.toString());
+        _isLoggedIn = true;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      developer.log('Failed to login with OAuth: $e');
+      return false;
+    }
+  }
+
+  Future<bool> connectOAuthService(BuildContext context, String service) async {
+    try {
+      final token = _authStorage.getToken();
+      final result = await Navigator.of(context).push<String>(
+        MaterialPageRoute(
+          builder: (context) => OAuthWebViewPage(
+            service: service,
+            apiUrl: _apiUrl,
+            redirectUrl: 'http://localhost:8081/loadOauth',
+            isLogin: false,
+            token: token,
+          ),
+        ),
+      );
+
+      return result != null;
+    } catch (e) {
+      developer.log('Failed to connect OAuth service: $e');
       return false;
     }
   }

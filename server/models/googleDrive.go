@@ -19,4 +19,5 @@ type Drive struct {
 
 	ChannelID  string `bun:"channel_id" json:"channel_id,omitempty"`
 	ResourceID string `bun:"resourceId" json:"resourceId,omitempty"`
+	FileName   string `bun:"file_name" json:"file_name,omitempty"`
 }

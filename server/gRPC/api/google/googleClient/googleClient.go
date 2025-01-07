@@ -23,16 +23,17 @@ import (
 )
 
 type GoogleClient struct {
-	MicroservicesLauncher *IServ.MicroserviceLauncher
+	MicroservicesLauncher *IServ.ReactionLauncher
 	ActionLauncher        *IServ.ActionLauncher
 
 	cc gRPCService.GoogleServiceClient
 }
 
 func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
-	micros := &IServ.MicroserviceLauncher{}
+	micros := &IServ.ReactionLauncher{}
 	actions := &IServ.ActionLauncher{}
 	google := &GoogleClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewGoogleServiceClient(conn)}
+
 	(*google.MicroservicesLauncher)["gmail/sendEmailMe"] = google.sendEmailMe
 	(*google.MicroservicesLauncher)["gmail/deleteEmailMe"] = google.deleteEmailMe
 	(*google.MicroservicesLauncher)["gmail/moveToTrash"] = google.moveToTrash
@@ -43,15 +44,15 @@ func NewGoogleClient(conn *grpc.ClientConn) *GoogleClient {
 	// (*google.MicroservicesLauncher)["gmail/deleteDrive"] = google.deleteDrive // Not free
 	// (*google.MicroservicesLauncher)["gmail/updateDrive"] = google.updateDrive
 	// (*google.MicroservicesLauncher)["gmail/createDrive"] = google.createDrive
-	(*google.MicroservicesLauncher)["gmail/createComment"] = google.createComment
-	(*google.MicroservicesLauncher)["gmail/deleteComment"] = google.deleteComment
-	(*google.MicroservicesLauncher)["gmail/updateComment"] = google.updateComment
-	(*google.MicroservicesLauncher)["gmail/createEmptyFile"] = google.createEmptyFile
-	(*google.MicroservicesLauncher)["gmail/deleteFile"] = google.deleteFile
-	(*google.MicroservicesLauncher)["gmail/updateFile"] = google.updateFile
-	(*google.MicroservicesLauncher)["gmail/copyFile"] = google.copyFile
+	(*google.MicroservicesLauncher)["drive/createComment"] = google.createComment
+	(*google.MicroservicesLauncher)["drive/deleteComment"] = google.deleteComment
+	(*google.MicroservicesLauncher)["drive/updateComment"] = google.updateComment
+	(*google.MicroservicesLauncher)["drive/createEmptyFile"] = google.createEmptyFile
+	(*google.MicroservicesLauncher)["drive/deleteFile"] = google.deleteFile
+	(*google.MicroservicesLauncher)["drive/updateFile"] = google.updateFile
+	(*google.MicroservicesLauncher)["drive/copyFile"] = google.copyFile
 
-	(*google.ActionLauncher)["watchme"] = google.watchEmail
+	(*google.ActionLauncher)["watchme"] = google.watchEmail // No subdomain because of google cloud inner functionning
 	(*google.ActionLauncher)["watchFile"] = google.watchFile
 	(*google.ActionLauncher)["watchChanges"] = google.watchChanges
 	return google
@@ -293,4 +294,29 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 		return &IServ.WebHookResponseStatus{}, nil
 	}
 	return nil, status.Errorf(codes.NotFound, "Microservice: %v not found", microservice)
+}
+
+func (google *GoogleClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	if microservice == "watchme" {
+		if _, err := google.cc.SetActivateGmailAction(ctx, &gRPCService.SetActivateGmail{
+			ActionId:  uint32(id),
+			Activated: activated,
+		}); err != nil {
+			return nil, err
+		}
+	}
+	if microservice == "watchChanges" || microservice == "watchFile" {
+		if _, err := google.cc.SetActivateDriveAction(ctx, &gRPCService.SetActivateDrive{
+			ActionId:     uint32(id),
+			Activated:    activated,
+			Microservice: microservice,
+		}); err != nil {
+			return nil, err
+		}
+	}
+	return &IServ.SetActivatedResponseStatus{
+		ActionID:    id,
+		Description: "",
+	}, nil
 }

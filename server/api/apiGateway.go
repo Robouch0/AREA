@@ -9,15 +9,17 @@ package api
 
 import (
 	areaMiddleware "area/api/middleware"
-	"area/gRPC/api/dateTime"
-	"area/gRPC/api/discord"
-	"area/gRPC/api/github"
+	asana_client "area/gRPC/api/asana/asanaClient"
+	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
+	discord_client "area/gRPC/api/discord/discordClient"
+	github "area/gRPC/api/github/githubClient"
 	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
+	miro_client "area/gRPC/api/miro/miroClient"
 	"area/gRPC/api/reaction"
 	IServ "area/gRPC/api/serviceInterface"
-	"area/gRPC/api/spotify"
+	spotify_client "area/gRPC/api/spotify/spotifyClient"
 	weather_client "area/gRPC/api/weather/weatherClient"
 
 	"github.com/go-chi/chi/v5"
@@ -42,15 +44,17 @@ func CreateApiGateway() (*ApiGateway, error) {
 	}
 
 	m := make(map[string]IServ.ClientService)
-	m["dt"] = dateTime.NewDateTimeServiceClient(conn)
+	m["dt"] = dateTime_client.NewDateTimeServiceClient(conn)
 	m["hf"] = huggingFace_client.NewHuggingFaceClient(conn)
 	m["github"] = github.NewGithubClient(conn)
 	m["gitlab"] = gitlab_client.NewGitlabClient(conn)
 	m["google"] = google_client.NewGoogleClient(conn)
-	m["discord"] = discord.NewDiscordClient(conn)
+	m["discord"] = discord_client.NewDiscordClient(conn)
 	m["react"] = reaction.NewReactionServiceClient(conn)
-	m["spotify"] = spotify.NewSpotifyClient(conn)
+	m["spotify"] = spotify_client.NewSpotifyClient(conn)
 	m["weather"] = weather_client.NewWeatherClient(conn)
+	m["miro"] = miro_client.NewMiroClient(conn)
+	m["asana"] = asana_client.NewAsanaClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),
 		JwtTok:  areaMiddleware.GetNewJWTAuth(),

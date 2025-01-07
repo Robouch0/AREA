@@ -1,0 +1,31 @@
+name: Check-Mobile-Compilation
+
+on: [workflow_call]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.1'
+          channel: 'stable'
+      - name: Get flutter dependecies
+        run: flutter pub get
+        working-directory: mobile/
+#      - run: flutter analyze
+#        working-directory: mobile/
+      - name: Create mockup env.prod file
+        run: touch .env.prod
+        working-directory: mobile/
+      - name: Create mockup env file
+        run: touch .env
+        working-directory: mobile/
+      - name: Build the apk
+        run: flutter build apk --release
+        working-directory: mobile/

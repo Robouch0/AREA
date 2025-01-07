@@ -12,11 +12,13 @@ service HuggingFaceService {
   rpc ChangeRepoVisibility(ChangeHFRepoReq) returns (ChangeHFRepoReq) {}
   rpc MoveRepo(MoveHFRepoReq) returns (MoveHFRepoReq) {}
 
+  // Unused because not handled by Hugging face
   rpc CreateRepoUpdateWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
   rpc CreateNewPRWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
   rpc CreateNewDiscussionWebHook(HFWebHookInfo) returns (HFWebHookInfo) {}
-
   rpc TriggerWebHook (WebHookTriggerReq) returns (WebHookTriggerReq) {}
+
+  rpc SetActivate(SetActivateHF) returns (SetActivateHF) {}
 }
 
 message TextGenerationReq {
@@ -92,4 +94,9 @@ message MoveHFRepoReq {
 
   // Type of repo (model, dataset, etc)
   string type = 3;
+}
+
+message SetActivateHF {
+  uint32 action_id = 1;
+  bool activated = 2;
 }

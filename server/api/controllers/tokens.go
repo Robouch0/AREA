@@ -10,6 +10,7 @@ package controllers
 import (
 	"area/db"
 	"area/models"
+	grpcutils "area/utils/grpcUtils"
 	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"log"
@@ -30,21 +31,32 @@ type TokenCreateRequest struct {
 	Token    string `json:"token"`
 }
 
+func convertTokensToPublicInfos(tokens *[]models.Token) []TokenInformations {
+	var allTokens []TokenInformations
+
+	for _, tok := range *tokens {
+		allTokens = append(allTokens, TokenInformations{
+			UserID:   strconv.FormatInt(tok.UserID, 10),
+			Provider: tok.Provider,
+		})
+	}
+	return allTokens
+}
+
 // Get tokens godoc
 // @Summary      Get all the tokens from a user
-// @Description  Get all the tokens from a user_id
+// @Description  Get all the tokens of the current logged user
+// @Security ApiKeyAuth
 // @Tags         Token
 // @Accept       json
 // @Produce      json
-// @Param 		 user_id path	string	true 	"Id of the user"
-// @Success      200  {object}  []models.Token
+// @Success      200  {object}  []TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /token/{user_id} [get]
-func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
+// @Router       /token [get]
+func GetTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		struserID := chi.URLParam(r, "user_id")
-		userID, err := strconv.Atoi(struserID)
+		userID, err := grpcutils.GetUserIDClaim(r.Context())
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
@@ -55,88 +67,99 @@ func getTokens(tokenDb *db.TokenDb) http.HandlerFunc {
 			http_utils.WriteHTTPResponseErr(&w, 500, err.Error())
 			return
 		}
+		allToks := convertTokensToPublicInfos(tokens)
 		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(tokens)
+		json.NewEncoder(w).Encode(&allToks)
 	}
 }
 
 // Get token godoc
-// @Summary      Get a token
-// @Description  Get the tokens from a user_id and a provider
+// @Summary      Get user's token
+// @Description  Get a the token associated to the remote provider of the user
+// @Security ApiKeyAuth
 // @Tags         Token
 // @Accept       json
 // @Produce      json
-// @Param 		 user_id path	string	true 	"Id of the user"
-// @Param 		 provider path	string	true 	"Provider of the Remote Service"
-// @Success      200  {object}  models.Token
+// @Param 		 provider path	string	true 	"Remote Service Name"
+// @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /token/ [post]
-func getToken(tokenDb *db.TokenDb) http.HandlerFunc {
+// @Router       /token/{provider} [get]
+func GetToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		TokenReq := new(TokenInformations)
-		TokenReq.UserID = chi.URLParam(r, "user_id")
-		TokenReq.Provider = chi.URLParam(r, "provider")
+		tokenReq := new(TokenInformations)
+		tokenReq.Provider = chi.URLParam(r, "provider")
 
-		UserId, err := strconv.Atoi(TokenReq.UserID)
+		userID, err := grpcutils.GetUserIDClaim(r.Context())
 		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte(err.Error()))
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
 
-		tokens, err := tokenDb.GetUserTokenByProvider(int64(UserId), TokenReq.Provider)
+		token, err := tokenDb.GetUserTokenByProvider(int64(userID), tokenReq.Provider)
 		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte(err.Error()))
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
 		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(tokens)
+		json.NewEncoder(w).Encode(&TokenInformations{
+			UserID:   strconv.FormatInt(token.UserID, 10),
+			Provider: token.Provider,
+		})
 	}
 }
 
 // create Token godoc
 // @Summary      Create a token
 // @Description  Create a token from a user_id and a provider
+// @Security ApiKeyAuth
 // @Tags         Token
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  models.Token
+// @Param 		 tokenCreateRequest body	TokenCreateRequest	true 	"Token creation request informations"
+// @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
 // @Router       /token/create/ [post]
-func createTkn(tokenDb *db.TokenDb) http.HandlerFunc {
+func CreateTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		CreateReq := new(TokenCreateRequest)
-		var NewToken models.Token
-		err := json.NewDecoder(r.Body).Decode(&CreateReq)
+		createReq := new(TokenCreateRequest)
+		var newToken models.Token
+		err := json.NewDecoder(r.Body).Decode(&createReq)
 
 		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte(err.Error()))
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
-		UserId, err := strconv.Atoi(CreateReq.UserID)
-		Oldtoken, err := tokenDb.GetUserTokenByProvider(int64(UserId), CreateReq.Provider)
+		userID, err := grpcutils.GetUserIDClaim(r.Context())
+		if err != nil {
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
+			return
+		}
+		oldToken, err := tokenDb.GetUserTokenByProvider(int64(userID), createReq.Provider)
 
 		if err != nil {
-			NewToken.AccessToken = CreateReq.Token
-			NewToken.Provider = CreateReq.Provider
-			NewToken.UserID = int64(UserId)
-			token, err := tokenDb.CreateToken(&NewToken)
+			newToken.AccessToken = createReq.Token
+			newToken.Provider = createReq.Provider
+			newToken.UserID = int64(userID)
+			token, err := tokenDb.CreateToken(&newToken)
 
 			if err != nil {
-				w.WriteHeader(500)
-				w.Write([]byte(err.Error()))
+				http_utils.WriteHTTPResponseErr(&w, 500, err.Error())
 				return
 			}
 			w.WriteHeader(200)
-			json.NewEncoder(w).Encode(&token)
+			json.NewEncoder(w).Encode(&TokenInformations{
+				UserID:   strconv.FormatInt(int64(userID), 10),
+				Provider: token.Provider,
+			})
 		} else {
-			Oldtoken.AccessToken = CreateReq.Token
+			tokenDb.UpdateUserTokenByProvider(int64(userID), createReq.Provider, createReq.Token)
 			w.WriteHeader(200)
-			json.NewEncoder(w).Encode(&Oldtoken)
+			json.NewEncoder(w).Encode(&TokenInformations{
+				UserID:   strconv.FormatInt(int64(userID), 10),
+				Provider: oldToken.Provider,
+			})
 		}
 	}
 }
@@ -144,47 +167,35 @@ func createTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 // Delete Token godoc
 // @Summary      Delete a token
 // @Description  Delete a token from a user_id and a provider
+// @Security ApiKeyAuth
 // @Tags         Token
 // @Accept       json
 // @Produce      json
+// @Param 		 provider path	string	true 	"Remote Service Name"
 // @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
 // @Router       /token/ [delete]
-func deleteUserToken(tokenDb *db.TokenDb) http.HandlerFunc {
+func DeleteUserToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userStrID := chi.URLParam(r, "user_id")
 		provider := chi.URLParam(r, "provider")
 
-		userId, err := strconv.Atoi(userStrID)
+		userID, err := grpcutils.GetUserIDClaim(r.Context())
 		if err != nil {
-			http_utils.WriteHTTPResponseErr(&w, 401, "Invalid userID given")
-			log.Println(err)
+			http_utils.WriteHTTPResponseErr(&w, 400, err.Error())
 			return
 		}
 
-		_, err = tokenDb.DeleteUserTokenByProvider(int64(userId), provider)
+		_, err = tokenDb.DeleteUserTokenByProvider(int64(userID), provider)
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 401, "Error while deleting token")
 			log.Println(err)
 			return
 		}
 		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(&TokenInformations{UserID: userStrID, Provider: provider})
+		json.NewEncoder(w).Encode(&TokenInformations{
+			UserID:   strconv.FormatInt(int64(userID), 10),
+			Provider: provider,
+		})
 	}
-}
-
-func TokenRoutes() chi.Router {
-	tokenRouter := chi.NewRouter()
-	tokenDb := db.GetTokenDb()
-
-	tokenRouter.Get("/{user_id}", getTokens(tokenDb))
-
-	tokenRouter.Get("/{user_id}/{provider}", getToken(tokenDb))
-
-	tokenRouter.Post("/create/", createTkn(tokenDb))
-
-	tokenRouter.Delete("/{user_id}/{provider}", deleteUserToken(tokenDb))
-
-	return tokenRouter
 }

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package date_time;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service DateTimeService {
+  // Launch a cron job that check each minutes if the trigger must be activated
+  rpc LaunchCronJob(TriggerTimeRequest) returns (TriggerTimeResponse) {}
+
+  // Activate/Deactivate the cron job for the specific action_id given
+  rpc SetActivateAction(SetActivateTime) returns (SetActivateTime) {}
+}
+
+message TriggerTimeRequest {
+  bool activated = 1;
+  int32 action_id = 2;
+
+  // Format: "DD/MM/HH:mm"
+  string datetimeString = 3;
+}
+
+message TriggerTimeResponse {
+}
+
+message SetActivateTime {
+  uint32 action_id = 1;
+  bool activated = 2;
+}

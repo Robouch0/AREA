@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { RegisterFormData, RegisterUserSchema } from "@/lib/typeRegister";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {FaDiscord, FaEye, FaEyeSlash, FaGithub, FaSpotify} from "react-icons/fa";
+import {FaDiscord, FaEye, FaEyeSlash, FaGithub, FaGoogle} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/api/authentification";
@@ -150,12 +150,12 @@ function RegisterForm() {
                             <div className="max-w-md w-full space-y-4">
 
                                 {<OauthButton
-                                    arial-label="Hf"
-                                    service="hf"
+                                    arial-label="Google"
+                                    service="google"
                                     login={true}
-                                    textButton={"Continuer avec HuggingFace"}
-                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaSpotify/>}
+                                    textButton={"Continuer avec Google"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaGoogle/>}
                                 />}
 
                                 <OauthButton

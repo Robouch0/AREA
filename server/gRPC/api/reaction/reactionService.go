@@ -9,14 +9,16 @@ package reaction
 
 import (
 	"area/db"
-	"area/gRPC/api/dateTime"
-	"area/gRPC/api/discord"
-	"area/gRPC/api/github"
+	asana_client "area/gRPC/api/asana/asanaClient"
+	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
+	discord_client "area/gRPC/api/discord/discordClient"
+	github "area/gRPC/api/github/githubClient"
 	gitlab_client "area/gRPC/api/gitlab/gitlabClient"
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
+	miro_client "area/gRPC/api/miro/miroClient"
 	IServ "area/gRPC/api/serviceInterface"
-	"area/gRPC/api/spotify"
+	spotify_client "area/gRPC/api/spotify/spotifyClient"
 	weather_client "area/gRPC/api/weather/weatherClient"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
@@ -29,6 +31,8 @@ import (
 	"log"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type ReactionService struct {
@@ -58,14 +62,16 @@ func NewReactionService() (*ReactionService, error) {
 }
 
 func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
-	react.clients["dt"] = dateTime.NewDateTimeServiceClient(conn)
+	react.clients["dt"] = dateTime_client.NewDateTimeServiceClient(conn)
 	react.clients["hf"] = huggingFace_client.NewHuggingFaceClient(conn)
 	react.clients["github"] = github.NewGithubClient(conn)
 	react.clients["gitlab"] = gitlab_client.NewGitlabClient(conn)
-	react.clients["discord"] = discord.NewDiscordClient(conn)
+	react.clients["discord"] = discord_client.NewDiscordClient(conn)
 	react.clients["google"] = google_client.NewGoogleClient(conn)
-	react.clients["spotify"] = spotify.NewSpotifyClient(conn)
+	react.clients["spotify"] = spotify_client.NewSpotifyClient(conn)
 	react.clients["weather"] = weather_client.NewWeatherClient(conn)
+	react.clients["asana"] = asana_client.NewAsanaClient(conn)
+	react.clients["miro"] = miro_client.NewMiroClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {
@@ -82,7 +88,10 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 	}
 
 	log.Println("AreaID Launch: ", area.ID)
-	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID)
+	reactions, err := react.ReactionDB.GetReactionsByAreaID(area.ID) // Check if it is activated ?
+	if reactions == nil {
+		return nil, status.Errorf(codes.Internal, "no associated reaction")
+	}
 	for _, re := range *reactions {
 		if cliService, ok := react.clients[re.Reaction.Service]; ok {
 			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, req.PrevOutput, int(area.UserID))
@@ -140,4 +149,27 @@ func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCServi
 		return nil, err
 	}
 	return &gRPCService.ReactionResponse{Description: "Done", ActionId: int64(act.ID)}, nil
+}
+
+func (react *ReactionService) SetActivate(ctx context.Context, req *gRPCService.AreaDeactivator) (*gRPCService.AreaDeactivator, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "reaction")
+	if err != nil {
+		return nil, err
+	}
+	area, err := react.AreaDB.GetUserAreaByID(userID, uint(req.AreaId))
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("Setting area (%v) activated to %v\n", req.AreaId, req.Activated)
+	_, err = react.clients[area.Action.Action.Service].SetActivate(area.Action.Action.Microservice, area.Action.ID, int(userID), req.Activated)
+	if err != nil {
+		log.Println("Service Action error")
+		return nil, err
+	}
+	_, err = react.AreaDB.SetActivateByAreaID(req.Activated, userID, uint(req.AreaId))
+	if err != nil {
+		log.Println("AreaDB error")
+		return nil, err
+	}
+	return req, nil
 }

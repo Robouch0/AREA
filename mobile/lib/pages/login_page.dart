@@ -21,9 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _performLogin(String email, String pass) async {
-    final success = await _authService.login(email, pass);
-
+  void _showSuccessStatus(bool success) async {
     if (!mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -41,10 +39,16 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      _performLogin(_emailController.text, _passwordController.text);
+      final success = await _authService.login(_emailController.text, _passwordController.text);
+      _showSuccessStatus(success);
     }
+  }
+
+  void _loginOAuth(String service) async {
+    final success = await _authService.loginWithOAuth(context, service);
+    _showSuccessStatus(success);
   }
 
   @override
@@ -75,6 +79,8 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 25),
             _buildTextDivider('or'),
             const SizedBox(height: 15),
+            _buildOAuthButton('Github'),
+            const SizedBox(height: 10),
             _buildSignUpHereLink()
           ],
         ),
@@ -114,6 +120,15 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLoginButton() {
     return AuthButton(text: 'Log in', onPressed: _login);
+  }
+
+  Widget _buildOAuthButton(String service) {
+    return AuthButton(
+      text: 'Continue with $service',
+      onPressed: () {
+        _loginOAuth(service);
+      }
+    );
   }
 
   Widget _buildForgotPasswordLink() {

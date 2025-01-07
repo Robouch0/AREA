@@ -21,10 +21,13 @@ import (
 	"net/http"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GitlabService struct {
 	tokenDb      *db.TokenDb
+	gitlabDb     *db.GitlabDB
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedGitlabServiceServer
@@ -36,7 +39,9 @@ func NewGitlabService() (*GitlabService, error) {
 		return nil, err
 	}
 
-	return &GitlabService{tokenDb: tokenDb, reactService: nil}, err
+	gitlabDb, err := db.InitGitlabDb()
+
+	return &GitlabService{tokenDb: tokenDb, gitlabDb: gitlabDb, reactService: nil}, err
 }
 
 func (git *GitlabService) InitReactClient(conn *grpc.ClientConn) {
@@ -64,7 +69,7 @@ func (git *GitlabService) CreateFile(ctx context.Context, req *gRPCService.Creat
 	q.Set("access_token", tokenInfo.AccessToken)
 	pathRequest.URL.RawQuery = q.Encode()
 
-	resp, err := http_utils.SendHttpRequest(pathRequest, 201);
+	resp, err := http_utils.SendHttpRequest(pathRequest, 201)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +98,7 @@ func (git *GitlabService) UpdateFile(ctx context.Context, req *gRPCService.Updat
 	q.Set("access_token", tokenInfo.AccessToken)
 	pathRequest.URL.RawQuery = q.Encode()
 
-	resp, err := http_utils.SendHttpRequest(pathRequest, 200);
+	resp, err := http_utils.SendHttpRequest(pathRequest, 200)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +127,7 @@ func (git *GitlabService) DeleteFile(ctx context.Context, req *gRPCService.Delet
 	q.Set("access_token", tokenInfo.AccessToken)
 	pathRequest.URL.RawQuery = q.Encode()
 
-	resp, err := http_utils.SendHttpRequest(pathRequest, 204);
+	resp, err := http_utils.SendHttpRequest(pathRequest, 204)
 	if err != nil {
 		return nil, err
 	}
@@ -151,14 +156,13 @@ func (git *GitlabService) MarkItemAsDone(ctx context.Context, req *gRPCService.T
 	q.Set("access_token", tokenInfo.AccessToken)
 	pathRequest.URL.RawQuery = q.Encode()
 
-	resp, err := http_utils.SendHttpRequest(pathRequest, 201);
+	resp, err := http_utils.SendHttpRequest(pathRequest, 201)
 	if err != nil {
 		return nil, err
 	}
 	log.Println(resp.Body)
 	return req, nil
 }
-
 
 func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCService.AllTodoLabItemDoneReq) (*gRPCService.AllTodoLabItemDoneReq, error) {
 	url := fmt.Sprintf("https://www.gitlab.com/api/v4/todos/mark_as_done")
@@ -173,10 +177,14 @@ func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCServic
 	q.Set("access_token", tokenInfo.AccessToken)
 	pathRequest.URL.RawQuery = q.Encode()
 
-	resp, err := http_utils.SendHttpRequest(pathRequest, 204);
+	resp, err := http_utils.SendHttpRequest(pathRequest, 204)
 	if err != nil {
 		return nil, err
 	}
 	log.Println(resp.Body)
 	return req, nil
+}
+
+func (git *GitlabService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateGitlab) (*gRPCService.SetActivateGitlab, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
 }
