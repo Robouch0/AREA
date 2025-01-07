@@ -15,7 +15,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -192,7 +191,6 @@ func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservic
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload send for this service")
 	}
-	log.Println("hey im here")
 	if _, err := git.cc.TriggerWebHook(context.Background(), &gRPCService.GitlabWebHookTriggerReq{ActionId: uint32(actionID), Payload: payloadBytes}); err != nil {
 		return nil, err
 	}

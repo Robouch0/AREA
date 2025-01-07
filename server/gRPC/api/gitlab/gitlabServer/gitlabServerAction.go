@@ -100,16 +100,14 @@ func (git *GitlabService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 		return nil, status.Errorf(codes.InvalidArgument, "No such action with id %d", req.ActionId)
 	}
 
-	log.Println("i am priting the payload")
-	log.Println(req.Payload)
-	// var gitpayload GitlabService.GithubEvents
-	// if json.Unmarshal(req.Payload, &gitpayload) != nil {
-	// 	return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
-	// }
-	// if len(gitpayload.Hook.Events) == 0 {
-	// 	return nil, status.Errorf(codes.InvalidArgument, "No events in github webhook payload")
-	// }
-	// if gitpayload.Hook.Events[0] == act.RepoAction {
+	var gitpayload gitlabtypes.GitlabWebHookResponse
+	if json.Unmarshal(req.Payload, &gitpayload) != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
+	}
+	if len(gitpayload.EventName) == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "No events in github webhook payload")
+	}
+	if gitpayload.EventName == act.RepoAction && string(gitpayload.ProjectId) == act.RepoID {
 		reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
 		_, err = git.reactService.LaunchReaction(
 			reactCtx,
@@ -118,6 +116,6 @@ func (git *GitlabService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
 		}
-	// }
+	}
 	return req, nil
 }
