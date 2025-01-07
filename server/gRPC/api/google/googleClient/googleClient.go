@@ -269,7 +269,8 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
 	}
-	log.Println(microservice)
+	log.Println("Header: ", webhook.Header)
+	log.Println("Payload: ", webhook.Payload)
 	if microservice == "watchme" {
 		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
 		if err != nil {
