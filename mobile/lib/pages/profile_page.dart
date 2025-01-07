@@ -3,8 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/services/api/profile_service.dart';
+import 'package:my_area_flutter/widgets/auth_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
+import 'package:my_area_flutter/services/api/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
   final Future<UserInfoBody> userInfo;
@@ -29,6 +31,27 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isEditing = false;
 
   late UserInfoBody userInfo;
+
+  void _performOAuth(String service) async {
+    final authService = AuthService.instance;
+    final success = await authService.connectOAuthService(context, service);
+
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+        Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
+      context.go(RouteNames.home);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Login failed. Please double-check your password.',
+            style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
 
   @override
   void initState() {
@@ -87,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final List<Map<String, dynamic>> services = [
     {"name": "Github", "icon": FontAwesomeIcons.github},
     {"name": "Google", "icon": FontAwesomeIcons.google},
-    {"name": "Twitter", "icon": FontAwesomeIcons.twitter},
+    {"name": "Spotify", "icon": FontAwesomeIcons.spotify},
     {"name": "Discord", "icon": FontAwesomeIcons.discord},
   ];
 
@@ -106,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildHeader(),
           _buildDivider(),
           _buildMainContent(),
-          const SizedBox(height: 40),
+          _buildLogoutButton()
         ],
       )),
     );
@@ -488,13 +511,27 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 32,
             child: ElevatedButton(
               onPressed: () {
-                print('Service clicked: ${service['name']}');
+                _performOAuth(service['name'].toString().toLowerCase());
               },
               child: const Text('Connect'),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return AuthButton(
+      text: 'Logout',
+      onPressed: () async {
+        final authService = AuthService.instance;
+        await authService.logout();
+
+        if (context.mounted && mounted) {
+          context.go(RouteNames.login);
+        }
+      }
     );
   }
 }

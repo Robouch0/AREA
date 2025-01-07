@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
-import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
@@ -42,9 +41,11 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
         return value;
       case IngredientType.string:
         return value;
+      case IngredientType.date:
+        return value.toString();
     }
   }
-
+//
   void _handleIngredientChange(bool isAction, String key, String value, Ingredient ingredient) {
     final convertedValue = convertIngredientValue(value, ingredient);
     setState(() {

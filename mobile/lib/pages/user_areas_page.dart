@@ -1,8 +1,10 @@
 // lib/pages/user_areas_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
+import 'package:my_area_flutter/services/api/area_service.dart';
 
 class UserAreasPage extends StatefulWidget {
   final Future<List<UserAreaData>> userAreas;
@@ -22,6 +24,10 @@ class _UserAreasPageState extends State<UserAreasPage> {
   void initState() {
     super.initState();
     _loadAreas();
+  }
+
+  void _updateAreaActivation(int areaId, bool newValue) async {
+    await AreaService.instance.updateAreaActivation(areaId, newValue);
   }
 
   Future<void> _loadAreas() async {
@@ -90,7 +96,10 @@ class _UserAreasPageState extends State<UserAreasPage> {
             ...areas.map(
               (area) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: AreaTile(area: area),
+                child: AreaTile(
+                  area: area,
+                  onActivationChanged: (newValue) => _updateAreaActivation(area.id, newValue)
+                ),
               )
             ),
         ],
@@ -116,10 +125,45 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-class AreaTile extends StatelessWidget {
+class AreaTile extends StatefulWidget {
   final UserAreaData area;
+  final Function(bool) onActivationChanged;
 
-  const AreaTile({super.key, required this.area});
+  const AreaTile({super.key, required this.area, required this.onActivationChanged});
+
+  @override
+  State<AreaTile> createState() => _AreaTileState();
+}
+
+class _AreaTileState extends State<AreaTile> {
+  late bool isActivated;
+
+  @override
+  void initState() {
+    super.initState();
+    isActivated = widget.area.activated;
+  }
+
+  void _handleActivationChange(bool newValue) async {
+    setState(() {
+      isActivated = newValue;
+    });
+
+    try {
+      await widget.onActivationChanged(newValue);
+    } catch (e) {
+      setState(() {
+        isActivated = !newValue;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Cannot update area.', style: TextStyle(fontWeight: FontWeight.w800)),
+          backgroundColor: Colors.red,
+        ));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,14 +174,15 @@ class AreaTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
-                    '${area.action.name} → ${area.reactions.length > 1
-                      ? '${area.reactions.length} reactions'
-                      : area.reactions[0].name}',
+                    '${widget.area.action.name} → ${widget.area.reactions.length > 1
+                        ? '${widget.area.reactions.length} reactions'
+                        : widget.area.reactions[0].name}',
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold
+                        fontSize: 14, fontWeight: FontWeight.bold
                     ),
                   ),
                 ),
@@ -145,11 +190,18 @@ class AreaTile extends StatelessWidget {
                   icon: const Icon(Icons.delete_outline),
                   onPressed: () => _showDeleteDialog(context),
                 ),
+                Transform.scale(
+                  scale: 0.8,
+                  child: Switch.adaptive(
+                    value: isActivated,
+                    onChanged: _handleActivationChange,
+                  ),
+                ),
               ],
             ),
-            ServiceInfo(service: area.action, isAction: true),
-            ...area.reactions.map(
-                (reaction) => ServiceInfo(service: reaction, isAction: false)),
+            ServiceInfo(service: widget.area.action, isAction: true),
+            ...widget.area.reactions.map(
+                    (reaction) => ServiceInfo(service: reaction, isAction: false)),
           ],
         ),
       ),
