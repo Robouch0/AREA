@@ -1,0 +1,78 @@
+//
+// EPITECH PROJECT, 2024
+// AREA
+// File description:
+// trelloClientReaction
+//
+
+package asana_client
+
+import (
+	IServ "area/gRPC/api/serviceInterface"
+	gRPCService "area/protogen/gRPC/proto"
+	grpcutils "area/utils/grpcUtils"
+	"encoding/json"
+)
+
+func (asana *AsanaClient) createProject(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	var createReq gRPCService.CreateProjectReq
+	err = json.Unmarshal(jsonString, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = asana.cc.CreateProject(ctx, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Project created"}, nil
+}
+
+func (asana *AsanaClient) createSection(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	var createReq gRPCService.CreateSectionReq
+	err = json.Unmarshal(jsonString, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = asana.cc.CreateSection(ctx, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Section created"}, nil
+}
+
+func (asana *AsanaClient) createTask(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+	jsonString, err := json.Marshal(ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	var createReq gRPCService.CreateTaskReq
+	err = json.Unmarshal(jsonString, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = asana.cc.CreateTask(ctx, &createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IServ.ReactionResponseStatus{Description: "Task created"}, nil
+}
