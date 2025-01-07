@@ -1,5 +1,5 @@
 // lib/api/types/area_body.dart
-enum IngredientType { string, int, bool, time, float }
+enum IngredientType { string, int, bool, time, float, date }
 
 class Ingredient {
   final IngredientType type;
@@ -36,10 +36,11 @@ class AreaServiceData {
   });
 
   factory AreaServiceData.fromJson(Map<String, dynamic> json) {
+    var microservicesList = json['microservices'] as List;
     return AreaServiceData(
-      name: json['name'],
-      refName: json['ref_name'],
-      microservices: (json['microservices'] as List)
+      name: json['name'] as String,
+      refName: json['ref_name'] as String,
+      microservices: microservicesList
           .map((m) => MicroServiceBody.fromJson(m))
           .toList(),
     );
@@ -60,20 +61,25 @@ class MicroServiceBody {
   });
 
   factory MicroServiceBody.fromJson(Map<String, dynamic> json) {
+    Map<String, Ingredient> ingredientsMap = {};
+    if (json['ingredients'] != null) {
+      final ingredients = json['ingredients'] as Map<String, dynamic>;
+      ingredientsMap = ingredients.map(
+            (key, value) => MapEntry(key, Ingredient.fromJson(value as Map<String, dynamic>)),
+      );
+    }
+
     return MicroServiceBody(
-      name: json['name'],
-      refName: json['ref_name'],
-      type: json['type'],
-      ingredients: (json['ingredients'] as Map<String, dynamic>).map(
-          (key, value) => MapEntry(key, Ingredient.fromJson(value as Map<String, dynamic>)
-        ),
-      ),
+      name: json['name'] as String,
+      refName: json['ref_name'] as String,
+      type: json['type'] as String,
+      ingredients: ingredientsMap,
     );
   }
 }
 
 IngredientType _stringToIngredientType(String value) {
-  switch (value) {
+  switch (value.toLowerCase()) {
     case 'string':
       return IngredientType.string;
     case 'int':
@@ -84,6 +90,8 @@ IngredientType _stringToIngredientType(String value) {
       return IngredientType.time;
     case 'float':
       return IngredientType.float;
+    case 'date':
+      return IngredientType.date;
     default:
       throw Exception('Unknown ingredient type: $value');
   }
@@ -93,20 +101,23 @@ class UserAreaData {
   final int id;
   final AreaServiceData action;
   final List<AreaServiceData> reactions;
+  final bool activated;
 
   UserAreaData({
     required this.id,
     required this.action,
     required this.reactions,
+    required this.activated,
   });
 
   factory UserAreaData.fromJson(Map<String, dynamic> json) {
     return UserAreaData(
-      id: json['ID'],
-      action: AreaServiceData.fromJson(json['Action']),
-      reactions: (json['Reactions'] as List)
-          .map((r) => AreaServiceData.fromJson(r))
+      id: json['id'] as int,
+      action: AreaServiceData.fromJson(json['action'] as Map<String, dynamic>),
+      reactions: (json['reactions'] as List)
+          .map((r) => AreaServiceData.fromJson(r as Map<String, dynamic>))
           .toList(),
+      activated: json['activated'] as bool,
     );
   }
 }

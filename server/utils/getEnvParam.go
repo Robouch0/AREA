@@ -21,7 +21,7 @@ func GetEnvParameter(key string) (string, error) {
 	}
 	tok := viper.Get(key)
 	if tok == nil {
-		return "", errors.New("No such environment variable")
+		return "", errors.New("no such environment variable")
 	}
 	return tok.(string), nil
 }

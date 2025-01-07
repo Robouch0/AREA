@@ -98,13 +98,13 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					},
 				},
 			},
-			{
-				Name:    "Add a song to a playlist",
-				RefName: "addSongToPlaylist",
-				Type:    "reaction",
-
-				Ingredients: map[string]IServ.IngredientDescriptor{},
-			},
+			//{
+			//	Name:    "Add a song to a playlist",
+			//	RefName: "addSongToPlaylist",
+			//	Type:    "reaction",
+			//
+			//	Ingredients: map[string]IServ.IngredientDescriptor{},
+			//},
 		},
 	}
 	return status, nil

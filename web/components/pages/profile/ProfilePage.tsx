@@ -16,7 +16,7 @@ import {useToast} from "@/hooks/use-toast";
 
 
 
-export default function ProfilePage({email, first_name, last_name, password, providers}: userInfo) {
+export default function ProfilePage({id, email, first_name, last_name, password, providers}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
     const [firstName, setFirstName] = useState(first_name);
     const [lastName, setLastName] = useState(last_name);
@@ -29,11 +29,15 @@ export default function ProfilePage({email, first_name, last_name, password, pro
         "google",
         "discord",
         "spotify",
+        "gitlab",
+        "asana",
+        "miro",
     ]
 
     function handleDisconnectProvider(provider: string) {
         unlinkOauthProvider(provider);
     }
+
     function handleDataUpdate() {
         updateUserInfos(firstName, lastName, passw).then(() => {
         toast({
@@ -54,6 +58,16 @@ export default function ProfilePage({email, first_name, last_name, password, pro
 
     const reloadPage = () => {
         window.location.reload()
+    }
+
+    if (id == -1) {
+        toast({
+            title: "The area server is down",
+            description: "Cannot get your profile datas for the moment",
+            variant: 'destructive',
+            duration: 2500,
+        })
+        return <> </>;
     }
 
     return (

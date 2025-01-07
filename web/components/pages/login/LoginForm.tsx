@@ -130,23 +130,23 @@ function LoginForm() {
                             </div>
                             <div className="max-w-md w-full space-y-4">
 
-                                <OauthButton
-                                    arial-label="Asana"
-                                    service="asana"
-                                    login={true}
-                                    textButton="Continuer avec Asana"
-                                    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-orange-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaGoogle className="w-12 h-12"/>}
-                                />
+                                {/*<OauthButton*/}
+                                {/*    arial-label="Asana"*/}
+                                {/*    service="asana"*/}
+                                {/*    login={true}*/}
+                                {/*    textButton="Continuer avec Asana"*/}
+                                {/*    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-orange-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"*/}
+                                {/*    ServiceIcon={<FaGoogle className="w-12 h-12"/>}*/}
+                                {/*/>*/}
 
-                                {/* {<OauthButton
-                                    arial-label="Hugging Face"
-                                    service="hf"
+                                {<OauthButton
+                                    arial-label="Google"
+                                    service="google"
                                     login={true}
-                                    textButton={"Continuer avec Hugging Face"}
-                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-green-500 hover:bg-green-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
-                                    ServiceIcon={<FaSpotify />}
-                                />} */}
+                                    textButton={"Continuer avec Google"}
+                                    className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
+                                    ServiceIcon={<FaGoogle />}
+                                />}
 
                                 <OauthButton
                                     arial-label="Discord"
