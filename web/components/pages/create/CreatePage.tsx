@@ -227,6 +227,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
         Object.entries(microReaction.ingredients).forEach(([key, type]): void => {
             payload.reaction.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type)
         })
+        console.log(payload)
         create(payload).catch(error => { console.log(error) });
     };
 
