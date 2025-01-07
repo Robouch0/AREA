@@ -29,6 +29,9 @@ export default function ProfilePage({email, first_name, last_name, password, pro
         "google",
         "discord",
         "spotify",
+        "gitlab",
+        "asana",
+        "miro",
     ]
 
     function handleDisconnectProvider(provider: string) {
