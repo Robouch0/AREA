@@ -17,7 +17,7 @@ type Gitlab struct {
 	UserID    uint `bun:"user_id" json:"user_id"`
 	Activated bool `bun:"activated" json:"activated,omitempty"`
 
-	RepoId string `bun:"repo_owner" json:"owner"` /* Name of the owner of the repository */
+	RepoID string `bun:"repo_owner" json:"repo_id"` /* Name of the owner of the repository */
 
 	RepoAction string `bun:"repo_action" json:"action"` /* Action to track in the event json on the webhook payload */
 }

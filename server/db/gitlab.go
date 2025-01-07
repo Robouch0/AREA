@@ -22,7 +22,7 @@ func InitGitlabDb() (*GitlabDB, error) {
 	db := initDB()
 
 	_, err := db.NewCreateTable().
-		Model((*models.Github)(nil)).
+		Model((*models.Gitlab)(nil)).
 		IfNotExists().
 		Exec(context.Background())
 
