@@ -17,6 +17,8 @@ import (
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -47,6 +49,18 @@ func GetByID[T any](Db bun.IDB, ID uint) (*T, error) {
 	return allDatas, nil
 }
 
+func GetByActionID[T any](Db bun.IDB, action_id uint) (*T, error) {
+	allDatas := new(T)
+	err := Db.NewSelect().
+		Model(allDatas).
+		Where("action_id = ?", action_id).
+		Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return allDatas, nil
+}
+
 func SetActivateByActionID[T any](Db bun.IDB, activated bool, userID, actionID uint) (*T, error) {
 	data := new(T)
 	_, err := Db.NewUpdate().
@@ -57,6 +71,11 @@ func SetActivateByActionID[T any](Db bun.IDB, activated bool, userID, actionID u
 		Exec(context.Background())
 	if err != nil {
 		return nil, err
+	}
+	data, err = GetByActionID[T](Db, actionID)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Errorf(codes.Internal, "Could not set activated for time action")
 	}
 	return data, nil
 }
