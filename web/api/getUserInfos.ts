@@ -12,8 +12,6 @@ export interface userInfo {
     password: string;
     providers: string[];
 }
-
-
 export async function getUserInfo(): Promise<userInfo> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
