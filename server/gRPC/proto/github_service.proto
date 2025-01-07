@@ -5,19 +5,35 @@ package github;
 option go_package = "github.com/area/grpc-go/service";
 
 service GithubService {
+  // Update repository infos
   rpc UpdateRepository(UpdateRepoInfos) returns(UpdateRepoInfos) {}
 
+  // Update file in repository
   rpc UpdateFile(UpdateRepoFile) returns(UpdateRepoFile) {}
 
+  // Delete file in repository
   rpc DeleteFile(DeleteRepoFile) returns(DeleteRepoFile) {}
 
+  /* Webhooks */
+
+  // Create a push to repository webhook
   rpc CreatePushWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 
+  // Create a delete branch repository webhook
+  rpc CreateDeleteBranchWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a fork repository webhook
+  rpc CreateForkRepositoryWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Trigger of github webhook
   rpc TriggerWebHook (GithubWebHookTriggerReq)
     returns (GithubWebHookTriggerReq) {}
 
+  // Deactivate a webhook github
   rpc SetActivateAction(SetActivateGithub) returns (SetActivateGithub) {}
 }
+
+///////
 
 message GitWebHookInfo {
   // Id of the action that will be sent while creating the webhook
@@ -30,6 +46,7 @@ message GitWebHookInfo {
   string repo = 3;
 }
 
+///////
 
 message UpdateRepoInfos {
   string owner = 1; /* Path parameter */
@@ -39,6 +56,8 @@ message UpdateRepoInfos {
   string description = 5;
   // There is more to add if needed
 }
+
+///////
 
 message UpdateRepoFile {
   string owner = 1; /* Path parameter */
@@ -51,6 +70,8 @@ message UpdateRepoFile {
   // There is more to add if needed
 }
 
+///////
+
 message DeleteRepoFile {
   string owner = 1;
   string repo = 2;
@@ -61,10 +82,15 @@ message DeleteRepoFile {
   // There is more to add if needed
 }
 
+///////
+
 message GithubWebHookTriggerReq {
   uint32 action_id = 1;
   bytes payload = 2;
+  bytes header = 3;
 }
+
+///////
 
 message SetActivateGithub {
   uint32 action_id = 1;

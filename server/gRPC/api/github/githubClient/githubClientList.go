@@ -38,6 +38,46 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				},
 			},
 			{
+				Name:    "Trigger every time a branch or a tag is deleted",
+				RefName: "triggerDelete",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"owner": {
+						Value:       "",
+						Type:        "string",
+						Description: "Owner of the repository",
+						Required:    true,
+					},
+					"repo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the repository",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Trigger every time the repository is forked",
+				RefName: "triggerFork",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"owner": {
+						Value:       "",
+						Type:        "string",
+						Description: "Owner of the repository",
+						Required:    true,
+					},
+					"repo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the repository",
+						Required:    true,
+					},
+				},
+			},
+			{
 				Name:    "Update Repository Informations",
 				RefName: "updateRepo",
 				Type:    "reaction",
