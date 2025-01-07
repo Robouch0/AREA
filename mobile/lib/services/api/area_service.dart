@@ -5,6 +5,7 @@ import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
+import 'package:my_area_flutter/api/types/area_activation_body.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
 
 class AreaService {
@@ -24,7 +25,7 @@ class AreaService {
       }
 
       final response = await http.get(
-        Uri.parse('$_apiUrl/create/list'),
+        Uri.parse('$_apiUrl/areas/create/list'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -84,7 +85,7 @@ class AreaService {
       }
 
       final response = await http.post(
-        Uri.parse('$_apiUrl/create/${newArea.action.service}'),
+        Uri.parse('$_apiUrl/areas/create/${newArea.action.service}'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -95,10 +96,31 @@ class AreaService {
       if (response.statusCode == 200) {
         return true;
       }
+      developer.log('Error when creating area: ${response.statusCode}');
       return false;
     } catch (e) {
       developer.log('Failed to create area: $e', name: 'my_network_log');
       return false;
+    }
+  }
+
+  Future<void> updateAreaActivation(int areaId, bool activated) async {
+    final areaActivation = AreaActivationBody(areaId: areaId, activated: activated);
+
+    try {
+      final token = _authStorage.getToken();
+
+      final response = await http.put(
+        Uri.parse('$_apiUrl/areas/activate'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-type': 'application/json',
+        },
+        body: json.encode(areaActivation.toJson())
+      );
+    } catch (e) {
+      developer.log('Failed to update area activation: $e');
+      rethrow;
     }
   }
 }
