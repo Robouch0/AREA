@@ -27,7 +27,7 @@ import (
 
 type GitlabService struct {
 	tokenDb      *db.TokenDb
-	
+	gitlabDb     *db.GitlabDB
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedGitlabServiceServer

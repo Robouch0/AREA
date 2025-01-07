@@ -8,7 +8,7 @@
 package gitlab_server
 
 import (
-	githubtypes "area/gRPC/api/github/githubTypes"
+	gitlabtypes "area/gRPC/api/gitlab/gitlabTypes"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"area/utils"
@@ -17,6 +17,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"context"
@@ -26,40 +27,40 @@ import (
 )
 
 const (
-	pushWebHookURL = "https://api.github.com/repos/%v/%v/hooks"
-	updateWebHookURL = "https://api.github.com/repos/%v/%v/hooks/%v"
+	pushWebHookURL   = "https://www.gitlab.com/api/v4/projects/%v/hooks"
+	updateWebHookURL = "https://www.gitlab.com/api/v4/projects/%v/hooks/%v"
 )
-
 
 func (git *GitlabService) storeNewWebHook(
 	tokenInfo *models.Token,
-	req *gRPCService.GitWebHookInfo,
+	req *gRPCService.GitlabWebHookInfo,
 	repoAction string,
 ) error {
-	_, err := git.GithubDb.StoreNewGithub(&models.Github{
+	_, err := git.gitlabDb.StoreNewGithub(&models.Gitlab{
 		ActionID:   uint(req.ActionId),
 		UserID:     uint(tokenInfo.UserID),
 		Activated:  true,
-		RepoOwner:  req.Owner,
-		RepoName:   req.Repo,
+		RepoId:     req.Id,
 		RepoAction: repoAction,
 	})
 	return err
 }
 
-func (git *GitlabService) createWebHook(tokenInfo *models.Token, webhookReq *githubtypes.GitWebHookRequest, owner string, repo string) error {
+func (git *GitlabService) createWebHook(tokenInfo *models.Token, webhookReq *gitlabtypes.GitlabWebHookRequest, project_id string) error {
 	b, err := json.Marshal(webhookReq)
 	if err != nil {
 		return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
 	}
 
-	webHookURL := fmt.Sprintf(pushWebHookURL, owner, repo)
+	webHookURL := fmt.Sprintf(pushWebHookURL, project_id)
 	postRequest, err := http.NewRequest("POST", webHookURL, bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
-	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
-	postRequest.Header.Add("Accept", "application/vnd.github+json")
+	postRequest.Header.Set("Authorization", "Bearer " + tokenInfo.AccessToken)
+	q := postRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	postRequest.URL.RawQuery = q.Encode()
 	_, err = http_utils.SendHttpRequest(postRequest, 201)
 	if err != nil {
 		return err
@@ -67,11 +68,11 @@ func (git *GitlabService) createWebHook(tokenInfo *models.Token, webhookReq *git
 	return nil
 }
 
-func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCService.GitWebHookInfo) (*gRPCService.GitWebHookInfo, error) {
-	if req.Owner == "" || req.Repo == "" {
+func (git *GitlabService) CreatePushWebhook(ctx context.Context, req *gRPCService.GitlabWebHookInfo) (*gRPCService.GitlabWebHookInfo, error) {
+	if req.Id == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
 	}
-	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GithubService", "github")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
 	if err != nil {
 		return nil, err
 	}
@@ -80,10 +81,10 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 		return nil, err
 	}
 
-	err = git.createWebHook(tokenInfo, &githubtypes.GitWebHookRequest{
-		Event:  []string{"push"},
-		Config: githubtypes.GithubConfig{Url: fmt.Sprintf(envWebhookUrl, "github", "push", req.ActionId), Content: "json"},
-	}, req.Owner, req.Repo)
+	err = git.createWebHook(tokenInfo, &gitlabtypes.GitlabWebHookRequest{
+		Url: fmt.Sprintf(envWebhookUrl, "github", "push", req.ActionId),
+		PushEvent: true,
+	}, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -93,52 +94,21 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	return req, nil
 }
 
-func (git *GithubService) UpdatePushWebhook(ctx context.Context, action *models.Github, activated bool) (error) {
-	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GithubService", "github")
-	if err != nil {
-		return err
-	}
-	envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
-	if err != nil {
-		return err
-	}
-
-	b, err := json.Marshal(&githubtypes.GitWebHookRequest{
-		Event:  []string{action.RepoAction},
-		Active: activated,
-		Config: githubtypes.GithubConfig{Url: fmt.Sprintf(envWebhookUrl, "github", action.RepoAction, action.ActionID), Content: "json"}})
-	if err != nil {
-		return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
-	}
-
-	webHookURL := fmt.Sprintf(updateWebHookURL, action.RepoOwner, action.RepoName)
-	postRequest, err := http.NewRequest("PATCH", webHookURL, bytes.NewBuffer(b))
-	if err != nil {
-		return err
-	}
-	postRequest.Header.Set("Authorization", "Bearer " + tokenInfo.AccessToken)
-	postRequest.Header.Add("Accept", "application/vnd.github+json")
-	_, err = http_utils.SendHttpRequest(postRequest, 200)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.GithubWebHookTriggerReq) (*gRPCService.GithubWebHookTriggerReq, error) {
-	act, err := git.GithubDb.GetGithubByActionID(uint(req.ActionId))
+func (git *GitlabService) TriggerWebHook(ctx context.Context, req *gRPCService.GitlabWebHookTriggerReq) (*gRPCService.GitlabWebHookTriggerReq, error) {
+	act, err := git.gitlabDb.GetGithubByActionID(uint(req.ActionId))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "No such action with id %d", req.ActionId)
 	}
 
-	var gitpayload githubtypes.GithubEvents
-	if json.Unmarshal(req.Payload, &gitpayload) != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
-	}
-	if len(gitpayload.Hook.Events) == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "No events in github webhook payload")
-	}
-	if gitpayload.Hook.Events[0] == act.RepoAction {
+	log.Println(req.Payload)
+	// var gitpayload GitlabService.GithubEvents
+	// if json.Unmarshal(req.Payload, &gitpayload) != nil {
+	// 	return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
+	// }
+	// if len(gitpayload.Hook.Events) == 0 {
+	// 	return nil, status.Errorf(codes.InvalidArgument, "No events in github webhook payload")
+	// }
+	// if gitpayload.Hook.Events[0] == act.RepoAction {
 		reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
 		_, err = git.reactService.LaunchReaction(
 			reactCtx,
@@ -147,30 +117,6 @@ func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
 		}
-	}
-	return req, nil
-}
-
-func (github *GithubService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateGithub) (*gRPCService.SetActivateGithub, error) {
-	userID, err := grpcutils.GetUserIdFromContext(ctx, "github")
-	if err != nil {
-		return nil, err
-	}
-	action, err := github.GithubDb.GetGithubByActionID(uint(req.ActionId))
-	if err != nil {
-		return nil, err
-	}
-	if !req.Activated {
-		err = github.UpdatePushWebhook(ctx, action, false)
-	} else {
-		err = github.UpdatePushWebhook(ctx, action, true)
-	}
-	if err != nil {
-		return nil, err
-	}
-	_, err = github.GithubDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
-	if err != nil {
-		return nil, err
-	}
+	// }
 	return req, nil
 }
