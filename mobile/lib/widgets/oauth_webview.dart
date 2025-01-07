@@ -51,6 +51,7 @@ class _OAuthWebViewPageState extends State<OAuthWebViewPage> {
       if (!mounted) return;
 
       final controller = WebViewController()
+        ..setUserAgent('Mozilla/5.0 (Linux; Android 10; Redmi Note 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.88 Mobile Safari/537.36')
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setNavigationDelegate(
           NavigationDelegate(
@@ -113,6 +114,14 @@ class _OAuthWebViewPageState extends State<OAuthWebViewPage> {
       developer.log('Error handling redirect: $e');
       if (mounted) Navigator.of(context).pop(null);
     }
+  }
+
+  @override
+  void dispose() {
+    if (_controller != null) {
+      _controller?.clearCache();
+    }
+    super.dispose();
   }
 
   @override

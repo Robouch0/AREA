@@ -30,7 +30,7 @@ class ProfileService {
       }
 
       final response = await http.put(
-        Uri.parse('$_apiUrl/users/$userId'),
+        Uri.parse('$_apiUrl/users/me'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-type': 'application/json',
