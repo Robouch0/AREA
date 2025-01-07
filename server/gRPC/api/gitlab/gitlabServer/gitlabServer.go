@@ -39,7 +39,9 @@ func NewGitlabService() (*GitlabService, error) {
 		return nil, err
 	}
 
-	return &GitlabService{tokenDb: tokenDb, reactService: nil}, err
+	gitlabDb, err := db.InitGitlabDb()
+
+	return &GitlabService{tokenDb: tokenDb, gitlabDb: gitlabDb, reactService: nil}, err
 }
 
 func (git *GitlabService) InitReactClient(conn *grpc.ClientConn) {

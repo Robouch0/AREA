@@ -40,7 +40,7 @@ func (git *GitlabService) storeNewWebHook(
 		ActionID:   uint(req.ActionId),
 		UserID:     uint(tokenInfo.UserID),
 		Activated:  true,
-		RepoId:     req.Id,
+		RepoID:     req.Id,
 		RepoAction: repoAction,
 	})
 	return err
@@ -57,7 +57,7 @@ func (git *GitlabService) createWebHook(tokenInfo *models.Token, webhookReq *git
 	if err != nil {
 		return err
 	}
-	postRequest.Header.Set("Authorization", "Bearer " + tokenInfo.AccessToken)
+	postRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
 	q := postRequest.URL.Query()
 	q.Set("access_token", tokenInfo.AccessToken)
 	postRequest.URL.RawQuery = q.Encode()
@@ -82,7 +82,7 @@ func (git *GitlabService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	}
 
 	err = git.createWebHook(tokenInfo, &gitlabtypes.GitlabWebHookRequest{
-		Url: fmt.Sprintf(envWebhookUrl, "github", "push", req.ActionId),
+		Url: fmt.Sprintf(envWebhookUrl, "gitlab", "push", req.ActionId),
 		PushEvent: true,
 	}, req.Id)
 	if err != nil {
@@ -100,6 +100,7 @@ func (git *GitlabService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 		return nil, status.Errorf(codes.InvalidArgument, "No such action with id %d", req.ActionId)
 	}
 
+	log.Println("i am priting the payload")
 	log.Println(req.Payload)
 	// var gitpayload GitlabService.GithubEvents
 	// if json.Unmarshal(req.Payload, &gitpayload) != nil {
