@@ -15,7 +15,11 @@ service GitlabService {
 
   rpc MarkAllItemAsDone(AllTodoLabItemDoneReq) returns(AllTodoLabItemDoneReq) {}
 
+  rpc CreatePushWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
   rpc SetActivateAction(SetActivateGitlab) returns (SetActivateGitlab) {}
+
+  rpc TriggerWebHook (GitlabWebHookTriggerReq) returns (GitlabWebHookTriggerReq) {}
 }
 
 message CreateLabRepoFileReq {
@@ -68,6 +72,19 @@ message AllTodoLabItemDoneReq {
 }
 
 message AllTodoLabItemDoneResp {
+}
+
+message GitlabWebHookInfo {
+  // Id of the action that will be sent while creating the webhook
+  int32 action_id = 1;
+
+  // Name of the owner of the repository
+  string id = 2;
+}
+
+message GitlabWebHookTriggerReq {
+  uint32 action_id = 1;
+  bytes payload = 2;
 }
 
 message SetActivateGitlab {
