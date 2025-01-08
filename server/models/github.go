@@ -19,6 +19,7 @@ const (
 	GFork           = "fork"
 	GCreate         = "create"
 	GIssue			= "issues"
+	GPullR 			= "pull_request"
 )
 
 const (

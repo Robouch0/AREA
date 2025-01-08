@@ -34,6 +34,12 @@ service GithubService {
   // Create a delete issue repository webhook
   rpc CreateDeleteIssueWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 
+  // Create a new pull request repository webhook
+  rpc CreateNewPRWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a delete pull request repository webhook
+  rpc CreateDeletePRWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
   // Trigger of github webhook
   rpc TriggerWebHook (GithubWebHookTriggerReq)
     returns (GithubWebHookTriggerReq) {}

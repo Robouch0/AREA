@@ -78,6 +78,46 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				},
 			},
 			{
+				Name:    "Trigger every time a pull request is opened",
+				RefName: "triggerPr",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"owner": {
+						Value:       "",
+						Type:        "string",
+						Description: "Owner of the repository",
+						Required:    true,
+					},
+					"repo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the repository",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Trigger every time a pull request is closed",
+				RefName: "triggerPrClose",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"owner": {
+						Value:       "",
+						Type:        "string",
+						Description: "Owner of the repository",
+						Required:    true,
+					},
+					"repo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the repository",
+						Required:    true,
+					},
+				},
+			},
+			{
 				Name:    "Trigger every time a branch or a tag is created",
 				RefName: "triggerCreate",
 				Type:    "action",
