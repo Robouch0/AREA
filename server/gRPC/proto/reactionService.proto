@@ -29,7 +29,7 @@ message Reaction {
 
 message ReactionRequest {
   Action action = 1;
-  Reaction reaction = 2;
+  repeated Reaction reactions = 2;
 }
 
 message ReactionResponse {

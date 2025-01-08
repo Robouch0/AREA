@@ -203,11 +203,11 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
                 microservice: microActionName,
                 ingredients: {}
             },
-            reaction: {
+            reactions: [{ // Here put all the reactions as an array
                 service: reactionServiceChosen?.ref_name,
                 microservice: microReactionName,
                 ingredients: {}
-            }
+            }]
         }
 
         const microAction: AreaMicroservices | undefined = actionServiceChosen.microservices.find((ms: AreaMicroservices): boolean => ms.ref_name === microActionName)
@@ -225,7 +225,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
 
         console.log("Micro reaction ing: ", microReaction.ingredients)
         Object.entries(microReaction.ingredients).forEach(([key, type]): void => {
-            payload.reaction.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type)
+            payload.reactions[0].ingredients[key] = convertIngredient(formData.get(key)?.toString(), type)
         })
         console.log(payload)
         create(payload).catch(error => { console.log(error) });
