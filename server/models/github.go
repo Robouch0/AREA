@@ -11,10 +11,18 @@ import "github.com/uptrace/bun"
 
 type GAction string
 
+type GType string
+
 const (
-	GCreate GAction = "push"
+	GPush   GAction = "push"
 	GDelete         = "delete"
 	GFork           = "fork"
+	GCreate         = "create"
+)
+
+const (
+	Gopen GType = "opened"
+	GEmpty 		= ""
 )
 
 type Github struct {
@@ -29,4 +37,5 @@ type Github struct {
 	RepoName  string `bun:"repo_name" json:"name"`   /* Name of the repository as it is named in github */
 
 	RepoAction GAction `bun:"repo_action" json:"action"` /* Action to track in the event json on the webhook payload */
+	ActionType GType   `bun:"action_type" json:"type"`
 }
