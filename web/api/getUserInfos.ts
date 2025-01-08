@@ -18,7 +18,7 @@ export async function getUserInfo(): Promise<userInfo> {
         const uid: string | undefined = cookiesObj.get("UID")?.value;
         const token: string | undefined = cookiesObj.get('token')?.value;
 
-        const response = await axiosInstance.get(`users/me`, {
+        const response = await axiosInstance.get(`user/me`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

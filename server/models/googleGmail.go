@@ -19,4 +19,5 @@ type Gmail struct {
 
 	HistoryID   string `bun:"history_id" json:"historyId"`
 	EmailAdress string `bun:"email_address" json:"emailAddress"`
+	FirstTime   bool   `bun:"first_time" json:"first_time,omitempty"`
 }
