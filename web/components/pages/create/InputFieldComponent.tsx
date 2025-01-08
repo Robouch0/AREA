@@ -10,13 +10,13 @@ export function InputFieldComponent({
     details,
     index,
     values,
-    setValues
+    setValuesAction
 }: {
     ingredient: string;
     details: Ingredient;
     index: number;
     values: string[];
-    setValues: React.Dispatch<React.SetStateAction<string[]>>;
+    setValuesAction: (values: []) => void;
 }) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedTime, setSelectedTime] = useState<Date | undefined>(new Date());
@@ -24,14 +24,14 @@ export function InputFieldComponent({
 
     useEffect(() => {
         if (details.type === "date" && selectedDate) {
-            setValues(prevValues => {
+            setValuesAction(prevValues => {
                 const newValues = [...prevValues];
                 newValues[index] = selectedDate.toISOString();
                 console.log(newValues[index])
                 return newValues;
             });
         }
-    }, [selectedDate, details.type, index, setValues])
+    }, [selectedDate, details.type, index, setValuesAction])
 
     const updateDate = useCallback((dateInput: Date) => {
         const date = new Date(selectedDate);
@@ -99,7 +99,7 @@ export function InputFieldComponent({
                     onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                         const newValues: string[] = [...values];
                         newValues[index] = e.target.value;
-                        setValues(newValues);
+                        setValuesAction(newValues);
                     }}
                     required
                 />

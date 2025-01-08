@@ -1,8 +1,9 @@
 "use client";
 import {ComboboxDemo} from "@/components/ui/utils/ComboboxDemo";
 import * as React from "react";
-import {renderIngredientsInput, renderMicroservices} from "@/components/pages/create/CreatePage";
+import {renderMicroservices} from "@/components/pages/create/RenderMicroServices";
 import {AreaMicroservices, AreaServices} from "@/api/types/areaStatus";
+import {renderIngredientsInput} from "@/components/pages/create/RenderInputFields";
 
 export default function MicroserviceCreateZone({
         services,
@@ -18,12 +19,12 @@ export default function MicroserviceCreateZone({
     }: {
         services: AreaServices[],
         name: string,
-        setNameAction: React.Dispatch<React.SetStateAction<string>>,
+        setNameAction: (name: string) => void;
         microServiceName: string,
         serviceChosen: AreaServices | undefined,
-        setServiceNameAction: React.Dispatch<React.SetStateAction<string>>,
+        setServiceNameAction: (name: string) => void,
         ingredientsValues: string[],
-        setIngredientValuesAction: React.Dispatch<React.SetStateAction<string[]>>,
+        setIngredientValuesAction: (values: []) => void,
         microServiceType: string,
         textColor: string
     }
@@ -35,7 +36,6 @@ export default function MicroserviceCreateZone({
             </div>
             <ComboboxDemo services={services} serviceName={name} setValueAction={setNameAction}/>
             {
-
                 microServiceName === "" && name !== "" && (
                     <div className={textColor}>
                         <h1 className="p-6 text-5xl">  Select your {microServiceType}</h1>
