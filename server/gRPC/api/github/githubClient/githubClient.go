@@ -49,6 +49,12 @@ func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 	(*git.ActionsLauncher)["triggerCreate"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
 		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateNewBranchWebhook)
 	}
+	(*git.ActionsLauncher)["triggerIssue"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateNewIssueWebhook)
+	}
+	(*git.ActionsLauncher)["triggerIssueClose"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateDeleteIssueWebhook)
+	}
 	return git
 }
 

@@ -18,10 +18,12 @@ const (
 	GDelete         = "delete"
 	GFork           = "fork"
 	GCreate         = "create"
+	GIssue			= "issues"
 )
 
 const (
 	Gopen GType = "opened"
+	GClosed 	= "closed"
 	GEmpty 		= ""
 )
 

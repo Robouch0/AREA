@@ -8,11 +8,11 @@
 package github
 
 import (
+	githubtypes "area/gRPC/api/github/githubTypes"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -29,8 +29,11 @@ func (git *GithubService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 	if json.Unmarshal(req.Header, &gitHeader) != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
 	}
-	log.Println(gitHeader)
-	if act.Activated && gitHeader.Get("X-GitHub-Event") == string(act.RepoAction) {
+	var gitpayload githubtypes.GithubWebHookResponse
+	if json.Unmarshal(req.Payload, &gitpayload) != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
+	}
+	if act.Activated && gitHeader.Get("X-GitHub-Event") == string(act.RepoAction) && gitpayload.Action == string(act.ActionType){
 		reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
 		_, err = git.reactService.LaunchReaction(
 			reactCtx,

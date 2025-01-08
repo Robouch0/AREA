@@ -28,6 +28,12 @@ service GithubService {
   // Create a new branch repository webhook
   rpc CreateNewBranchWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 
+  // Create a new issue repository webhook
+  rpc CreateNewIssueWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a delete issue repository webhook
+  rpc CreateDeleteIssueWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
   // Trigger of github webhook
   rpc TriggerWebHook (GithubWebHookTriggerReq)
     returns (GithubWebHookTriggerReq) {}
