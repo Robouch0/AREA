@@ -22,78 +22,20 @@ class CreateAreaPage extends StatefulWidget {
 
 class _CreateAreaPageState extends State<CreateAreaPage> {
   List<AreaServiceData>? services;
+  late List<AreaServiceData> actions;
+  late List<AreaServiceData> reactions;
+  late UserInfoBody userInfo;
+
   String actionName = '';
   String microActionName = '';
   String reactionName = '';
   String microReactionName = '';
+
   Map<String, dynamic> actionIngredients = {};
   Map<String, dynamic> reactionIngredients = {};
 
-  dynamic convertIngredientValue(String value, Ingredient ingredient) {
-    switch (ingredient.type) {
-      case IngredientType.int:
-        return int.tryParse(value) ?? 0;
-      case IngredientType.float:
-        return double.tryParse(value) ?? 0.0;
-      case IngredientType.bool:
-        return value.toLowerCase() == 'true';
-      case IngredientType.time:
-        return value;
-      case IngredientType.string:
-        return value;
-      case IngredientType.date:
-        return value.toString();
-    }
-  }
-//
-  void _handleIngredientChange(bool isAction, String key, String value, Ingredient ingredient) {
-    final convertedValue = convertIngredientValue(value, ingredient);
-    setState(() {
-      if (isAction) {
-        actionIngredients[key] = convertedValue;
-      } else {
-        reactionIngredients[key] = convertedValue;
-      }
-    });
-  }
-
-  void _handleSubmit() async {
-    final newArea = AreaCreateBody(
-      userId: userInfo.userId,
-      action: Service(
-        service: actionName,
-        microservice: microActionName,
-        ingredients: actionIngredients,
-      ),
-      reaction: Service(
-        service: reactionName,
-        microservice: microReactionName,
-        ingredients: reactionIngredients,
-      ),
-    );
-
-    final success = await AreaService.instance.createArea(newArea);
-    _displayScaffoldStatus(success);
-  }
-
-  void _displayScaffoldStatus(bool success) {
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-        Text('Area created successfully.', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: Colors.green,
-      ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Area creation failed.', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: Colors.red,
-      ));
-    }
-  }
-
-  late List<AreaServiceData> actions;
-  late List<AreaServiceData> reactions;
-  late UserInfoBody userInfo;
+  Map<String, TextEditingController> actionControllers = {};
+  Map<String, TextEditingController> reactionControllers = {};
 
   @override
   void initState() {
@@ -116,17 +58,122 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     }
   }
 
-  List<AreaServiceData> _filterAreaByType(List<AreaServiceData> services, String type) {
+  List<AreaServiceData> _filterAreaByType(
+      List<AreaServiceData> services, String type) {
     return services
-        .where((service) => service.microservices.any((micro) => micro.type == type))
+        .where((service) =>
+            service.microservices.any((micro) => micro.type == type))
         .map((service) => AreaServiceData(
-      name: service.name,
-      refName: service.refName,
-      microservices: service.microservices
-          .where((micro) => micro.type == type)
-          .toList(),
-    ))
+              name: service.name,
+              refName: service.refName,
+              microservices: service.microservices
+                  .where((micro) => micro.type == type)
+                  .toList(),
+            ))
         .toList();
+  }
+
+  @override
+  void dispose() {
+    actionControllers.forEach((_, controller) => controller.dispose());
+    reactionControllers.forEach((_, controller) => controller.dispose());
+    super.dispose();
+  }
+
+  void _initializeControllers(
+      bool isAction, Map<String, Ingredient> ingredients) {
+    final controllers = isAction ? actionControllers : reactionControllers;
+    final values = isAction ? actionIngredients : reactionIngredients;
+
+    controllers.forEach((_, controller) => controller.dispose());
+    controllers.clear();
+
+    ingredients.forEach((key, ingredient) {
+      final controller =
+          TextEditingController(text: ingredient.value?.toString() ?? '');
+      controllers[key] = controller;
+      values[key] = ingredient.value;
+    });
+  }
+
+  bool _validateIngredients(
+      Map<String, Ingredient> ingredients, Map<String, dynamic> values) {
+    return ingredients.entries.every((entry) {
+      final ingredient = entry.value;
+      if (ingredient.required) {
+        final value = values[entry.key];
+        return value != null && value.toString().isNotEmpty;
+      }
+      return true;
+    });
+  }
+
+  dynamic convertIngredientValue(String value, Ingredient ingredient) {
+    if (value.isEmpty) return null;
+
+    switch (ingredient.type) {
+      case IngredientType.int:
+        return int.tryParse(value) ?? ingredient.value;
+      case IngredientType.float:
+        return double.tryParse(value) ?? ingredient.value;
+      case IngredientType.bool:
+        return value.toLowerCase() == 'true';
+      case IngredientType.time:
+        return value;
+      case IngredientType.string:
+        return value;
+      case IngredientType.date:
+        return value;
+    }
+  }
+
+  void _handleIngredientChange(
+      bool isAction, String key, String value, Ingredient ingredient) {
+    final convertedValue = convertIngredientValue(value, ingredient);
+    setState(() {
+      if (isAction) {
+        actionIngredients[key] = convertedValue;
+      } else {
+        reactionIngredients[key] = convertedValue;
+      }
+    });
+  }
+
+  void _handleSubmit() async {
+    final newArea = AreaCreateBody(
+      userId: userInfo.userId,
+      action: Service(
+        service: actionName,
+        microservice: microActionName,
+        ingredients: actionIngredients,
+      ),
+      reactions: [
+        Service(
+          service: reactionName,
+          microservice: microReactionName,
+          ingredients: reactionIngredients,
+        ),
+      ],
+    );
+
+    final success = await AreaService.instance.createArea(newArea);
+    _displayScaffoldStatus(success);
+  }
+
+  void _displayScaffoldStatus(bool success) {
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Area created successfully.',
+            style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Area creation failed.',
+            style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   @override
@@ -173,52 +220,6 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     );
   }
 
-  Widget _buildMicroserviceSection(bool isAction) {
-    final selectedService = isAction ? actionName : reactionName;
-    final selectedMicro = isAction ? microActionName : microReactionName;
-    final services = isAction ? actions : reactions;
-
-    if (selectedService.isEmpty) return const SizedBox.shrink();
-
-    final service = services.firstWhere((s) => s.refName == selectedService);
-    final selectedMicroService = service.microservices
-        .firstWhere((m) => m.refName == selectedMicro, orElse: () => MicroServiceBody(
-      name: '',
-      refName: '',
-      type: '',
-      ingredients: {},
-    ));
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildMicroserviceGrid(
-          service: service,
-          selectedMicro: selectedMicro,
-          onMicroSelected: (value) {
-            setState(() {
-              if (isAction) {
-                microActionName = value;
-                actionIngredients.clear();
-              } else {
-                microReactionName = value;
-                reactionIngredients.clear();
-              }
-            });
-          },
-        ),
-        if (selectedMicro.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          _buildIngredientsForm(
-            ingredients: selectedMicroService.ingredients,
-            values: isAction ? actionIngredients : reactionIngredients,
-            isAction: isAction
-          ),
-        ],
-      ],
-    );
-  }
-
   Widget _buildActionSection() {
     return Container(
       decoration: BoxDecoration(
@@ -245,24 +246,14 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                 actionName = value;
                 microActionName = '';
                 actionIngredients.clear();
+                actionControllers
+                    .forEach((_, controller) => controller.dispose());
+                actionControllers.clear();
               });
             },
           ),
-          if (actionName.isNotEmpty)
-            _buildMicroserviceSection(true),
+          if (actionName.isNotEmpty) _buildMicroserviceSection(true),
         ],
-      ),
-    );
-  }
-
-  Widget _buildConnector() {
-    return Container(
-      height: 4,
-      width: 100,
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: Colors.grey,
-        borderRadius: BorderRadius.circular(2),
       ),
     );
   }
@@ -293,12 +284,28 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                 reactionName = value;
                 microReactionName = '';
                 reactionIngredients.clear();
+                reactionControllers
+                    .forEach((_, controller) => controller.dispose());
+                reactionControllers.clear();
               });
             },
           ),
-          if (reactionName.isNotEmpty)
-            _buildMicroserviceSection(false),
+          if (reactionName.isNotEmpty) _buildMicroserviceSection(false),
         ],
+      ),
+    );
+  }
+
+  Widget _buildConnector() {
+    return Center(
+      child: Container(
+        height: 4,
+        width: 100,
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.circular(2),
+        ),
       ),
     );
   }
@@ -338,6 +345,59 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           }
         },
       ),
+    );
+  }
+
+  Widget _buildMicroserviceSection(bool isAction) {
+    final selectedService = isAction ? actionName : reactionName;
+    final selectedMicro = isAction ? microActionName : microReactionName;
+    final services = isAction ? actions : reactions;
+
+    if (selectedService.isEmpty) return const SizedBox.shrink();
+
+    final service = services.firstWhere((s) => s.refName == selectedService);
+    final selectedMicroService =
+        service.microservices.firstWhere((m) => m.refName == selectedMicro,
+            orElse: () => MicroServiceBody(
+                  name: '',
+                  refName: '',
+                  type: '',
+                  ingredients: {},
+                ));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildMicroserviceGrid(
+          service: service,
+          selectedMicro: selectedMicro,
+          onMicroSelected: (value) {
+            if (isAction) {
+              setState(() {
+                microActionName = value;
+                actionIngredients.clear();
+              });
+            } else {
+              setState(() {
+                microReactionName = value;
+                reactionIngredients.clear();
+              });
+            }
+            final selectedService = services.firstWhere(
+                (s) => s.refName == (isAction ? actionName : reactionName));
+            final selectedMicroService = selectedService.microservices
+                .firstWhere((m) => m.refName == value);
+            _initializeControllers(isAction, selectedMicroService.ingredients);
+          },
+        ),
+        if (selectedMicro.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          _buildIngredientsForm(
+              ingredients: selectedMicroService.ingredients,
+              values: isAction ? actionIngredients : reactionIngredients,
+              isAction: isAction),
+        ],
+      ],
     );
   }
 
@@ -393,6 +453,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     required bool isAction,
   }) {
     if (ingredients.isEmpty) return const SizedBox.shrink();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -417,11 +478,17 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
             child: Column(
               children: ingredients.entries.map((entry) {
                 final ingredient = entry.value;
+                final controllers =
+                    isAction ? actionControllers : reactionControllers;
+                final controller = controllers[entry.key]!;
+
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: TextField(
+                    controller: controller,
                     decoration: InputDecoration(
-                      labelText: '${entry.key}${ingredient.required ? ' *' : ''}',
+                      labelText:
+                          '${entry.key}${ingredient.required ? ' *' : ''}',
                       hintText: ingredient.description,
                       labelStyle: const TextStyle(color: Colors.white70),
                       hintStyle: const TextStyle(color: Colors.white30),
@@ -434,8 +501,6 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) => _handleIngredientChange(
                         isAction, entry.key, value, ingredient),
-                    key: ValueKey(entry.key),
-                    controller: null,
                     onTapOutside: (event) => FocusScope.of(context).unfocus(),
                   ),
                 );
@@ -447,10 +512,25 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     );
   }
 
-  Widget _buildCreateButton() {
-    final bool isValid =
-        microActionName.isNotEmpty && microReactionName.isNotEmpty;
+  bool get isValid {
+    if (microActionName.isEmpty || microReactionName.isEmpty) return false;
 
+    final actionService = services!.firstWhere((s) => s.refName == actionName);
+    final reactionService =
+        services!.firstWhere((s) => s.refName == reactionName);
+
+    final actionMicroservice = actionService.microservices
+        .firstWhere((m) => m.refName == microActionName);
+    final reactionMicroservice = reactionService.microservices
+        .firstWhere((m) => m.refName == microReactionName);
+
+    return _validateIngredients(
+            actionMicroservice.ingredients, actionIngredients) &&
+        _validateIngredients(
+            reactionMicroservice.ingredients, reactionIngredients);
+  }
+
+  Widget _buildCreateButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ElevatedButton(
