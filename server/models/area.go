@@ -22,6 +22,6 @@ type Area struct {
 }
 
 type AreaScenario struct {
-	Action   Action   `json:"action"`
-	Reaction Reaction `json:"reaction"`
+	Action    Action     `json:"action"`
+	Reactions []Reaction `json:"reactions"`
 }

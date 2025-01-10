@@ -6,5 +6,5 @@ export interface Service {
 export interface AreaCreateBody {
     user_id: number,
     action: Service,
-    reaction: Service,
+    reactions: Service[],
 }

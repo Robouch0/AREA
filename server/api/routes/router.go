@@ -58,7 +58,7 @@ func InitHTTPServer() (*api.ApiGateway, error) {
 		r.Use(jwtauth.Authenticator(gateway.JwtTok))
 
 		r.Mount("/token/", TokenRoutes())
-		r.Mount("/users/", UserRoutes())
+		r.Mount("/user/", UserRoutes())
 		r.Mount("/areas/", AreaRoutes(gateway))
 		r.Get("/ping", controllers.PingRoute)
 	})

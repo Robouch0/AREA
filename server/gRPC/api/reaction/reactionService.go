@@ -118,10 +118,8 @@ func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCServi
 	}
 
 	var ingredientsAction map[string]any
-	var ingredientsReaction map[string]any
 	errIngAct := json.Unmarshal(req.Action.Ingredients, &ingredientsAction)
-	errIngReact := json.Unmarshal(req.Reaction.Ingredients, &ingredientsReaction)
-	if err = cmp.Or(errIngAct, errIngReact); err != nil {
+	if errIngAct != nil {
 		return nil, err
 	}
 
@@ -137,16 +135,27 @@ func (react *ReactionService) RegisterAction(ctx context.Context, req *gRPCServi
 		return nil, err
 	}
 
-	_, err = react.ReactionDB.InsertNewReaction(
-		&models.Reaction{
-			Service:      req.Reaction.Service,
-			Microservice: req.Reaction.Microservice,
-			Ingredients:  ingredientsReaction,
-		},
-		newArea.ID,
-	)
-	if err != nil {
-		return nil, err
+	for _, reaction := range req.Reactions {
+		var ingredientsReaction map[string]any
+
+		errIngReact := json.Unmarshal(reaction.Ingredients, &ingredientsReaction)
+		if errIngReact != nil {
+			log.Println(errIngReact)
+			return nil, status.Errorf(codes.InvalidArgument, "Invalid ingredient given to reaction")
+		}
+
+		_, err := react.ReactionDB.InsertNewReaction(
+			&models.Reaction{
+				Service:      reaction.Service,
+				Microservice: reaction.Microservice,
+				Ingredients:  ingredientsReaction,
+			},
+			newArea.ID,
+		)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
 	}
 	return &gRPCService.ReactionResponse{Description: "Done", ActionId: int64(act.ID)}, nil
 }

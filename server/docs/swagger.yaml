@@ -19,6 +19,13 @@ definitions:
           $ref: '#/definitions/serviceinterface.ServiceStatus'
         type: array
     type: object
+  controllers.AboutInfos:
+    properties:
+      client:
+        $ref: '#/definitions/controllers.clientInfos'
+      server:
+        $ref: '#/definitions/controllers.serverInfos'
+    type: object
   controllers.TokenCreateRequest:
     properties:
       provider:
@@ -48,12 +55,46 @@ definitions:
       password:
         type: string
     type: object
+  controllers.clientInfos:
+    properties:
+      host:
+        type: string
+    type: object
   controllers.credentials:
     properties:
       email:
         type: string
       password:
         type: string
+    type: object
+  controllers.microservice:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  controllers.serverInfos:
+    properties:
+      current_time:
+        type: integer
+      services:
+        items:
+          $ref: '#/definitions/controllers.serverService'
+        type: array
+    type: object
+  controllers.serverService:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/controllers.microservice'
+        type: array
+      name:
+        type: string
+      reactions:
+        items:
+          $ref: '#/definitions/controllers.microservice'
+        type: array
     type: object
   controllers.userSignUp:
     properties:
@@ -141,6 +182,7 @@ definitions:
         description: Reference Name of the microservice as it is named in the server
         type: string
       type:
+        description: Type of service action or reaction
         type: string
     type: object
   serviceinterface.ServiceStatus:
@@ -178,10 +220,14 @@ paths:
       description: json giving the list of handled action-reaction services
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.AboutInfos'
       summary: List of handled services
       tags:
-      - Utils
+      - About
   /area/activate:
     put:
       consumes:
@@ -426,31 +472,6 @@ paths:
       tags:
       - Account
   /token:
-    get:
-      consumes:
-      - application/json
-      description: Get all the tokens of the current logged user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/controllers.TokenInformations'
-            type: array
-        "400":
-          description: Bad Request
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Get all the tokens from a user
-      tags:
-      - Token
-  /token/:
     delete:
       consumes:
       - application/json
@@ -477,6 +498,59 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Delete a token
+      tags:
+      - Token
+    get:
+      consumes:
+      - application/json
+      description: Get all the tokens of the current logged user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.TokenInformations'
+            type: array
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all the tokens from a user
+      tags:
+      - Token
+    post:
+      consumes:
+      - application/json
+      description: Create a token from a user_id and a provider
+      parameters:
+      - description: Token creation request informations
+        in: body
+        name: tokenCreateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.TokenCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenInformations'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a token
       tags:
       - Token
   /token/{provider}:
@@ -508,37 +582,7 @@ paths:
       summary: Get user's token
       tags:
       - Token
-  /token/create/:
-    post:
-      consumes:
-      - application/json
-      description: Create a token from a user_id and a provider
-      parameters:
-      - description: Token creation request informations
-        in: body
-        name: tokenCreateRequest
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.TokenCreateRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controllers.TokenInformations'
-        "400":
-          description: Bad Request
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Create a token
-      tags:
-      - Token
-  /users/:
+  /user/:
     post:
       consumes:
       - application/json
@@ -568,7 +612,7 @@ paths:
       summary: Create a new user
       tags:
       - User
-  /users/me:
+  /user/me:
     get:
       consumes:
       - application/json
