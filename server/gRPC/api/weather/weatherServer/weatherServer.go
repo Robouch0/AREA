@@ -49,6 +49,8 @@ func NewWeatherService() (*WeatherService, error) {
 	}
 	weatherService.c.AddFunc("@hourly", weatherService.checkDayCondition)
 	weatherService.c.AddFunc("@hourly", weatherService.checkTemperature)
+	weatherService.c.AddFunc("@hourly", weatherService.checkRain)
+	weatherService.c.AddFunc("@hourly", weatherService.checkSnow)
 	return weatherService, nil
 }
 
@@ -131,7 +133,7 @@ func (weather *WeatherService) NewIsDayTrigger(ctx context.Context, req *gRPCSer
 		if err != nil {
 			return nil, err
 		}
-		log.Println("Day is looked at is looked at")
+		log.Println("Day is looked at")
 	} else {
 		return nil, status.Errorf(codes.NotFound, "Region: %v is not supported", req.Region)
 	}
@@ -155,11 +157,11 @@ func (weather *WeatherService) NewRainTrigger(ctx context.Context, req *gRPCServ
 			log.Println("Could not fetch weather data: ", err)
 			return nil, err
 		}
-		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.DayCondition, resp.Current.Temperature2m, resp.Current.Rain, resp.Current.SnowFall)
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.Raining, resp.Current.Temperature2m, 0, resp.Current.SnowFall)
 		if err != nil {
 			return nil, err
 		}
-		log.Println("Day is looked at is looked at")
+		log.Println("Rain is looked at")
 	} else {
 		return nil, status.Errorf(codes.NotFound, "Region: %v is not supported", req.Region)
 	}
@@ -176,18 +178,18 @@ func (weather *WeatherService) NewSnowTrigger(ctx context.Context, req *gRPCServ
 		resp, err := GetCurrentWeather(&WeatherConfig{
 			Latitude:  coord.Latitude,
 			Longitude: coord.Longitude,
-			Current:   "rain",
+			Current:   "snowfall",
 			Timezone:  req.Timezone,
 		})
 		if err != nil {
 			log.Println("Could not fetch weather data: ", err)
 			return nil, err
 		}
-		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.DayCondition, resp.Current.Temperature2m, resp.Current.Rain, resp.Current.SnowFall)
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.Snowing, resp.Current.Temperature2m, resp.Current.Rain, 0)
 		if err != nil {
 			return nil, err
 		}
-		log.Println("Day is looked at is looked at")
+		log.Println("Snow is looked at")
 	} else {
 		return nil, status.Errorf(codes.NotFound, "Region: %v is not supported", req.Region)
 	}

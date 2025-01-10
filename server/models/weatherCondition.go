@@ -14,6 +14,8 @@ type WeatherActionType int
 const (
 	TemperatureExceed WeatherActionType = iota
 	DayCondition
+	Raining
+	Snowing
 )
 
 type WeatherCondition struct {
