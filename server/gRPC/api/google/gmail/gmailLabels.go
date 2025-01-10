@@ -8,7 +8,7 @@
 package gmail
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
@@ -109,7 +109,7 @@ func PutLabel(accessToken, userID, labelName string, putLabel GmailLabel) (*Gmai
 			if err != nil {
 				return nil, err
 			}
-			return utils.IoReaderToStruct[GmailLabel](&resp.Body)
+			return conv_utils.IoReaderToStruct[GmailLabel](&resp.Body)
 		}
 	}
 	return nil, status.Errorf(codes.NotFound, "Did not found label named: %v", labelName)
@@ -134,7 +134,7 @@ func CreateLabel(accessToken, userID string, newLabel GmailLabel) (*GmailLabel, 
 	if err != nil {
 		return nil, err
 	}
-	lab, err := utils.IoReaderToStruct[GmailLabel](&resp.Body)
+	lab, err := conv_utils.IoReaderToStruct[GmailLabel](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

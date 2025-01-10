@@ -95,6 +95,7 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 	for _, re := range *reactions {
 		if cliService, ok := react.clients[re.Reaction.Service]; ok {
 			// Format ingredients
+			// Only strings
 			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, int(area.UserID))
 			if err != nil {
 				fmt.Println("error: ", err)

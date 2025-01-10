@@ -5,7 +5,7 @@
 // ioReaderToMap
 //
 
-package utils
+package conv_utils
 
 import (
 	"encoding/json"
