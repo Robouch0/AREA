@@ -55,6 +55,20 @@ func (google *GoogleGmailDB) GetByEmail(email string) (*models.Gmail, error) {
 	return allDatas, nil
 }
 
+func (google *GoogleGmailDB) SetFirstTime(action_id uint, firstTime bool) (*models.Gmail, error) {
+	allDatas := new(models.Gmail)
+	_, err := google.Db.NewUpdate().
+		Model(allDatas).
+		Set("first_time = ?", firstTime).
+		Where("action_id = ?", action_id).
+		Exec(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return allDatas, nil
+}
+
 // Activate or desactivate an action based on actionID and the boolean activated
 func (google *GoogleGmailDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.Gmail, error) {
 	return SetActivateByActionID[models.Gmail](google.Db, activated, userID, actionID)

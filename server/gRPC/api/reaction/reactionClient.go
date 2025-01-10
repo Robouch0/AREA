@@ -16,6 +16,8 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type ReactionServiceClient struct {
@@ -47,27 +49,28 @@ func (react *ReactionServiceClient) SendAction(scenario models.AreaScenario, act
 		return nil, err
 	}
 
-	bytesReactIngredients, err := json.Marshal(scenario.Reaction.Ingredients)
-	if err != nil {
-		return nil, err
+	reactReq := &gRPCService.ReactionRequest{
+		Action: &gRPCService.Action{
+			Service:      scenario.Action.Service,
+			Microservice: scenario.Action.Microservice,
+			Ingredients:  bytesActIngredients,
+		},
+		Reactions: []*gRPCService.Reaction{},
+	}
+	for _, reaction := range scenario.Reactions {
+		bytesReactIngredients, err := json.Marshal(reaction.Ingredients)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "Invalid ingredients given to the reaction")
+		}
+		reactReq.Reactions = append(reactReq.Reactions, &gRPCService.Reaction{
+			Service:      reaction.Service,
+			Microservice: reaction.Microservice,
+			Ingredients:  bytesReactIngredients,
+		})
 	}
 
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	res, err := react.RegisterAction(
-		ctx,
-		&gRPCService.ReactionRequest{
-			Action: &gRPCService.Action{
-				Service:      scenario.Action.Service,
-				Microservice: scenario.Action.Microservice,
-				Ingredients:  bytesActIngredients,
-			},
-			Reaction: &gRPCService.Reaction{
-				Service:      scenario.Reaction.Service,
-				Microservice: scenario.Reaction.Microservice,
-				Ingredients:  bytesReactIngredients,
-			},
-		},
-	)
+	res, err := react.RegisterAction(ctx, reactReq)
 	if err != nil {
 		return nil, err
 	}

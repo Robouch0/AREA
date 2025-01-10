@@ -49,7 +49,7 @@ func UserModelToUserInfos(data *models.User) *UserInformations {
 // @Success      200  {object}  UserInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /users/ [post]
+// @Router       /user/ [post]
 func CreateNewUser(userDb *db.UserDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newUser, err := utils.IoReaderToStruct[UserInformations](&r.Body)
@@ -104,7 +104,7 @@ func CreateNewUser(userDb *db.UserDb) http.HandlerFunc {
 // @Success      200  {object}  UserInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /users/me [get]
+// @Router       /user/me [get]
 func GetUserByID(userDb *db.UserDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, err := grpcutils.GetUserIDClaim(r.Context())
@@ -140,7 +140,7 @@ func GetUserByID(userDb *db.UserDb) http.HandlerFunc {
 // @Success      200  {object}  models.UpdatableUserData
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /users/me [put]
+// @Router       /user/me [put]
 func UpdateUserDatas(userDb *db.UserDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, err := grpcutils.GetUserIDClaim(r.Context())
