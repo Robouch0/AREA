@@ -11,6 +11,12 @@ service WeatherService {
   // Each Hour, when it is night, do this
   rpc NewIsDayTrigger(IsDayTriggerReq) returns(IsDayTriggerReq) {}
 
+  // Each Hour, when it is night, do this
+  rpc NewRainTrigger(IsRainTriggerReq) returns(IsRainTriggerReq) {}
+
+  // Each Hour, when it is night, do this
+  rpc NewSnowTrigger(IsSnowTriggerReq) returns(IsSnowTriggerReq) {}
+
   // Deactivate weather trigger
   rpc SetActivate(SetActivateWeather)
     returns (SetActivateWeather) {}
@@ -31,6 +37,24 @@ message IsDayTriggerReq {
 
   string timezone = 3; /* Timezone of the trigger */
   string region = 4; /* Will be converted to latitude and longitude */
+}
+
+message IsRainTriggerReq {
+  bool activated = 1;
+  int32 action_id = 2;
+
+  float rain = 4; /* With a degree of precision of 0.5 */
+  string timezone = 5; /* Timezone of the trigger */
+  string region = 6; /* Will be converted to latitude and longitude */
+}
+
+message IsSnowTriggerReq {
+  bool activated = 1;
+  int32 action_id = 2;
+
+  float snowfall = 4; /* With a degree of precision of 0.5 */
+  string timezone = 5; /* Timezone of the trigger */
+  string region = 6; /* Will be converted to latitude and longitude */
 }
 
 message SetActivateWeather {
