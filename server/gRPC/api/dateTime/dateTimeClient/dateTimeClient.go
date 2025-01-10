@@ -51,7 +51,7 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 	return status, nil
 }
 
-func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }
 

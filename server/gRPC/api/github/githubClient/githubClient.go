@@ -70,7 +70,7 @@ func (git *GithubClient) sendNewWebHookAction(
 	return &IServ.ActionResponseStatus{Description: res.Repo}, nil
 }
 
-func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) updateRepository(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput
 	return &IServ.ReactionResponseStatus{Description: res.Description}, nil
 }
 
-func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byt
 	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
 }
 
-func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -137,9 +137,9 @@ func (git *GithubClient) SendAction(scenario models.AreaScenario, actionID, user
 	return nil, errors.New("No such action microservice")
 }
 
-func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*git.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }

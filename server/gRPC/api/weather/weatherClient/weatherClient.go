@@ -44,7 +44,7 @@ func (weather *WeatherClient) SendAction(scenario models.AreaScenario, actionID,
 func (weather *WeatherClient) TriggerReaction(
 	ingredients map[string]any,
 	microservice string,
-	prevOutput []byte,
+
 	userID int,
 ) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No microservice Reaction yet")

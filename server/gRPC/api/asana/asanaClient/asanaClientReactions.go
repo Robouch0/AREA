@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-func (asana *AsanaClient) createProject(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createProject(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (asana *AsanaClient) createProject(ingredients map[string]any, _ []byte, us
 	return &IServ.ReactionResponseStatus{Description: "Project created"}, nil
 }
 
-func (asana *AsanaClient) createSection(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createSection(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (asana *AsanaClient) createSection(ingredients map[string]any, _ []byte, us
 	return &IServ.ReactionResponseStatus{Description: "Section created"}, nil
 }
 
-func (asana *AsanaClient) createTask(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createTask(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
