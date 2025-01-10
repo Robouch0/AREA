@@ -5,7 +5,7 @@
 // reactionService
 //
 
-package reaction
+package reaction_server
 
 import (
 	"area/db"

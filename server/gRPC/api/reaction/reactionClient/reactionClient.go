@@ -5,7 +5,7 @@
 // reactionClient
 //
 
-package reaction
+package reaction_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
