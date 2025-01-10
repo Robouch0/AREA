@@ -14,5 +14,5 @@ type GithubEvents struct {
 type GithubWebHookResponse struct {
 	Events []string `json:"events"`
 	Id     int64    `json:"id"`
-	Action string 	`json:"action,omitempty"`
+	Action string   `json:"action,omitempty"`
 }
