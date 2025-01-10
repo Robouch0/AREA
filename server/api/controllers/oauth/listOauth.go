@@ -12,6 +12,10 @@ import (
 	"net/http"
 )
 
+type Oauthlist struct {
+	Services []string `json:"services"`
+}
+
 // Sign-up OAuth godoc
 // @Summary      List Oauth
 // @Description  List all the current Oauth handled by the server
@@ -22,9 +26,9 @@ import (
 // @Router       /oauth/oauthlist [get]
 func ListOauth(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var Oauths []string
+		var Oauths Oauthlist
 		for key, _ := range OAuthURLs {
-			Oauths = append(Oauths, key)
+			Oauths.Services = append(Oauths.Services, key)
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
