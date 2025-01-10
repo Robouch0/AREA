@@ -33,5 +33,8 @@ type WeatherCondition struct {
 	Latitude  float64 `bun:"latitude" json:"latitude,omitempty"`
 	Longitude float64 `bun:"longitude" json:"longitude,omitempty"`
 
+	Rain     float64 `bun:"rain" json:"rain,omitempty"`
+	SnowFall float64 `bun:"snowfall" json:"snowfall,omitempty"`
+
 	IsDay int `bun:"is_day" json:"is_day,omitempty"`
 }
