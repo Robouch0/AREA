@@ -22,11 +22,11 @@ export interface ServiceState {
 }
 
 export default function CreatePage({services, uid}: { services: AreaServices[], uid: number }) {
-    const [tokens, setTokens] = useState({ action: true, reaction: true });
-    const [action, setAction] = useState<ServiceState>({ name: "", microServiceName: "", ingredientValues: [] });
-    const [reaction, setReaction] = useState<ServiceState>({ name: "", microServiceName: "", ingredientValues: [] });
+    const [tokens, setTokens] = useState({action: true, reaction: true});
+    const [action, setAction] = useState<ServiceState>({name: "", microServiceName: "", ingredientValues: []});
+    const [reaction, setReaction] = useState<ServiceState>({name: "", microServiceName: "", ingredientValues: []});
     const router: AppRouterInstance = useRouter();
-    const { toast } = useToast();
+    const {toast} = useToast();
 
     const actions = useMemo(() => filterAreaByType(services, "action"), [services]);
     const reactionsList = useMemo(() => filterAreaByType(services, "reaction"), [services]);
@@ -34,34 +34,30 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
     useEffect(() => {
         if (action.name || reaction.name) {
             getUserTokens().then((res: string[]) => {
-                const actionToken: boolean = action.name !== "dt" && action.name !== "weather" ? res.includes(action.name) : true;
+                const actionToken: boolean = action.name !== "dt" && action.name !== "weather" ? res.includes(
+                    action.name) : true;
                 const reactionToken: boolean = res.includes(reaction.name);
-                setTokens({ action: actionToken, reaction: reactionToken });
-            }).catch((err) => {console.log(err)});
+                setTokens({action: actionToken, reaction: reactionToken});
+            }).catch((err) => {
+                console.log(err)
+            });
         }
     }, [action.name, reaction.name]);
 
-        const actionService : AreaServices | undefined = filterServiceByRefName(actions, action.name);
-        const actionMicroService: AreaMicroservices | undefined = actionService?.microservices.find(ms => ms.ref_name === action.microServiceName);
+    const actionService: AreaServices | undefined = filterServiceByRefName(actions, action.name);
+    const actionMicroService: AreaMicroservices | undefined = actionService?.microservices.find(
+        ms => ms.ref_name === action.microServiceName);
 
-        const reactionService : AreaServices | undefined = filterServiceByRefName(reactionsList, reaction.name);
-        const reactionMicroService : AreaMicroservices | undefined = reactionService?.microservices.find(ms => ms.ref_name === reaction.microServiceName);
+    const reactionService: AreaServices | undefined = filterServiceByRefName(reactionsList, reaction.name);
+    const reactionMicroService: AreaMicroservices | undefined = reactionService?.microservices.find(
+        ms => ms.ref_name === reaction.microServiceName);
     const handleSubmit = (formData: FormData): void => {
         if (!action.name || !reaction.name) {
             console.error("Both action and reaction must be selected");
             return;
         }
-        if (actionMicroService) {
-            Object.entries(actionMicroService.ingredients).forEach(([key, type]) => {
-                payload.action.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type);
-            });
-        }
-        if (reactionMicroService) {
-            Object.entries(reactionMicroService.ingredients).forEach(([key, type]) => {
-                payload.reaction.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type);
-            });
-        }
-
+        console.log(formData.get("datetimestring")?.toString())
+        console.log(formData.get("owner")?.toString())
         const payload: AreaCreateBody = {
             user_id: uid,
             action: {
@@ -75,6 +71,17 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                 ingredients: {}
             }
         };
+
+        if (actionMicroService) {
+            Object.entries(actionMicroService.ingredients).forEach(([key, type]) => {
+                payload.action.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type);
+            });
+        }
+        if (reactionMicroService) {
+            Object.entries(reactionMicroService.ingredients).forEach(([key, type]) => {
+                payload.reaction.ingredients[key] = convertIngredient(formData.get(key)?.toString(), type);
+            });
+        }
 
         console.log(payload);
         create(payload).then(() => {
@@ -91,31 +98,51 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
     return (
         <Form action={handleSubmit}>
             <div className="pt-20 my-16 bg-white h-full w-full flex flex-col justify-center items-center p-8">
-                <div className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center">
+                <div
+                    className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
+                >
                     <MicroserviceCreateZone
                         serviceChosen={actionService}
                         services={actions}
                         name={action.name}
-                        setNameAction={(name) => setAction(prev => ({ ...prev, name: name }))}
+                        setNameAction={(name) => {
+                            setAction(prev => ({...prev, name: name}))
+                            setAction(prev => ({...prev, microServiceName: "", ingredientValues: []}))
+                            }
+                        }
                         microServiceName={action.microServiceName}
-                        setServiceNameAction={(name) => setAction(prev => ({ ...prev, microServiceName: name }))}
+                        setServiceNameAction={(name) => {
+                            setAction(prev => ({...prev, microServiceName: name}))
+                            setAction(prev => ({...prev, ingredientValues: []}))
+                            }
+                        }
                         ingredientsValues={action.ingredientValues}
-                        setIngredientValuesAction={(values) => setAction(prev => ({ ...prev, ingredientValues: values }))}
+                        setIngredientValuesAction={(values) => setAction(prev => ({...prev, ingredientValues: values}))}
                         microServiceType={"action"}
                         textColor={"text-blue-500"}
                     />
                 </div>
-                <hr className="h-32 w-4 bg-gray-300" />
-                <div className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center">
+                <hr className="h-32 w-4 bg-gray-300"/>
+                <div
+                    className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
+                >
                     <MicroserviceCreateZone
                         serviceChosen={reactionService}
                         services={reactionsList}
                         name={reaction.name}
-                        setNameAction={(name) => setReaction(prev => ({ ...prev, name }))}
+                        setNameAction={(name) => {
+                            setReaction(prev => ({...prev, name}))
+                            setReaction(prev => ({...prev, microServiceName: "", ingredientValues: []}))
+                            }
+                        }
                         microServiceName={reaction.microServiceName}
-                        setServiceNameAction={(name) => setReaction(prev => ({ ...prev, microServiceName: name }))}
+                        setServiceNameAction={(name) => {
+                            setReaction(prev => ({...prev, microServiceName: name}))
+                            setReaction(prev => ({...prev, ingredientValues: []}))
+                            }
+                        }
                         ingredientsValues={reaction.ingredientValues}
-                        setIngredientValuesAction={(values) => setReaction(prev => ({ ...prev, ingredientValues: values }))}
+                        setIngredientValuesAction={(values) => setReaction(prev => ({...prev, ingredientValues: values}))}
                         microServiceType={"reaction"}
                         textColor={"text-red-500"}
                     />

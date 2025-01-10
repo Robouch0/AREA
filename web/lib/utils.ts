@@ -31,8 +31,6 @@ export function convertIngredient(ingredient: string | undefined, obj: Ingredien
             return parseFloat(ingredient)
         case "bool":
             return ingredient.toLowerCase() === "true"
-        case "time":
-            return ""
         case "date":
             return ingredient
         default:
