@@ -12,7 +12,7 @@ export async function updateUserInfos(firstName: string, lastName: string, passw
         if (!uid) {
             throw new Error("User ID not found in cookies");
         }
-        await axiosInstance.put(`users/me`, {
+        await axiosInstance.put(`user/me`, {
             first_name: firstName,
             last_name: lastName,
             password: password

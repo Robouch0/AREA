@@ -120,7 +120,7 @@ func GetToken(tokenDb *db.TokenDb) http.HandlerFunc {
 // @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /token/create/ [post]
+// @Router       /token [post]
 func CreateTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		createReq := new(TokenCreateRequest)
@@ -175,7 +175,7 @@ func CreateTkn(tokenDb *db.TokenDb) http.HandlerFunc {
 // @Success      200  {object}  TokenInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
-// @Router       /token/ [delete]
+// @Router       /token [delete]
 func DeleteUserToken(tokenDb *db.TokenDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		provider := chi.URLParam(r, "provider")

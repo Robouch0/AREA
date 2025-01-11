@@ -65,11 +65,11 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                 microservice: action.microServiceName,
                 ingredients: {}
             },
-            reaction: {
-                service: reaction.name,
-                microservice: reaction.microServiceName,
+            reactions: [{ // Here put all the reactions as an array
+                service: reactionServiceChosen?.ref_name,
+                microservice: microReactionName,
                 ingredients: {}
-            }
+            }]
         };
 
         if (actionMicroService) {
