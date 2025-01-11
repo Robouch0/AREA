@@ -60,16 +60,6 @@ export default function ProfilePage({id, email, first_name, last_name, password,
         window.location.reload()
     }
 
-    if (id == -1) {
-        toast({
-            title: "The area server is down",
-            description: "Cannot get your profile datas for the moment",
-            variant: 'destructive',
-            duration: 2500,
-        })
-        return <> </>;
-    }
-
     return (
         <>
             <div className="pt-10 w-full h-full flex flex-col bg-white justify-center items-center my-16">

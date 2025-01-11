@@ -4,17 +4,20 @@ import {TimePickerDemo} from "@/components/ui/utils/TimePicker";
 import {Calendar} from "@/components/ui/calendar";
 import {Input} from "@/components/ui/utils/Input";
 import {usePrevious} from "@radix-ui/react-use-previous";
+
 export function CalendarTimeInput({
     ingredient,
     details,
     index,
     values,
+    indexService,
     setValuesAction
 }: {
     ingredient: string;
     details: Ingredient;
     index: number;
     values: string[];
+    indexService: number;
     setValuesAction: (data: string) => void;
 }) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -40,7 +43,7 @@ export function CalendarTimeInput({
 
     const updateTime = useCallback((dateInput: Date) => {
         const time = new Date(selectedDate);
-        time.setUTCHours(dateInput.getUTCHours() + 1);
+        time.setUTCHours(dateInput.getUTCHours() + 1 );
         time.setUTCMinutes(dateInput.getUTCMinutes());
 
         setSelectedDate(time);
@@ -73,8 +76,8 @@ export function CalendarTimeInput({
             </div>
             <Input
                 type="hidden"
-                name={`${ingredient}`}
-                id={`text-${index}`}
+                name={`${indexService}-${ingredient}`}
+                id={`${index}-${ingredient}`}
                 className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                 aria-label="text"
                 value={values[index] || ''}

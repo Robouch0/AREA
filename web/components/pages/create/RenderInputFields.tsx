@@ -6,7 +6,8 @@ import {InputFieldComponent} from "@/components/pages/create/InputFieldComponent
 export function renderIngredientsInput(
     ingredients: Map<string, Ingredient> | undefined,
     values: string[],
-    setValues: (values: []) => void
+    setValues: (values: []) => void,
+    indexService: number
 ) {
     if (ingredients === undefined) {
         return <div></div>;
@@ -33,6 +34,7 @@ export function renderIngredientsInput(
                         ingredient={ingredient}
                         details={details}
                         index={index}
+                        indexService={indexService}
                         values={values}
                         setValuesAction={setValues}
                     />

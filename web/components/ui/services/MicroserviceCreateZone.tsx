@@ -15,7 +15,8 @@ export default function MicroserviceCreateZone({
         ingredientsValues,
         setIngredientValuesAction,
         microServiceType,
-        textColor
+        textColor,
+        index,
     }: {
         services: AreaServices[],
         name: string,
@@ -26,7 +27,8 @@ export default function MicroserviceCreateZone({
         ingredientsValues: string[],
         setIngredientValuesAction: (values: []) => void,
         microServiceType: string,
-        textColor: string
+        textColor: string,
+        index: number
     }
 ) {
     return (
@@ -60,7 +62,8 @@ export default function MicroserviceCreateZone({
                             serviceChosen.microservices.find(
                                 (ms: AreaMicroservices): boolean => ms.ref_name === microServiceName)?.ingredients,
                             ingredientsValues,
-                            setIngredientValuesAction
+                            setIngredientValuesAction,
+                            index
                         )}
                     </>
                 )

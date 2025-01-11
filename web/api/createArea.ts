@@ -6,7 +6,7 @@ import {AreaCreateBody} from "@/api/types/areaCreateBody";
 
 // Axios debug interceptors
 axiosInstance.interceptors.request.use(request => {
-    // console.log('Starting Request', JSON.stringify(request, null, 2))
+    console.log('Starting Request', JSON.stringify(request, null, 2))
     return request
 })
 export async function create(data: AreaCreateBody) : Promise<void> {
