@@ -43,7 +43,7 @@ export function CalendarTimeInput({
 
     const updateTime = useCallback((dateInput: Date) => {
         const time = new Date(selectedDate);
-        time.setUTCHours(dateInput.getUTCHours() + 1 );
+        time.setUTCHours(dateInput.getUTCHours() + 1);
         time.setUTCMinutes(dateInput.getUTCMinutes());
 
         setSelectedDate(time);

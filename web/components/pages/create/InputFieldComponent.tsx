@@ -33,7 +33,6 @@ export function InputFieldComponent({
         default:
             return (
                 <>
-                    <h1>{indexService} lol {ingredient}</h1>
                     <Input
                         type={"text"}
                         name={`${indexService}-${ingredient}`}

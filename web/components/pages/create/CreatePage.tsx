@@ -103,7 +103,7 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                 variant: 'default',
                 duration: 3000,
             });
-            // setTimeout(() => router.push("myareas/"), 800);
+            setTimeout(() => router.push("myareas/"), 800);
         }).catch(console.error);
     };
 
@@ -135,9 +135,9 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                         textColor={"text-blue-500"}
                     />
                 </div>
-                <hr className="h-32 w-4 bg-gray-300"/>
                 {reactions.map((reaction, index) => (
                     <React.Fragment key={index}>
+                    <hr className="h-32 w-4 bg-gray-300"/>
                         <div
                             className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
                         >
@@ -179,10 +179,11 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                     </React.Fragment>
                 ))
                 }
+
                 <Button
                     type="button"
                     onClick={addReaction}
-                    className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg text-xl font-bold"
+                    className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg text-3xl font-bold"
                 >
                     Add Another Reaction
                 </Button>
