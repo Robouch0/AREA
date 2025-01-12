@@ -22,7 +22,9 @@ import (
 	weather_client "area/gRPC/api/weather/weatherClient"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	"area/utils"
 	grpcutils "area/utils/grpcUtils"
+	template_utils "area/utils/templateUtils"
 
 	"cmp"
 	"context"
@@ -92,16 +94,25 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 	if reactions == nil {
 		return nil, status.Errorf(codes.Internal, "no associated reaction")
 	}
+
+	var cache map[string]any
+	errIngAct := json.Unmarshal(req.PrevOutput, &cache)
+	if errIngAct != nil {
+		return nil, err
+	}
+
 	for _, re := range *reactions {
 		if cliService, ok := react.clients[re.Reaction.Service]; ok {
-			// Format ingredients
-			// Only strings
-			res, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, int(area.UserID))
+			template_utils.FormatIngredients(&re.Reaction.Ingredients, &cache)
+
+			reactionRes, err := cliService.TriggerReaction(re.Reaction.Ingredients, re.Reaction.Microservice, int(area.UserID))
 			if err != nil {
 				fmt.Println("error: ", err)
 				return nil, err
 			}
-			log.Println(res)
+			log.Println(reactionRes)
+
+			utils.MergeMaps[any](&cache, &re.PrevOutput)
 		}
 	}
 	return &gRPCService.LaunchResponse{}, nil
