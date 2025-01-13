@@ -6,7 +6,7 @@ import {InputFieldComponent} from "@/components/pages/create/InputFieldComponent
 export function renderIngredientsInput(
     ingredients: Map<string, Ingredient> | undefined,
     values: string[],
-    setValues: (values: []) => void,
+    setValues: (values: string[]) => void,
     indexService: number
 ) {
     if (ingredients === undefined) {

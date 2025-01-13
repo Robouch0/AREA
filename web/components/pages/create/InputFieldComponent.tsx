@@ -16,7 +16,7 @@ export function InputFieldComponent({
     details: Ingredient;
     index: number;
     values: string[];
-    setValuesAction: (values: []) => void;
+    setValuesAction: (values: string[]) => void;
     indexService: number;
 }) {
 

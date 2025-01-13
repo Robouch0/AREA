@@ -18,7 +18,7 @@ import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-
 export interface ServiceState {
     name: string;
     microServiceName: string;
-    ingredientValues: [];
+    ingredientValues: string[];
 }
 
 interface TokenState {

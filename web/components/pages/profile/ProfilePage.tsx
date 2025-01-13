@@ -16,7 +16,7 @@ import {useToast} from "@/hooks/use-toast";
 
 
 
-export default function ProfilePage({id, email, first_name, last_name, password, providers}: userInfo) {
+export default function ProfilePage({ email, first_name, last_name, password, providers}: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
     const [firstName, setFirstName] = useState(first_name);
     const [lastName, setLastName] = useState(last_name);
