@@ -23,19 +23,19 @@ class Service {
 class AreaCreateBody {
   final int userId;
   final Service action;
-  final Service reaction;
+  final List<Service> reactions;
 
   AreaCreateBody({
     required this.userId,
     required this.action,
-    required this.reaction,
+    required this.reactions,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'user_id': userId,
       'action': action.toJson(),
-      'reaction': reaction.toJson(),
+      'reactions': reactions.map((reaction) => reaction.toJson()).toList(),
     };
   }
 }
