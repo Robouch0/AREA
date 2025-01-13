@@ -49,6 +49,8 @@ func NewWeatherService() (*WeatherService, error) {
 	}
 	weatherService.c.AddFunc("@hourly", weatherService.checkDayCondition)
 	weatherService.c.AddFunc("@hourly", weatherService.checkTemperature)
+	weatherService.c.AddFunc("@hourly", weatherService.checkRain)
+	weatherService.c.AddFunc("@hourly", weatherService.checkSnow)
 	return weatherService, nil
 }
 
@@ -62,6 +64,8 @@ func (weather *WeatherService) createNewWeatherInfo(
 	actionID int,
 	actionType models.WeatherActionType,
 	temperature float64,
+	rain float64,
+	snow float64,
 ) error {
 	_, err := weather.weatherDb.InsertNewWeatherCondition(&models.WeatherCondition{
 		ActionID:           uint(actionID),
@@ -73,6 +77,8 @@ func (weather *WeatherService) createNewWeatherInfo(
 		Timezone:           resp.Timezone,
 		Latitude:           resp.Latitude,
 		Longitude:          resp.Longitude,
+		Rain:               rain,
+		SnowFall:           snow,
 		IsDay:              resp.Current.IsDay,
 	})
 	return err
@@ -95,7 +101,7 @@ func (weather *WeatherService) NewTemperatureTrigger(ctx context.Context, req *g
 			log.Println("Could not fetch weather data: ", err)
 			return nil, err
 		}
-		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.TemperatureExceed, float64(req.Temperature))
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.TemperatureExceed, float64(req.Temperature), resp.Current.Rain, resp.Current.SnowFall)
 		if err != nil {
 			return nil, err
 		}
@@ -123,11 +129,67 @@ func (weather *WeatherService) NewIsDayTrigger(ctx context.Context, req *gRPCSer
 			log.Println("Could not fetch weather data: ", err)
 			return nil, err
 		}
-		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.DayCondition, resp.Current.Temperature2m)
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.DayCondition, resp.Current.Temperature2m, resp.Current.Rain, resp.Current.SnowFall)
 		if err != nil {
 			return nil, err
 		}
-		log.Println("Day is looked at is looked at")
+		log.Println("Day is looked at")
+	} else {
+		return nil, status.Errorf(codes.NotFound, "Region: %v is not supported", req.Region)
+	}
+	return req, nil
+}
+
+func (weather *WeatherService) NewRainTrigger(ctx context.Context, req *gRPCService.IsRainTriggerReq) (*gRPCService.IsRainTriggerReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "WeatherService")
+	if err != nil {
+		return nil, err
+	}
+
+	if coord, ok := (*weather.regionSupported)[req.Region]; ok {
+		resp, err := GetCurrentWeather(&WeatherConfig{
+			Latitude:  coord.Latitude,
+			Longitude: coord.Longitude,
+			Current:   "rain",
+			Timezone:  req.Timezone,
+		})
+		if err != nil {
+			log.Println("Could not fetch weather data: ", err)
+			return nil, err
+		}
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.Raining, resp.Current.Temperature2m, 0, resp.Current.SnowFall)
+		if err != nil {
+			return nil, err
+		}
+		log.Println("Rain is looked at")
+	} else {
+		return nil, status.Errorf(codes.NotFound, "Region: %v is not supported", req.Region)
+	}
+	return req, nil
+}
+
+func (weather *WeatherService) NewSnowTrigger(ctx context.Context, req *gRPCService.IsSnowTriggerReq) (*gRPCService.IsSnowTriggerReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "WeatherService")
+	if err != nil {
+		return nil, err
+	}
+
+	if coord, ok := (*weather.regionSupported)[req.Region]; ok {
+		resp, err := GetCurrentWeather(&WeatherConfig{
+			Latitude:  coord.Latitude,
+			Longitude: coord.Longitude,
+			Current:   "snowfall",
+			Timezone:  req.Timezone,
+		})
+		if err != nil {
+			log.Println("Could not fetch weather data: ", err)
+			return nil, err
+		}
+		err = weather.createNewWeatherInfo(resp, userID, int(req.ActionId), models.Snowing, resp.Current.Temperature2m, resp.Current.Rain, 0)
+		if err != nil {
+			return nil, err
+		}
+		log.Println("Snow is looked at")
 	} else {
 		return nil, status.Errorf(codes.NotFound, "Region: %v is not supported", req.Region)
 	}

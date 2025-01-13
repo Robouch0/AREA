@@ -28,5 +28,7 @@ func OAuthRoutes(JwtTok *jwtauth.JWTAuth) chi.Router {
 	OAuthRouter.Get("/{service}", oauth.GetUrl(OAuthURLs))
 
 	OAuthRouter.Post("/", oauth.LoginOAuth(JwtTok, OAuthURLs))
+
+	OAuthRouter.Get("/list", oauth.ListOauth(OAuthURLs))
 	return OAuthRouter
 }

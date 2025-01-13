@@ -29,6 +29,8 @@ func NewWeatherClient(conn *grpc.ClientConn) *WeatherClient {
 
 	(*weather.ActionLauncher)["temperatureExceed"] = weather.SendTemperatureAction
 	(*weather.ActionLauncher)["dayChanged"] = weather.SendIsDayAction
+	(*weather.ActionLauncher)["rainWeather"] = weather.SendRainAction
+	(*weather.ActionLauncher)["snowWeather"] = weather.SendSnowAction
 
 	// send a request to create a cron job and every 30min trigger it
 	return weather
