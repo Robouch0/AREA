@@ -270,7 +270,6 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
                     </div>
                 )}
 
-
                 <Button
                     type="submit"
                     className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold"
