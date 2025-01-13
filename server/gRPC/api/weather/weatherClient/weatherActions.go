@@ -64,3 +64,53 @@ func (weather *WeatherClient) SendIsDayAction(scenario models.AreaScenario, acti
 		ActionID:    actionID,
 	}, nil
 }
+
+func (weather *WeatherClient) SendRainAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	wReqBytes, err := json.Marshal(scenario.Action.Ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	wRequest := gRPCService.IsRainTriggerReq{
+		Activated: true,
+		ActionId:  int32(actionID),
+	}
+	err = json.Unmarshal(wReqBytes, &wRequest)
+	if err != nil {
+		return nil, err
+	}
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = weather.cc.NewRainTrigger(ctx, &wRequest)
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.ActionResponseStatus{
+		Description: "Done",
+		ActionID:    actionID,
+	}, nil
+}
+
+func (weather *WeatherClient) SendSnowAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	wReqBytes, err := json.Marshal(scenario.Action.Ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	wRequest := gRPCService.IsSnowTriggerReq{
+		Activated: true,
+		ActionId:  int32(actionID),
+	}
+	err = json.Unmarshal(wReqBytes, &wRequest)
+	if err != nil {
+		return nil, err
+	}
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err = weather.cc.NewSnowTrigger(ctx, &wRequest)
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.ActionResponseStatus{
+		Description: "Done",
+		ActionID:    actionID,
+	}, nil
+}

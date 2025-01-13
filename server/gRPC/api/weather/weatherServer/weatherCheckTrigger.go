@@ -48,7 +48,7 @@ func (weather *WeatherService) checkTemperature() {
 }
 
 func (weather *WeatherService) checkDayCondition() {
-	actions, err := weather.weatherDb.GetActionsByType(models.TemperatureExceed)
+	actions, err := weather.weatherDb.GetActionsByType(models.DayCondition)
 	if err != nil {
 		log.Println("Error while loading temperatures")
 		return
@@ -66,6 +66,70 @@ func (weather *WeatherService) checkDayCondition() {
 		}
 		if resp.Current.IsDay != act.IsDay {
 			weather.weatherDb.UpdateUserIsDay(int(act.ActionID), act.IsDay)
+			ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
+			b, err := json.Marshal(&resp.Current)
+			if err != nil {
+				log.Println("Could not marshal weather current response")
+				continue
+			}
+			weather.reactService.LaunchReaction(ctx, &service.LaunchRequest{
+				ActionId:   int64(act.ActionID),
+				PrevOutput: b,
+			})
+		}
+	}
+}
+
+func (weather *WeatherService) checkRain() {
+	actions, err := weather.weatherDb.GetActionsByType(models.Raining)
+	if err != nil {
+		log.Println("Error while loading rain values")
+		return
+	}
+	for _, act := range *actions {
+		resp, err := GetCurrentWeather(&WeatherConfig{
+			Latitude:  act.Latitude,
+			Longitude: act.Longitude,
+			Current:   "rain",
+			Timezone:  act.Timezone,
+		})
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		if resp.Current.Rain > act.Rain {
+			ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
+			b, err := json.Marshal(&resp.Current)
+			if err != nil {
+				log.Println("Could not marshal weather current response")
+				continue
+			}
+			weather.reactService.LaunchReaction(ctx, &service.LaunchRequest{
+				ActionId:   int64(act.ActionID),
+				PrevOutput: b,
+			})
+		}
+	}
+}
+
+func (weather *WeatherService) checkSnow() {
+	actions, err := weather.weatherDb.GetActionsByType(models.Snowing)
+	if err != nil {
+		log.Println("Error while loading snow values")
+		return
+	}
+	for _, act := range *actions {
+		resp, err := GetCurrentWeather(&WeatherConfig{
+			Latitude:  act.Latitude,
+			Longitude: act.Longitude,
+			Current:   "snowfall",
+			Timezone:  act.Timezone,
+		})
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		if resp.Current.SnowFall > act.SnowFall {
 			ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
 			b, err := json.Marshal(&resp.Current)
 			if err != nil {
