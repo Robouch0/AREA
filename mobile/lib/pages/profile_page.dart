@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_area_flutter/api/types/oauth_list_body.dart';
 import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/widgets/auth_button.dart';
@@ -10,10 +11,12 @@ import 'package:my_area_flutter/services/api/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
   final Future<UserInfoBody> userInfo;
+  final Future<OAuthListBody> oauthList;
 
   const ProfilePage({
     super.key,
-    required this.userInfo
+    required this.userInfo,
+    required this.oauthList
   });
 
   @override
@@ -31,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isEditing = false;
 
   late UserInfoBody userInfo;
+  late OAuthListBody oauthList;
 
   void _performOAuth(String service) async {
     final authService = AuthService.instance;
@@ -57,6 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _loadUserInfos();
+    _loadOauthList();
   }
 
   Future<void> _loadUserInfos() async {
@@ -71,6 +76,13 @@ class _ProfilePageState extends State<ProfilePage> {
     } catch (e) {
       debugPrint('Error loading user infos: $e');
     }
+  }
+
+  Future<void> _loadOauthList() async {
+    final loadedOauthList = await widget.oauthList;
+    setState(() {
+      oauthList = loadedOauthList;
+    });
   }
 
   void _toggleEdit() {
@@ -107,12 +119,27 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  final List<Map<String, dynamic>> services = [
-    {"name": "Github", "icon": FontAwesomeIcons.github},
-    {"name": "Google", "icon": FontAwesomeIcons.google},
-    {"name": "Spotify", "icon": FontAwesomeIcons.spotify},
-    {"name": "Discord", "icon": FontAwesomeIcons.discord},
-  ];
+  final Map<String, IconData> serviceIcons = {
+    'github': FontAwesomeIcons.github,
+    'google': FontAwesomeIcons.google,
+    'spotify': FontAwesomeIcons.spotify,
+    'discord': FontAwesomeIcons.discord,
+    'gitlab': FontAwesomeIcons.gitlab
+  };
+
+  List<Map<String, dynamic>> getServicesList() {
+    if (!userInfosLoaded || oauthList.services.isEmpty) {
+      return [];
+    }
+
+    return oauthList.services.map((service) {
+      final serviceLower = service.toLowerCase();
+      return {
+        "name": service,
+        "icon": serviceIcons[serviceLower] ?? FontAwesomeIcons.link
+      };
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -453,6 +480,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildServicesScroll() {
+    final services = getServicesList();
+
     return Container(
       height: 280,
       width: double.infinity,

@@ -61,7 +61,7 @@ class AppRouter {
           ),
           GoRoute(
             path: RouteNames.profile,
-            builder: (context, state) => ProfilePage(userInfo: ProfileService.instance.getUserInfo()),
+            builder: (context, state) => ProfilePage(userInfo: ProfileService.instance.getUserInfo(), oauthList: ProfileService.instance.getOAuthList()),
           ),
         ],
       ),
