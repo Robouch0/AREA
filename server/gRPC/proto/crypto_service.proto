@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package weather;
+
+option go_package = "github.com/area/grpc-go/service";
+
+service CryptoService {
+    // Each hour, when crypto currency value exceed a certain amount, do this
+    rpc IsHigherThanTrigger(IsHigherThanTriggerReq) returns(IsHigherThanTriggerReq) {}
+
+    // Each hour, when crypto currency value is lower than a certain amount, do this
+    rpc IsLowerThanTrigger(IsLowerThanTriggerReq) returns(IsLowerThanTriggerReq) {}
+
+    // Deactivate crypto trigger
+    rpc SetActivate(SetActivateCrypto)
+      returns (SetActivateCrypto) {}
+}
+
+message IsHigherThanTriggerReq {
+    bool activated = 1;
+    int32 action_id = 2;
+
+    float threshold = 4; /* value of the currency to be higher of */
+    string crypto_curr = 5; /* crypto currency to convert */
+    string currency = 6; /* currency to check */
+}
+
+message IsLowerThanTriggerReq {
+    bool activated = 1;
+    int32 action_id = 2;
+
+    float threshold = 4; /* value of the currency to be higher of */
+    string crypto_curr = 5; /* crypto currency to convert */
+    string currency = 6; /* currency to check */
+}
+
+message SetActivateCrypto {
+    uint32 action_id = 1;
+    bool activated = 2;
+}
+
