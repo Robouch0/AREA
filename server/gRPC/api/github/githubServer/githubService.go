@@ -44,6 +44,7 @@ func (git *GithubService) storeNewWebHook(
 	tokenInfo *models.Token,
 	req *gRPCService.GitWebHookInfo,
 	repoAction models.GAction,
+	repoType models.GType,
 ) error {
 	_, err := git.GithubDb.StoreNewGithub(&models.Github{
 		ActionID:   uint(req.ActionId),
@@ -52,6 +53,7 @@ func (git *GithubService) storeNewWebHook(
 		RepoOwner:  req.Owner,
 		RepoName:   req.Repo,
 		RepoAction: repoAction,
+		ActionType: repoType,
 	})
 	return err
 }
