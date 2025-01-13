@@ -30,6 +30,8 @@ type CurrentInformations struct {
 	Interval      float64 `json:"interval,omitempty"`
 	Temperature2m float64 `json:"temperature_2m,omitempty"`
 	IsDay         int     `json:"is_day,omitempty"`
+	Rain 		  float64 `json:"rain,omitempty"`
+	SnowFall      float64 `json:"snowfall,omitempty"`
 }
 
 type WeatherAPIResponseBody struct {
