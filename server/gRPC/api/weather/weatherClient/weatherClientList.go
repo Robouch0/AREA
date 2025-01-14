@@ -61,6 +61,44 @@ func (weather *WeatherClient) ListServiceStatus() (*IServ.ServiceStatus, error) 
 					},
 				},
 			},
+			{
+				Name:    "Each Hour, when the current weather condition is rain",
+				RefName: "rainWeather",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"timezone": {
+						Value:       "Europe/Paris",
+						Type:        "string",
+						Description: "Timezone that will be tracked",
+						Required:    true,
+					},
+					"region": {
+						Value:       "France",
+						Type:        "string",
+						Description: "Region that will be tracked",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Each Hour, when the current weather condition is snow",
+				RefName: "snowWeather",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"timezone": {
+						Value:       "Europe/Paris",
+						Type:        "string",
+						Description: "Timezone that will be tracked",
+						Required:    true,
+					},
+					"region": {
+						Value:       "France",
+						Type:        "string",
+						Description: "Region that will be tracked",
+						Required:    true,
+					},
+				},
+			},
 		},
 	}
 	return status, nil
