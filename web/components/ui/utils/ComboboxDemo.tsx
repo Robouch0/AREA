@@ -23,7 +23,7 @@ import {AreaServices} from "@/api/types/areaStatus";
 export function ComboboxDemo({services, serviceName, setValueAction}: {
     services: AreaServices[];
     serviceName: string;
-    setValueAction: React.Dispatch<React.SetStateAction<string>>
+    setValueAction: (name: string) => void
 }) {
     const [open, setOpen] = React.useState(false)
 

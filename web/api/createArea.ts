@@ -13,7 +13,7 @@ export async function create(data: AreaCreateBody) : Promise<void> {
     try {
         const cookieStore : ReadonlyRequestCookies = await cookies();
         const token : string|undefined = cookieStore.get('token')?.value;
-        
+
         await axiosInstance.post(`areas/create/${data.action.service}`, data, {
             headers: {
                 'Authorization': `Bearer ${token}`
