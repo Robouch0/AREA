@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package weather;
+package crypto;
 
 option go_package = "github.com/area/grpc-go/service";
 
@@ -21,7 +21,7 @@ message IsHigherThanTriggerReq {
     int32 action_id = 2;
 
     float threshold = 4; /* value of the currency to be higher of */
-    string crypto_curr = 5; /* crypto currency to convert */
+    string crypto_currency = 5; /* crypto currency to convert */
     string currency = 6; /* currency to check */
 }
 
@@ -30,7 +30,7 @@ message IsLowerThanTriggerReq {
     int32 action_id = 2;
 
     float threshold = 4; /* value of the currency to be higher of */
-    string crypto_curr = 5; /* crypto currency to convert */
+    string crypto_currency = 5; /* crypto currency to convert */
     string currency = 6; /* currency to check */
 }
 

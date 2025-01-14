@@ -23,9 +23,10 @@ type CryptoCompare struct {
 	ActionID uint `bun:"action_id" json:"action_id"`
 	UserID   uint `bun:"user_id" json:"user_id"`
 
-	ActionType WeatherActionType `bun:"action_type" json:"action_type"`
-	Activated  bool              `bun:"activated" json:"activated,omitempty"`
+	ActionType CryptoActionType `bun:"action_type" json:"action_type"`
+	Activated  bool             `bun:"activated" json:"activated,omitempty"`
 
-	Currency string `bun:"currency" json:"currency"`
-	Threshold uint `bun:"threshold" json:"threshold"`
+	CryptoCurrency string `bun:"crypto_currency" json:"crypto_currency"`
+	Currency       string `bun:"currency" json:"currency"`
+	Threshold      uint   `bun:"threshold" json:"threshold"`
 }

@@ -44,7 +44,7 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
     useEffect(() => {
         if (action.name || reactions.some(r => r.name)) {
             getUserTokens().then((res: string[]) => {
-                const actionToken: boolean = action.name !== "dt" && action.name !== "weather" ? res.includes(
+                const actionToken: boolean = action.name !== "dt" && action.name !== "weather" &&  action.name != "crypto" ? res.includes(
                     action.name) : true;
                 const reactionTokens: boolean[] = reactions.map(r => res.includes(r.name))
                 setTokens({action: actionToken, reactions: reactionTokens});
