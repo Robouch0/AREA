@@ -159,7 +159,7 @@ export default function CreatePage({ services, uid }: { services: AreaServices[]
         if (actionName != "" && reactionName != "") {
             getUserTokens().then((res) => {
                 let actionToken = false;
-                if (actionName != "dt" && actionName != "weather") {
+                if (actionName != "dt" && actionName != "weather" && actionName != "crypto") {
                     actionToken = res.includes(actionName);
                 } else {
                     actionToken = true;
