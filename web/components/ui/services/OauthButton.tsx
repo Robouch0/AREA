@@ -117,7 +117,7 @@ export function OauthButton({ service, className, ServiceIcon, textButton, locat
                     {ServiceIcon}
                 </div>
             }
-            <p >{textButton}</p>
+            <p className={"text-black font-bold text-xl"}>{textButton}</p>
         </Button>
     );
 }

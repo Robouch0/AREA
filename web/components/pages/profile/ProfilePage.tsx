@@ -146,7 +146,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                             <div className={"ml-auto"}>
                                                 {usersProviders.includes(tag) ?
                                                     <Button
-                                                        className="my-2 mr-6 lg:mr-2 font-bold bg-red-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
+                                                        className="my-2 mr-6 lg:mr-2 text-black text-xl font-bold bg-red-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
                                                         onClick={() => {
                                                             handleDisconnectProvider(tag);
                                                             setTimeout(() => {

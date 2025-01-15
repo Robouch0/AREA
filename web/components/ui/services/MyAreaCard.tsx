@@ -4,7 +4,6 @@ import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
 import {getColorForService} from "@/lib/utils";
 import {AreaServices} from "@/api/types/areaStatus";
 import {Switch} from "@/components/ui/switch";
-import {Label} from "@/components/ui/label";
 import {useState} from "react";
 import {activateArea} from "@/api/enableArea";
 
