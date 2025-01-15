@@ -250,10 +250,10 @@ class ServiceInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${isAction ? "If" : "Then"}: ${service.microservices.map((m) => m.name).join(", ")}',
+            service.microservices.map((m) => m.name).join(", "),
             style: TextStyle(
               color: isAction ? Colors.blue : Colors.red,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w800
             ),
           ),
         ],

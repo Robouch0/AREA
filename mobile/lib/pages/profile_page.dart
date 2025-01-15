@@ -7,6 +7,7 @@ import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/widgets/auth_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
+import 'package:my_area_flutter/widgets/oauth_connection_button.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 import 'package:my_area_flutter/services/api/auth_service.dart';
 
@@ -531,24 +532,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildConnectionButton(String serviceName) {
-    if (userProviders.providers.contains(serviceName)) {
-      return ElevatedButton(
-        onPressed: () {
-          _unlinkOAuth(serviceName);
-        },
-        child: const Text('Disconnect'),
-      );
-    } else {
-      return ElevatedButton(
-        onPressed: () {
-          _performOAuth(serviceName);
-        },
-        child: const Text('Connect'),
-      );
-    }
-  }
-
   Widget _buildServiceItem(Map<String, dynamic> service) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -566,7 +549,11 @@ class _ProfilePageState extends State<ProfilePage> {
           const Spacer(),
           SizedBox(
             height: 32,
-            child: _buildConnectionButton(service['name'].toString().toLowerCase()),
+            child: OAuthConnectionButton(
+              serviceName: service['name'].toString().toLowerCase(),
+              initialProviders: userProviders.providers,
+              onSuccess: (){},
+            ),
           ),
         ],
       ),
