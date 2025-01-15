@@ -14,6 +14,7 @@ import {useToast} from "@/hooks/use-toast";
 import {filterAreaByType, filterServiceByRefName} from "@/lib/filterCreateAreas";
 import TokenStatus from "@/components/pages/create/TokenStatus";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {FaPlusCircle, FaTrash} from "react-icons/fa";
 
 export interface ServiceState {
     name: string;
@@ -26,7 +27,7 @@ interface TokenState {
     reactions: boolean[];
 }
 
-export default function CreatePage({services, uid}: { services: AreaServices[], uid: number }) {
+export default function CreatePage({services, userTokens, uid}: { services: AreaServices[], userTokens: string[], uid: number }) {
     const [tokens, setTokens] = useState<TokenState>({action: true, reactions: []});
     const [action, setAction] = useState<ServiceState>({name: "", microServiceName: "", ingredientValues: []});
     const [reactions, setReactions] = useState<ServiceState[]>(
@@ -51,7 +52,7 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
     useEffect(() => {
         if (action.name || reactions.some(r => r.name)) {
             getUserTokens().then((res: string[]) => {
-                const actionToken: boolean = action.name !== "dt" && action.name !== "weather" &&  action.name != "crypto" ? res.includes(
+                const actionToken: boolean = action.name !== "dt" && action.name !== "weather" && action.name != "crypto" ? res.includes(
                     action.name) : true;
                 const reactionTokens: boolean[] = reactions.map(r => res.includes(r.name))
                 setTokens({action: actionToken, reactions: reactionTokens});
@@ -63,7 +64,6 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
 
     const handleSubmit = (formData: FormData): void => {
         if (!action.name || reactions.some(r => !r.name)) {
-            console.error("Action and all reactions must be selected");
             return;
         }
 
@@ -151,59 +151,66 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                         <div
                             className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
                         >
-                            <div className={"flex flex-row text-red-500 justify-center"}>
-                                <h1 className="my-2"> REACTION </h1>
-                                {index > 0 && reactions.length > 1 ?
-                                    <Button className={"bg-white text-black text-xl font-bold mt-4 ml-auto"} onClick={() => deleteReaction(index)}>
-                                        Delete
-                                    </Button> : <></>
-                                }
-                            </div>
-                            <MicroserviceCreateZone
-                                index={index}
-                                serviceChosen={filterServiceByRefName(reactionsList, reaction.name)}
-                                services={reactionsList}
-                                name={reaction.name}
-                                setNameAction={(name) => {
-                                    const newReactions = [...reactions];
-                                    newReactions[index] = {
-                                        ...newReactions[index],
-                                        name,
-                                        microServiceName: "",
-                                        ingredientValues: []
-                                    };
-                                    setReactions(newReactions);
-                                }}
-                                microServiceName={reaction.microServiceName}
-                                setServiceNameAction={(name) => {
-                                    const newReactions = [...reactions];
-                                    newReactions[index] = {
-                                        ...newReactions[index],
-                                        microServiceName: name,
-                                        ingredientValues: []
-                                    };
-                                    setReactions(newReactions);
-                                }}
-                                ingredientsValues={reaction.ingredientValues}
-                                setIngredientValuesAction={(values) => {
-                                    const newReactions = [...reactions];
-                                    newReactions[index] = {...newReactions[index], ingredientValues: values};
-                                    setReactions(newReactions);
-                                }}
-                                microServiceType={"reaction"}
-                                textColor={"text-red-500"}
-                            />
-                        </div>
-                    </React.Fragment>
-                ))
+                            {reactions.length > 1 ?
+                                <div className={"flex flex-row text-red-500 justify-between w-full"}>
+                                <div className={"text-slate-800"}> ___ </div>
+                                    <h1 className="my-2"> REACTION #{index}</h1>
+                                    <Button
+                                        className={"bg-transparent text-black text-xl font-bold mt-4 mr-12"}
+                                        onClick={() => deleteReaction(index)}
+                                    >
+                                        <FaTrash className={"text-red-500"}/>
+                                    </Button></div>
+                                :
+                                <div className={" text-red-500"}>
+                                    <h1 className="my-2"> REACTION </h1>
+                                </div>
+                            }
+                                    <MicroserviceCreateZone
+                                        index={index}
+                                        serviceChosen={filterServiceByRefName(reactionsList, reaction.name)}
+                                        services={reactionsList}
+                                        name={reaction.name}
+                                        setNameAction={(name) => {
+                                            const newReactions = [...reactions];
+                                            newReactions[index] = {
+                                                ...newReactions[index],
+                                                name,
+                                                microServiceName: "",
+                                                ingredientValues: []
+                                            };
+                                            setReactions(newReactions);
+                                        }}
+                                        microServiceName={reaction.microServiceName}
+                                        setServiceNameAction={(name) => {
+                                            const newReactions = [...reactions];
+                                            newReactions[index] = {
+                                                ...newReactions[index],
+                                                microServiceName: name,
+                                                ingredientValues: []
+                                            };
+                                            setReactions(newReactions);
+                                        }}
+                                        ingredientsValues={reaction.ingredientValues}
+                                        setIngredientValuesAction={(values) => {
+                                            const newReactions = [...reactions];
+                                            newReactions[index] = {...newReactions[index], ingredientValues: values};
+                                            setReactions(newReactions);
+                                        }}
+                                        microServiceType={"reaction"}
+                                        textColor={"text-red-500"}
+                                    />
+                                </div>
+                                </React.Fragment>
+                                ))
                 }
-
-                <Button
-                    type="button"
-                    onClick={addReaction}
-                    className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg text-3xl font-bold"
-                >
-                    Add Another Reaction
+                            <Button
+                                type="button"
+                                onClick={addReaction}
+                                className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg text-3xl font-bold hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
+                            >
+                    Add Reaction
+                    <FaPlusCircle></FaPlusCircle>
                 </Button>
 
                 <TokenStatus
