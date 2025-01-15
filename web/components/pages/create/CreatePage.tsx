@@ -38,6 +38,13 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
         setReactions([...reactions, {name: "", microServiceName: "", ingredientValues: []}]);
     }
 
+    const deleteReaction = (index: number) => {
+        const newArray = reactions.filter((_, i) => {
+            return i !== index;
+        })
+        setReactions(newArray);
+    }
+
     const actions = useMemo(() => filterAreaByType(services, "action"), [services]);
     const reactionsList = useMemo(() => filterAreaByType(services, "reaction"), [services]);
 
@@ -113,6 +120,9 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                 <div
                     className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
                 >
+                    <div className={"text-blue-500"}>
+                        <h1 className="my-2"> ACTION </h1>
+                    </div>
                     <MicroserviceCreateZone
                         index={-1}
                         serviceChosen={filterServiceByRefName(actions, action.name)}
@@ -137,10 +147,18 @@ export default function CreatePage({services, uid}: { services: AreaServices[], 
                 </div>
                 {reactions.map((reaction, index) => (
                     <React.Fragment key={index}>
-                    <hr className="h-32 w-4 bg-gray-300"/>
+                        <hr className="h-32 w-4 bg-gray-300"/>
                         <div
                             className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
                         >
+                            <div className={"flex flex-row text-red-500 justify-center"}>
+                                <h1 className="my-2"> REACTION </h1>
+                                {index > 0 && reactions.length > 1 ?
+                                    <Button className={"bg-white text-black text-xl font-bold mt-4 ml-auto"} onClick={() => deleteReaction(index)}>
+                                        Delete
+                                    </Button> : <></>
+                                }
+                            </div>
                             <MicroserviceCreateZone
                                 index={index}
                                 serviceChosen={filterServiceByRefName(reactionsList, reaction.name)}

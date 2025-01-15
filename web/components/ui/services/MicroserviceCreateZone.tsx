@@ -28,14 +28,11 @@ export default function MicroserviceCreateZone({
         setIngredientValuesAction: (values: string[]) => void,
         microServiceType: string,
         textColor: string,
-        index: number
+        index: number,
     }
 ) {
     return (
         <>
-            <div className={textColor}>
-                <h1 className="my-2">{microServiceType.toUpperCase()} </h1>
-            </div>
             <ComboboxDemo services={services} serviceName={name} setValueAction={setNameAction}/>
             {
                 microServiceName === "" && name !== "" && (

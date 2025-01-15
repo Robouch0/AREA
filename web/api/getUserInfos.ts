@@ -21,7 +21,6 @@ export interface listOauth {
     data: oauthProviders;
 }
 
-
 export async function getUserInfo(): Promise<userInfo> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
@@ -39,7 +38,6 @@ export async function getUserInfo(): Promise<userInfo> {
         throw error;
     }
 }
-
 
 export async function getOauhProviders(): Promise<string[]> {
     try {
