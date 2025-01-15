@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_area_flutter/api/types/oauth_list_body.dart';
+import 'package:my_area_flutter/api/types/user_provider_list_body.dart';
 import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/widgets/auth_button.dart';
@@ -12,11 +13,13 @@ import 'package:my_area_flutter/services/api/auth_service.dart';
 class ProfilePage extends StatefulWidget {
   final Future<UserInfoBody> userInfo;
   final Future<OAuthListBody> oauthList;
+  final Future<UserProviderListBody> userProviders;
 
   const ProfilePage({
     super.key,
     required this.userInfo,
-    required this.oauthList
+    required this.oauthList,
+    required this.userProviders,
   });
 
   @override
@@ -35,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late UserInfoBody userInfo;
   late OAuthListBody oauthList;
+  late UserProviderListBody userProviders;
 
   void _performOAuth(String service) async {
     final authService = AuthService.instance;
@@ -57,6 +61,10 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void _unlinkOAuth(String service) async {
+    await AuthService.instance.unlinkOAuthService(service);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -67,9 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _loadUserInfos() async {
     try {
       final loadedUserInfos = await widget.userInfo;
+      final loadedUserProviders = await widget.userProviders;
       setState(() {
         userInfosLoaded = true;
         userInfo = loadedUserInfos;
+        userProviders = loadedUserProviders;
       });
       _firstNameController.text = userInfo.firstName;
       _lastNameController.text = userInfo.lastName;
@@ -521,6 +531,24 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _buildConnectionButton(String serviceName) {
+    if (userProviders.providers.contains(serviceName)) {
+      return ElevatedButton(
+        onPressed: () {
+          _unlinkOAuth(serviceName);
+        },
+        child: const Text('Disconnect'),
+      );
+    } else {
+      return ElevatedButton(
+        onPressed: () {
+          _performOAuth(serviceName);
+        },
+        child: const Text('Connect'),
+      );
+    }
+  }
+
   Widget _buildServiceItem(Map<String, dynamic> service) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -538,12 +566,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const Spacer(),
           SizedBox(
             height: 32,
-            child: ElevatedButton(
-              onPressed: () {
-                _performOAuth(service['name'].toString().toLowerCase());
-              },
-              child: const Text('Connect'),
-            ),
+            child: _buildConnectionButton(service['name'].toString().toLowerCase()),
           ),
         ],
       ),
