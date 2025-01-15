@@ -33,8 +33,8 @@ export async function getUserInfo(): Promise<userInfo> {
 export async function getUserTokens(): Promise<string[]> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
-        const arrTokens: string[] = [];
         const token: string | undefined = cookiesObj.get('token')?.value;
+        var arrTokens: string[] = [];
 
         const response = await axiosInstance.get(`/token/`, {
             headers: {
@@ -42,9 +42,7 @@ export async function getUserTokens(): Promise<string[]> {
             }
         });
         if (response.data != null) {
-            for (const token of response.data) {
-                arrTokens.push(token.provider);
-            }
+            arrTokens = response.data;
         }
         return arrTokens;
     } catch (error) {
