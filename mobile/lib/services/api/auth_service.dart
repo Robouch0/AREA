@@ -142,6 +142,21 @@ class AuthService {
     }
   }
 
+  Future<void> unlinkOAuthService(String service) async {
+    try {
+      final token = _authStorage.getToken();
+
+      await http.delete(
+        Uri.parse('$_apiUrl/token/$service'),
+        headers: {
+          'Authorization': 'Bearer $token'
+        },
+      );
+    } catch (e) {
+      developer.log('Failed to unlink oauth: $e');
+    }
+  }
+
   Future<bool> checkAuthentification() async {
     try {
       final token = _authStorage.getToken();

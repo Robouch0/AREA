@@ -41,9 +41,9 @@ class ActionData {
 
 class _CreateAreaPageState extends State<CreateAreaPage> {
   List<AreaServiceData>? services;
+  UserInfoBody? userInfo;
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
-  late UserInfoBody userInfo;
 
   ActionData action = ActionData();
   List<ActionData> reactionsList = [ActionData()];
@@ -156,7 +156,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
         .toList();
 
     final newArea = AreaCreateBody(
-      userId: userInfo.userId,
+      userId: userInfo!.userId,
       action: Service(
         service: action.serviceName,
         microservice: action.microServiceName,
@@ -295,6 +295,33 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     );
   }
 
+  List<Widget> _buildMultipleReactions(int index) {
+    const TextStyle textStyle = TextStyle(
+      color: Colors.red,
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+    );
+
+    if (reactionsList.length == 1) {
+      return [
+        const Text(
+          'Reaction',
+          style: textStyle
+        )
+      ];
+    }
+    return [
+      Text(
+        'Reaction #${index + 1}',
+        style: textStyle
+      ),
+      IconButton(
+        icon: const Icon(Icons.delete, color: Colors.red),
+        onPressed: () => _removeReaction(index),
+      ),
+    ];
+  }
+
   Widget _buildReactionCard(int index) {
     final reaction = reactionsList[index];
     return Stack(
@@ -308,22 +335,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Reaction #${index + 1}',
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (reactionsList.length > 1)
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _removeReaction(index),
-                    ),
-                ],
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: _buildMultipleReactions(index),
               ),
               const SizedBox(height: 20),
               _buildServiceSelection(
