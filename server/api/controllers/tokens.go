@@ -30,17 +30,18 @@ type TokenCreateRequest struct {
 	Provider string `json:"provider"`
 	Token    string `json:"token"`
 }
+ 
+type ProviderList struct {
+	Providers []string `json:"providers"`
+}
 
-func convertTokensToPublicInfos(tokens *[]models.Token) []TokenInformations {
-	var allTokens []TokenInformations
+func convertTokensToPublicInfos(tokens *[]models.Token) ProviderList {
+	var providerInfos ProviderList
 
 	for _, tok := range *tokens {
-		allTokens = append(allTokens, TokenInformations{
-			UserID:   strconv.FormatInt(tok.UserID, 10),
-			Provider: tok.Provider,
-		})
+		providerInfos.Providers = append(providerInfos.Providers, tok.Provider)
 	}
-	return allTokens
+	return providerInfos
 }
 
 // Get tokens godoc
