@@ -157,7 +157,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                                     <OauthButton
                                                         arial-label={`${tag}`}
                                                         service={`${tag}`}
-                                                        login={false}
+                                                        location="profile"
                                                         textButton={"Link"}
                                                         className="my-2 mr-6 lg:mr-2 font-bold bg-green-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
                                                         ServiceIcon={null}

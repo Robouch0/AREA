@@ -130,19 +130,10 @@ function LoginForm() {
                             </div>
                             <div className="max-w-md w-full space-y-4">
 
-                                {/*<OauthButton*/}
-                                {/*    arial-label="Asana"*/}
-                                {/*    service="asana"*/}
-                                {/*    login={true}*/}
-                                {/*    textButton="Continuer avec Asana"*/}
-                                {/*    className="focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-orange-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"*/}
-                                {/*    ServiceIcon={<FaGoogle className="w-12 h-12"/>}*/}
-                                {/*/>*/}
-
                                 {<OauthButton
                                     arial-label="Google"
                                     service="google"
-                                    login={true}
+                                    location="login"
                                     textButton={"Continuer avec Google"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGoogle />}
@@ -151,7 +142,7 @@ function LoginForm() {
                                 <OauthButton
                                     arial-label="Discord"
                                     service="discord"
-                                    login={true}
+                                    location="login"
                                     textButton={"Continuer avec Discord"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-purple-500 hover:bg-purple-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaDiscord />}
@@ -160,7 +151,7 @@ function LoginForm() {
                                 {<OauthButton
                                     arial-label="Github"
                                     service="github"
-                                    login={true}
+                                    location="login"
                                     textButton={"Continuer avec Github"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGithub />}

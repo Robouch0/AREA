@@ -39,7 +39,7 @@ export async function getUserInfo(): Promise<userInfo> {
     }
 }
 
-export async function getOauhProviders(): Promise<string[]> {
+export async function getOauthProviders(): Promise<string[]> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
         const token: string | undefined = cookiesObj.get('token')?.value;
