@@ -22,8 +22,8 @@ type Oauthlist struct {
 // @Tags         Account
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  []string
-// @Router       /oauth/oauthlist [get]
+// @Success      200  {object}  Oauthlist
+// @Router       /oauth/list [get]
 func ListOauth(OAuthURLs map[string]OAuthURLs) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var Oauths Oauthlist

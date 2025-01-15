@@ -3,7 +3,6 @@
 import Image from "next/image";
 import {Input} from "@/components/ui/utils/Input";
 import {Button} from "@/components/ui/utils/Button";
-import {FaEye, FaEyeSlash} from "react-icons/fa";
 import {ScrollArea} from "@/components/ui/utils/Scroll-area"
 import {ChangeEvent, useState} from "react";
 import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
@@ -16,23 +15,13 @@ import {useToast} from "@/hooks/use-toast";
 
 
 
-export default function ProfilePage({id, email, first_name, last_name, password, providers}: userInfo) {
-    const [showPassword, setShowPassword] = useState(false);
+export default function ProfilePage({id, email, first_name, last_name, password, usersProviders, possibleProviders}: userInfo) {
     const [firstName, setFirstName] = useState(first_name);
     const [lastName, setLastName] = useState(last_name);
-    const [passw, setPassword] = useState(password);
-    const [passwTooShort, setTooShort] = useState(false);
+    const [passw] = useState(password);
     const { toast } = useToast()
 
-    const tags : string[] = [
-        "github",
-        "google",
-        "discord",
-        "spotify",
-        "gitlab",
-        "asana",
-        "miro",
-    ]
+    possibleProviders.sort((a, b) => a.localeCompare(b))
 
     function handleDisconnectProvider(provider: string) {
         unlinkOauthProvider(provider);
@@ -119,41 +108,9 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                 setLastName(e.target.value);
                             }}
                         />
-                        <h2 className="p-2 text-white text-2xl font-bold"> Password </h2>
-                        <div className="w-full flex flex-row justify-center relative mb-6">
-                            <Input
-                                type={showPassword ? "text" : "password"}
-                                id="password"
-                                className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                                aria-label="text"
-                                value={passw}
-                                onChange={(e:ChangeEvent<HTMLInputElement>) => {
-                                    setPassword(e.target.value);
-                                    if (passw.length < 6) {
-                                        setTooShort(true);
-                                    } else {
-                                        setTooShort(false);
-                                    }
-                                }}
-                            />
-                            <Button
-                                type="button"
-                                onClick={() : void => setShowPassword(!showPassword)}
-                                className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent focus-visible:!border-black focus-visible::border focus-visible:!border-8 hover:bg-transparent shadow-none p-2"
-                                aria-label={showPassword ? "Hide password" : "Show password"}
-                                tabIndex={0}
-                            >
-                                {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl"/> :
-                                    <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
-                            </Button>
-                        </div>
-                        {passwTooShort &&
-                                <p className={"text-xl text-red-600 font-bold"}> Your password must be longer than 6 characters</p>
-                        }
                             <Button
                                 className="text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
                                 onClick={handleDataUpdate}
-                                disabled={passw.length < 6}
                             >
                                 Save & Update Profile
                             </Button>
@@ -173,7 +130,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                         <ScrollArea className="h-80 w-72 lg:w-96 bg-white rounded-md border opacity-90 mb-4">
                             <h4 className="mb-4 text-3xl leading-none text-black font-bold m-4"> Services </h4>
                             <div className="flex flex-col items-center p-2 gap-2">
-                                {tags.map((tag: string) => (
+                                {possibleProviders.map((tag: string) => (
                                     <div key={tag}>
                                         <div className="flex flex-row items-center justify-between">
                                             <div className="flex items-center">
@@ -185,7 +142,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                                 </div>
                                             </div>
                                             <div className={"ml-auto"}>
-                                                {providers.includes(tag) ?
+                                                {usersProviders.includes(tag) ?
                                                     <Button
                                                         className="my-2 mr-6 lg:mr-2 font-bold bg-red-600 w-24 focus-visible:border-8 focus-visible:border-black focus-visible:ring-0"
                                                         onClick={() => {
