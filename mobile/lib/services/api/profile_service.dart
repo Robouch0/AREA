@@ -16,9 +16,8 @@ class ProfileService {
   final _apiUrl = dotenv.get('NEXT_PUBLIC_GATEWAY_URL');
   final _authStorage = AuthStorage.instance;
 
-  Future<bool> updateUserInfo(String firstName, String lastName, String password) async {
+  Future<bool> updateUserInfo(String firstName, String lastName) async {
     final UserEditBody userEditBody = UserEditBody(
-      password: password,
       firstName: firstName,
       lastName: lastName,
     );

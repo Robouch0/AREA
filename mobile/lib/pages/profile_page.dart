@@ -29,12 +29,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool userInfosLoaded = false;
-  bool showPassword = false;
 
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  final _passwordController = TextEditingController();
   bool isEditing = false;
 
   late UserInfoBody userInfo;
@@ -106,8 +104,8 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _performUpdate(String firstName, String lastName, String password) async {
-    bool success = await ProfileService.instance.updateUserInfo(firstName, lastName, password);
+  void _performUpdate(String firstName, String lastName) async {
+    bool success = await ProfileService.instance.updateUserInfo(firstName, lastName);
 
     if (!mounted) return;
     if (success) {
@@ -126,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _handleUpdate() {
     if (_formKey.currentState!.validate()) {
-      _performUpdate(_firstNameController.text, _lastNameController.text, _passwordController.text);
+      _performUpdate(_firstNameController.text, _lastNameController.text);
     }
   }
 
@@ -251,7 +249,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 controller: _firstNameController),
             _buildInfoField('Last name', userInfo.lastName,
                 controller: _lastNameController),
-            _buildPasswordField(),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -371,80 +368,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Password',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(204),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black, width: 4),
-              ),
-              child: isEditing
-                  ? TextFormField(
-                      controller: _passwordController,
-                      obscureText: !showPassword,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password cannot be empty';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    )
-                  : Text(
-                      showPassword
-                          ? userInfo.password
-                          : '•' * userInfo.password.length,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-            ),
-            Positioned(
-              right: 16,
-              top: 12,
-              child: GestureDetector(
-                onTap: () => setState(() => showPassword = !showPassword),
-                child: Icon(
-                  showPassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey[600],
-                  size: 24,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
