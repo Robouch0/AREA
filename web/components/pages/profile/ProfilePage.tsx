@@ -1,22 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import {Input} from "@/components/ui/utils/Input";
-import {Button} from "@/components/ui/utils/Button";
-import {FaEye, FaEyeSlash} from "react-icons/fa";
-import {ScrollArea} from "@/components/ui/utils/Scroll-area"
-import {ChangeEvent, useState} from "react";
-import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
-import {userInfo} from "@/api/getUserInfos";
-import {OauthButton} from "@/components/ui/services/OauthButton";
-import {unlinkOauthProvider} from "@/api/unlinkOauth";
-import {updateUserInfos} from "@/api/updateUserInfos";
-import {useToast} from "@/hooks/use-toast";
+import { Input } from "@/components/ui/utils/Input";
+import { Button } from "@/components/ui/utils/Button";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ScrollArea } from "@/components/ui/utils/Scroll-area"
+import { ChangeEvent, useState } from "react";
+import { ServiceIcon } from "@/components/ui/services/ServiceIcon";
+import { userInfo } from "@/api/getUserInfos";
+import { OauthButton } from "@/components/ui/services/OauthButton";
+import { unlinkOauthProvider } from "@/api/unlinkOauth";
+import { updateUserInfos } from "@/api/updateUserInfos";
+import { useToast } from "@/hooks/use-toast";
 
-
-
-
-export default function ProfilePage({id, email, first_name, last_name, password, providers}: userInfo) {
+export default function ProfilePage({ id, email, first_name, last_name, password, providers }: userInfo) {
     const [showPassword, setShowPassword] = useState(false);
     const [firstName, setFirstName] = useState(first_name);
     const [lastName, setLastName] = useState(last_name);
@@ -24,7 +21,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
     const [passwTooShort, setTooShort] = useState(false);
     const { toast } = useToast()
 
-    const tags : string[] = [
+    const tags: string[] = [
         "github",
         "google",
         "discord",
@@ -40,19 +37,21 @@ export default function ProfilePage({id, email, first_name, last_name, password,
 
     function handleDataUpdate() {
         updateUserInfos(firstName, lastName, passw).then(() => {
-        toast({
-            title: "Update sucessful",
-            description: "Your new datas have been updated on our server.",
-            variant: 'default',
-            duration: 2500,
-        })}
+            toast({
+                title: "Update sucessful",
+                description: "Your new datas have been updated on our server.",
+                variant: 'default',
+                duration: 2500,
+            })
+        }
         ).catch(() => {
-        toast({
-            title: "Update failed",
-            description: "Your new datas have not been updated on our server.",
-            variant: 'destructive',
-            duration: 2500,
-        })}
+            toast({
+                title: "Update failed",
+                description: "Your new datas have not been updated on our server.",
+                variant: 'destructive',
+                duration: 2500,
+            })
+        }
         )
     }
 
@@ -74,7 +73,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
         <>
             <div className="pt-10 w-full h-full flex flex-col bg-white justify-center items-center my-16">
                 <h1 className="text-6xl font-bold p-8"> Account Settings </h1>
-                <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700"/>
+                <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700" />
                 <div
                     className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between"
                 >
@@ -104,7 +103,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={firstName}
-                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setFirstName(e.target.value);
                             }}
                         />
@@ -115,7 +114,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={lastName}
-                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setLastName(e.target.value);
                             }}
                         />
@@ -127,7 +126,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                 className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 aria-label="text"
                                 value={passw}
-                                onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                     setPassword(e.target.value);
                                     if (passw.length < 6) {
                                         setTooShort(true);
@@ -138,25 +137,25 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                             />
                             <Button
                                 type="button"
-                                onClick={() : void => setShowPassword(!showPassword)}
+                                onClick={(): void => setShowPassword(!showPassword)}
                                 className="absolute top-1/2 right-32 transform -translate-y-1/2 bg-transparent focus-visible:!border-black focus-visible::border focus-visible:!border-8 hover:bg-transparent shadow-none p-2"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
                                 tabIndex={0}
                             >
-                                {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl"/> :
-                                    <FaEye className="text-gray-500 scale-x-[-1] text-2xl"/>}
+                                {showPassword ? <FaEyeSlash className="text-gray-500 scale-x-[-1] text-2xl" /> :
+                                    <FaEye className="text-gray-500 scale-x-[-1] text-2xl" />}
                             </Button>
                         </div>
                         {passwTooShort &&
-                                <p className={"text-xl text-red-600 font-bold"}> Your password must be longer than 6 characters</p>
+                            <p className={"text-xl text-red-600 font-bold"}> Your password must be longer than 6 characters</p>
                         }
-                            <Button
-                                className="text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
-                                onClick={handleDataUpdate}
-                                disabled={passw.length < 6}
-                            >
-                                Save & Update Profile
-                            </Button>
+                        <Button
+                            className="text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
+                            onClick={handleDataUpdate}
+                        // disabled={passw.length < 6}
+                        >
+                            Save & Update Profile
+                        </Button>
                     </div>
                     userData
                     userData
@@ -178,7 +177,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                         <div className="flex flex-row items-center justify-between">
                                             <div className="flex items-center">
                                                 <div className="my-3">
-                                                    <ServiceIcon className="text-2xl" tag={tag}/>
+                                                    <ServiceIcon className="text-2xl" tag={tag} />
                                                 </div>
                                                 <div className="mx-4 lg:mx-8 text-2xl text-black font-semibold">
                                                     {tag.charAt(0).toUpperCase() + tag.slice(1)}
@@ -208,7 +207,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                                 }
                                             </div>
                                         </div>
-                                        <hr className="w-72 h-px bg-black border-0 dark:bg-gray-700"/>
+                                        <hr className="w-72 h-px bg-black border-0 dark:bg-gray-700" />
                                     </div>
                                 ))}
                             </div>
