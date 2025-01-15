@@ -59,21 +59,24 @@ export async function getOauhProviders(): Promise<string[]> {
 }
 
 
+export interface userProviders {
+    providers: string[];
+}
+export interface listUserProviders {
+    data: userProviders;
+}
 export async function getUserTokens(): Promise<string[]> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
         const token: string | undefined = cookiesObj.get('token')?.value;
         var arrTokens: string[] = [];
 
-        const response = await axiosInstance.get(`/token/`, {
+        const response: listUserProviders = await axiosInstance.get(`/token/`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        if (response.data != null) {
-            arrTokens = response.data;
-        }
-        return arrTokens;
+        return response.data.providers;
     } catch (error) {
         console.error("Error fetching user tokens:", error);
         throw error;
