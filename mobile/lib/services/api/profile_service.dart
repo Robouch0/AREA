@@ -5,6 +5,7 @@ import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 import 'package:my_area_flutter/api/types/oauth_list_body.dart';
+import 'package:my_area_flutter/api/types/user_provider_list_body.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
 
 class ProfileService {
@@ -71,6 +72,27 @@ class ProfileService {
       throw Exception('Failed to load user infos: ${response.statusCode}');
     } catch (e) {
       developer.log('Failed to get user infos: $e', name: 'my_network_log');
+      rethrow;
+    }
+  }
+
+  Future<UserProviderListBody> getUserProviders() async {
+    try {
+      final token = _authStorage.getToken();
+
+      final response = await http.get(
+        Uri.parse('$_apiUrl/token/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        }
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        return UserProviderListBody.fromJson(jsonData);
+      }
+      throw Exception('Failed to load users providers list: ${response.statusCode}');
+    } catch (e) {
       rethrow;
     }
   }
