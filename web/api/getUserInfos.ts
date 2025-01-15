@@ -69,7 +69,6 @@ export async function getUserTokens(): Promise<string[]> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
         const token: string | undefined = cookiesObj.get('token')?.value;
-        var arrTokens: string[] = [];
 
         const response: listUserProviders = await axiosInstance.get(`/token/`, {
             headers: {
