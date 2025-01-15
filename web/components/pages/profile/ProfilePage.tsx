@@ -29,19 +29,21 @@ export default function ProfilePage({id, email, first_name, last_name, password,
 
     function handleDataUpdate() {
         updateUserInfos(firstName, lastName, passw).then(() => {
-        toast({
-            title: "Update sucessful",
-            description: "Your new datas have been updated on our server.",
-            variant: 'default',
-            duration: 2500,
-        })}
+            toast({
+                title: "Update sucessful",
+                description: "Your new datas have been updated on our server.",
+                variant: 'default',
+                duration: 2500,
+            })
+        }
         ).catch(() => {
-        toast({
-            title: "Update failed",
-            description: "Your new datas have not been updated on our server.",
-            variant: 'destructive',
-            duration: 2500,
-        })}
+            toast({
+                title: "Update failed",
+                description: "Your new datas have not been updated on our server.",
+                variant: 'destructive',
+                duration: 2500,
+            })
+        }
         )
     }
 
@@ -63,7 +65,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
         <>
             <div className="pt-10 w-full h-full flex flex-col bg-white justify-center items-center my-16">
                 <h1 className="text-6xl font-bold p-8"> Account Settings </h1>
-                <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700"/>
+                <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700" />
                 <div
                     className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between"
                 >
@@ -93,7 +95,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={firstName}
-                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setFirstName(e.target.value);
                             }}
                         />
@@ -104,7 +106,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                             className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-8 focus-visible:ring-0 focus-visible:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                             aria-label="text"
                             value={lastName}
-                            onChange={(e:ChangeEvent<HTMLInputElement>) => {
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setLastName(e.target.value);
                             }}
                         />
@@ -135,7 +137,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                         <div className="flex flex-row items-center justify-between">
                                             <div className="flex items-center">
                                                 <div className="my-3">
-                                                    <ServiceIcon className="text-2xl" tag={tag}/>
+                                                    <ServiceIcon className="text-2xl" tag={tag} />
                                                 </div>
                                                 <div className="mx-4 lg:mx-8 text-2xl text-black font-semibold">
                                                     {tag.charAt(0).toUpperCase() + tag.slice(1)}
@@ -165,7 +167,7 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                                 }
                                             </div>
                                         </div>
-                                        <hr className="w-72 h-px bg-black border-0 dark:bg-gray-700"/>
+                                        <hr className="w-72 h-px bg-black border-0 dark:bg-gray-700" />
                                     </div>
                                 ))}
                             </div>
