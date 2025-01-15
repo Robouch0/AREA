@@ -196,8 +196,8 @@ export default function CreatePage({services, userTokens, uid}: {
                     onClick={addReaction}
                     className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg text-3xl font-bold hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
                 >
-                    Add Reaction
                     <FaPlusCircle></FaPlusCircle>
+                    Add Reaction
                 </Button>
 
                 <Button

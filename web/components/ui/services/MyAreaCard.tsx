@@ -44,9 +44,9 @@ export function MyAreaCard({action, reaction, areaID, areaActivate}: {
 
                             <ServiceIcon className="text-3xl text-black" tag={reaction.ref_name}/>
                             <div className="flex items-center ml-auto" >
-                                <Label
-                                    className={"mx-4 font-bold text-xl ml"} htmlFor={`switch-${areaID}`}
-                                > {switchOn ? "Disable" : "Enable"} </Label>
+                                {/*<Label*/}
+                                {/*    className={"mx-4 font-bold text-xl ml"} htmlFor={`switch-${areaID}`}*/}
+                                {/*> {switchOn ? "Disable" : "Enable"} </Label>*/}
                                 <Switch
                                     className={`transition-colors duration-300 ${switchOn ? '!bg-green-500' : '!bg-red-500'}`}
                                     id={`switch-${areaID}`} onClick={handleSwitchToggle} checked={switchOn}/>
