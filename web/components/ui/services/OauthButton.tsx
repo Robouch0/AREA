@@ -5,13 +5,14 @@ import { connectOauth, oauthLogin } from "@/api/authentification";
 import { Button } from '@/components/ui/utils/Button';
 import redirectURI from '@/lib/redirectUri';
 import { useToast } from "@/hooks/use-toast"
+import * as React from "react";
 
 interface IOAuthButton {
     className: string,
     service: string,
     ServiceIcon?: React.ReactNode | null,
     textButton: string,
-    login: boolean,
+    location: string,
 }
 
 async function redirectToService(service: string) {
@@ -27,13 +28,13 @@ async function redirectToService(service: string) {
     }
 }
 // http://127.0.0.1:8081
-async function askForToken(service: string, code: string | null, login: boolean) {
+async function askForToken(service: string, code: string | null, location: string) {
 
     try {
         if (redirectURI == undefined)
             throw Error("env variable redirectURI is undefined")
-        console.log(login)
-        if (login) {
+        console.log(location)
+        if (location == "login") {
             await oauthLogin({ service: service, code: code, redirect_uri: redirectURI })
         } else {
             await connectOauth(service, code)
@@ -44,7 +45,7 @@ async function askForToken(service: string, code: string | null, login: boolean)
     }
 }
 
-export function OauthButton({ service, className, ServiceIcon, textButton, login }: IOAuthButton) {
+export function OauthButton({ service, className, ServiceIcon, textButton, location}: IOAuthButton) {
     const router = useRouter();
     const [code, setPopupCode] = useState<string | null>("");
     const { toast } = useToast()
@@ -55,7 +56,6 @@ export function OauthButton({ service, className, ServiceIcon, textButton, login
             if (!event || !event.data.code) {
                 return;
             }
-            // maybe we will later need to check for message origin, for security purposes
             const eventValues: string[] = event.data.code.split(",")
             const code: string = eventValues[0];
             const msgService: string = eventValues[1];
@@ -90,17 +90,20 @@ export function OauthButton({ service, className, ServiceIcon, textButton, login
 
     useEffect(() => {
         if (code) {
-            askForToken(service, code, login)
+            askForToken(service, code, location)
                 .then(() => {
-                    if (login) {
+                    if (location == "login") {
                         router.push("/services")
-                    } else {
+                    } else if (location == "profile") {
+                        console.log("ici")
                         router.push("/services/profile")
+                    } else if (location == "create") {
+                        window.location.reload()
                     }
                 })
                 .catch((error) => console.log(error));
         }
-    }, [code, router, service, login]);
+    }, [code, router, service, location]);
 
     return (
         <Button
@@ -114,7 +117,7 @@ export function OauthButton({ service, className, ServiceIcon, textButton, login
                     {ServiceIcon}
                 </div>
             }
-            <p >{textButton}</p>
+            <p className={"text-black font-bold text-xl"}>{textButton}</p>
         </Button>
     );
 }
