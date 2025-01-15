@@ -39,8 +39,8 @@ export default function MicroserviceCreateZone({
         (tokenState) => tokenState.providerName == serviceChosen?.ref_name)?.isTokenPresent || serviceChosen === undefined
     return (
         <>
-            <>
-                <ComboboxDemo services={services} serviceName={name} setValueAction={setNameAction} />
+            <div>
+                <ComboboxDemo services={services.sort((a,b) => a.name.localeCompare(b.name))} serviceName={name} setValueAction={setNameAction} />
                 {
                     microServiceName === "" && name !== "" ? (
                         isOauthButtonVisible ? (
@@ -54,7 +54,7 @@ export default function MicroserviceCreateZone({
                         )
                     ) : null
                 }
-            </>
+            </div>
 
             {
                 isOauthButtonVisible ?

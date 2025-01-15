@@ -203,8 +203,8 @@ export default function CreatePage({services, userTokens, uid}: {
                 <Button
                     type="submit"
                     className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold"
-                    // disabled={action.microServiceName === "" || reactions.some(
-                    //     r => r.microServiceName === "") || !tokens.action || !tokens.reactions.every((token) => token)}
+                    disabled={action.microServiceName === "" || reactions.some(
+                        r => r.microServiceName === "") || !userTokens || !userTokens.every((token) => token)}
                 >
                     Create AREA
                 </Button>
