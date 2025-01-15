@@ -9,9 +9,12 @@ package db
 
 import (
 	"area/models"
+	"area/utils"
 	"context"
 
 	"github.com/uptrace/bun"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UserDb struct {
@@ -35,7 +38,13 @@ func GetUserDb() *UserDb {
 }
 
 func (user *UserDb) CreateUser(userData *models.User) (*models.User, error) {
-	_, err := user.Db.NewInsert().
+	hashedPass, err := utils.HashPassword(userData.Password)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Cannot hash the password")
+	}
+
+	userData.Password = hashedPass
+	_, err = user.Db.NewInsert().
 		Model(userData).
 		Exec(context.Background())
 
@@ -71,12 +80,17 @@ func (user *UserDb) GetUserByID(id int) (*models.User, error) { // Use the gener
 }
 
 func (user *UserDb) UpdateUserData(id int, datas *models.UpdatableUserData) (*models.User, error) {
+	hashedPass, err := utils.HashPassword(datas.Password)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Cannot hash the password")
+	}
+
 	userData := new(models.User)
-	_, err := user.Db.NewUpdate().
+	_, err = user.Db.NewUpdate().
 		Model(userData).
 		Set("first_name = ?", datas.FirstName).
 		Set("last_name = ?", datas.LastName).
-		Set("password = ?", datas.Password).
+		Set("password = ?", hashedPass).
 		Where("id = ?", id).
 		Exec(context.Background())
 	if err != nil {

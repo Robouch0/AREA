@@ -12,6 +12,7 @@ import (
 	"area/api/middleware"
 	"area/db"
 	"area/models"
+	"area/utils"
 	http_utils "area/utils/httpUtils"
 	"context"
 	"log"
@@ -57,9 +58,13 @@ func SignIn(jwtauth *jwtauth.JWTAuth) http.HandlerFunc {
 		err = userDb.Db.NewSelect().
 			Model(us).
 			Where("email = ?", cred.Email).
-			Where("password = ?", cred.Password).
 			Scan(context.Background())
 
+		if !utils.CheckPasswordHash(cred.Password, us.Password) {
+			http_utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("Invalid password: %s\n", cred.Password))
+			log.Printf("Error: %v\n", err)
+			return
+		}
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 401, fmt.Sprintf("No user known with email: %s\n", cred.Email))
 			log.Printf("Error: %v\n", err)
