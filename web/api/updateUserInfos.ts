@@ -8,7 +8,7 @@ export async function updateUserInfos(firstName: string, lastName: string, passw
         const cookiesObj: ReadonlyRequestCookies = await cookies();
         const uid: string | undefined = cookiesObj.get("UID")?.value;
         const token: string | undefined = cookiesObj.get('token')?.value;
-
+        console.log(password)
         if (!uid) {
             throw new Error("User ID not found in cookies");
         }

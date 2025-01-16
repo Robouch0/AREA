@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from "next/navigation";
+import {useCallback, useEffect, useState} from 'react';
+import {useRouter} from "next/navigation";
 import axiosInstance from "@/lib/axios";
-import { connectOauth, oauthLogin } from "@/api/authentification";
-import { Button } from '@/components/ui/utils/Button';
+import {connectOauth, oauthLogin} from "@/api/authentification";
+import {Button} from '@/components/ui/utils/Button';
 import redirectURI from '@/lib/redirectUri';
-import { useToast } from "@/hooks/use-toast"
+import {useToast} from "@/hooks/use-toast"
 import * as React from "react";
 
 interface IOAuthButton {
@@ -27,6 +27,7 @@ async function redirectToService(service: string) {
         throw error;
     }
 }
+
 // http://127.0.0.1:8081
 async function askForToken(service: string, code: string | null, location: string) {
 
@@ -35,7 +36,7 @@ async function askForToken(service: string, code: string | null, location: strin
             throw Error("env variable redirectURI is undefined")
         console.log(location)
         if (location == "login") {
-            await oauthLogin({ service: service, code: code, redirect_uri: redirectURI })
+            await oauthLogin({service: service, code: code, redirect_uri: redirectURI})
         } else {
             await connectOauth(service, code)
         }
@@ -45,10 +46,10 @@ async function askForToken(service: string, code: string | null, location: strin
     }
 }
 
-export function OauthButton({ service, className, ServiceIcon, textButton, location}: IOAuthButton) {
+export function OauthButton({service, className, ServiceIcon, textButton, location}: IOAuthButton) {
     const router = useRouter();
     const [code, setPopupCode] = useState<string | null>("");
-    const { toast } = useToast()
+    const {toast} = useToast()
     const [channel, setChannel] = useState<BroadcastChannel | null>(null);
     console.log(service)
     useEffect(() => {
@@ -108,7 +109,9 @@ export function OauthButton({ service, className, ServiceIcon, textButton, locat
     return (
         <Button
             className={className}
-            onClick={() => { openPopup(service) }}
+            onClick={() => {
+                openPopup(service)
+            }}
         >
             {ServiceIcon == null ?
                 <></>
@@ -117,7 +120,10 @@ export function OauthButton({ service, className, ServiceIcon, textButton, locat
                     {ServiceIcon}
                 </div>
             }
-            <p className={"text-black font-bold text-xl"}>{textButton}</p>
+            {location === "login" ?
+                <p className={"text-white font-bold text-xl"}>{textButton}</p> :
+                <p className={"text-black font-bold text-xl"}>{textButton}</p>
+            }
         </Button>
     );
 }
