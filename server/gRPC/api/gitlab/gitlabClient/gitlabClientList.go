@@ -30,6 +30,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Create a file on a repository",
@@ -68,6 +69,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Update a file on a repository",
@@ -106,6 +108,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Delete a file on a repository",
@@ -138,6 +141,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Mark an item of a todo list as done",
@@ -152,13 +156,15 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Mark all Items of your todo list as done",
 				RefName: "markAllItemDone",
 				Type:    "reaction",
 
-				Ingredients: map[string]IServ.IngredientDescriptor{},
+				Ingredients:       map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 		},
 	}

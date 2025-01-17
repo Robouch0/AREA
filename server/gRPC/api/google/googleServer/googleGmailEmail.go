@@ -102,7 +102,7 @@ func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.E
 		return nil, status.Errorf(codes.Aborted, resp.Status)
 	}
 	log.Println(resp.Body)
-	return nil, nil
+	return req, nil
 }
 
 func (google *GoogleService) WatchGmailEmail(ctx context.Context, req *gRPCService.EmailTriggerReq) (*gRPCService.EmailTriggerReq, error) {
