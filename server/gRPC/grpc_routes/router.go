@@ -8,6 +8,7 @@
 package grpc_routes
 
 import (
+	crypto_service "area/gRPC/api/cryptoCompare/cryptoCompareServer"
 	asana_server "area/gRPC/api/asana/asanaServer"
 	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
 	discord_server "area/gRPC/api/discord/discordServer"
@@ -49,8 +50,9 @@ func LaunchServices() {
 	weatherService, errWeather := weather_server.NewWeatherService()
 	miroService, errMiro := miro_server.NewMiroService()
 	asanaService, errAsana := asana_server.NewAsanaService()
+	cryptoService, errCrypto := crypto_service.NewCryptoService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errAsana, errMiro); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errAsana, errMiro, errCrypto); err != nil {
 		log.Println(err)
 		return
 	}
@@ -65,6 +67,7 @@ func LaunchServices() {
 	services.RegisterWeatherServiceServer(s, weatherService)
 	services.RegisterMiroServiceServer(s, miroService)
 	services.RegisterAsanaServiceServer(s, asanaService)
+	services.RegisterCryptoServiceServer(s, cryptoService)
 
 	var wg sync.WaitGroup
 
@@ -91,6 +94,7 @@ func LaunchServices() {
 	weatherService.InitReactClient(conn)
 	githubService.InitReactClient(conn)
 	gitlabService.InitReactClient(conn)
+	cryptoService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

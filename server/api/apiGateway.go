@@ -9,6 +9,7 @@ package api
 
 import (
 	areaMiddleware "area/api/middleware"
+	crypto_client "area/gRPC/api/cryptoCompare/cryptoCompareClient"
 	asana_client "area/gRPC/api/asana/asanaClient"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
@@ -54,6 +55,7 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["spotify"] = spotify_client.NewSpotifyClient(conn)
 	m["weather"] = weather_client.NewWeatherClient(conn)
 	m["miro"] = miro_client.NewMiroClient(conn)
+	m["crypto"] = crypto_client.NewCryptoClient(conn)
 	m["asana"] = asana_client.NewAsanaClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),

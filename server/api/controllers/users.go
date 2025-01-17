@@ -19,22 +19,29 @@ import (
 	"net/http"
 )
 
-type UserInformations struct {
-	ID        uint   `bun:"id,pk,autoincrement" json:"id,pk,autoincrement"`
-	FirstName string `bun:"first_name" json:"first_name"`
-	LastName  string `bun:"last_name" json:"last_name"`
+type ReadUserInformations struct {
+	ID        uint   `json:"id,pk,autoincrement"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 
-	Email    string `bun:"email" json:"email"`
-	Password string `bun:"password" json:"password"`
+	Email string `json:"email"`
 }
 
-func UserModelToUserInfos(data *models.User) *UserInformations {
-	return &UserInformations{
+type CreateUserInformations struct {
+	ID        uint   `json:"id,pk,autoincrement"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func UserModelToReadUserInfos(data *models.User) *ReadUserInformations {
+	return &ReadUserInformations{
 		ID:        data.ID,
 		FirstName: data.FirstName,
 		LastName:  data.LastName,
 		Email:     data.Email,
-		Password:  data.Password,
 	}
 }
 
@@ -45,14 +52,14 @@ func UserModelToUserInfos(data *models.User) *UserInformations {
 // @Tags         User
 // @Accept       json
 // @Produce      json
-// @Param 		 userInfos body	UserInformations	true 	"User's information"
-// @Success      200  {object}  UserInformations
+// @Param 		 userInfos body	CreateUserInformations	true 	"Create User's information body"
+// @Success      200  {object}  ReadUserInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
 // @Router       /user/ [post]
 func CreateNewUser(userDb *db.UserDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		newUser, err := conv_utils.IoReaderToStruct[UserInformations](&r.Body)
+		newUser, err := conv_utils.IoReaderToStruct[CreateUserInformations](&r.Body)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
@@ -70,29 +77,18 @@ func CreateNewUser(userDb *db.UserDb) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(UserModelToUserInfos(res))
+		err = json.NewEncoder(w).Encode(&ReadUserInformations{
+			ID:        res.ID,
+			FirstName: res.FirstName,
+			LastName:  res.LastName,
+			Email:     res.Email,
+		})
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
 	}
 }
-
-// func GetAllUsers(userDb *db.UserDb) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		res, err := userDb.GetUsers()
-// 		if err != nil {
-// 			fmt.Printf("Error: %v\n", err)
-// 			return
-// 		}
-
-// 		err = json.NewEncoder(w).Encode(res) // Convert to []UserInformations
-// 		if err != nil {
-// 			fmt.Printf("Error: %v\n", err)
-// 			return
-// 		}
-// 	}
-// }
 
 // Get token godoc
 // @Summary      Get User By ID
@@ -101,7 +97,7 @@ func CreateNewUser(userDb *db.UserDb) http.HandlerFunc {
 // @Tags         User
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  UserInformations
+// @Success      200  {object}  ReadUserInformations
 // @Failure      400  {object}  error
 // @Failure      500  {object}  error
 // @Router       /user/me [get]
@@ -120,7 +116,12 @@ func GetUserByID(userDb *db.UserDb) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(UserModelToUserInfos(res))
+		err = json.NewEncoder(w).Encode(&ReadUserInformations{
+			ID:        res.ID,
+			FirstName: res.FirstName,
+			LastName:  res.LastName,
+			Email:     res.Email,
+		})
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 422, fmt.Sprintf("Error: %v\n", err))
 			log.Printf("Error: %v\n", err)

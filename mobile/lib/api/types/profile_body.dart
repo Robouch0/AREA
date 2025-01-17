@@ -41,7 +41,7 @@ class UserInfoBody {
       firstName: json['first_name'],
       lastName: json['last_name'],
       email: json['email'],
-      password: json['password']
+      password: json['password'],
     );
   }
 
@@ -51,7 +51,7 @@ class UserInfoBody {
       'first_name': firstName,
       'last_name': lastName,
       'email': email,
-      'password': password
+      'password': password,
     };
   }
 }

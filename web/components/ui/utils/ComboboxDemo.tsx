@@ -23,7 +23,7 @@ import {AreaServices} from "@/api/types/areaStatus";
 export function ComboboxDemo({services, serviceName, setValueAction}: {
     services: AreaServices[];
     serviceName: string;
-    setValueAction: React.Dispatch<React.SetStateAction<string>>
+    setValueAction: (name: string) => void
 }) {
     const [open, setOpen] = React.useState(false)
 
@@ -34,7 +34,7 @@ export function ComboboxDemo({services, serviceName, setValueAction}: {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="text-white hover:text-slate-200 bg-slate-800 border-2 hover:bg-slate-800 text-xl font-bold w-72"
+                    className="text-white hover:text-slate-200 bg-slate-800 border-2 hover:bg-slate-800 text-xl font-bold w-72 hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-4"
                 >
                     {serviceName !== ""
                         ? services.find((service: AreaServices): boolean => service.ref_name === serviceName)?.ref_name
@@ -49,8 +49,7 @@ export function ComboboxDemo({services, serviceName, setValueAction}: {
                         placeholder="Search a service..."
                     />
                     <CommandList className="border-t-2 border-slate-700">
-                        <CommandEmpty className="items-center justify-center mx-8 text-xl font-bold text-white">Aucun
-                            service trouvé.</CommandEmpty>
+                        <CommandEmpty className="items-center justify-center mx-8 text-xl font-bold text-white">No service found.</CommandEmpty>
                         <CommandGroup>
                             {services.map((service: AreaServices, i: number) => (
                                 <CommandItem

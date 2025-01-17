@@ -9,6 +9,7 @@ package reaction_server
 
 import (
 	"area/db"
+	crypto_client "area/gRPC/api/cryptoCompare/cryptoCompareClient"
 	asana_client "area/gRPC/api/asana/asanaClient"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
@@ -74,6 +75,7 @@ func (react *ReactionService) InitServiceClients(conn *grpc.ClientConn) {
 	react.clients["weather"] = weather_client.NewWeatherClient(conn)
 	react.clients["asana"] = asana_client.NewAsanaClient(conn)
 	react.clients["miro"] = miro_client.NewMiroClient(conn)
+	react.clients["crypto"] = crypto_client.NewCryptoClient(conn)
 }
 
 func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCService.LaunchRequest) (*gRPCService.LaunchResponse, error) {

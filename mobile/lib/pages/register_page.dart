@@ -23,17 +23,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _performRegister(String email, String pass, String firstName, String lastName) async {
-    final success = await _authService.createAccount(email, pass, firstName, lastName);
-
-    if (!mounted) {
-      return;
-    }
+  void _showSuccessStatus(bool success) async {
+    if (!mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content:
-              Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
-          backgroundColor: Colors.green));
+        content:
+        Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
       context.go(RouteNames.home);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -44,15 +41,20 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  void _register() {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
-      _performRegister(
-        _emailController.text,
-        _passwordController.text,
-        _firstNameController.text,
-        _lastNameController.text,
-      );
+      final success = await _authService.createAccount(
+          _emailController.text,
+          _passwordController.text,
+          _firstNameController.text,
+          _lastNameController.text);
+      _showSuccessStatus(success);
     }
+  }
+
+  void _registerOAuth(String service) async {
+    final success = await _authService.loginWithOAuth(context, service);
+    _showSuccessStatus(success);
   }
 
   @override
@@ -85,6 +87,9 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(height: 25),
             _buildTextDivider('or'),
             const SizedBox(height: 15),
+            _buildOAuthButton('Github'),
+            const SizedBox(height: 15),
+            _buildOAuthButton('Discord'),
             _buildSignUpHereLink()
           ],
         ),
@@ -154,6 +159,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _buildRegisterButton() {
     return AuthButton(text: 'Get started', onPressed: _register);
+  }
+
+  Widget _buildOAuthButton(String service) {
+    return AuthButton(
+        text: 'Continue with $service',
+        onPressed: () {
+          _registerOAuth(service);
+        }
+    );
   }
 
   Widget _buildTextDivider(String text) {

@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
+import 'package:my_area_flutter/api/types/oauth_list_body.dart';
+import 'package:my_area_flutter/api/types/user_provider_list_body.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
 
 class ProfileService {
@@ -23,7 +25,6 @@ class ProfileService {
 
     try {
       final token = _authStorage.getToken();
-      final userId = _authStorage.getUserId();
 
       if (token == null) {
         return false;
@@ -52,7 +53,6 @@ class ProfileService {
   Future<UserInfoBody> getUserInfo() async {
     try {
       final token = _authStorage.getToken();
-      final userId = _authStorage.getUserId();
 
       if (token == null) {
         throw Exception('Token is undefined');
@@ -65,10 +65,6 @@ class ProfileService {
         },
       );
 
-      developer.log(response.body);
-
-      developer.log('token: $token');
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
         return UserInfoBody.fromJson(jsonData);
@@ -76,6 +72,46 @@ class ProfileService {
       throw Exception('Failed to load user infos: ${response.statusCode}');
     } catch (e) {
       developer.log('Failed to get user infos: $e', name: 'my_network_log');
+      rethrow;
+    }
+  }
+
+  Future<UserProviderListBody> getUserProviders() async {
+    try {
+      final token = _authStorage.getToken();
+
+      final response = await http.get(
+        Uri.parse('$_apiUrl/token/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        }
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        return UserProviderListBody.fromJson(jsonData);
+      }
+      throw Exception('Failed to load users providers list: ${response.statusCode}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<OAuthListBody> getOAuthList() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_apiUrl/oauth/list'),
+        headers: {
+          'Content-type': 'application/json',
+        }
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        return OAuthListBody.fromJson(jsonData);
+      }
+      throw Exception('Failed to load oauth list: ${response.statusCode}');
+    } catch (e) {
       rethrow;
     }
   }
