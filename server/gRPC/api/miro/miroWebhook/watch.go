@@ -8,7 +8,7 @@
 package miro_webhook
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
@@ -51,5 +51,5 @@ func CreateWebhook(accessToken string, body *CreateWebhookBody) (*CreateWebhookR
 		log.Println("Watch error: ", err)
 		return nil, err
 	}
-	return utils.IoReaderToStruct[CreateWebhookResponse](&resp.Body)
+	return conv_utils.IoReaderToStruct[CreateWebhookResponse](&resp.Body)
 }

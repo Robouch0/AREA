@@ -9,12 +9,13 @@ package asana_get
 
 import (
 	asana_generics "area/gRPC/api/asana/asanaGenerics"
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"fmt"
+	"net/http"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"net/http"
 )
 
 type WorkspaceInfo struct {
@@ -48,7 +49,7 @@ func ListWorkspace(accesToken string) (*asana_generics.AsanaBaseBody[[]Workspace
 		return nil, err
 	}
 
-	list, err := utils.IoReaderToStruct[asana_generics.AsanaBaseBody[[]WorkspaceInfo]](&res.Body)
+	list, err := conv_utils.IoReaderToStruct[asana_generics.AsanaBaseBody[[]WorkspaceInfo]](&res.Body)
 	if err != nil {
 		return nil, err
 	}

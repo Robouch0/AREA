@@ -43,7 +43,7 @@ func (spot *SpotifyClient) SendAction(_ models.AreaScenario, _, _ int) (*IServ.A
 	return nil, errors.New("No action supported in spotify  service (Next will be things)")
 }
 
-func (spot *SpotifyClient) stopSong(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) stopSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	_, err := json.Marshal(ingredients)
 	if err != nil {
 		log.Println("Ingredients problems", err)
@@ -60,7 +60,7 @@ func (spot *SpotifyClient) stopSong(ingredients map[string]any, _ []byte, userID
 	return &IServ.ReactionResponseStatus{Description: "Song stopped"}, nil
 }
 
-func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, _ []byte, 
 	return &IServ.ReactionResponseStatus{Description: "Playlist created"}, nil
 }
 
-func (spot *SpotifyClient) nextSong(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) nextSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	_, err := json.Marshal(ingredients)
 	if err != nil {
 		log.Println("Ingredients problems", err)
@@ -96,7 +96,7 @@ func (spot *SpotifyClient) nextSong(ingredients map[string]any, _ []byte, userID
 	return &IServ.ReactionResponseStatus{Description: "Song skipped"}, nil
 }
 
-func (spot *SpotifyClient) previousSong(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) previousSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	_, err := json.Marshal(ingredients)
 	if err != nil {
 		log.Println("Ingredients problems", err)
@@ -113,7 +113,7 @@ func (spot *SpotifyClient) previousSong(ingredients map[string]any, _ []byte, us
 	return &IServ.ReactionResponseStatus{Description: "Go back to previous song"}, nil
 }
 
-func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, _ []byt
 	return &IServ.ReactionResponseStatus{Description: "Change the playback volume"}, nil
 }
 
-func (spot *SpotifyClient) launchSong(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) launchSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -153,7 +153,7 @@ func (spot *SpotifyClient) launchSong(ingredients map[string]any, _ []byte, user
 	return &IServ.ReactionResponseStatus{Description: "Song launched"}, nil
 }
 
-func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	// 	jsonString, err := json.Marshal(ingredients)
 	// 	if err != nil {
 	// 		return nil, err
@@ -173,9 +173,9 @@ func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, _ []byt
 	return &IServ.ReactionResponseStatus{Description: "Song added"}, nil
 }
 
-func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*spot.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	log.Println(microservice)
 	return nil, errors.New("No such microservice")

@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-func (google *GoogleClient) deleteDrive(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) deleteDrive(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (google *GoogleClient) deleteDrive(ingredients map[string]any, prevOutput [
 	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
 }
 
-func (google *GoogleClient) updateDrive(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) updateDrive(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (google *GoogleClient) updateDrive(ingredients map[string]any, prevOutput [
 	return &IServ.ReactionResponseStatus{Description: res.NewName}, nil
 }
 
-func (google *GoogleClient) createDrive(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) createDrive(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err

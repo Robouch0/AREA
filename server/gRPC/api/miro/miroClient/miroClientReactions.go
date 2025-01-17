@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (miro *MiroClient) createStickyNote(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (miro *MiroClient) createStickyNote(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (miro *MiroClient) createStickyNote(ingredients map[string]any, prevOutput 
 	return &IServ.ReactionResponseStatus{Description: "Done"}, nil
 }
 
-func (miro *MiroClient) createTextNote(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (miro *MiroClient) createTextNote(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (miro *MiroClient) createTextNote(ingredients map[string]any, prevOutput []
 	return &IServ.ReactionResponseStatus{Description: "Done"}, nil
 }
 
-func (miro *MiroClient) createCardNote(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (miro *MiroClient) createCardNote(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err

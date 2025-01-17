@@ -5,7 +5,7 @@
 // reactionClient
 //
 
-package reaction
+package reaction_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
@@ -35,7 +35,7 @@ func (react *ReactionServiceClient) ListServiceStatus() (*IServ.ServiceStatus, e
 	return nil, nil
 }
 
-func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }
 

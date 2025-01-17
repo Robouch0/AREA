@@ -8,7 +8,7 @@
 package weather_server
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"log"
 	"net/http"
@@ -51,7 +51,7 @@ func GetCurrentWeather(config *WeatherConfig) (*WeatherAPIResponseBody, error) {
 		log.Println(err)
 		return nil, err
 	}
-	weatherRes, err := utils.IoReaderToStruct[WeatherAPIResponseBody](&resp.Body)
+	weatherRes, err := conv_utils.IoReaderToStruct[WeatherAPIResponseBody](&resp.Body)
 	if err != nil {
 		log.Println(err)
 		return nil, err
