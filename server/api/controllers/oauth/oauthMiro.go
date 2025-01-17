@@ -8,7 +8,7 @@
 package oauth
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"errors"
@@ -55,7 +55,7 @@ func (Miro *MiroOAuth) GetAccessToken(OAuthCode *OAuthRequest) (*OAuthAccessInfo
 	if err != nil {
 		return nil, err
 	}
-	miroOAuthResponse, err := utils.IoReaderToStruct[miroAccessTokenResponse](&resp.Body)
+	miroOAuthResponse, err := conv_utils.IoReaderToStruct[miroAccessTokenResponse](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

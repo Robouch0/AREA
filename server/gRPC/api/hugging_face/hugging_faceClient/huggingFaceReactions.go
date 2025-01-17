@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-func (hf *HuggingFaceServiceClient) SendTextGenerationReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) SendTextGenerationReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	ctx := grpcutils.CreateContextFromUserID(userID)
 	res, err := hf.cc.LaunchTextGeneration(ctx, &gRPCService.TextGenerationReq{Inputs: ingredients["inputs"].(string)})
 	if err != nil {
@@ -24,7 +24,7 @@ func (hf *HuggingFaceServiceClient) SendTextGenerationReaction(ingredients map[s
 	return &IServ.ReactionResponseStatus{Description: res.GeneratedText}, nil
 }
 
-func (hf *HuggingFaceServiceClient) CreateRepositoryReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) CreateRepositoryReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (hf *HuggingFaceServiceClient) CreateRepositoryReaction(ingredients map[str
 	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
 }
 
-func (hf *HuggingFaceServiceClient) ChangeRepoVisibilityReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) ChangeRepoVisibilityReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (hf *HuggingFaceServiceClient) ChangeRepoVisibilityReaction(ingredients map
 	return &IServ.ReactionResponseStatus{Description: res.Type}, nil
 }
 
-func (hf *HuggingFaceServiceClient) MoveRepoReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) MoveRepoReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (hf *HuggingFaceServiceClient) MoveRepoReaction(ingredients map[string]any,
 	return &IServ.ReactionResponseStatus{Description: res.ToRepo}, nil
 }
 
-func (hf *HuggingFaceServiceClient) DeleteRepositoryReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) DeleteRepositoryReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err

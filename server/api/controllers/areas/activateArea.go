@@ -9,7 +9,7 @@ package areas
 
 import (
 	api "area/api"
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	http_utils "area/utils/httpUtils"
 	"encoding/json"
@@ -41,7 +41,7 @@ func ActivateArea(gateway *api.ApiGateway) http.HandlerFunc {
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
-		areaReq, err := utils.IoReaderToStruct[areaActivateRequest](&r.Body)
+		areaReq, err := conv_utils.IoReaderToStruct[areaActivateRequest](&r.Body)
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return

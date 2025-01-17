@@ -67,7 +67,7 @@ func (git *GitlabClient) sendNewWebHookAction(
 	return &IServ.ActionResponseStatus{Description: res.Id}, nil
 }
 
-func (git *GitlabClient) createFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) createFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (git *GitlabClient) createFile(ingredients map[string]any, prevOutput []byt
 	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
 }
 
-func (git *GitlabClient) updateFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -107,7 +107,7 @@ func (git *GitlabClient) updateFile(ingredients map[string]any, prevOutput []byt
 	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
 }
 
-func (git *GitlabClient) deleteFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -127,7 +127,7 @@ func (git *GitlabClient) deleteFile(ingredients map[string]any, prevOutput []byt
 	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
 }
 
-func (git *GitlabClient) markItemDone(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) markItemDone(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func (git *GitlabClient) markItemDone(ingredients map[string]any, prevOutput []b
 	return &IServ.ReactionResponseStatus{Description: res.Id}, nil
 }
 
-func (git *GitlabClient) markAllItemDone(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) markAllItemDone(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -177,11 +177,10 @@ func (git *GitlabClient) SendAction(scenario models.AreaScenario, actionID, user
 func (git *GitlabClient) TriggerReaction(
 	ingredients map[string]any,
 	microservice string,
-	prevOutput []byte,
 	userID int,
 ) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*git.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }

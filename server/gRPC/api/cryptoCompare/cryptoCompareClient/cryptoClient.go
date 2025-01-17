@@ -44,7 +44,6 @@ func (crypto *CryptoClient) SendAction(scenario models.AreaScenario, actionID, u
 func (crypto *CryptoClient) TriggerReaction(
 	ingredients map[string]any,
 	microservice string,
-	prevOutput []byte,
 	userID int,
 ) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No microservice Reaction yet")
@@ -68,4 +67,3 @@ func (crypto *CryptoClient) SetActivate(microservice string, id uint, userID int
 		Description: "CryptoCompare Deactivated",
 	}, nil
 }
-

@@ -9,6 +9,7 @@ package drive
 
 import (
 	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
@@ -66,7 +67,7 @@ func WatchFile(accessToken, fileID, channelID string, actionID uint) (*DriveChan
 	if err != nil {
 		return nil, err
 	}
-	watchResBody, err := utils.IoReaderToStruct[DriveChannel](&resp.Body)
+	watchResBody, err := conv_utils.IoReaderToStruct[DriveChannel](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +110,7 @@ func WatchChanges(accessToken, channelID string, actionID uint) (*DriveChannel, 
 	if err != nil {
 		return nil, err
 	}
-	watchResBody, err := utils.IoReaderToStruct[DriveChannel](&resp.Body)
+	watchResBody, err := conv_utils.IoReaderToStruct[DriveChannel](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

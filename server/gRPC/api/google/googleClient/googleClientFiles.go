@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-func (google *GoogleClient) createEmptyFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) createEmptyFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (google *GoogleClient) createEmptyFile(ingredients map[string]any, prevOutp
 	return &IServ.ReactionResponseStatus{Description: res.Description}, nil
 }
 
-func (google *GoogleClient) deleteFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (google *GoogleClient) deleteFile(ingredients map[string]any, prevOutput []
 	return &IServ.ReactionResponseStatus{Description: res.FileName}, nil
 }
 
-func (google *GoogleClient) updateFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (google *GoogleClient) updateFile(ingredients map[string]any, prevOutput []
 	return &IServ.ReactionResponseStatus{Description: res.NewFileName}, nil
 }
 
-func (google *GoogleClient) copyFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) copyFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err

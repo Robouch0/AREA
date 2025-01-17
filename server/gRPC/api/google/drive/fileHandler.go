@@ -8,7 +8,7 @@
 package drive
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
@@ -46,7 +46,7 @@ func ListFiles(accessToken string) (*ListDriveFile, error) {
 	if err != nil {
 		return nil, err
 	}
-	list, err := utils.IoReaderToStruct[ListDriveFile](&resp.Body)
+	list, err := conv_utils.IoReaderToStruct[ListDriveFile](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func CreateEmptyFile(accessToken string, file DriveFile) (*DriveFile, error) {
 		return nil, err
 	}
 	io.Copy(os.Stdout, postRequest.Body)
-	drive, err := utils.IoReaderToStruct[DriveFile](&resp.Body)
+	drive, err := conv_utils.IoReaderToStruct[DriveFile](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func CopyFile(accessToken string, fileID string, file DriveFile) (*DriveFile, er
 	if err != nil {
 		return nil, err
 	}
-	drive, err := utils.IoReaderToStruct[DriveFile](&resp.Body)
+	drive, err := conv_utils.IoReaderToStruct[DriveFile](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ func UpdateFile(accessToken, fileID string, file DriveFile) (*DriveFile, error) 
 	if err != nil {
 		return nil, err
 	}
-	drive, err := utils.IoReaderToStruct[DriveFile](&resp.Body)
+	drive, err := conv_utils.IoReaderToStruct[DriveFile](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
