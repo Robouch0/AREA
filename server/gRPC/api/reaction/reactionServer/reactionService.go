@@ -9,8 +9,8 @@ package reaction_server
 
 import (
 	"area/db"
-	crypto_client "area/gRPC/api/cryptoCompare/cryptoCompareClient"
 	asana_client "area/gRPC/api/asana/asanaClient"
+	crypto_client "area/gRPC/api/cryptoCompare/cryptoCompareClient"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
 	github "area/gRPC/api/github/githubClient"
