@@ -114,7 +114,7 @@ func (react *ReactionService) LaunchReaction(ctx context.Context, req *gRPCServi
 			}
 			log.Println(reactionRes)
 
-			utils.MergeMaps[any](&cache, &re.PrevOutput)
+			utils.MergeMaps[any](&cache, &reactionRes.Datas)
 		}
 	}
 	return &gRPCService.LaunchResponse{}, nil
