@@ -23,3 +23,8 @@ type GitlabWebHookResponse struct {
 	Object     ObjectAttribute `json:"object_attributes,omitempty"`
 	Action     string          `json:"action,omitempty"`
 }
+
+type GitlabPayloadResponse struct {
+	EventName string 	`json:"event_name,omitempty"`
+	ProjectId int 		`json:"project_id,omitempty"`
+}

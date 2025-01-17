@@ -215,10 +215,17 @@ func (git *GitlabService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 	   (gitpayload.EventType != "" && gitpayload.EventType == string(act.RepoAction) && strconv.Itoa(gitpayload.Project.ProjectId) == act.RepoID) ||
 	   (gitpayload.ObjectKind != "" && gitpayload.ObjectKind == string(act.RepoAction) && strconv.Itoa(gitpayload.Project.ProjectId) == act.RepoID) {
 		if gitpayload.Object.Action == string(act.ActionType) || gitpayload.Action == string(act.ActionType) {
+			var gitoutput gitlabtypes.GitlabPayloadResponse
+			gitoutput.EventName = gitpayload.EventName + gitpayload.EventType + gitpayload.ObjectKind
+			gitoutput.ProjectId = gitpayload.Project.ProjectId
+			b, err := json.Marshal(gitoutput)
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+			}
 			reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
 			_, err = git.reactService.LaunchReaction(
 				reactCtx,
-				&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: nil},
+				&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: b},
 			)
 			if err != nil {
 				return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
