@@ -17,6 +17,14 @@ service GitlabService {
 
   rpc CreatePushWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
 
+  rpc CreateIssueWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
+  rpc CreateTagWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
+  rpc CreateReleaseWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
+  rpc CreateMergeEventWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
   rpc SetActivateAction(SetActivateGitlab) returns (SetActivateGitlab) {}
 
   rpc TriggerWebHook (GitlabWebHookTriggerReq) returns (GitlabWebHookTriggerReq) {}
