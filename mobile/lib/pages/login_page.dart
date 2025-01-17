@@ -80,6 +80,8 @@ class _LoginPageState extends State<LoginPage> {
             _buildTextDivider('or'),
             const SizedBox(height: 15),
             _buildOAuthButton('Github'),
+            const SizedBox(height: 15),
+            _buildOAuthButton('Discord'),
             const SizedBox(height: 10),
             _buildSignUpHereLink()
           ],

@@ -21,7 +21,6 @@ export interface listOauth {
     data: oauthProviders;
 }
 
-
 export async function getUserInfo(): Promise<userInfo> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
@@ -40,8 +39,7 @@ export async function getUserInfo(): Promise<userInfo> {
     }
 }
 
-
-export async function getOauhProviders(): Promise<string[]> {
+export async function getOauthProviders(): Promise<string[]> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
         const token: string | undefined = cookiesObj.get('token')?.value;
@@ -59,23 +57,23 @@ export async function getOauhProviders(): Promise<string[]> {
 }
 
 
+export interface userProviders {
+    providers: string[];
+}
+export interface listUserProviders {
+    data: userProviders;
+}
 export async function getUserTokens(): Promise<string[]> {
     try {
         const cookiesObj: ReadonlyRequestCookies = await cookies();
-        const arrTokens: string[] = [];
         const token: string | undefined = cookiesObj.get('token')?.value;
 
-        const response = await axiosInstance.get(`/token/`, {
+        const response: listUserProviders = await axiosInstance.get(`/token/`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        if (response.data != null) {
-            for (const token of response.data) {
-                arrTokens.push(token.provider);
-            }
-        }
-        return arrTokens;
+        return response.data.providers;
     } catch (error) {
         console.error("Error fetching user tokens:", error);
         throw error;
