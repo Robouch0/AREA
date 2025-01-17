@@ -155,11 +155,17 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 			_, err := google.gmailDb.SetFirstTime(act.ActionID, false)
 			return req, err
 		}
+
+		bytesMess, err := json.Marshal(payload.Message)
+		if err != nil {
+			return nil, err
+		}
+
 		log.Println("Action (GmailWatchMe) is activated so redirect to reaction Service")
 		ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
-		_, err := google.reactService.LaunchReaction(
+		_, err = google.reactService.LaunchReaction(
 			ctx,
-			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: []byte(payload.Message.Data)},
+			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: bytesMess},
 		)
 		if err != nil {
 			log.Println("Error ReactionService", err)
