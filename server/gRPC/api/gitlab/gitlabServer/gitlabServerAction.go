@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"context"
 
@@ -33,7 +34,8 @@ const (
 func (git *GitlabService) storeNewWebHook(
 	tokenInfo *models.Token,
 	req *gRPCService.GitlabWebHookInfo,
-	repoAction string,
+	repoAction models.GlAction,
+	actionType models.GlType,
 ) error {
 	_, err := git.gitlabDb.StoreNewGithub(&models.Gitlab{
 		ActionID:   uint(req.ActionId),
@@ -41,6 +43,7 @@ func (git *GitlabService) storeNewWebHook(
 		Activated:  true,
 		RepoID:     req.Id,
 		RepoAction: repoAction,
+		ActionType: actionType,
 	})
 	return err
 }
@@ -63,6 +66,7 @@ func (git *GitlabService) createWebHook(tokenInfo *models.Token, webhookReq *git
 	_, err = http_utils.SendHttpRequest(postRequest, 201)
 	if err != nil {
 		return err
+
 	}
 	return nil
 }
@@ -81,13 +85,117 @@ func (git *GitlabService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	}
 
 	err = git.createWebHook(tokenInfo, &gitlabtypes.GitlabWebHookRequest{
-		Url: fmt.Sprintf(envWebhookUrl, "gitlab", "push", req.ActionId),
+		Url: fmt.Sprintf(envWebhookUrl, "gitlab", models.GlPush, req.ActionId),
 		PushEvent: true,
 	}, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, "push"); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GlPush, models.GlEmpty); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+func (git *GitlabService) CreateIssueWebhook(ctx context.Context, req *gRPCService.GitlabWebHookInfo) (*gRPCService.GitlabWebHookInfo, error) {
+	if req.Id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
+	}
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
+	if err != nil {
+		return nil, err
+	}
+	envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
+	if err != nil {
+		return nil, err
+	}
+
+	err = git.createWebHook(tokenInfo, &gitlabtypes.GitlabWebHookRequest{
+		Url: fmt.Sprintf(envWebhookUrl, "gitlab", models.GlIssue, req.ActionId),
+		IssuesEvent: true,
+	}, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if err := git.storeNewWebHook(tokenInfo, req, models.GlIssue, models.Glopen); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+func (git *GitlabService) CreateTagWebhook(ctx context.Context, req *gRPCService.GitlabWebHookInfo) (*gRPCService.GitlabWebHookInfo, error) {
+	if req.Id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
+	}
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
+	if err != nil {
+		return nil, err
+	}
+	envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
+	if err != nil {
+		return nil, err
+	}
+
+	err = git.createWebHook(tokenInfo, &gitlabtypes.GitlabWebHookRequest{
+		Url: fmt.Sprintf(envWebhookUrl, "gitlab", models.GlTag, req.ActionId),
+		TagEvent: true,
+	}, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if err := git.storeNewWebHook(tokenInfo, req, models.GlTag, models.GlEmpty); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+func (git *GitlabService) CreateReleaseWebhook(ctx context.Context, req *gRPCService.GitlabWebHookInfo) (*gRPCService.GitlabWebHookInfo, error) {
+	if req.Id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
+	}
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
+	if err != nil {
+		return nil, err
+	}
+	envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
+	if err != nil {
+		return nil, err
+	}
+
+	err = git.createWebHook(tokenInfo, &gitlabtypes.GitlabWebHookRequest{
+		Url: fmt.Sprintf(envWebhookUrl, "gitlab", models.GlRelease, req.ActionId),
+		ReleaseEvent: true,
+	}, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if err := git.storeNewWebHook(tokenInfo, req, models.GlRelease, models.Glcreate); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+func (git *GitlabService) CreateMergeEventWebhook(ctx context.Context, req *gRPCService.GitlabWebHookInfo) (*gRPCService.GitlabWebHookInfo, error) {
+	if req.Id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
+	}
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
+	if err != nil {
+		return nil, err
+	}
+	envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
+	if err != nil {
+		return nil, err
+	}
+
+	err = git.createWebHook(tokenInfo, &gitlabtypes.GitlabWebHookRequest{
+		Url: fmt.Sprintf(envWebhookUrl, "gitlab", models.GlMergeR, req.ActionId),
+		MergeEvent: true,
+	}, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if err := git.storeNewWebHook(tokenInfo, req, models.GlMergeR, models.Glopen); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -103,17 +211,26 @@ func (git *GitlabService) TriggerWebHook(ctx context.Context, req *gRPCService.G
 	if json.Unmarshal(req.Payload, &gitpayload) != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid Payload received")
 	}
-	if len(gitpayload.EventName) == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "No events in github webhook payload")
-	}
-	if gitpayload.EventName == act.RepoAction && string(gitpayload.ProjectId) == act.RepoID {
-		reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
-		_, err = git.reactService.LaunchReaction(
-			reactCtx,
-			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: nil},
-		)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+	if (gitpayload.EventName != "" && gitpayload.EventName == string(act.RepoAction) && strconv.Itoa(gitpayload.Project.ProjectId) == act.RepoID) ||
+	   (gitpayload.EventType != "" && gitpayload.EventType == string(act.RepoAction) && strconv.Itoa(gitpayload.Project.ProjectId) == act.RepoID) ||
+	   (gitpayload.ObjectKind != "" && gitpayload.ObjectKind == string(act.RepoAction) && strconv.Itoa(gitpayload.Project.ProjectId) == act.RepoID) {
+		if gitpayload.Object.Action == string(act.ActionType) || gitpayload.Action == string(act.ActionType) {
+			gitoutput := &gitlabtypes.GitlabPayloadResponse{
+				EventName : gitpayload.EventName + gitpayload.EventType + gitpayload.ObjectKind,
+				ProjectId : gitpayload.Project.ProjectId,
+			}
+			b, err := json.Marshal(gitoutput)
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+			}
+			reactCtx := grpcutils.CreateContextFromUserID(int(act.UserID))
+			_, err = git.reactService.LaunchReaction(
+				reactCtx,
+				&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: b},
+			)
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "Could not handle action's reaction")
+			}
 		}
 	}
 	return req, nil

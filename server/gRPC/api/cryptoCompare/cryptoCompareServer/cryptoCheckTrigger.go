@@ -32,8 +32,13 @@ func (crypto *CryptoService) checkIsHigher() {
 		}
 		threshold := resp.Currency[act.Currency]
 		if uint(threshold) > act.Threshold {
+			cryptoP := &CryptoPayload{
+				CryptoCurrency: act.CryptoCurrency,
+				Currency: act.Currency,
+				Threshold: int(threshold),
+			}
 			ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
-			b, err := json.Marshal(&resp.Currency)
+			b, err := json.Marshal(&cryptoP)
 			if err != nil {
 				log.Println("Could not marshal crypto current response")
 				continue
@@ -63,8 +68,13 @@ func (crypto *CryptoService) checkIsLower() {
 		}
 		threshold := resp.Currency[act.Currency]
 		if uint(threshold) < act.Threshold {
+			cryptoP := &CryptoPayload{
+				CryptoCurrency: act.CryptoCurrency,
+				Currency: act.Currency,
+				Threshold: int(threshold),
+			}
 			ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
-			b, err := json.Marshal(&resp.Currency)
+			b, err := json.Marshal(&cryptoP)
 			if err != nil {
 				log.Println("Could not marshal crypto current response")
 				continue
