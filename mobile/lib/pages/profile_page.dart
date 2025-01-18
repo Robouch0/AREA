@@ -459,16 +459,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildLogoutButton() {
-    return AuthButton(
-      text: 'Logout',
-      onPressed: () async {
-        final authService = AuthService.instance;
-        await authService.logout();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: AuthButton(
+          text: 'Logout',
+          onPressed: () async {
+            final authService = AuthService.instance;
+            await authService.logout();
 
-        if (context.mounted && mounted) {
-          context.go(RouteNames.login);
-        }
-      }
+            if (context.mounted && mounted) {
+              context.go(RouteNames.login);
+            }
+          }
+      )
     );
   }
 }
