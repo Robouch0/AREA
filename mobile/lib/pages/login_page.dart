@@ -85,18 +85,18 @@ class _LoginPageState extends State<LoginPage> {
             _buildEmailField(),
             const SizedBox(height: 17),
             _buildPasswordField(),
-            const SizedBox(height: 5),
-            _buildForgotPasswordLink(),
             const SizedBox(height: 25),
             _buildLoginButton(),
-            const SizedBox(height: 25),
+            const SizedBox(height: 10),
             _buildTextDivider('or'),
             const SizedBox(height: 15),
             _buildOAuthButton('Github'),
             const SizedBox(height: 15),
             _buildOAuthButton('Discord'),
             const SizedBox(height: 10),
-            _buildSignUpHereLink()
+            _buildSignUpHereLink(),
+            const SizedBox(height: 10),
+            _buildEditNetworkServer(),
           ],
         ),
       ),
@@ -137,44 +137,47 @@ class _LoginPageState extends State<LoginPage> {
     return AuthButton(text: 'Log in', onPressed: _login);
   }
 
+  Color _getColorFromService(String service) {
+    switch (service) {
+      case 'Github': return const Color.fromRGBO(36, 41, 46, 1);
+      case 'Discord': return const Color.fromRGBO(114, 137, 218, 1);
+    }
+    return Colors.black;
+  }
+
   Widget _buildOAuthButton(String service) {
     return AuthButton(
       text: 'Continue with $service',
       onPressed: () {
         _loginOAuth(service);
-      }
+      },
+      backgroundColor: _getColorFromService(service),
     );
   }
 
-  Widget _buildForgotPasswordLink() {
-    return TextButton(
-      onPressed: () {},
-      child: const Text(
-        'Forgot your password?',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          color: Colors.black,
-          decoration: TextDecoration.underline,
-        ),
-      ),
+  Widget _buildEditNetworkServer() {
+    return AuthButton(
+      text: 'Edit network server',
+      onPressed: () { context.push(RouteNames.serverConfig); },
+      borderRadius: 10,
     );
   }
 
   Widget _buildTextDivider(String text) {
-    return const Row(children: [
-      Expanded(
+    return Row(children: [
+      const Expanded(
         child: Divider(color: Colors.grey),
       ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        child: Text(
-          'or',
-          style: TextStyle(
-              fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+      if (text.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            text,
+            style: const TextStyle(
+                fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+          ),
         ),
-      ),
-      Expanded(
+      const Expanded(
         child: Divider(color: Colors.grey),
       ),
     ]);

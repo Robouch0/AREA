@@ -84,12 +84,13 @@ class _RegisterPageState extends State<RegisterPage> {
             _buildPasswordField(),
             const SizedBox(height: 25),
             _buildRegisterButton(),
-            const SizedBox(height: 25),
+            const SizedBox(height: 15),
             _buildTextDivider('or'),
             const SizedBox(height: 15),
             _buildOAuthButton('Github'),
             const SizedBox(height: 15),
             _buildOAuthButton('Discord'),
+            const SizedBox(height: 10),
             _buildSignUpHereLink()
           ],
         ),
@@ -161,12 +162,21 @@ class _RegisterPageState extends State<RegisterPage> {
     return AuthButton(text: 'Get started', onPressed: _register);
   }
 
+  Color _getColorFromService(String service) {
+    switch (service) {
+      case 'Github': return const Color.fromRGBO(36, 41, 46, 1);
+      case 'Discord': return const Color.fromRGBO(114, 137, 218, 1);
+    }
+    return Colors.black;
+  }
+
   Widget _buildOAuthButton(String service) {
     return AuthButton(
-        text: 'Continue with $service',
-        onPressed: () {
-          _registerOAuth(service);
-        }
+      text: 'Continue with $service',
+      onPressed: () {
+        _registerOAuth(service);
+      },
+      backgroundColor: _getColorFromService(service),
     );
   }
 
