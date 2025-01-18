@@ -2,19 +2,22 @@
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
+import 'package:my_area_flutter/widgets/oauth_connection_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
+import 'package:my_area_flutter/api/types/user_provider_list_body.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
   final Future<UserInfoBody> userInfo;
+  final Future<UserProviderListBody> userProviders;
 
-  const CreateAreaPage({
-    super.key,
-    required this.services,
-    required this.userInfo,
-  });
+  const CreateAreaPage(
+      {super.key,
+      required this.services,
+      required this.userInfo,
+      required this.userProviders});
 
   @override
   State<CreateAreaPage> createState() => _CreateAreaPageState();
@@ -42,6 +45,7 @@ class ActionData {
 class _CreateAreaPageState extends State<CreateAreaPage> {
   List<AreaServiceData>? services;
   UserInfoBody? userInfo;
+  UserProviderListBody? userProviders;
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
 
@@ -58,9 +62,14 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     try {
       final loadedServices = await widget.services;
       final loadedUserInfo = await widget.userInfo;
+      final loadedUserProviders = await widget.userProviders;
       setState(() {
         services = loadedServices;
         userInfo = loadedUserInfo;
+        userProviders = loadedUserProviders;
+        userProviders?.providers.add('crypto');
+        userProviders?.providers.add('dt');
+        userProviders?.providers.add('weather');
         actions = _filterAreaByType(loadedServices, 'action');
         reactions = _filterAreaByType(loadedServices, 'reaction');
       });
@@ -303,18 +312,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     );
 
     if (reactionsList.length == 1) {
-      return [
-        const Text(
-          'Reaction',
-          style: textStyle
-        )
-      ];
+      return [const Text('Reaction', style: textStyle)];
     }
     return [
-      Text(
-        'Reaction #${index + 1}',
-        style: textStyle
-      ),
+      Text('Reaction #${index + 1}', style: textStyle),
       IconButton(
         icon: const Icon(Icons.delete, color: Colors.red),
         onPressed: () => _removeReaction(index),
@@ -422,15 +423,45 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
     if (selectedService.isEmpty) return const SizedBox.shrink();
 
+    if (userProviders!.providers.contains(selectedService) == false) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              'Link your $selectedService account',
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            OAuthConnectionButton(
+              serviceName: selectedService,
+              initialProviders: userProviders!.providers,
+              onSuccess: () {
+                setState(() {
+                  userProviders!.providers.add(selectedService);
+                });
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     final service = services.firstWhere((s) => s.refName == selectedService);
     final selectedMicroService =
-        service.microservices.firstWhere((m) => m.refName == selectedMicro,
-            orElse: () => MicroServiceBody(
-                  name: '',
-                  refName: '',
-                  type: '',
-                  ingredients: {},
-                ));
+    service.microservices.firstWhere((m) => m.refName == selectedMicro,
+        orElse: () => MicroServiceBody(
+          name: '',
+          refName: '',
+          type: '',
+          ingredients: {},
+        ));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -444,7 +475,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
               actionData.ingredients.clear();
             });
             final selectedMicroService =
-                service.microservices.firstWhere((m) => m.refName == value);
+            service.microservices.firstWhere((m) => m.refName == value);
             _initializeControllers(
                 actionData, selectedMicroService.ingredients);
           },
@@ -475,13 +506,13 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           return InkWell(
             onTap: () => onMicroSelected(micro.refName),
             child: Container(
+              width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected ? Colors.blue[700] : Colors.blue[900],
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     micro.name,

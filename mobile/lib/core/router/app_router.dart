@@ -57,14 +57,18 @@ class AppRouter {
           ),
           GoRoute(
             path: RouteNames.create,
-            builder: (context, state) => CreateAreaPage(services: AreaService.instance.listAreas(), userInfo: ProfileService.instance.getUserInfo()),
+            builder: (context, state) => CreateAreaPage(
+              services: AreaService.instance.listAreas(),
+              userInfo: ProfileService.instance.getUserInfo(),
+              userProviders: ProfileService.instance.getUserProviders(),
+            ),
           ),
           GoRoute(
             path: RouteNames.profile,
             builder: (context, state) => ProfilePage(
-                userInfo: ProfileService.instance.getUserInfo(),
-                oauthList: ProfileService.instance.getOAuthList(),
-                userProviders: ProfileService.instance.getUserProviders()
+              userInfo: ProfileService.instance.getUserInfo(),
+              oauthList: ProfileService.instance.getOAuthList(),
+              userProviders: ProfileService.instance.getUserProviders()
             ),
           ),
         ],
