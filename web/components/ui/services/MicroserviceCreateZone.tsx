@@ -94,6 +94,22 @@ export default function MicroserviceCreateZone({
                             setIngredientValuesAction,
                             index
                         )}
+                        {serviceChosen && serviceChosen.microservices.find(
+                            (ms: AreaMicroservices): boolean => ms.ref_name === microServiceName
+                        )?.pipeline_available?.length !== undefined ?
+                            <div className={"flex flex-col justify-center items-center"}>
+                                <p className={"ml-4 text-xl flex flex-wrap mb-2 font-bold text-white"}> Variables available in next reactions </p>
+                                <div className={"ml-2 mr-2 flex rounded-2xl bg-slate-700 flex-wrap justify-center items-center text-white font-bold max-w-full"}>
+                                    {serviceChosen && serviceChosen.microservices.find(
+                                        (ms: AreaMicroservices): boolean => ms.ref_name === microServiceName
+                                    )?.pipeline_available?.map((data, index, array) => (
+                                        <p key={data.toLowerCase()} className={"pr-2 pl-2 text-lg font-bold text-blue-500"}>
+                                            {` {{.${data.toLowerCase()}}}${index < array.length - 1 ? ", " : ''} `}
+                                        </p>
+                                    ))}
+                                </div>
+                            </div> : null
+                        }
                     </>
                 ) : null
             }
