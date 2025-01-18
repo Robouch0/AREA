@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_area_flutter/api/types/auth_body.dart';
+import 'package:my_area_flutter/services/api/server_service.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
 import 'package:my_area_flutter/widgets/oauth_webview.dart';
 
@@ -14,7 +14,6 @@ class AuthService {
   static AuthService get instance => _instance;
 
   final _authStorage = AuthStorage.instance;
-  final _apiUrl = dotenv.get('NEXT_PUBLIC_GATEWAY_URL');
   bool _isLoggedIn = false;
   bool get isLoggedInSync => _isLoggedIn;
 
@@ -35,8 +34,9 @@ class AuthService {
     );
 
     try {
+      final apiUrl = await ServerService.getApiUrl();
       final response = await http.post(
-          Uri.parse('$_apiUrl/sign-up/'),
+          Uri.parse('$apiUrl/sign-up/'),
           headers: {
             'Content-type': 'application/json',
           },
@@ -61,8 +61,9 @@ class AuthService {
     );
 
     try {
+      final apiUrl = await ServerService.getApiUrl();
       final response = await http.post(
-          Uri.parse('$_apiUrl/login/'),
+          Uri.parse('$apiUrl/login/'),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -91,12 +92,16 @@ class AuthService {
   }
 
   Future<bool> loginWithOAuth(BuildContext context, String service) async {
+    final apiUrl = await ServerService.getApiUrl();
+    if (apiUrl == null || !context.mounted) {
+      return false;
+    }
     try {
       final response = await Navigator.of(context).push<String>(
         MaterialPageRoute(
           builder: (context) => OAuthWebViewPage(
             service: service.toLowerCase(),
-            apiUrl: _apiUrl,
+            apiUrl: apiUrl,
             redirectUrl: 'http://localhost:8081/loadOauth',
             isLogin: true,
           ),
@@ -121,13 +126,17 @@ class AuthService {
   }
 
   Future<bool> connectOAuthService(BuildContext context, String service) async {
+    final apiUrl = await ServerService.getApiUrl();
+    if (apiUrl == null || !context.mounted) {
+      return false;
+    }
     try {
       final token = _authStorage.getToken();
       final result = await Navigator.of(context).push<String>(
         MaterialPageRoute(
           builder: (context) => OAuthWebViewPage(
             service: service,
-            apiUrl: _apiUrl,
+            apiUrl: apiUrl,
             redirectUrl: 'http://localhost:8081/loadOauth',
             isLogin: false,
             token: token,
@@ -145,9 +154,10 @@ class AuthService {
   Future<void> unlinkOAuthService(String service) async {
     try {
       final token = _authStorage.getToken();
+      final apiUrl = await ServerService.getApiUrl();
 
       await http.delete(
-        Uri.parse('$_apiUrl/token/$service'),
+        Uri.parse('$apiUrl/token/$service'),
         headers: {
           'Authorization': 'Bearer $token'
         },
@@ -159,9 +169,10 @@ class AuthService {
 
   Future<bool> checkAuthentification() async {
     try {
+      final apiUrl = await ServerService.getApiUrl();
       final token = _authStorage.getToken();
       final response = await http.get(
-        Uri.parse('$_apiUrl/ping'),
+        Uri.parse('$apiUrl/ping'),
         headers: {
           'Authorization': 'Bearer $token'
         },
