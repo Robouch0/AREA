@@ -21,8 +21,13 @@ func (spotify *SpotifyService) checkVolumeNbr() {
 		log.Println("Error while getting actions")
 		return
 	}
+
 	for _, act := range *actions {
-		resp, err := GetSpotifyInfos()
+		tokenInfo, err := spotify.tokenDb.GetUserTokenByProvider(int64(act.UserID), "spotify")
+		if err != nil {
+			continue
+		}
+		resp, err := GetSpotifyInfos(tokenInfo.AccessToken)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -49,7 +54,11 @@ func (spotify *SpotifyService) checkFollowersNbr() {
 		return
 	}
 	for _, act := range *actions {
-		resp, err := GetArtistInfos(act.ArtistID)
+		tokenInfo, err := spotify.tokenDb.GetUserTokenByProvider(int64(act.UserID), "spotify")
+		if err != nil {
+			continue
+		}
+		resp, err := GetArtistInfos(act.ArtistID, tokenInfo.AccessToken)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -76,12 +85,16 @@ func (spotify *SpotifyService) checkRepeatSong() {
 		return
 	}
 	for _, act := range *actions {
-		resp, err := GetSpotifyInfos()
+		tokenInfo, err := spotify.tokenDb.GetUserTokenByProvider(int64(act.UserID), "spotify")
+		if err != nil {
+			continue
+		}
+		resp, err := GetSpotifyInfos(tokenInfo.AccessToken)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
-		if resp.RepeatState == "track" {
+		if resp.RepeatState == "track" || resp.RepeatState == "context" {
 			ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
 			b, err := json.Marshal(&resp)
 			if err != nil {
@@ -103,14 +116,18 @@ func (spotify *SpotifyService) checkShufflePlaylist() {
 		return
 	}
 	for _, act := range *actions {
-		resp, err := GetSpotifyInfos()
+		tokenInfo, err := spotify.tokenDb.GetUserTokenByProvider(int64(act.UserID), "spotify")
+		if err != nil {
+			continue
+		}
+		resp, err := GetSpotifyInfos(tokenInfo.AccessToken)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 		if resp.ShuffleState == true {
 			ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
-			b, err := json.Marshal(&act.Volume)
+			b, err := json.Marshal(&resp)
 			if err != nil {
 				log.Println("Could not marshal crypto current response")
 				continue
@@ -130,7 +147,11 @@ func (spotify *SpotifyService) checkIsPlaying() {
 		return
 	}
 	for _, act := range *actions {
-		resp, err := GetSpotifyInfos()
+		tokenInfo, err := spotify.tokenDb.GetUserTokenByProvider(int64(act.UserID), "spotify")
+		if err != nil {
+			continue
+		}
+		resp, err := GetSpotifyInfos(tokenInfo.AccessToken)
 		if err != nil {
 			log.Println(err)
 			continue

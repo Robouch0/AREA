@@ -95,6 +95,7 @@ func LaunchServices() {
 	githubService.InitReactClient(conn)
 	gitlabService.InitReactClient(conn)
 	cryptoService.InitReactClient(conn)
+	spotifyService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

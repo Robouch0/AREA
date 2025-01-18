@@ -118,9 +118,11 @@ func (spot *SpotifyService) FindPlayList(playlists PlaylistsResponse, str string
 	return PlaylistResponse{}, errors.New("playlist not found")
 }
 
-func GetArtistInfos(ArtistId string) (*SpotifyArtistAPIResponseBody, error) {
+func GetArtistInfos(ArtistId string, accessToken string) (*SpotifyArtistAPIResponseBody, error) {
 	Url := fmt.Sprintf(spotifyArtistAPIURL, ArtistId)
+	log.Println(Url)
 	req, err := http.NewRequest("GET", Url, nil)
+	req.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
 	if err != nil {
 		log.Println("Request creation error: ", err)
 		return nil, status.Errorf(codes.Internal, "Could not create the request: %v", err)
@@ -143,8 +145,9 @@ func GetArtistInfos(ArtistId string) (*SpotifyArtistAPIResponseBody, error) {
 	return &spotifyInfo, nil
 }
 
-func GetSpotifyInfos() (*SpotifyInfoAPIResponseBody, error) {
+func GetSpotifyInfos(accessToken string) (*SpotifyInfoAPIResponseBody, error) {
 	req, err := http.NewRequest("GET", spotifyMeAPIURL, nil)
+	req.Header = http_utils.GetDefaultBearerHTTPHeader(accessToken)
 	if err != nil {
 		log.Println("Request creation error: ", err)
 		return nil, status.Errorf(codes.Internal, "Could not create the request: %v", err)

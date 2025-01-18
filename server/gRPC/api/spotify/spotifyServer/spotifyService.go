@@ -68,6 +68,7 @@ func (spotify *SpotifyService) createNewSpotifyInfo(
 	userID uint,
 	actionID int,
 	actionType models.SpotifyActionType,
+	artist_id string,
 	followers uint,
 	volume uint,
 ) error {
@@ -76,6 +77,7 @@ func (spotify *SpotifyService) createNewSpotifyInfo(
 		UserID:     userID,
 		ActionType: actionType,
 		Activated:  true,
+		ArtistID:   artist_id,
 		Followers:  followers,
 		Volume:     volume,
 	})

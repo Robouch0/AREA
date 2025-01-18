@@ -22,9 +22,9 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				RefName: "checkFollowers",
 				Type:    "action",
 				Ingredients: map[string]IServ.IngredientDescriptor{
-					"Artist SpotifyID": {
+					"artist_id": {
 						Value:       "",
-						Type:        "int",
+						Type:        "string",
 						Description: "Spotify Id of the artist",
 						Required:    true,
 					},
@@ -63,7 +63,7 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 			},
 			{
 				Name:    "Check every 3 minutes if the song is playing",
-				RefName: "checkPLaying",
+				RefName: "checkPlaying",
 				Type:    "action",
 				Ingredients: map[string]IServ.IngredientDescriptor{},
 			},
