@@ -36,7 +36,7 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"push"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -44,7 +44,7 @@ func (git *GithubService) CreatePushWebhook(ctx context.Context, req *gRPCServic
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GPush, models.GEmpty); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GPush, models.GEmpty, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -63,7 +63,7 @@ func (git *GithubService) CreateDeleteBranchWebhook(ctx context.Context, req *gR
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"delete"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -71,7 +71,7 @@ func (git *GithubService) CreateDeleteBranchWebhook(ctx context.Context, req *gR
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GDelete, models.GEmpty); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GDelete, models.GEmpty, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -90,7 +90,7 @@ func (git *GithubService) CreateNewBranchWebhook(ctx context.Context, req *gRPCS
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"create"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -98,7 +98,7 @@ func (git *GithubService) CreateNewBranchWebhook(ctx context.Context, req *gRPCS
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GCreate, models.GEmpty); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GCreate, models.GEmpty, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -117,7 +117,7 @@ func (git *GithubService) CreateNewIssueWebhook(ctx context.Context, req *gRPCSe
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"issues"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -125,7 +125,7 @@ func (git *GithubService) CreateNewIssueWebhook(ctx context.Context, req *gRPCSe
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GIssue, models.Gopen); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GIssue, models.Gopen, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -144,7 +144,7 @@ func (git *GithubService) CreateDeleteIssueWebhook(ctx context.Context, req *gRP
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"issues"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -152,7 +152,7 @@ func (git *GithubService) CreateDeleteIssueWebhook(ctx context.Context, req *gRP
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GIssue, models.GClosed); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GIssue, models.GClosed, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -171,7 +171,7 @@ func (git *GithubService) CreateNewPRWebhook(ctx context.Context, req *gRPCServi
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"pull_request"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -179,7 +179,7 @@ func (git *GithubService) CreateNewPRWebhook(ctx context.Context, req *gRPCServi
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GPullR, models.Gopen); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GPullR, models.Gopen, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -198,7 +198,7 @@ func (git *GithubService) CreateDeletePRWebhook(ctx context.Context, req *gRPCSe
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"pull_request"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -206,7 +206,7 @@ func (git *GithubService) CreateDeletePRWebhook(ctx context.Context, req *gRPCSe
 	if err != nil {
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GPullR, models.GClosed); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GPullR, models.GClosed, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -225,7 +225,7 @@ func (git *GithubService) CreateForkRepositoryWebhook(ctx context.Context, req *
 		return nil, err
 	}
 
-	err = github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
 		Event:  []string{"fork"},
 		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
 		Active: true,
@@ -234,7 +234,7 @@ func (git *GithubService) CreateForkRepositoryWebhook(ctx context.Context, req *
 		log.Println("Error while sending the webhook")
 		return nil, err
 	}
-	if err := git.storeNewWebHook(tokenInfo, req, models.GFork, models.GEmpty); err != nil {
+	if err := git.storeNewWebHook(tokenInfo, req, models.GFork, models.GEmpty, resp.HookId); err != nil {
 		return nil, err
 	}
 	return req, nil
@@ -267,9 +267,17 @@ func (github *GithubService) SetActivateAction(ctx context.Context, req *gRPCSer
 }
 
 func (github *GithubService) DeleteAction(ctx context.Context, req *gRPCService.DeleteGithubActionReq) (*gRPCService.DeleteGithubActionReq, error) {
-	userID, err := grpcutils.GetUserIdFromContext(ctx, "github")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, github.tokenDb, "GithubService", "github")
 	if err != nil {
 		return nil, err
-	} // TODO Matthieu
-	return req, github.GithubDb.DeleteByActionID(userID, uint(req.ActionId))
+	}
+	action, err := github.GithubDb.GetGithubByActionID(uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	err = github_webhooks.DeletePushWebhook(tokenInfo, ctx, action)
+	if err != nil {
+		return nil, err
+	}
+	return req, github.GithubDb.DeleteByActionID(uint(tokenInfo.UserID), uint(req.ActionId))
 }
