@@ -14,7 +14,7 @@ Aswell as the Category of service his action is coming from (ex: Github)
 # Functionalities
 ## **Search Areas**:
 
-![searchFieldMyAreas.png](searchFieldMyAreas.png)
+![searchFieldMyAreas.png](assets/myAreasPage/searchFieldMyAreas.png)
 
 - On this search field you can type the name of the action/reactions or the description of the microservices in this area.
 
@@ -22,12 +22,12 @@ Aswell as the Category of service his action is coming from (ex: Github)
 
 - You can click the switch on the area card to disable or enable them.
 
-![disableArea.png](disableArea.png)
+![disableArea.png](assets/myAreasPage/disableArea.png)
  
 
 ## Visual overview of the My Areas page
 
-![overviewAreaPage.png](overviewAreaPage.png)
+![overviewAreaPage.png](assets/myAreasPage/overviewAreaPage.png)
 
 ---
 
@@ -39,7 +39,7 @@ The Profile page enables users to manage their personal information and link ext
 ### Sections
 - **Update User Data**:
 
-- ![updateUserDataProfile.png](updateUserDataProfile.png)
+- ![updateUserDataProfile.png](assets/profilePage/updateUserDataProfile.png)
 
     - The left part of the profile page allows user to edit their personnal informations with input fields.
    
@@ -48,7 +48,7 @@ The Profile page enables users to manage their personal information and link ext
 
 - **Link OAuth Accounts**:
 
-![linkOauthProfile.png](linkOauthProfile.png)
+![linkOauthProfile.png](assets/profilePage/linkOauthProfile.png)
   
 - The right side of the profile page allows you to scroll through services (e.g., GitHub, Google, Spotify).
 - You can click on the Unlink button to make Area forgot about your linked account on the designated service.
@@ -56,7 +56,7 @@ The Profile page enables users to manage their personal information and link ext
 
 ### Visual overview of the profile page
 
-![overviewProfilePage.png](overviewProfilePage.png)
+![overviewProfilePage.png](assets/profilePage/overviewProfilePage.png)
 
 ---
 
@@ -72,13 +72,13 @@ On this page you can choose one actions and add multiple reactions to it.
 
 - Here on this screenshot you can see how to search and select a service on the dropdown.
 
-![chooseServiceCreate.png](chooseServiceCreate.png)
+![chooseServiceCreate.png](assets/createPage/chooseServiceCreate.png)
 
 - **Select Microservices**:
 
 - After choosing a service, microservices card with description will be displayed. You can click on them to select one.
 
-![chooseMicroserviceCreate.png](chooseMicroserviceCreate.png)
+![chooseMicroserviceCreate.png](assets/createPage/chooseMicroserviceCreate.png)
 
 - **Fill out the values**:
 
@@ -87,15 +87,15 @@ On this page you can choose one actions and add multiple reactions to it.
     - In some that needs time data you can select it in the calendar directly
     - If you need more information about an ingredient you can pass your mouse on it to have a tooltip containing a brief description of what we are waiting for.
 
-![fillOutIngredientsInputfieldCreate.png](fillOutIngredientsInputfieldCreate.png)
+![fillOutIngredientsInputfieldCreate.png](assets/createPage/fillOutIngredientsInputfieldCreate.png)
 
 *Tooltip description of the ingredient*
 
-![ingredientsTooltip.png](ingredientsTooltip.png)
+![ingredientsTooltip.png](assets/createPage/ingredientsTooltip.png)
 
 - After you filled out everything you can click on the create AREA button to finish the process and create your process automation !
 
-![createAreaButton.png](createAreaButton.png)
+![createAreaButton.png](assets/createPage/createAreaButton.png)
 
 - **Add chained reactions**:
 
@@ -103,24 +103,27 @@ In our website you can create area with one action and then add multiple chained
 For this just click on the [**+ Add Reaction**] button 
 then fill out the new inputfield needed before creating your area.
 
-![chainReactionCreate.png](chainReactionCreate.png)
+![chainReactionCreate.png](assets/createPage/chainReactionCreate.png)
 
 - **Data pipelines**:
 
 On some microservices you can also transfer trough small pipe between a precendent microservices some datas :
 
-You can for example use a the hour variable of your action date and time in your send mail reaction.
+You can for example use the hour variable of your action date and time in your send mail reaction.
 
 In order to do this first check the available variables at the end of your action/reaction :
 
+![ingredientPipeline.png](assets/createPage/ingredientPipeline.png)
 
+And then you can simply use it like this in the next reaction : 
 
+![useOfDataPipeline.png](assets/createPage/useOfDataPipeline.png)
 
 
 
 
 ### Visual overview of the Create page
-![overviewOfCreatePage.png](overviewOfCreatePage.png)
+![overviewOfCreatePage.png](assets/createPage/overviewOfCreatePage.png)
 ---
 
 ## 4. Login Page
@@ -132,7 +135,7 @@ The Login page is where users access their accounts.
 - Or you can connect with Oauth (Discord, Google, GitHub...)
 - If you do not own an Area account for the moment, at the bottom of the page you cand find a link to go to the register page, to create an account.
 
-![loginPageFields.png](loginPageFields.png)
+![loginPageFields.png](assets/loginPage/loginPageFields.png)
 
 ---
 
@@ -146,7 +149,7 @@ The Register page allows new users to create an account.
 
 We will then take your email on this account as a data on your profile.
 
-![registerPageFields.png](registerPageFields.png)
+![registerPageFields.png](assets/registerPage/registerPageFields.png)
 
 ## Conclusion
 
