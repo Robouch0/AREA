@@ -483,7 +483,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           },
         ),
         if (selectedMicro.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           _buildIngredientsForm(
               ingredients: selectedMicroService.ingredients,
               values: actionData.ingredients,
@@ -539,6 +539,17 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     );
   }
 
+  Widget _buildIngredientsFormTitle(String title, double fontSize) {
+    return Text(
+      title,
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: fontSize,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   Widget _buildIngredientsForm({
     required Map<String, Ingredient> ingredients,
     required Map<String, dynamic> values,
@@ -556,30 +567,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            'Parameters',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: _buildIngredientsFormTitle('Parameters', 16),
         ),
-        if (availablePipelines.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Text(
-              'Available variables: ${availablePipelines.map((p) => '{{.$p}}').join(', ')}',
-              style: const TextStyle(
-                color: Colors.blue,
-                fontSize: 12,
-                fontWeight: FontWeight.bold
-              ),
-            ),
-          ),
-        ],
         Card(
           color: Colors.white10,
           shape: RoundedRectangleBorder(
@@ -620,6 +611,30 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
             ),
           ),
         ),
+        if (availablePipelines.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: _buildIngredientsFormTitle('Variables available in next reactions', 15),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white.withAlpha(25),
+              ),
+              child: Text(
+                availablePipelines.map((p) => '{{.$p}}').join(', '),
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+          )
+        ],
       ],
     );
   }
