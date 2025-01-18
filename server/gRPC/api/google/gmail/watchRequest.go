@@ -10,6 +10,7 @@ package gmail
 import (
 	"area/models"
 	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
@@ -83,7 +84,7 @@ func SendWatchMeRequest(tokenInfo *models.Token) (*WatchReponseBody, error) {
 	if err != nil {
 		return nil, err
 	}
-	watchResBody, err := utils.IoReaderToStruct[WatchReponseBody](&resp.Body)
+	watchResBody, err := conv_utils.IoReaderToStruct[WatchReponseBody](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

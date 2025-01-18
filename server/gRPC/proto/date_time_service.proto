@@ -23,6 +23,8 @@ message TriggerTimeRequest {
 message TriggerTimeResponse {
 }
 
+///////////////
+
 message SetActivateTime {
   uint32 action_id = 1;
   bool activated = 2;

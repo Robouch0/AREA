@@ -8,7 +8,7 @@
 package gmail
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"encoding/json"
 	"fmt"
@@ -88,7 +88,7 @@ func GetEmail(
 		io.Copy(os.Stderr, result.Body)
 		return nil, status.Errorf(codes.Aborted, result.Status)
 	}
-	message, err := utils.IoReaderToStruct[GmailMessage](&result.Body)
+	message, err := conv_utils.IoReaderToStruct[GmailMessage](&result.Body)
 	if err != nil {
 		return nil, err
 	}

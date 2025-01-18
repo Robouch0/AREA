@@ -83,9 +83,9 @@ func (hf *HuggingFaceServiceClient) SendAction(scenario models.AreaScenario, act
 	return nil, errors.New("No such action microservice")
 }
 
-func (hf *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (hf *HuggingFaceServiceClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*hf.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }

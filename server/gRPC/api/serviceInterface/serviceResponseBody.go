@@ -15,6 +15,8 @@ type ActionResponseStatus struct {
 type ReactionResponseStatus struct {
 	Description string `json:"description"`
 	ReactionID  int    `json:"reaction_id"`
+
+	Datas map[string]any
 }
 
 type WebHookResponseStatus struct {
