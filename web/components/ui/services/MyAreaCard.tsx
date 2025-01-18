@@ -7,16 +7,14 @@ import {Switch} from "@/components/ui/switch";
 import {useState} from "react";
 import {activateArea} from "@/api/enableArea";
 
-export function MyAreaCard({action, reaction, areaID, areaActivate}: {
+export function MyAreaCard({action, reactions, areaID, areaActivate}: {
     action: AreaServices,
-    reaction: AreaServices|undefined,
+    reactions: AreaServices[],
     areaID: number,
     areaActivate: boolean,
 }) {
     const [switchOn, setSwitchOn] = useState<boolean>(areaActivate)
-    if (reaction === undefined) {
-        return <h1 className="text-black text-7xl mt-20"> ERROR with the Reaction </h1>
-    }
+
     const handleSwitchToggle = async () => {
         setSwitchOn(!switchOn)
         console.log(areaID)
@@ -25,6 +23,14 @@ export function MyAreaCard({action, reaction, areaID, areaActivate}: {
         }).catch((err) => console.log(err));
     };
 
+    const mappedReactServices = reactions?.map((react, index) => {
+        console.log(react.name)
+        return (
+            <div key={index}>
+                <p className="text-red-700 my-2 !text-2xl break-words"> {react.microservices?.at(0)?.name} </p>
+            </div>
+        );
+    });
 
     return (
         <>
@@ -33,7 +39,7 @@ export function MyAreaCard({action, reaction, areaID, areaActivate}: {
                 tabIndex={0}
             >
                 <Card
-                    className={"font-black text-3xl w-full h-full border-none flex flex-col justify-between"}
+                    className={"font-black text-3xl w-full h-full border-none flex flex-col justify-between overflow-y-auto"}
                     style={{backgroundColor: getColorForService(action.ref_name)}}
                 >
                     <div className="flex flex-col">
@@ -41,11 +47,8 @@ export function MyAreaCard({action, reaction, areaID, areaActivate}: {
 
                             <ServiceIcon className="text-2xl text-black mx-2" tag={action.ref_name}/>
 
-                            <ServiceIcon className="text-3xl text-black" tag={reaction.ref_name}/>
+                            <ServiceIcon className="text-3xl text-black" tag={reactions?.at(0)?.name}/>
                             <div className="flex items-center ml-auto" >
-                                {/*<Label*/}
-                                {/*    className={"mx-4 font-bold text-xl ml"} htmlFor={`switch-${areaID}`}*/}
-                                {/*> {switchOn ? "Disable" : "Enable"} </Label>*/}
                                 <Switch
                                     className={`transition-colors duration-300 ${switchOn ? '!bg-green-500' : '!bg-red-500'}`}
                                     id={`switch-${areaID}`} onClick={handleSwitchToggle} checked={switchOn}/>
@@ -55,7 +58,7 @@ export function MyAreaCard({action, reaction, areaID, areaActivate}: {
                             <CardTitle
                                 className="text-blue-700 my-2 !text-2xl break-words mb-6"
                             > {action.microservices?.at(0)?.name} </CardTitle>
-                            <CardTitle className="text-red-700 my-2 !text-2xl break-words"> {reaction.microservices.at(0)?.name} </CardTitle>
+                            {mappedReactServices}
 
                         </CardHeader>
                     </div>
