@@ -53,7 +53,7 @@ export function InputFieldComponent({
                         newValues[index] = e.target.value;
                         setValuesAction(newValues);
                     }}
-                    required
+                    required={details.required || undefined}
                 />
             )
         case "float":
@@ -81,7 +81,7 @@ export function InputFieldComponent({
                         newValues[index] = e.target.value;
                         setValuesAction(newValues);
                     }}
-                    required
+                    required={details.required || undefined}
                 />
 
             )
@@ -100,7 +100,7 @@ export function InputFieldComponent({
                             newValues[index] = e.target.value;
                             setValuesAction(newValues);
                         }}
-                        required
+                        required={details.required || undefined}
                     />
                 </>
             )
