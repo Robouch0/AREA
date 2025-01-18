@@ -23,5 +23,6 @@ func AreaRoutes(gateway *api.ApiGateway) chi.Router {
 	areaRouter.Put("/activate", areas.ActivateArea(gateway))
 	areaRouter.Post("/create/{service}", areas.CreateArea(gateway))
 	areaRouter.Get("/create/list", areas.ListService(gateway))
+	areaRouter.Delete("/", areas.DeleteArea(gateway))
 	return areaRouter
 }

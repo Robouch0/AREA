@@ -41,13 +41,13 @@ func DeleteArea(gateway *api.ApiGateway) http.HandlerFunc {
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
-		areaReq, err := conv_utils.IoReaderToStruct[areaActivateRequest](&r.Body)
+		areaReq, err := conv_utils.IoReaderToStruct[areaDeleteRequest](&r.Body)
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
 			return
 		}
-		log.Printf("Setting area (%v) activated to %v\n", areaReq.AreaID, areaReq.Activated)
-		resp, err := gateway.Clients["react"].SetActivate("", uint(areaReq.AreaID), int(userID), areaReq.Activated)
+		log.Printf("Deleting area (%v)\n", areaReq.AreaID)
+		resp, err := gateway.Clients["react"].DeleteArea(uint(areaReq.AreaID), userID)
 		if err != nil {
 			log.Println("Error in reaction service: ", err)
 			http_utils.WriteHTTPResponseErr(&w, 401, err.Error())
