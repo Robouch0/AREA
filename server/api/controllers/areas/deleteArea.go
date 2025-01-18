@@ -29,7 +29,7 @@ type areaDeleteRequest struct {
 // @Accept       json
 // @Produce      json
 // @Param 		 area body	areaDeleteRequest	true 	"Informations about the deletion of an area"
-// @Success      200  {object}  serviceinterface.SetActivatedResponseStatus
+// @Success      200  {object}  serviceinterface.DeleteResponseStatus
 // @Failure      401  {object}  error
 // @Failure      500  {object}  error
 // @Router       /area [delete]
