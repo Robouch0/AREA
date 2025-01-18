@@ -23,12 +23,15 @@ import (
 
 type SpotifyClient struct {
 	MicroservicesLauncher *IServ.ReactionLauncher
+	ActionLauncher        *IServ.ActionLauncher
+
 	cc                    gRPCService.SpotifyServiceClient
 }
 
 func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	micros := &IServ.ReactionLauncher{}
-	spotify := &SpotifyClient{MicroservicesLauncher: micros, cc: gRPCService.NewSpotifyServiceClient(conn)}
+	actions := &IServ.ActionLauncher{}
+	spotify := &SpotifyClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewSpotifyServiceClient(conn)}
 	(*spotify.MicroservicesLauncher)["stopSong"] = spotify.stopSong
 	(*spotify.MicroservicesLauncher)["createPlaylist"] = spotify.createPlaylist
 	(*spotify.MicroservicesLauncher)["nextSong"] = spotify.nextSong
@@ -36,11 +39,21 @@ func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	(*spotify.MicroservicesLauncher)["setPlaybackVolume"] = spotify.setPlaybackVolume
 	(*spotify.MicroservicesLauncher)["launchSong"] = spotify.launchSong
 	(*spotify.MicroservicesLauncher)["addSongToPlaylist"] = spotify.addSongToPlaylist
+
+	(*spotify.ActionLauncher)["checkFollowers"] = spotify.SendCheckFollowersAction
+	(*spotify.ActionLauncher)["checkVolume"] = spotify.SendCheckVolumeAction
+	(*spotify.ActionLauncher)["checkRepeat"] = spotify.SendCheckRepeatAction
+	(*spotify.ActionLauncher)["checkShuffle"] = spotify.SendCheckShuffleAction
+	(*spotify.ActionLauncher)["checkPlaying"] = spotify.SendCheckPlayingAction
+
 	return spotify
 }
 
-func (spot *SpotifyClient) SendAction(_ models.AreaScenario, _, _ int) (*IServ.ActionResponseStatus, error) {
-	return nil, errors.New("No action supported in spotify  service (Next will be things)")
+func (spot *SpotifyClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	if micro, ok := (*spot.ActionLauncher)[scenario.Action.Microservice]; ok {
+		return micro(scenario, actionID, userID)
+	}
+	return nil, errors.New("No such microservice")
 }
 
 func (spot *SpotifyClient) stopSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {

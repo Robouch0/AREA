@@ -18,6 +18,56 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 		Microservices: []IServ.MicroserviceDescriptor{
 			{
+				Name:    "Check every 3 minutes if an artist has a certain number of followers",
+				RefName: "checkFollowers",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"Artist SpotifyID": {
+						Value:       "",
+						Type:        "int",
+						Description: "Spotify Id of the artist",
+						Required:    true,
+					},
+					"followers": {
+						Value:       "",
+						Type:        "int",
+						Description: "numbers of follow up to check",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Check every 1 minutes if the volume exceed a certain amount",
+				RefName: "checkVolume",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"volume": {
+						Value:       "",
+						Type:        "int",
+						Description: "volume threshold",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Check every 3 minutes if the song is on repeat",
+				RefName: "checkRepeat",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+			},
+			{
+				Name:    "Check every 3 minutes if the playlist is shuffle",
+				RefName: "checkShuffle",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+			},
+			{
+				Name:    "Check every 3 minutes if the song is playing",
+				RefName: "checkPLaying",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+			},
+			{
 				Name:    "Stop the current song playing on the last device connected",
 				RefName: "stopSong",
 				Type:    "reaction",
