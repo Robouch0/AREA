@@ -45,8 +45,8 @@ export function InputFieldComponent({
                     }}
                     name={`${indexService}-${ingredient}`}
                     id={`${indexService}-${ingredient}`}
-                    className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                    aria-label="text"
+                    className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 focus-visible:!ring-0 shadow-none duration-200"
+                    aria-label="number int input field"
                     value={values[index] || ''}
                     onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                         const newValues: string[] = [...values];
@@ -73,8 +73,8 @@ export function InputFieldComponent({
                     }}
                     name={`${indexService}-${ingredient}`}
                     id={`${indexService}-${ingredient}`}
-                    className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                    aria-label="text"
+                    className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 focus-visible:!ring-0 shadow-none duration-200"
+                    aria-label="float number input field"
                     value={values[index] || ''}
                     onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                         const newValues: string[] = [...values];
@@ -92,8 +92,8 @@ export function InputFieldComponent({
                         type={"text"}
                         name={`${indexService}-${ingredient}`}
                         id={`${indexService}-${ingredient}`}
-                        className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                        aria-label="text"
+                        className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 focus-visible:!ring-0 shadow-none duration-200"
+                        aria-label="basic text input field"
                         value={values[index] || ''}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                             const newValues: string[] = [...values];
