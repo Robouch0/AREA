@@ -23,8 +23,6 @@ import (
 
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type SpotifyService struct {
@@ -53,10 +51,10 @@ func NewSpotifyService() (*SpotifyService, error) {
 	}
 
 	Spotify.c.AddFunc("* * * * *", Spotify.checkVolumeNbr)
-	Spotify.c.AddFunc("* * * * *", Spotify.checkIsPlaying)
-	Spotify.c.AddFunc("* * * * *", Spotify.checkRepeatSong)
-	Spotify.c.AddFunc("* * * * *", Spotify.checkShufflePlaylist)
-	Spotify.c.AddFunc("* * * * *", Spotify.checkFollowersNbr)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkIsPlaying)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkRepeatSong)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkShufflePlaylist)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkFollowersNbr)
 	return Spotify, nil
 }
 
@@ -349,6 +347,14 @@ func (spot *SpotifyService) AddSongToPlaylist(ctx context.Context, req *gRPCServ
 	return req, nil
 }
 
-func (spot *SpotifyService) DeactivateSpotAction(ctx context.Context, req *gRPCService.SetActivateSpotify) (*gRPCService.SetActivateSpotify, error) {
-	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify")
+func (spot *SpotifyService) SetActivate(ctx context.Context, req *gRPCService.SetActivateSpotify) (*gRPCService.SetActivateSpotify, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "spotify")
+	if err != nil {
+		return nil, err
+	}
+	_, err = spot.spotifyDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
 }
