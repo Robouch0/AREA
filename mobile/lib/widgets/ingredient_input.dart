@@ -136,7 +136,7 @@ class IngredientInput extends StatelessWidget {
       final TimeOfDay? pickedTime = await _showTimePicker(context);
 
       if (pickedTime != null) {
-        final DateTime combinedDateTime = DateTime(
+        final DateTime localDateTime = DateTime(
           pickedDate.year,
           pickedDate.month,
           pickedDate.day,
@@ -144,7 +144,7 @@ class IngredientInput extends StatelessWidget {
           pickedTime.minute,
         );
 
-        final String formattedDateTime = combinedDateTime.toUtc().toIso8601String();
+        final String formattedDateTime = "${localDateTime.toIso8601String()}Z";
         controller.text = formattedDateTime;
         onChanged(formattedDateTime);
       }
