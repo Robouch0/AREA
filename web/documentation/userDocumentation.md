@@ -85,11 +85,11 @@ For this just click on the [**+ Add Reaction**] button and fill out the new inpu
 The Login page is where users access their accounts.
 
 ### Steps to Log In
-- Entering credentials (username/email and password).
-- Troubleshooting common login issues (e.g., forgotten password).
+- To log-in you can either enter your credentials (email and password).
+- Or you can connect with Oauth (Discord, Google, GitHub...)
+- If you do not own an Area account for the moment, at the bottom of the page you cand find a link to go to the register page, to create an account.
 
-### Visual Aids
-![Login Page Screenshot](link-to-screenshot)
+![img_17.png](img_17.png)
 
 ---
 
@@ -98,19 +98,14 @@ The Login page is where users access their accounts.
 The Register page allows new users to create an account.
 
 ### Steps to Register
-- Filling out registration form fields (username, email, password).
-- Confirmation email process and verification steps.
+- Filling out registration form fields (firstname, lastname, email, password).
+- If you want to do a quick sign-up you can click on one of the three bottom buttons to connect through an Oauth of one of your already existing account (Github, Discord or Google)
 
-### Visual Aids
-![Register Page Screenshot](link-to-screensh![img_14.png](img_14.png)ot)
+We will then take your email on this account as a data on your profile.
 
----
+![img_18.png](img_18.png)
 
-## 6. Frequently Asked Questions (FAQs)
-- **Q1**: How do I reset my password?
-    - **A**: Instructions for resetting the password.
+## Conclusion
 
-- **Q2**: Can I link multiple OAuth accounts?
-    - **A**: Explanation regarding linking multiple accounts.
-
----
+This documentation act as a user guide / walkthrough to help you naviguate on our web application.
+You can download a pdf version of this documentation in the FAQ page, available in the footer of every page of our app.
