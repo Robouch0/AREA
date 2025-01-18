@@ -109,7 +109,7 @@ export default function ServicesLayout({children,}: Readonly<{
                 <div className="container mx-auto px-4 py-8">
                     <h1 className="text-amber-50 font-semibold text-xl p-2 mb-4">AREA</h1>
                     <div className="flex flex-row space-x-8">
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col justify-start items-start space-y-2">
                             <button
                                 className="text-amber-50 font-medium px-4 focus-visible:border-slate-500 focus-visible:border-4 rounded-full focus-visible:outline-none"
                                 onClick={(): void => router.push('/services/profile')}
@@ -122,8 +122,14 @@ export default function ServicesLayout({children,}: Readonly<{
                             >
                                 Contact Us
                             </button>
+                            <button
+                                className="text-amber-50 font-medium px-4 focus-visible:border-slate-500 focus-visible:border-4 rounded-full focus-visible:outline-none"
+                                onClick={(): void => router.push('/services/faq')}
+                            >
+                                FAQ
+                            </button>
                         </div>
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-2 justify-start items-start">
                             <button
                                 className="text-amber-50 font-medium px-4 focus-visible:border-slate-500 focus-visible:border-4 rounded-full focus-visible:outline-none"
                                 onClick={(): void => router.push('/services/myareas')}
