@@ -11,7 +11,7 @@ import (
 	"area/api"
 	"area/db"
 	serviceinterface "area/gRPC/api/serviceInterface"
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"log"
 	"net/http"
@@ -43,7 +43,7 @@ func handleWebhookPayload(gateway *api.ApiGateway) http.HandlerFunc {
 			http_utils.WriteHTTPResponseErr(&w, 401, "Incorrect format ")
 			return
 		}
-		payload, err := utils.IoReaderToMap(&r.Body)
+		payload, err := conv_utils.IoReaderToMap(&r.Body)
 		if err != nil {
 			http_utils.WriteHTTPResponseErr(&w, 401, "Invalid json payload")
 			return

@@ -112,7 +112,7 @@ func (google *GoogleClient) SendAction(scenario models.AreaScenario, actionID, u
 	return nil, errors.New("No such microservice")
 }
 
-func (google *GoogleClient) deleteLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) deleteLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (google *GoogleClient) deleteLabel(ingredients map[string]any, prevOutput [
 	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
 }
 
-func (google *GoogleClient) updateLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) updateLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func (google *GoogleClient) updateLabel(ingredients map[string]any, prevOutput [
 	return &IServ.ReactionResponseStatus{Description: res.NewName}, nil
 }
 
-func (google *GoogleClient) createLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) createLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -172,7 +172,7 @@ func (google *GoogleClient) createLabel(ingredients map[string]any, prevOutput [
 	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
 }
 
-func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) moveToTrash(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -192,7 +192,7 @@ func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput [
 	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
 }
 
-func (google *GoogleClient) moveFromTrash(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) moveFromTrash(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -212,7 +212,7 @@ func (google *GoogleClient) moveFromTrash(ingredients map[string]any, prevOutput
 	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
 }
 
-func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -232,7 +232,7 @@ func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, prevOutput
 	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
 }
 
-func (google *GoogleClient) sendEmailMe(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) sendEmailMe(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -252,9 +252,9 @@ func (google *GoogleClient) sendEmailMe(ingredients map[string]any, prevOutput [
 	return &IServ.ReactionResponseStatus{Description: res.BodyMessage}, nil
 }
 
-func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*google.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }

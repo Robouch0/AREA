@@ -73,7 +73,7 @@ func (dt *DateTimeService) checkTimeTrigger() {
 		log.Println(err)
 		return
 	}
-	bytesBody, err = json.Marshal(&dateData) // Check but not really usefull
+	bytesBody, err = json.Marshal(&dateData)
 	if err != nil {
 		log.Println(err)
 		return
