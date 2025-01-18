@@ -210,7 +210,18 @@ func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservic
 }
 
 func (git *GitlabClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
-	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet") // TODO Matthieu
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := git.cc.SetActivateAction(ctx, &gRPCService.SetActivateGitlab{
+		ActionId:  uint32(id),
+		Activated: activated,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.SetActivatedResponseStatus{
+		ActionID:    id,
+		Description: "Github Deactivated",
+	}, nil
 }
 
 func (git *GitlabClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
