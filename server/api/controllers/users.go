@@ -10,7 +10,7 @@ package controllers
 import (
 	"area/db"
 	"area/models"
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	http_utils "area/utils/httpUtils"
 	"encoding/json"
@@ -59,7 +59,7 @@ func UserModelToReadUserInfos(data *models.User) *ReadUserInformations {
 // @Router       /user/ [post]
 func CreateNewUser(userDb *db.UserDb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		newUser, err := utils.IoReaderToStruct[CreateUserInformations](&r.Body)
+		newUser, err := conv_utils.IoReaderToStruct[CreateUserInformations](&r.Body)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
@@ -151,7 +151,7 @@ func UpdateUserDatas(userDb *db.UserDb) http.HandlerFunc {
 			return
 		}
 
-		updateData, err := utils.IoReaderToStruct[models.UpdatableUserData](&r.Body)
+		updateData, err := conv_utils.IoReaderToStruct[models.UpdatableUserData](&r.Body)
 		if err != nil {
 			log.Println(err)
 			http_utils.WriteHTTPResponseErr(&w, 422, fmt.Sprintf("Invalid request format"))

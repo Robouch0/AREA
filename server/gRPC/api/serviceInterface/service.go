@@ -19,7 +19,7 @@ type WebhookInfos struct {
 }
 
 // Alias for maps of reactions functions
-type ReactionLauncher = map[string]func(ingredients map[string]any, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
+type ReactionLauncher = map[string]func(ingredients map[string]any, userID int) (*ReactionResponseStatus, error)
 
 // Alias for maps of actions functions
 type ActionLauncher = map[string]func(scenario models.AreaScenario, actionId, userID int) (*ActionResponseStatus, error)
@@ -37,7 +37,7 @@ type ClientService interface {
 	SetActivate(microservice string, id uint, userID int, activated bool) (*SetActivatedResponseStatus, error)
 
 	// Trigger a specific reaction of an user
-	TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*ReactionResponseStatus, error)
+	TriggerReaction(ingredients map[string]any, microservice string, userID int) (*ReactionResponseStatus, error)
 
 	// Trigger the webhook callback sent by a remote service
 	TriggerWebhook(webhook *WebhookInfos, microservice string, action_id int) (*WebHookResponseStatus, error)

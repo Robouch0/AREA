@@ -8,7 +8,7 @@
 package drive
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
@@ -48,7 +48,7 @@ func GetComment(accessToken, fileID, commentID, fields string) (*DriveComment, e
 	if err != nil {
 		return nil, err
 	}
-	list, err := utils.IoReaderToStruct[DriveComment](&resp.Body)
+	list, err := conv_utils.IoReaderToStruct[DriveComment](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func ListComments(accessToken, fileID, fields string) (*DriveListComments, error
 	if err != nil {
 		return nil, err
 	}
-	list, err := utils.IoReaderToStruct[DriveListComments](&resp.Body)
+	list, err := conv_utils.IoReaderToStruct[DriveListComments](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func CreateCommentOnFile(accessToken, fileID, fields string, comment DriveCommen
 	if err != nil {
 		return nil, err
 	}
-	drive, err := utils.IoReaderToStruct[DriveComment](&resp.Body)
+	drive, err := conv_utils.IoReaderToStruct[DriveComment](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func UpdateCommentOnFile(accessToken, fileID, commentID, fields string, comment 
 	if err != nil {
 		return nil, err
 	}
-	drive, err := utils.IoReaderToStruct[DriveComment](&resp.Body)
+	drive, err := conv_utils.IoReaderToStruct[DriveComment](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

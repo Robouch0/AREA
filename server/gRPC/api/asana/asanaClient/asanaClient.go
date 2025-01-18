@@ -12,8 +12,9 @@ import (
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	"errors"
-	"google.golang.org/grpc"
 	"log"
+
+	"google.golang.org/grpc"
 )
 
 type AsanaClient struct {
@@ -39,9 +40,9 @@ func (asana *AsanaClient) SetActivate(microservice string, id uint, userID int, 
 	return nil, nil
 }
 
-func (asana *AsanaClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*asana.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	log.Println(microservice)
 	return nil, errors.New("no such microservice")

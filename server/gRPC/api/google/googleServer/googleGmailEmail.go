@@ -102,7 +102,7 @@ func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.E
 		return nil, status.Errorf(codes.Aborted, resp.Status)
 	}
 	log.Println(resp.Body)
-	return nil, nil
+	return req, nil
 }
 
 func (google *GoogleService) WatchGmailEmail(ctx context.Context, req *gRPCService.EmailTriggerReq) (*gRPCService.EmailTriggerReq, error) {
@@ -155,11 +155,21 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 			_, err := google.gmailDb.SetFirstTime(act.ActionID, false)
 			return req, err
 		}
+
+		payload.Message.Data, err = utils.DecodeBase64ToString([]byte(payload.Message.Data))
+		if err != nil {
+			return nil, err
+		}
+		bytesMess, err := json.Marshal(payload.Message)
+		if err != nil {
+			return nil, err
+		}
+
 		log.Println("Action (GmailWatchMe) is activated so redirect to reaction Service")
 		ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
-		_, err := google.reactService.LaunchReaction(
+		_, err = google.reactService.LaunchReaction(
 			ctx,
-			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: []byte(payload.Message.Data)},
+			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: bytesMess},
 		)
 		if err != nil {
 			log.Println("Error ReactionService", err)

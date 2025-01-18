@@ -177,11 +177,10 @@ func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCServic
 	q.Set("access_token", tokenInfo.AccessToken)
 	pathRequest.URL.RawQuery = q.Encode()
 
-	resp, err := http_utils.SendHttpRequest(pathRequest, 204)
+	_, err = http_utils.SendHttpRequest(pathRequest, 204)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(resp.Body)
 	return req, nil
 }
 

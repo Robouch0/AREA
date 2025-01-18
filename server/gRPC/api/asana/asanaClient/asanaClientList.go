@@ -48,6 +48,7 @@ func (asana *AsanaClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"projectName", "color", "workspaceName"},
 			},
 			{
 				Name:    "Create a Section on an Asana Project",
@@ -68,6 +69,7 @@ func (asana *AsanaClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"projectName", "sectionName"},
 			},
 			{
 				Name:    "Create a Task on an Asana Project",
@@ -106,6 +108,7 @@ func (asana *AsanaClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"projectName", "taskName", "taskDescription", "completion", "dueOn"},
 			},
 		},
 	}

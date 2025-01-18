@@ -10,11 +10,12 @@ package google_client
 import (
 	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 )
 
-func (google *GoogleClient) createEmptyFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) createEmptyFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -31,10 +32,10 @@ func (google *GoogleClient) createEmptyFile(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Description}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Description, Datas: conv_utils.ConvertToMap[gRPCService.CreateEmptyFileReq](res)}, nil
 }
 
-func (google *GoogleClient) deleteFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -51,10 +52,10 @@ func (google *GoogleClient) deleteFile(ingredients map[string]any, prevOutput []
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.FileName}, nil
+	return &IServ.ReactionResponseStatus{Description: res.FileName, Datas: conv_utils.ConvertToMap[gRPCService.DeleteFileReq](&driveReq)}, nil
 }
 
-func (google *GoogleClient) updateFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -71,10 +72,10 @@ func (google *GoogleClient) updateFile(ingredients map[string]any, prevOutput []
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.NewFileName}, nil
+	return &IServ.ReactionResponseStatus{Description: res.NewFileName, Datas: conv_utils.ConvertToMap[gRPCService.UpdateFileMetaReq](&driveReq)}, nil
 }
 
-func (google *GoogleClient) copyFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) copyFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -91,5 +92,5 @@ func (google *GoogleClient) copyFile(ingredients map[string]any, prevOutput []by
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.DestFileName}, nil
+	return &IServ.ReactionResponseStatus{Description: res.DestFileName, Datas: conv_utils.ConvertToMap[gRPCService.CopyFileReq](&driveReq)}, nil
 }
