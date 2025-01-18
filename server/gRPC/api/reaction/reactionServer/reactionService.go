@@ -209,8 +209,8 @@ func (react *ReactionService) DeleteUserArea(ctx context.Context, req *gRPCServi
 	}
 
 	_, errAction := react.clients[area.Action.Action.Service].DeleteArea(area.Action.ID, userID)
-	errAct := react.ActionDB.DeleteByActionID(userID, area.Action.ID)
-	errReact := react.ReactionDB.DeleteByAreaID(userID, area.ID)
+	errAct := react.ActionDB.DeleteByActionID(area.Action.ID)
+	errReact := react.ReactionDB.DeleteByAreaID(area.ID)
 	errArea := react.AreaDB.DeleteByID(userID, area.ID)
 	if err := cmp.Or(errAction, errAct, errReact, errArea); err != nil {
 		return nil, err
