@@ -15,7 +15,7 @@ service CryptoService {
     rpc SetActivate(SetActivateCrypto) returns (SetActivateCrypto) {}
 
     // Delete a crypto trigger
-    rpc DeleteAction(DeleteActionReq) returns (DeleteActionReq) {}
+    rpc DeleteAction(DeleteCryptoActionReq) returns (DeleteCryptoActionReq) {}
 }
 
 message IsHigherThanTriggerReq {
@@ -47,6 +47,6 @@ message SetActivateCrypto {
 
 ///////////////
 
-message DeleteActionReq {
+message DeleteCryptoActionReq {
     uint32 action_id = 1;
 }

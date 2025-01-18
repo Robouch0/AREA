@@ -185,5 +185,13 @@ func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCServic
 }
 
 func (git *GitlabService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateGitlab) (*gRPCService.SetActivateGitlab, error) {
-	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
+	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet") // TODO Matthieu
+}
+
+func (git *GitlabService) DeleteAction(ctx context.Context, req *gRPCService.DeleteGitlabActionReq) (*gRPCService.DeleteGitlabActionReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "gitlab")
+	if err != nil {
+		return nil, err
+	} // TODO Matthieu
+	return req, git.gitlabDb.DeleteByActionID(userID, uint(req.ActionId))
 }

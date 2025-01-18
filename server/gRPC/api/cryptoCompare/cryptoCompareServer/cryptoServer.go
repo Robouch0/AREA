@@ -138,7 +138,7 @@ func (crypto *CryptoService) SetActivate(ctx context.Context, req *gRPCService.S
 	return req, nil
 }
 
-func (crypto *CryptoService) DeleteAction(ctx context.Context, req *gRPCService.DeleteActionReq) (*gRPCService.DeleteActionReq, error) {
+func (crypto *CryptoService) DeleteAction(ctx context.Context, req *gRPCService.DeleteCryptoActionReq) (*gRPCService.DeleteCryptoActionReq, error) {
 	userID, err := grpcutils.GetUserIdFromContext(ctx, "crypto")
 	if err != nil {
 		return nil, err

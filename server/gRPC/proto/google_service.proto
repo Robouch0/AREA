@@ -79,6 +79,9 @@ service GoogleService {
 
   // Deactivate Drive watch trigger
   rpc SetActivateDriveAction(SetActivateDrive) returns (SetActivateDrive) {}
+
+  // Delete a google trigger
+  rpc DeleteAction(DeleteGoogleActionReq) returns (DeleteGoogleActionReq) {}
 }
 
 message EmailRequestMe {
@@ -210,4 +213,10 @@ message SetActivateDrive {
   uint32 action_id = 1;
   bool activated = 2;
   string microservice = 3;
+}
+
+///////////////
+
+message DeleteGoogleActionReq {
+  uint32 action_id = 1;
 }

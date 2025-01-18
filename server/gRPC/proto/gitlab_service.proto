@@ -28,6 +28,9 @@ service GitlabService {
   rpc SetActivateAction(SetActivateGitlab) returns (SetActivateGitlab) {}
 
   rpc TriggerWebHook (GitlabWebHookTriggerReq) returns (GitlabWebHookTriggerReq) {}
+
+  // Delete a gitlab trigger
+  rpc DeleteAction(DeleteGitlabActionReq) returns (DeleteGitlabActionReq) {}
 }
 
 message CreateLabRepoFileReq {
@@ -98,4 +101,10 @@ message GitlabWebHookTriggerReq {
 message SetActivateGitlab {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteGitlabActionReq {
+  uint32 action_id = 1;
 }
