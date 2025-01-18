@@ -462,6 +462,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           refName: '',
           type: '',
           ingredients: {},
+          pipelines: [],
         ));
 
     return Column(
@@ -545,6 +546,13 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }) {
     if (ingredients.isEmpty) return const SizedBox.shrink();
 
+    List<dynamic> availablePipelines = [];
+    if (actionData.serviceName.isNotEmpty && actionData.microServiceName.isNotEmpty) {
+      final service = services!.firstWhere((s) => s.refName == actionData.serviceName);
+      final microservice = service.microservices
+          .firstWhere((m) => m.refName == actionData.microServiceName);
+      availablePipelines = microservice.pipelines;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -559,6 +567,19 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
             ),
           ),
         ),
+        if (availablePipelines.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              'Available variables: ${availablePipelines.map((p) => '{{.$p}}').join(', ')}',
+              style: const TextStyle(
+                color: Colors.blue,
+                fontSize: 12,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+          ),
+        ],
         Card(
           color: Colors.white10,
           shape: RoundedRectangleBorder(
