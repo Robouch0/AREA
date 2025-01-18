@@ -32,7 +32,7 @@ export default function ServicesLayout({children,}: Readonly<{
                         className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-36 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
                         onClick={(): void => (router.push("/services/myareas/"))}
                     >
-                        My Areas
+                        <span>My Areas</span>
                     </Button>
                     <Button
                         className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-36 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"

@@ -53,9 +53,9 @@ export function MyAreaCard({action, reaction, areaID, areaActivate}: {
                         </div>
                         <CardHeader className="text-wrap mt-2">
                             <CardTitle
-                                className="text-blue-700 my-2 !text-2xl break-words mb-6"
+                                className="text-blue-500 my-2 !text-2xl break-words mb-6"
                             > {action.microservices?.at(0)?.name} </CardTitle>
-                            <CardTitle className="text-red-700 my-2 !text-2xl break-words"> {reaction.microservices.at(0)?.name} </CardTitle>
+                            <CardTitle className="text-red-500 my-2 !text-2xl break-words"> {reaction.microservices.at(0)?.name} </CardTitle>
 
                         </CardHeader>
                     </div>

@@ -107,7 +107,7 @@ export default function CreatePage({services, userTokens, uid}: {
             <Form action={handleSubmit}>
                 <div className="pt-20 my-16 bg-white h-full w-full flex flex-col justify-center items-center p-8">
                     <div
-                        className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
+                        className="bg-slate-800 !opacity-100 text-6xl font-bold min-w-fit w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
                     >
                         <div className={"text-blue-500"}>
                             <h1 className="my-2"> ACTION </h1>
@@ -140,7 +140,7 @@ export default function CreatePage({services, userTokens, uid}: {
                         <React.Fragment key={index}>
                             <hr className="h-32 w-4 bg-gray-300"/>
                             <div
-                                className="bg-slate-800 !opacity-100 text-6xl font-bold w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
+                                className="bg-slate-800 !opacity-100 text-6xl font-bold  min-w-fit w-2/3 py-4 rounded-3xl flex flex-col justify-start items-center"
                             >
                                 {reactions.length > 1 ?
                                     <div className={"flex flex-row text-red-500 justify-between w-full"}>
