@@ -7,6 +7,7 @@ import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
 import 'package:my_area_flutter/api/types/user_provider_list_body.dart';
+import 'package:my_area_flutter/widgets/ingredient_input.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
@@ -579,28 +580,19 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: TextField(
+                  child: IngredientInput(
+                    label: entry.key,
+                    hint: ingredient.description,
+                    required: ingredient.required,
+                    type: ingredient.type,
                     controller: controller,
-                    decoration: InputDecoration(
-                      labelText:
-                          '${entry.key}${ingredient.required ? ' *' : ''}',
-                      hintText: ingredient.description,
-                      labelStyle: const TextStyle(color: Colors.white70),
-                      hintStyle: const TextStyle(color: Colors.white30),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white.withAlpha(25),
-                    ),
-                    style: const TextStyle(color: Colors.white),
+                    value: values[entry.key],
                     onChanged: (value) => _handleIngredientChange(
                       actionData,
                       entry.key,
                       value,
                       ingredient,
                     ),
-                    onTapOutside: (event) => FocusScope.of(context).unfocus(),
                   ),
                 );
               }).toList(),
