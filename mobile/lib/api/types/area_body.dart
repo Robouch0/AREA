@@ -52,12 +52,14 @@ class MicroServiceBody {
   final String refName;
   final String type;
   final Map<String, Ingredient> ingredients;
+  final List<dynamic> pipelines;
 
   MicroServiceBody({
     required this.name,
     required this.refName,
     required this.type,
     required this.ingredients,
+    required this.pipelines,
   });
 
   factory MicroServiceBody.fromJson(Map<String, dynamic> json) {
@@ -74,6 +76,9 @@ class MicroServiceBody {
       refName: json['ref_name'] as String,
       type: json['type'] as String,
       ingredients: ingredientsMap,
+      pipelines: json['pipeline_available'] != null
+          ? json['pipeline_available'] as List<dynamic>
+          : [],
     );
   }
 }
