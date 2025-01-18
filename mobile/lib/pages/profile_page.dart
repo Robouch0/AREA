@@ -286,6 +286,12 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: const CircleAvatar(
         radius: 40,
+        backgroundColor: Color(0xffE6E6E6),
+        child: Icon(
+          Icons.person,
+          color: Color(0xffCCCCCC),
+          size: 80,
+        ),
       ),
     );
   }
