@@ -70,3 +70,14 @@ func (weather *WeatherClient) SetActivate(microservice string, id uint, userID i
 		Description: "DateTime Deactivated",
 	}, nil
 }
+
+func (weather *WeatherClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := weather.cc.DeleteAction(ctx, &gRPCService.DeleteWeatherActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
+}

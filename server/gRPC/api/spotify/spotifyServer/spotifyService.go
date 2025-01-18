@@ -301,6 +301,14 @@ func (spot *SpotifyService) AddSongToPlaylist(ctx context.Context, req *gRPCServ
 	return req, nil
 }
 
-func (spot *SpotifyService) DeactivateSpotAction(ctx context.Context, req *gRPCService.SetActivateSpotify) (*gRPCService.SetActivateSpotify, error) {
-	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify")
+func (spot *SpotifyService) SetActivate(ctx context.Context, req *gRPCService.SetActivateSpotify) (*gRPCService.SetActivateSpotify, error) {
+	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify") // TODO Matthieu
+}
+
+func (spot *SpotifyService) DeleteAction(ctx context.Context, req *gRPCService.DeleteSpotifyActionReq) (*gRPCService.DeleteSpotifyActionReq, error) {
+	_, err := grpcutils.GetUserIdFromContext(ctx, "spotify")
+	if err != nil {
+		return nil, err
+	} // TODO Matthieu
+	return req, nil
 }

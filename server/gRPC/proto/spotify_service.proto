@@ -14,6 +14,9 @@ service SpotifyService {
   rpc AddSongToPlaylist(SpotifyAddSongToPlaylist) returns(SpotifyAddSongToPlaylist) {}
 
   rpc SetActivate(SetActivateSpotify) returns (SetActivateSpotify) {}
+
+  // Delete a spotify trigger
+  rpc DeleteAction(DeleteSpotifyActionReq) returns (DeleteSpotifyActionReq) {}
 }
 
 message SpotifyStopInfo {
@@ -47,4 +50,10 @@ message SpotifyAddSongToPlaylist {
 message SetActivateSpotify {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteSpotifyActionReq {
+  uint32 action_id = 1;
 }

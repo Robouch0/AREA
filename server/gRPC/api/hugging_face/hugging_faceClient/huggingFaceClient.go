@@ -105,3 +105,7 @@ func (hf *HuggingFaceServiceClient) TriggerWebhook(webhook *IServ.WebhookInfos, 
 func (hf *HuggingFaceServiceClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
 	return nil, nil
 }
+
+func (hf *HuggingFaceServiceClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
+}

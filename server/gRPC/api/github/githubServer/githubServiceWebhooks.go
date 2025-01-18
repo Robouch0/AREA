@@ -265,3 +265,11 @@ func (github *GithubService) SetActivateAction(ctx context.Context, req *gRPCSer
 	}
 	return req, nil
 }
+
+func (github *GithubService) DeleteAction(ctx context.Context, req *gRPCService.DeleteGithubActionReq) (*gRPCService.DeleteGithubActionReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "github")
+	if err != nil {
+		return nil, err
+	} // TODO Matthieu
+	return req, github.GithubDb.DeleteByActionID(userID, uint(req.ActionId))
+}
