@@ -10,6 +10,7 @@ package google_client
 import (
 	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 )
@@ -31,7 +32,7 @@ func (google *GoogleClient) createComment(ingredients map[string]any, userID int
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Content, Datas: conv_utils.ConvertToMap[gRPCService.CreateCommentReq](&driveReq)}, nil
 }
 
 func (google *GoogleClient) deleteComment(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -51,7 +52,7 @@ func (google *GoogleClient) deleteComment(ingredients map[string]any, userID int
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Content, Datas: conv_utils.ConvertToMap[gRPCService.DeleteCommentReq](&driveReq)}, nil
 }
 
 func (google *GoogleClient) updateComment(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -71,5 +72,5 @@ func (google *GoogleClient) updateComment(ingredients map[string]any, userID int
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.NewContent}, nil
+	return &IServ.ReactionResponseStatus{Description: res.NewContent, Datas: conv_utils.ConvertToMap[gRPCService.UpdateCommentReq](&driveReq)}, nil
 }

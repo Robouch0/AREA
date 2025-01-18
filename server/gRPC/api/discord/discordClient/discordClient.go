@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
@@ -54,7 +55,7 @@ func (disCli *DiscordClient) createMessage(ingredients map[string]any, userID in
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Content, Datas: conv_utils.ConvertToMap[gRPCService.CreateMsg](&updateReq)}, nil
 }
 
 func (disCli *DiscordClient) editMessage(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -74,7 +75,7 @@ func (disCli *DiscordClient) editMessage(ingredients map[string]any, userID int)
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Content, Datas: conv_utils.ConvertToMap[gRPCService.EditMsg](&updateReq)}, nil
 }
 
 func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -94,7 +95,7 @@ func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, userID in
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.MessageId}, nil
+	return &IServ.ReactionResponseStatus{Description: res.MessageId, Datas: conv_utils.ConvertToMap[gRPCService.DeleteMsg](&updateReq)}, nil
 }
 
 func (disCli *DiscordClient) createReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -114,7 +115,7 @@ func (disCli *DiscordClient) createReaction(ingredients map[string]any, userID i
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Emoji}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Emoji, Datas: conv_utils.ConvertToMap[gRPCService.CreateReact](&updateReq)}, nil
 }
 
 func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -134,7 +135,7 @@ func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, user
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.MessageId}, nil
+	return &IServ.ReactionResponseStatus{Description: res.MessageId, Datas: conv_utils.ConvertToMap[gRPCService.DeleteAllReact](&updateReq)}, nil
 }
 
 func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -154,7 +155,7 @@ func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, userID i
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Emoji}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Emoji, Datas: conv_utils.ConvertToMap[gRPCService.DeleteReact](&updateReq)}, nil
 }
 
 func (disCli *DiscordClient) SendAction(scenario models.AreaScenario, actionId int, userID int) (*IServ.ActionResponseStatus, error) {
