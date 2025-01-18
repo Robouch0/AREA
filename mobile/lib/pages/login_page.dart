@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:my_area_flutter/services/api/auth_service.dart';
+import 'package:my_area_flutter/services/api/server_service.dart';
 import 'package:my_area_flutter/widgets/auth_input_field.dart';
 import 'package:my_area_flutter/widgets/auth_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
@@ -20,6 +21,18 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkNetworkAvailable();
+  }
+
+  Future<void> _checkNetworkAvailable() async {
+    if (await ServerService.isApiUrlDefined() == false && mounted) {
+      context.push(RouteNames.serverConfig);
+    }
+  }
 
   void _showSuccessStatus(bool success) async {
     if (!mounted) return;
