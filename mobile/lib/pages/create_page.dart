@@ -503,38 +503,38 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
       child: Wrap(
         spacing: 10,
         runSpacing: 10,
-        children: service.microservices.map((micro) {
-          final isSelected = micro.refName == selectedMicro;
-          return InkWell(
-            onTap: () => onMicroSelected(micro.refName),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.blue[700] : Colors.blue[900],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    micro.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Service ${micro.refName}',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
+        children: service.microservices
+            .where((micro) => selectedMicro.isEmpty || micro.refName == selectedMicro)
+            .map((micro) => InkWell(
+          onTap: () => onMicroSelected(micro.refName == selectedMicro ? '' : micro.refName),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: micro.refName == selectedMicro ? Colors.blue[700] : Colors.blue[900],
+              borderRadius: BorderRadius.circular(15),
             ),
-          );
-        }).toList(),
+            child: Column(
+              children: [
+                Text(
+                  micro.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Service ${micro.refName}',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ))
+            .toList(),
       ),
     );
   }
@@ -693,7 +693,8 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           'Create AREA',
           style: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
+            color: Colors.white
           ),
         ),
       ),
