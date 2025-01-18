@@ -9,9 +9,11 @@ package spotify_server
 
 import (
 	"area/db"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"bytes"
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -19,21 +21,65 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/robfig/cron/v3"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type SpotifyService struct {
 	tokenDb      *db.TokenDb
+	spotifyDb    *db.SpotifyDB
+	c            *cron.Cron
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedSpotifyServiceServer
 }
 
 func NewSpotifyService() (*SpotifyService, error) {
-	tokenDb, err := db.InitTokenDb()
+	scheduler := cron.New()
+	scheduler.Start()
+	tokenDb, errT := db.InitTokenDb()
+	spotifyDb, errS := db.InitSpotifyDb()
+	if err := cmp.Or(errT, errS); err != nil {
+		return nil, err
+	}
 
-	return &SpotifyService{tokenDb: tokenDb, reactService: nil}, err
+	Spotify := &SpotifyService{
+		tokenDb:      tokenDb,
+		spotifyDb:    spotifyDb,
+		c:            scheduler,
+		reactService: nil,
+	}
+
+	Spotify.c.AddFunc("* * * * *", Spotify.checkVolumeNbr)
+	Spotify.c.AddFunc("* * * * *", Spotify.checkIsPlaying)
+	Spotify.c.AddFunc("* * * * *", Spotify.checkRepeatSong)
+	Spotify.c.AddFunc("* * * * *", Spotify.checkShufflePlaylist)
+	Spotify.c.AddFunc("* * * * *", Spotify.checkFollowersNbr)
+	return Spotify, nil
+}
+
+func (spotify *SpotifyService) InitReactClient(conn *grpc.ClientConn) {
+	spotify.reactService = gRPCService.NewReactionServiceClient(conn)
+}
+
+func (spotify *SpotifyService) createNewSpotifyInfo(
+	userID uint,
+	actionID int,
+	actionType models.SpotifyActionType,
+	followers uint,
+	volume uint,
+) error {
+	_, err := spotify.spotifyDb.InsertNewSpotify(&models.Spotify{
+		ActionID:   uint(actionID),
+		UserID:     userID,
+		ActionType: actionType,
+		Activated:  true,
+		Followers:  followers,
+		Volume:     volume,
+	})
+	return err
 }
 
 func (spot *SpotifyService) StopSong(ctx context.Context, req *gRPCService.SpotifyStopInfo) (*gRPCService.SpotifyStopInfo, error) {
