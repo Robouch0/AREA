@@ -138,10 +138,11 @@ func (area *AreaDB) GetUserAreaByActionID(UserId, ActionID uint) (*models.Area, 
 	return data, nil
 }
 
-func (area *AreaDB) DeleteByID(ID uint) error {
+func (area *AreaDB) DeleteByID(userID, ID uint) error {
 	data := new(models.Area)
 	_, err := area.Db.NewDelete().
 		Model(data).
+		Where("user_id = ?", userID).
 		Where("id = ?", ID).
 		Exec(context.Background())
 	if err != nil {

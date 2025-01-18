@@ -320,3 +320,14 @@ func (google *GoogleClient) SetActivate(microservice string, id uint, userID int
 		Description: "",
 	}, nil
 }
+
+func (google *GoogleClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := google.cc.DeleteAction(ctx, &gRPCService.DeleteGoogleActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
+}

@@ -9,11 +9,16 @@ package google_server
 
 import (
 	"area/db"
+	"area/gRPC/api/google/drive"
+	"area/gRPC/api/google/gmail"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"context"
+	"strconv"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GoogleService struct {
@@ -48,13 +53,19 @@ func (google *GoogleService) InitReactClient(conn *grpc.ClientConn) {
 }
 
 func (google *GoogleService) DeleteAction(ctx context.Context, req *gRPCService.DeleteGoogleActionReq) (*gRPCService.DeleteGoogleActionReq, error) {
-	_, err := grpcutils.GetUserIdFromContext(ctx, "google")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, google.tokenDb, "GoogleGmailService", "google")
 	if err != nil {
 		return nil, err
 	}
-	// TODO Rahul:
-	// Check if it is drive or gmail
-	// Delete for GCP
-	// Delete for the corresponding DB
+
+	if driveData, err := google.driveDb.GetActionByID(strconv.Itoa(int(req.ActionId))); err == nil {
+		drive.StopWatchDrive(tokenInfo, driveData.ChannelID, driveData.ResourceID)
+		google.driveDb.DeleteByActionID(uint(tokenInfo.UserID), uint(req.ActionId))
+	} else if _, err := google.gmailDb.GetActionByID(uint(req.ActionId)); err == nil {
+		gmail.StopPubSub(tokenInfo)
+		google.driveDb.DeleteByActionID(uint(tokenInfo.UserID), uint(req.ActionId))
+	} else {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid actionID sent")
+	}
 	return req, nil
 }

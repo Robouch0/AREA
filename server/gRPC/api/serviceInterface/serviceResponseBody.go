@@ -28,3 +28,7 @@ type SetActivatedResponseStatus struct {
 	Description string `json:"description,omitempty"`
 	Activated   bool   `json:"activated,omitempty"`
 }
+
+type DeleteResponseStatus struct {
+	ID uint `json:"id,omitempty"`
+}

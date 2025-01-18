@@ -55,6 +55,19 @@ func (google *GoogleGmailDB) GetByEmail(email string) (*models.Gmail, error) {
 	return allDatas, nil
 }
 
+func (google *GoogleGmailDB) GetActionByID(action_id uint) (*models.Gmail, error) {
+	allDatas := new(models.Gmail)
+	err := google.Db.NewSelect().
+		Model(allDatas).
+		Where("action_id = ?", action_id).
+		Scan(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return allDatas, nil
+}
+
 func (google *GoogleGmailDB) SetFirstTime(action_id uint, firstTime bool) (*models.Gmail, error) {
 	allDatas := new(models.Gmail)
 	_, err := google.Db.NewUpdate().

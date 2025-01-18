@@ -182,5 +182,16 @@ func (git *GithubClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, a
 }
 
 func (git *GithubClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
-	return nil, nil
+	return nil, nil // TODO Matthieu
+}
+
+func (git *GithubClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := git.cc.DeleteAction(ctx, &gRPCService.DeleteGithubActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

@@ -197,3 +197,23 @@ func (react *ReactionService) SetActivate(ctx context.Context, req *gRPCService.
 	}
 	return req, nil
 }
+
+func (react *ReactionService) DeleteUserArea(ctx context.Context, req *gRPCService.DeleteAreaReq) (*gRPCService.DeleteAreaReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "reaction")
+	if err != nil {
+		return nil, err
+	}
+	area, err := react.AreaDB.GetUserAreaByID(userID, uint(req.AreaId))
+	if err != nil {
+		return nil, err
+	}
+
+	_, errAction := react.clients[area.Action.Action.Service].DeleteArea(area.Action.ID, userID)
+	errAct := react.ActionDB.DeleteByActionID(userID, area.Action.ID)
+	errReact := react.ReactionDB.DeleteByAreaID(userID, area.ID)
+	errArea := react.AreaDB.DeleteByID(userID, area.ID)
+	if err := cmp.Or(errAction, errAct, errReact, errArea); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
