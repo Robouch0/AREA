@@ -156,6 +156,10 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 			return req, err
 		}
 
+		payload.Message.Data, err = utils.DecodeBase64ToString([]byte(payload.Message.Data))
+		if err != nil {
+			return nil, err
+		}
 		bytesMess, err := json.Marshal(payload.Message)
 		if err != nil {
 			return nil, err
