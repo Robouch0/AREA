@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
@@ -96,7 +97,7 @@ func (git *GitlabClient) createFile(ingredients map[string]any, userID int) (*IS
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.CommitMessage, Datas: conv_utils.ConvertToMap[gRPCService.CreateLabRepoFileReq](&updateReq)}, nil
 }
 
 func (git *GitlabClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -116,7 +117,7 @@ func (git *GitlabClient) updateFile(ingredients map[string]any, userID int) (*IS
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.CommitMessage, Datas: conv_utils.ConvertToMap[gRPCService.UpdateLabRepoFileReq](&updateReq)}, nil
 }
 
 func (git *GitlabClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -136,7 +137,7 @@ func (git *GitlabClient) deleteFile(ingredients map[string]any, userID int) (*IS
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.CommitMessage, Datas: conv_utils.ConvertToMap[gRPCService.DeleteLabRepoFileReq](&updateReq)}, nil
 }
 
 func (git *GitlabClient) markItemDone(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -156,7 +157,7 @@ func (git *GitlabClient) markItemDone(ingredients map[string]any, userID int) (*
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Id}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Id, Datas: conv_utils.ConvertToMap[gRPCService.TodoLabItemDoneReq](&updateReq)}, nil
 }
 
 func (git *GitlabClient) markAllItemDone(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -176,7 +177,7 @@ func (git *GitlabClient) markAllItemDone(ingredients map[string]any, userID int)
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Done"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Done", Datas: conv_utils.ConvertToMap[gRPCService.AllTodoLabItemDoneReq](&updateReq)}, nil
 }
 
 func (git *GitlabClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {

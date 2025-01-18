@@ -45,6 +45,9 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{
+					"timezone", "formatted", "timestamp", "week_day", "day", "month", "year", "hour", "minute",
+				},
 			},
 		},
 	}

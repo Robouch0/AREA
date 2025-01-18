@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
@@ -129,7 +130,7 @@ func (google *GoogleClient) deleteLabel(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.DeleteLabelReq](&labelReq)}, nil
 }
 
 func (google *GoogleClient) updateLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -149,7 +150,7 @@ func (google *GoogleClient) updateLabel(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.NewName}, nil
+	return &IServ.ReactionResponseStatus{Description: res.NewName, Datas: conv_utils.ConvertToMap[gRPCService.UpdateLabelReq](&labelReq)}, nil
 }
 
 func (google *GoogleClient) createLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -169,7 +170,7 @@ func (google *GoogleClient) createLabel(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.CreateLabelReq](&labelReq)}, nil
 }
 
 func (google *GoogleClient) moveToTrash(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -189,7 +190,7 @@ func (google *GoogleClient) moveToTrash(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Subject, Datas: conv_utils.ConvertToMap[gRPCService.TrashEmailRequestMe](&deleteEmailMe)}, nil
 }
 
 func (google *GoogleClient) moveFromTrash(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -209,7 +210,7 @@ func (google *GoogleClient) moveFromTrash(ingredients map[string]any, userID int
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Subject, Datas: conv_utils.ConvertToMap[gRPCService.TrashEmailRequestMe](&deleteEmailMe)}, nil
 }
 
 func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -229,7 +230,7 @@ func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, userID int
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Subject, Datas: conv_utils.ConvertToMap[gRPCService.DeleteEmailRequestMe](&deleteEmailMe)}, nil
 }
 
 func (google *GoogleClient) sendEmailMe(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -249,7 +250,7 @@ func (google *GoogleClient) sendEmailMe(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.BodyMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.BodyMessage, Datas: conv_utils.ConvertToMap[gRPCService.EmailRequestMe](&sendEmailMe)}, nil
 }
 
 func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {

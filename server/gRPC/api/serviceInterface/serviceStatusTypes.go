@@ -23,7 +23,8 @@ type MicroserviceDescriptor struct {
 	RefName string `json:"ref_name"` /* Reference Name of the microservice as it is named in the server */
 	Type    string `json:"type"`     /* Type of service action or reaction */
 
-	Ingredients Ingredients `json:"ingredients"`
+	Ingredients       Ingredients `json:"ingredients"`
+	PipelineAvailable []string    `json:"pipeline_available,omitempty"`
 }
 
 type ServiceStatus struct {

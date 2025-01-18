@@ -10,6 +10,7 @@ package google_client
 import (
 	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 )
@@ -31,7 +32,7 @@ func (google *GoogleClient) deleteDrive(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.DeleteSharedDriveReq](res)}, nil
 }
 
 func (google *GoogleClient) updateDrive(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -51,7 +52,7 @@ func (google *GoogleClient) updateDrive(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.NewName}, nil
+	return &IServ.ReactionResponseStatus{Description: res.NewName, Datas: conv_utils.ConvertToMap[gRPCService.UpdateSharedDriveReq](res)}, nil
 }
 
 func (google *GoogleClient) createDrive(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -71,5 +72,5 @@ func (google *GoogleClient) createDrive(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.CreateSharedDriveReq](res)}, nil
 }

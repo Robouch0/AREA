@@ -42,6 +42,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"to", "subject", "body_message"},
 			},
 			{
 				Name:    "Delete an email of a specific user",
@@ -56,6 +57,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Move an email to trash",
@@ -70,6 +72,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"subject"},
 			},
 			{
 				Name:    "Move an email from trash",
@@ -84,6 +87,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"subject"},
 			},
 			{
 				Name:    "Create a new label",
@@ -116,6 +120,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"name", "messageListVisibility", "LabelListVisibility", "type"},
 			},
 			{
 				Name:    "Update a label",
@@ -154,6 +159,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"old_name", "new_name", "messageListVisibility", "LabelListVisibility", "type"},
 			},
 			{
 				Name:    "Delete a label",
@@ -168,6 +174,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"name"},
 			},
 			{
 				Name:    "Create a comment in a file",
@@ -188,6 +195,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"file_name", "content"},
 			},
 			{
 				Name:    "Delete a comment in a file",
@@ -208,6 +216,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"file_name", "content"},
 			},
 			{
 				Name:    "Update a comment in a file",
@@ -234,6 +243,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"file_name", "old_content", "new_content"},
 			},
 			{
 				Name:    "Create an empty file",
@@ -254,6 +264,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"file_name", "description"},
 			},
 			{
 				Name:    "Delete a file",
@@ -268,6 +279,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"file_name"},
 			},
 			{
 				Name:    "Update a file",
@@ -294,6 +306,7 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"old_file_name", "new_file_name", "description"},
 			},
 			{
 				Name:    "Copy a file",
@@ -320,13 +333,15 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"src_file_name", "dest_file_name", "description"},
 			},
 			{
 				Name:    "Watch email received by an user",
 				RefName: "watchme", // No subdomain because of google cloud inner functionning
 				Type:    "action",
 
-				Ingredients: map[string]IServ.IngredientDescriptor{},
+				Ingredients:       map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{"data", "messageId", "publishTime"},
 			},
 			{
 				Name:    "Watch a specific file",
@@ -341,13 +356,15 @@ func (google *GoogleClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Watch Changes for all file ressources",
 				RefName: "watchChanges",
 				Type:    "action",
 
-				Ingredients: map[string]IServ.IngredientDescriptor{},
+				Ingredients:       map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
 			},
 		},
 	}
