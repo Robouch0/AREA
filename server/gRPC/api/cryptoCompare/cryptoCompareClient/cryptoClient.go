@@ -67,3 +67,14 @@ func (crypto *CryptoClient) SetActivate(microservice string, id uint, userID int
 		Description: "CryptoCompare Deactivated",
 	}, nil
 }
+
+func (crypto *CryptoClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := crypto.cc.DeleteAction(ctx, &gRPCService.DeleteCryptoActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
+}

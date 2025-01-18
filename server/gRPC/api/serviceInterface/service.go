@@ -31,10 +31,13 @@ type ClientService interface {
 	// Send an action that a service should watch
 	SendAction(body models.AreaScenario, actionId, userID int) (*ActionResponseStatus, error)
 
-	// Deactivate an area
+	// Activate/Deactivate an area
 	//
 	// Parameter id must be used to identify the area, and userID identifies the user
 	SetActivate(microservice string, id uint, userID int, activated bool) (*SetActivatedResponseStatus, error)
+
+	// Delete an area of an user with respect of the userID
+	DeleteArea(ID uint, userID uint) (*DeleteResponseStatus, error)
 
 	// Trigger a specific reaction of an user
 	TriggerReaction(ingredients map[string]any, microservice string, userID int) (*ReactionResponseStatus, error)

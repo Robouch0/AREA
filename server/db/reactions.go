@@ -84,3 +84,15 @@ func (reaction *ReactionDb) GetReactionsByAreaID(AreaID uint) (*[]models.Reactio
 	}
 	return allReactions, nil
 }
+
+func (reaction *ReactionDb) DeleteByAreaID(areaID uint) error {
+	data := new(models.Reactions)
+	_, err := reaction.Db.NewDelete().
+		Model(data).
+		Where("area_id = ?", areaID).
+		Exec(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
+}

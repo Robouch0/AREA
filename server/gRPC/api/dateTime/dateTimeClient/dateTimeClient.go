@@ -92,3 +92,14 @@ func (dt *DTServiceClient) SetActivate(microservice string, id uint, userID int,
 		Description: "DateTime Deactivated",
 	}, nil
 }
+
+func (dt *DTServiceClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := dt.DeleteAction(ctx, &gRPCService.DeleteDTActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
+}
