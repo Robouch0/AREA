@@ -73,3 +73,7 @@ func (wDb *WeatherConditionDB) UpdateUserIsDay(actionID, IsDay int) error {
 func (weather *WeatherConditionDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.WeatherCondition, error) {
 	return SetActivateByActionID[models.WeatherCondition](weather.Db, activated, userID, actionID)
 }
+
+func (weather *WeatherConditionDB) DeleteByActionID(actionID uint) error {
+	return DeleteByActionID[models.WeatherCondition](weather.Db, actionID)
+}

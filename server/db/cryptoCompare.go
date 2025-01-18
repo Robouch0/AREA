@@ -59,3 +59,7 @@ func (wDb *CryptoCompareDB) GetActionsByType(actionType models.CryptoActionType)
 func (weather *CryptoCompareDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.CryptoCompare, error) {
 	return SetActivateByActionID[models.CryptoCompare](weather.Db, activated, userID, actionID)
 }
+
+func (weather *CryptoCompareDB) DeleteByActionID(actionID uint) error {
+	return DeleteByActionID[models.CryptoCompare](weather.Db, actionID)
+}

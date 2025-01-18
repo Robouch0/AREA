@@ -31,8 +31,8 @@ func InitGithubDb() (*GithubDB, error) {
 
 // If we need to do activation/disactivation do like dateTimeDB
 
-func (hf *GithubDB) StoreNewGithub(newData *models.Github) (*models.Github, error) {
-	_, err := hf.Db.NewInsert().
+func (git *GithubDB) StoreNewGithub(newData *models.Github) (*models.Github, error) {
+	_, err := git.Db.NewInsert().
 		Model(newData).
 		Exec(context.Background())
 	if err != nil {
@@ -41,9 +41,9 @@ func (hf *GithubDB) StoreNewGithub(newData *models.Github) (*models.Github, erro
 	return newData, nil
 }
 
-func (hf *GithubDB) GetGithubByActionID(actionID uint) (*models.Github, error) {
+func (git *GithubDB) GetGithubByActionID(actionID uint) (*models.Github, error) {
 	allDatas := new(models.Github)
-	err := hf.Db.NewSelect().
+	err := git.Db.NewSelect().
 		Model(allDatas).
 		Where("action_id = ?", actionID).
 		Scan(context.Background())
@@ -59,9 +59,9 @@ func (git *GithubDB) SetActivateByActionID(activated bool, userID, actionID uint
 	return SetActivateByActionID[models.Github](git.Db, activated, userID, actionID)
 }
 
-func (hf *GithubDB) GetAllActionsActivated() (*[]models.Github, error) {
+func (git *GithubDB) GetAllActionsActivated() (*[]models.Github, error) {
 	allDatas := new([]models.Github)
-	err := hf.Db.NewSelect().
+	err := git.Db.NewSelect().
 		Model(allDatas).
 		Where("activated = TRUE").
 		Scan(context.Background())
@@ -72,6 +72,10 @@ func (hf *GithubDB) GetAllActionsActivated() (*[]models.Github, error) {
 	return allDatas, nil
 }
 
-func (hf *GithubDB) GetAllDTActions() (*[]models.Github, error) {
-	return GetAll[models.Github](hf.Db)
+func (git *GithubDB) GetAllDTActions() (*[]models.Github, error) {
+	return GetAll[models.Github](git.Db)
+}
+
+func (git *GithubDB) DeleteByActionID(actionID uint) error {
+	return DeleteByActionID[models.Github](git.Db, actionID)
 }

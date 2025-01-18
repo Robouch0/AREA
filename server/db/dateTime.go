@@ -67,3 +67,7 @@ func (dt *DateTimeDB) GetAllDTActionsActivated() (*[]models.DateTime, error) {
 func (dt *DateTimeDB) GetAllDTActions() (*[]models.DateTime, error) {
 	return GetAll[models.DateTime](dt.Db)
 }
+
+func (dt *DateTimeDB) DeleteByActionID(actionID uint) error {
+	return DeleteByActionID[models.DateTime](dt.Db, actionID)
+}

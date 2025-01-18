@@ -90,3 +90,7 @@ func (google *GoogleGmailDB) GetAllActionsActivated() (*[]models.Gmail, error) {
 func (google *GoogleGmailDB) GetAllActions() (*[]models.Gmail, error) {
 	return GetAll[models.Gmail](google.Db)
 }
+
+func (google *GoogleGmailDB) DeleteByActionID(actionID uint) error {
+	return DeleteByActionID[models.Gmail](google.Db, actionID)
+}

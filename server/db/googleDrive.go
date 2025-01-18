@@ -102,3 +102,7 @@ func (google *GoogleDriveDB) GetAllActionsActivated() (*[]models.Drive, error) {
 func (google *GoogleDriveDB) GetAllActions() (*[]models.Drive, error) {
 	return GetAll[models.Drive](google.Db)
 }
+
+func (google *GoogleDriveDB) DeleteByActionID(actionID uint) error {
+	return DeleteByActionID[models.Drive](google.Db, actionID)
+}

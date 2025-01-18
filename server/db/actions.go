@@ -58,6 +58,10 @@ func (action *ActionsDb) InsertNewAction(ActionInfo *models.Action, AreaID uint)
 	return newAction, nil
 }
 
+func (action *ActionsDb) DeleteByActionID(actionID uint) error {
+	return DeleteByActionID[models.Actions](action.Db, actionID)
+}
+
 func (action *ActionsDb) GetActionByID(ID uint) (*models.Actions, error) {
 	return GetByID[models.Actions](action.Db, ID)
 }
