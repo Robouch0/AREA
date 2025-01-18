@@ -8,10 +8,16 @@
 package cryptocompareserver
 
 type CryptoConfig struct {
-	CryptoCurrency string  `json:"crypto_currency"`
-	Currency       string  `json:"currency"`
+	CryptoCurrency string `json:"crypto_currency"`
+	Currency       string `json:"currency"`
 }
 
 type CryptoAPIResponseBody struct {
-	Currency       map[string]float64 `json:"currency,omitempty"`
+	Currency map[string]float64 `json:"currency,omitempty"`
+}
+
+type CryptoPayload struct {
+	CryptoCurrency string `json:"crypto_currency"`
+	Currency       string `json:"currency"`
+	Threshold      int    `json:"threshold"`
 }

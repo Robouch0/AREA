@@ -44,6 +44,18 @@ func NewGitlabClient(conn *grpc.ClientConn) *GitlabClient {
 	(*gitlab.ActionLauncher)["triggerPush"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
 		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreatePushWebhook)
 	}
+	(*gitlab.ActionLauncher)["triggerIssue"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateIssueWebhook)
+	}
+	(*gitlab.ActionLauncher)["triggerTag"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateTagWebhook)
+	}
+	(*gitlab.ActionLauncher)["triggerRelease"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateReleaseWebhook)
+	}
+	(*gitlab.ActionLauncher)["triggerMerge"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateMergeEventWebhook)
+	}
 	return gitlab
 }
 

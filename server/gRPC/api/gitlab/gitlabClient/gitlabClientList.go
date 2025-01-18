@@ -18,7 +18,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 		Microservices: []IServ.MicroserviceDescriptor{
 			{
-				Name:    "Trigger every push",
+				Name:    "Triggers every push",
 				RefName: "triggerPush",
 				Type:    "action",
 
@@ -31,6 +31,62 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 					},
 				},
 				PipelineAvailable: []string{}, // TODO Matthieu
+			},
+			{
+				Name:    "Triggers at every creation of a new issue on a project",
+				RefName: "triggerIssue",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"id": {
+						Value:       "",
+						Type:        "string",
+						Description: "The ID or URL-encoded path of the project",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Triggers on every tag event on a project",
+				RefName: "triggerTag",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"id": {
+						Value:       "",
+						Type:        "string",
+						Description: "The ID or URL-encoded path of the project",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Triggers on every new release on a project",
+				RefName: "triggerRelease",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"id": {
+						Value:       "",
+						Type:        "string",
+						Description: "The ID or URL-encoded path of the project",
+						Required:    true,
+					},
+				},
+			},
+			{
+				Name:    "Trigger every merge request event on a project",
+				RefName: "triggerMerge",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"id": {
+						Value:       "",
+						Type:        "string",
+						Description: "The ID or URL-encoded path of the project",
+						Required:    true,
+					},
+				},
 			},
 			{
 				Name:    "Create a file on a repository",
