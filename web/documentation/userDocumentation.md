@@ -14,7 +14,7 @@ Aswell as the Category of service his action is coming from (ex: Github)
 # Functionalities
 ## **Search Areas**:
 
-![img.png](img.png)
+![searchFieldMyAreas.png](searchFieldMyAreas.png)
 
 - On this search field you can type the name of the action/reactions or the description of the microservices in this area.
 
@@ -22,12 +22,12 @@ Aswell as the Category of service his action is coming from (ex: Github)
 
 - You can click the switch on the area card to disable or enable them.
 
-![img_2.png](img_2.png)
+![disableArea.png](disableArea.png)
  
 
 ## Visual overview of the My Areas page
 
-![img_4.png](img_4.png)
+![overviewAreaPage.png](overviewAreaPage.png)
 
 ---
 
@@ -39,7 +39,7 @@ The Profile page enables users to manage their personal information and link ext
 ### Sections
 - **Update User Data**:
 
-- ![img_5.png](img_5.png)
+- ![updateUserDataProfile.png](updateUserDataProfile.png)
 
     - The left part of the profile page allows user to edit their personnal informations with input fields.
    
@@ -48,7 +48,7 @@ The Profile page enables users to manage their personal information and link ext
 
 - **Link OAuth Accounts**:
 
-![img_6.png](img_6.png)
+![linkOauthProfile.png](linkOauthProfile.png)
   
 - The right side of the profile page allows you to scroll through services (e.g., GitHub, Google, Spotify).
 - You can click on the Unlink button to make Area forgot about your linked account on the designated service.
@@ -56,7 +56,7 @@ The Profile page enables users to manage their personal information and link ext
 
 ### Visual overview of the profile page
 
-![img_7.png](img_7.png)
+![overviewProfilePage.png](overviewProfilePage.png)
 
 ---
 
@@ -72,13 +72,13 @@ On this page you can choose one actions and add multiple reactions to it.
 
 - Here on this screenshot you can see how to search and select a service on the dropdown.
 
-![img_8.png](img_8.png)
+![chooseServiceCreate.png](chooseServiceCreate.png)
 
 - **Select Microservices**:
 
 - After choosing a service, microservices card with description will be displayed. You can click on them to select one.
 
-- ![img_9.png](img_9.png)
+![chooseMicroserviceCreate.png](chooseMicroserviceCreate.png)
 
 - **Fill out the values**:
 
@@ -87,14 +87,15 @@ On this page you can choose one actions and add multiple reactions to it.
     - In some that needs time data you can select it in the calendar directly
     - If you need more information about an ingredient you can pass your mouse on it to have a tooltip containing a brief description of what we are waiting for.
 
-![img_10.png](img_10.png)
+![fillOutIngredientsInputfieldCreate.png](fillOutIngredientsInputfieldCreate.png)
 
 *Tooltip description of the ingredient*
 
-![img_11.png](img_11.png)
-    - After you filled out everything you can click on the create AREA button to finish the process and create your process automation !
+![ingredientsTooltip.png](ingredientsTooltip.png)
 
-![img_13.png](img_13.png)
+- After you filled out everything you can click on the create AREA button to finish the process and create your process automation !
+
+![createAreaButton.png](createAreaButton.png)
 
 - **Add chained reactions**:
 
@@ -102,10 +103,24 @@ In our website you can create area with one action and then add multiple chained
 For this just click on the [**+ Add Reaction**] button 
 then fill out the new inputfield needed before creating your area.
 
-![img_12.png](img_12.png)
+![chainReactionCreate.png](chainReactionCreate.png)
+
+- **Data pipelines**:
+
+On some microservices you can also transfer trough small pipe between a precendent microservices some datas :
+
+You can for example use a the hour variable of your action date and time in your send mail reaction.
+
+In order to do this first check the available variables at the end of your action/reaction :
+
+
+
+
+
+
 
 ### Visual overview of the Create page
-![img_16.png](img_16.png)
+![overviewOfCreatePage.png](overviewOfCreatePage.png)
 ---
 
 ## 4. Login Page
@@ -117,7 +132,7 @@ The Login page is where users access their accounts.
 - Or you can connect with Oauth (Discord, Google, GitHub...)
 - If you do not own an Area account for the moment, at the bottom of the page you cand find a link to go to the register page, to create an account.
 
-![img_17.png](img_17.png)
+![loginPageFields.png](loginPageFields.png)
 
 ---
 
@@ -131,7 +146,7 @@ The Register page allows new users to create an account.
 
 We will then take your email on this account as a data on your profile.
 
-![img_18.png](img_18.png)
+![registerPageFields.png](registerPageFields.png)
 
 ## Conclusion
 
