@@ -52,6 +52,10 @@ func (miro *MiroClient) SetActivate(microservice string, id uint, userID int, ac
 	return nil, status.Errorf(codes.Internal, "No set Activate yet")
 }
 
+func (miro *MiroClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
+}
+
 func (miro *MiroClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*miro.ReactionLauncher)[microservice]; ok {
 		return micro(ingredients, userID)

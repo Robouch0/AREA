@@ -358,3 +358,11 @@ func (spot *SpotifyService) SetActivate(ctx context.Context, req *gRPCService.Se
 	}
 	return req, nil
 }
+
+func (spot *SpotifyService) DeleteAction(ctx context.Context, req *gRPCService.DeleteSpotifyActionReq) (*gRPCService.DeleteSpotifyActionReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "spotify")
+	if err != nil {
+		return nil, err
+	}
+	return req, spot.spotifyDb.DeleteByActionID(userID, uint(req.ActionId))
+}

@@ -137,3 +137,11 @@ func (dt *DateTimeService) SetActivateAction(ctx context.Context, req *gRPCServi
 	log.Printf("Time Action with action ID: %v has activated state: %v", data.ActionID, data.Activated)
 	return req, nil
 }
+
+func (dt *DateTimeService) DeleteAction(ctx context.Context, req *gRPCService.DeleteDTActionReq) (*gRPCService.DeleteDTActionReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "dt")
+	if err != nil {
+		return nil, err
+	}
+	return req, dt.dtDb.DeleteByActionID(userID, uint(req.ActionId))
+}

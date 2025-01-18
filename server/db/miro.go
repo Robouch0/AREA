@@ -75,3 +75,7 @@ func (miro *MiroDB) GetAllActionsActivated() (*[]models.Miro, error) {
 func (miro *MiroDB) GetAllMiroActions() (*[]models.Miro, error) {
 	return GetAll[models.Miro](miro.Db)
 }
+
+func (miro *MiroDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.Miro](miro.Db, userID, actionID)
+}

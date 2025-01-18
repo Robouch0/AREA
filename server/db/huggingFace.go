@@ -70,3 +70,7 @@ func (hf *HuggingFaceDB) GetAllActionsActivated() (*[]models.HuggingFace, error)
 func (hf *HuggingFaceDB) GetAllDTActions() (*[]models.HuggingFace, error) {
 	return GetAll[models.HuggingFace](hf.Db)
 }
+
+func (hf *HuggingFaceDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.HuggingFace](hf.Db, userID, actionID)
+}

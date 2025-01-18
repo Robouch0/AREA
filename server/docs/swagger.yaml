@@ -6,6 +6,11 @@ definitions:
       area_id:
         type: integer
     type: object
+  areas.areaDeleteRequest:
+    properties:
+      area_id:
+        type: integer
+    type: object
   areas.userArea:
     properties:
       action:
@@ -26,6 +31,30 @@ definitions:
       server:
         $ref: '#/definitions/controllers.serverInfos'
     type: object
+  controllers.CreateUserInformations:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
+  controllers.ReadUserInformations:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+    type: object
   controllers.TokenCreateRequest:
     properties:
       provider:
@@ -40,19 +69,6 @@ definitions:
       provider:
         type: string
       user_id:
-        type: string
-    type: object
-  controllers.UserInformations:
-    properties:
-      email:
-        type: string
-      first_name:
-        type: string
-      id:
-        type: integer
-      last_name:
-        type: string
-      password:
         type: string
     type: object
   controllers.clientInfos:
@@ -128,8 +144,10 @@ definitions:
     properties:
       action:
         $ref: '#/definitions/models.Action'
-      reaction:
-        $ref: '#/definitions/models.Reaction'
+      reactions:
+        items:
+          $ref: '#/definitions/models.Reaction'
+        type: array
     type: object
   models.Reaction:
     properties:
@@ -150,12 +168,24 @@ definitions:
       password:
         type: string
     type: object
+  oauth.Oauthlist:
+    properties:
+      services:
+        items:
+          type: string
+        type: array
+    type: object
   serviceinterface.ActionResponseStatus:
     properties:
       action_id:
         type: integer
       description:
         type: string
+    type: object
+  serviceinterface.DeleteResponseStatus:
+    properties:
+      id:
+        type: integer
     type: object
   serviceinterface.IngredientDescriptor:
     properties:
@@ -178,6 +208,10 @@ definitions:
       name:
         description: Name of the microservice
         type: string
+      pipeline_available:
+        items:
+          type: string
+        type: array
       ref_name:
         description: Reference Name of the microservice as it is named in the server
         type: string
@@ -228,6 +262,36 @@ paths:
       summary: List of handled services
       tags:
       - About
+  /area:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user's area
+      parameters:
+      - description: Informations about the deletion of an area
+        in: body
+        name: area
+        required: true
+        schema:
+          $ref: '#/definitions/areas.areaDeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serviceinterface.DeleteResponseStatus'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an area
+      tags:
+      - Area
   /area/activate:
     put:
       consumes:
@@ -430,6 +494,21 @@ paths:
       summary: Get an oauth url for a service
       tags:
       - Account
+  /oauth/list:
+    get:
+      consumes:
+      - application/json
+      description: List all the current Oauth handled by the server
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/oauth.Oauthlist'
+      summary: List Oauth
+      tags:
+      - Account
   /ping:
     get:
       description: Pong
@@ -588,19 +667,19 @@ paths:
       - application/json
       description: Create a new user in database
       parameters:
-      - description: User's information
+      - description: Create User's information body
         in: body
         name: userInfos
         required: true
         schema:
-          $ref: '#/definitions/controllers.UserInformations'
+          $ref: '#/definitions/controllers.CreateUserInformations'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.UserInformations'
+            $ref: '#/definitions/controllers.ReadUserInformations'
         "400":
           description: Bad Request
           schema: {}
@@ -623,7 +702,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.UserInformations'
+            $ref: '#/definitions/controllers.ReadUserInformations'
         "400":
           description: Bad Request
           schema: {}

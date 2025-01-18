@@ -59,3 +59,7 @@ func (wDb *SpotifyDB) GetActionsByType(actionType models.SpotifyActionType) (*[]
 func (weather *SpotifyDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.Spotify, error) {
 	return SetActivateByActionID[models.Spotify](weather.Db, activated, userID, actionID)
 }
+
+func (spot *SpotifyDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.Spotify](spot.Db, userID, actionID)
+}

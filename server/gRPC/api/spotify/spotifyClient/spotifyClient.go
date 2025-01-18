@@ -211,3 +211,14 @@ func (spot *SpotifyClient) SetActivate(microservice string, id uint, userID int,
 		Description: "Spotify Deactivated",
 	}, nil
 }
+
+func (spot *SpotifyClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := spot.cc.DeleteAction(ctx, &gRPCService.DeleteSpotifyActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
+}

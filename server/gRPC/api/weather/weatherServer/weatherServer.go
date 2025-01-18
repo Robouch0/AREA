@@ -207,3 +207,11 @@ func (weather *WeatherService) SetActivate(ctx context.Context, req *gRPCService
 	}
 	return req, nil
 }
+
+func (weather *WeatherService) DeleteAction(ctx context.Context, req *gRPCService.DeleteWeatherActionReq) (*gRPCService.DeleteWeatherActionReq, error) {
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "weather")
+	if err != nil {
+		return nil, err
+	}
+	return req, weather.weatherDb.DeleteByActionID(userID, uint(req.ActionId))
+}

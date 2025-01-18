@@ -91,3 +91,14 @@ func (react *ReactionServiceClient) SetActivate(microservice string, id uint, us
 		Description: "DateTime Deactivated",
 	}, nil
 }
+
+func (react *ReactionServiceClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := react.DeleteUserArea(ctx, &gRPCService.DeleteAreaReq{
+		AreaId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
+}

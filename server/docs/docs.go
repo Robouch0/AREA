@@ -38,6 +38,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/area": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "Delete an area",
+                "parameters": [
+                    {
+                        "description": "Informations about the deletion of an area",
+                        "name": "area",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/areas.areaDeleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serviceinterface.DeleteResponseStatus"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/area/activate": {
             "put": {
                 "security": [
@@ -294,6 +341,29 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {}
+                    }
+                }
+            }
+        },
+        "/oauth/list": {
+            "get": {
+                "description": "List all the current Oauth handled by the server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "List Oauth",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/oauth.Oauthlist"
+                        }
                     }
                 }
             }
@@ -601,12 +671,12 @@ const docTemplate = `{
                 "summary": "Create a new user",
                 "parameters": [
                     {
-                        "description": "User's information",
+                        "description": "Create User's information body",
                         "name": "userInfos",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserInformations"
+                            "$ref": "#/definitions/controllers.CreateUserInformations"
                         }
                     }
                 ],
@@ -614,7 +684,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserInformations"
+                            "$ref": "#/definitions/controllers.ReadUserInformations"
                         }
                     },
                     "400": {
@@ -650,7 +720,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserInformations"
+                            "$ref": "#/definitions/controllers.ReadUserInformations"
                         }
                     },
                     "400": {
@@ -772,6 +842,14 @@ const docTemplate = `{
                 }
             }
         },
+        "areas.areaDeleteRequest": {
+            "type": "object",
+            "properties": {
+                "area_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "areas.userArea": {
             "type": "object",
             "properties": {
@@ -803,6 +881,43 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.CreateUserInformations": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.ReadUserInformations": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.TokenCreateRequest": {
             "type": "object",
             "properties": {
@@ -824,26 +939,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "controllers.UserInformations": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 }
             }
@@ -961,8 +1056,11 @@ const docTemplate = `{
                 "action": {
                     "$ref": "#/definitions/models.Action"
                 },
-                "reaction": {
-                    "$ref": "#/definitions/models.Reaction"
+                "reactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Reaction"
+                    }
                 }
             }
         },
@@ -995,6 +1093,17 @@ const docTemplate = `{
                 }
             }
         },
+        "oauth.Oauthlist": {
+            "type": "object",
+            "properties": {
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "serviceinterface.ActionResponseStatus": {
             "type": "object",
             "properties": {
@@ -1003,6 +1112,14 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
+                }
+            }
+        },
+        "serviceinterface.DeleteResponseStatus": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1036,6 +1153,12 @@ const docTemplate = `{
                 "name": {
                     "description": "Name of the microservice",
                     "type": "string"
+                },
+                "pipeline_available": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "ref_name": {
                     "description": "Reference Name of the microservice as it is named in the server",
