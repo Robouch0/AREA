@@ -103,6 +103,6 @@ func (google *GoogleDriveDB) GetAllActions() (*[]models.Drive, error) {
 	return GetAll[models.Drive](google.Db)
 }
 
-func (google *GoogleDriveDB) DeleteByActionID(actionID uint) error {
-	return DeleteByActionID[models.Drive](google.Db, actionID)
+func (google *GoogleDriveDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.Drive](google.Db, userID, actionID)
 }

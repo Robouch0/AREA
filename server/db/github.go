@@ -76,6 +76,6 @@ func (git *GithubDB) GetAllDTActions() (*[]models.Github, error) {
 	return GetAll[models.Github](git.Db)
 }
 
-func (git *GithubDB) DeleteByActionID(actionID uint) error {
-	return DeleteByActionID[models.Github](git.Db, actionID)
+func (git *GithubDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.Github](git.Db, userID, actionID)
 }

@@ -80,10 +80,11 @@ func SetActivateByActionID[T any](Db bun.IDB, activated bool, userID, actionID u
 	return data, nil
 }
 
-func DeleteByActionID[T any](Db bun.IDB, actionID uint) error {
+func DeleteUserActionByActionID[T any](Db bun.IDB, userID, actionID uint) error {
 	data := new(T)
 	_, err := Db.NewDelete().
 		Model(data).
+		Where("user_id = ?", userID).
 		Where("action_id = ?", actionID).
 		Exec(context.Background())
 	if err != nil {

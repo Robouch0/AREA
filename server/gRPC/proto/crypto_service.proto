@@ -11,9 +11,11 @@ service CryptoService {
     // Each hour, when crypto currency value is lower than a certain amount, do this
     rpc IsLowerThanTrigger(IsLowerThanTriggerReq) returns(IsLowerThanTriggerReq) {}
 
-    // Deactivate crypto trigger
-    rpc SetActivate(SetActivateCrypto)
-      returns (SetActivateCrypto) {}
+    // Set activate crypto trigger
+    rpc SetActivate(SetActivateCrypto) returns (SetActivateCrypto) {}
+
+    // Delete a crypto trigger
+    rpc DeleteAction(DeleteActionReq) returns (DeleteActionReq) {}
 }
 
 message IsHigherThanTriggerReq {
@@ -43,3 +45,8 @@ message SetActivateCrypto {
     bool activated = 2;
 }
 
+///////////////
+
+message DeleteActionReq {
+    uint32 action_id = 1;
+}

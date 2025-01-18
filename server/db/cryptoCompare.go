@@ -29,8 +29,8 @@ func InitCryptoCompareDb() (*CryptoCompareDB, error) {
 	return &CryptoCompareDB{Db: db}, err
 }
 
-func (wDb *CryptoCompareDB) InsertNewCryptoCompare(data *models.CryptoCompare) (*models.CryptoCompare, error) {
-	_, err := wDb.Db.NewInsert().
+func (crypto *CryptoCompareDB) InsertNewCryptoCompare(data *models.CryptoCompare) (*models.CryptoCompare, error) {
+	_, err := crypto.Db.NewInsert().
 		Model(data).
 		On("CONFLICT (id) DO UPDATE").
 		Set("activated = TRUE").
@@ -41,9 +41,9 @@ func (wDb *CryptoCompareDB) InsertNewCryptoCompare(data *models.CryptoCompare) (
 	return data, nil
 }
 
-func (wDb *CryptoCompareDB) GetActionsByType(actionType models.CryptoActionType) (*[]models.CryptoCompare, error) {
+func (crypto *CryptoCompareDB) GetActionsByType(actionType models.CryptoActionType) (*[]models.CryptoCompare, error) {
 	allDatas := new([]models.CryptoCompare)
-	err := wDb.Db.NewSelect().
+	err := crypto.Db.NewSelect().
 		Model(allDatas).
 		Where("activated = TRUE").
 		Where("action_type = ?", actionType).
@@ -56,10 +56,10 @@ func (wDb *CryptoCompareDB) GetActionsByType(actionType models.CryptoActionType)
 }
 
 // Activate or desactivate an action based on actionID and the boolean activated
-func (weather *CryptoCompareDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.CryptoCompare, error) {
-	return SetActivateByActionID[models.CryptoCompare](weather.Db, activated, userID, actionID)
+func (crypto *CryptoCompareDB) SetActivateByActionID(activated bool, userID, actionID uint) (*models.CryptoCompare, error) {
+	return SetActivateByActionID[models.CryptoCompare](crypto.Db, activated, userID, actionID)
 }
 
-func (weather *CryptoCompareDB) DeleteByActionID(actionID uint) error {
-	return DeleteByActionID[models.CryptoCompare](weather.Db, actionID)
+func (crypto *CryptoCompareDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.CryptoCompare](crypto.Db, userID, actionID)
 }

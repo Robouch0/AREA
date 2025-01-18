@@ -91,6 +91,6 @@ func (google *GoogleGmailDB) GetAllActions() (*[]models.Gmail, error) {
 	return GetAll[models.Gmail](google.Db)
 }
 
-func (google *GoogleGmailDB) DeleteByActionID(actionID uint) error {
-	return DeleteByActionID[models.Gmail](google.Db, actionID)
+func (google *GoogleGmailDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.Gmail](google.Db, userID, actionID)
 }

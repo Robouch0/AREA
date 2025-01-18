@@ -71,6 +71,6 @@ func (hf *HuggingFaceDB) GetAllDTActions() (*[]models.HuggingFace, error) {
 	return GetAll[models.HuggingFace](hf.Db)
 }
 
-func (hf *HuggingFaceDB) DeleteByActionID(actionID uint) error {
-	return DeleteByActionID[models.HuggingFace](hf.Db, actionID)
+func (hf *HuggingFaceDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.HuggingFace](hf.Db, userID, actionID)
 }

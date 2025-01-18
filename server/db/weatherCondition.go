@@ -74,6 +74,6 @@ func (weather *WeatherConditionDB) SetActivateByActionID(activated bool, userID,
 	return SetActivateByActionID[models.WeatherCondition](weather.Db, activated, userID, actionID)
 }
 
-func (weather *WeatherConditionDB) DeleteByActionID(actionID uint) error {
-	return DeleteByActionID[models.WeatherCondition](weather.Db, actionID)
+func (weather *WeatherConditionDB) DeleteByActionID(userID, actionID uint) error {
+	return DeleteUserActionByActionID[models.WeatherCondition](weather.Db, userID, actionID)
 }
