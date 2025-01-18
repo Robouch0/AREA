@@ -9,9 +9,11 @@ package spotify_server
 
 import (
 	"area/db"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"bytes"
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -19,21 +21,65 @@ import (
 	"net/http"
 	"strconv"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/robfig/cron/v3"
+	"google.golang.org/grpc"
 )
 
 type SpotifyService struct {
 	tokenDb      *db.TokenDb
+	spotifyDb    *db.SpotifyDB
+	c            *cron.Cron
 	reactService gRPCService.ReactionServiceClient
 
 	gRPCService.UnimplementedSpotifyServiceServer
 }
 
 func NewSpotifyService() (*SpotifyService, error) {
-	tokenDb, err := db.InitTokenDb()
+	scheduler := cron.New()
+	scheduler.Start()
+	tokenDb, errT := db.InitTokenDb()
+	spotifyDb, errS := db.InitSpotifyDb()
+	if err := cmp.Or(errT, errS); err != nil {
+		return nil, err
+	}
 
-	return &SpotifyService{tokenDb: tokenDb, reactService: nil}, err
+	Spotify := &SpotifyService{
+		tokenDb:      tokenDb,
+		spotifyDb:    spotifyDb,
+		c:            scheduler,
+		reactService: nil,
+	}
+
+	Spotify.c.AddFunc("* * * * *", Spotify.checkVolumeNbr)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkIsPlaying)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkRepeatSong)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkShufflePlaylist)
+	Spotify.c.AddFunc("@every 0h03m00s", Spotify.checkFollowersNbr)
+	return Spotify, nil
+}
+
+func (spotify *SpotifyService) InitReactClient(conn *grpc.ClientConn) {
+	spotify.reactService = gRPCService.NewReactionServiceClient(conn)
+}
+
+func (spotify *SpotifyService) createNewSpotifyInfo(
+	userID uint,
+	actionID int,
+	actionType models.SpotifyActionType,
+	artist_id string,
+	followers uint,
+	volume uint,
+) error {
+	_, err := spotify.spotifyDb.InsertNewSpotify(&models.Spotify{
+		ActionID:   uint(actionID),
+		UserID:     userID,
+		ActionType: actionType,
+		Activated:  true,
+		ArtistID:   artist_id,
+		Followers:  followers,
+		Volume:     volume,
+	})
+	return err
 }
 
 func (spot *SpotifyService) StopSong(ctx context.Context, req *gRPCService.SpotifyStopInfo) (*gRPCService.SpotifyStopInfo, error) {
@@ -302,13 +348,21 @@ func (spot *SpotifyService) AddSongToPlaylist(ctx context.Context, req *gRPCServ
 }
 
 func (spot *SpotifyService) SetActivate(ctx context.Context, req *gRPCService.SetActivateSpotify) (*gRPCService.SetActivateSpotify, error) {
-	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify") // TODO Matthieu
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "spotify")
+	if err != nil {
+		return nil, err
+	}
+	_, err = spot.spotifyDb.SetActivateByActionID(req.Activated, userID, uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
 }
 
 func (spot *SpotifyService) DeleteAction(ctx context.Context, req *gRPCService.DeleteSpotifyActionReq) (*gRPCService.DeleteSpotifyActionReq, error) {
-	_, err := grpcutils.GetUserIdFromContext(ctx, "spotify")
+	userID, err := grpcutils.GetUserIdFromContext(ctx, "spotify")
 	if err != nil {
 		return nil, err
-	} // TODO Matthieu
-	return req, nil
+	}
+	return req, spot.spotifyDb.DeleteByActionID(userID, uint(req.ActionId))
 }
