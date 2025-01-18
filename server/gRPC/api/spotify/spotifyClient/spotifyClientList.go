@@ -35,6 +35,7 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"artist_id", "followers"},
 			},
 			{
 				Name:    "Check every 1 minutes if the volume exceed a certain amount",
@@ -48,24 +49,28 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"volume"},
 			},
 			{
 				Name:    "Check every 3 minutes if the song is on repeat",
 				RefName: "checkRepeat",
 				Type:    "action",
 				Ingredients: map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Check every 3 minutes if the playlist is shuffle",
 				RefName: "checkShuffle",
 				Type:    "action",
 				Ingredients: map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Check every 3 minutes if the song is playing",
 				RefName: "checkPlaying",
 				Type:    "action",
 				Ingredients: map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Stop the current song playing on the last device connected",
