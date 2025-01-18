@@ -41,6 +41,7 @@ func (crypto *CryptoClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO: Matthieu
 			},
 			{
 				Name:    "Each hour, when crypto currency value is lower a certain amount trigger happens",
@@ -66,6 +67,7 @@ func (crypto *CryptoClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO: Matthieu
 			},
 		},
 	}

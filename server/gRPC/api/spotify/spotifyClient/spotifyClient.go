@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
@@ -70,7 +71,7 @@ func (spot *SpotifyClient) stopSong(ingredients map[string]any, userID int) (*IS
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Song stopped"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Song stopped", Datas: map[string]any{}}, nil
 }
 
 func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -84,12 +85,12 @@ func (spot *SpotifyClient) createPlaylist(ingredients map[string]any, userID int
 		return nil, err
 	}
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	_, err = spot.cc.CreatePlaylist(ctx, &createReq)
+	res, err := spot.cc.CreatePlaylist(ctx, &createReq)
 	if err != nil {
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Playlist created"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Playlist created", Datas: conv_utils.ConvertToMap[gRPCService.SpotifyCreatePlaylist](res)}, nil
 }
 
 func (spot *SpotifyClient) nextSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -106,7 +107,7 @@ func (spot *SpotifyClient) nextSong(ingredients map[string]any, userID int) (*IS
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Song skipped"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Song skipped", Datas: map[string]any{}}, nil
 }
 
 func (spot *SpotifyClient) previousSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -123,7 +124,7 @@ func (spot *SpotifyClient) previousSong(ingredients map[string]any, userID int) 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Go back to previous song"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Go back to previous song", Datas: map[string]any{}}, nil
 }
 
 func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -138,12 +139,12 @@ func (spot *SpotifyClient) setPlaybackVolume(ingredients map[string]any, userID 
 	}
 	ctx := grpcutils.CreateContextFromUserID(userID)
 
-	_, err = spot.cc.SetPlaybackVolume(ctx, &setPlaybackVolume)
+	res, err := spot.cc.SetPlaybackVolume(ctx, &setPlaybackVolume)
 	if err != nil {
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Change the playback volume"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Change the playback volume", Datas: conv_utils.ConvertToMap[gRPCService.SpotifySetPlaybackVolumeInfo](res)}, nil
 }
 
 func (spot *SpotifyClient) launchSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -158,12 +159,12 @@ func (spot *SpotifyClient) launchSong(ingredients map[string]any, userID int) (*
 	}
 	ctx := grpcutils.CreateContextFromUserID(userID)
 
-	_, err = spot.cc.LaunchSong(ctx, &launchSong)
+	res, err := spot.cc.LaunchSong(ctx, &launchSong)
 	if err != nil {
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Song launched"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Song launched", Datas: conv_utils.ConvertToMap[gRPCService.SpotifyLauchSongInfo](res)}, nil
 }
 
 func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -183,7 +184,7 @@ func (spot *SpotifyClient) addSongToPlaylist(ingredients map[string]any, userID 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Song added"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Song added", Datas: map[string]any{}}, nil // Not used
 }
 
 func (spot *SpotifyClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {

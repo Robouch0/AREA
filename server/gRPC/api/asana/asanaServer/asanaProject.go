@@ -8,16 +8,17 @@
 package asana_server
 
 import (
-	"area/gRPC/api/asana/asanaCreate"
+	asana_create "area/gRPC/api/asana/asanaCreate"
 	asana_generics "area/gRPC/api/asana/asanaGenerics"
-	"area/gRPC/api/asana/asanaGet"
+	asana_get "area/gRPC/api/asana/asanaGet"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"errors"
+	"log"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 func (asana *AsanaService) CreateProject(ctx context.Context, req *gRPCService.CreateProjectReq) (*gRPCService.CreateProjectResp, error) {
@@ -55,5 +56,9 @@ func (asana *AsanaService) CreateProject(ctx context.Context, req *gRPCService.C
 		return nil, status.Errorf(codes.InvalidArgument, "error when calling Create Project : %v", err)
 	}
 	log.Println(res)
-	return &gRPCService.CreateProjectResp{}, nil
+	return &gRPCService.CreateProjectResp{
+		ProjectName:   req.ProjectName,
+		Color:         req.Color,
+		WorkspaceName: workspaceGid,
+	}, nil
 }

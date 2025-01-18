@@ -36,6 +36,7 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"generated_text"},
 			},
 			{
 				Name:    "Create repository",
@@ -68,6 +69,7 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 						Required:    false,
 					},
 				},
+				PipelineAvailable: []string{"type", "name", "organisation", "private"},
 			},
 			{
 				Name:    "Move repository",
@@ -94,6 +96,7 @@ func (hfCli *HuggingFaceServiceClient) ListServiceStatus() (*IServ.ServiceStatus
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"fromRepo", "toRepo", "type"},
 			},
 		},
 	}

@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
@@ -102,7 +103,7 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, userID int
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Description}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Description, Datas: conv_utils.ConvertToMap[gRPCService.UpdateRepoInfos](&updateReq)}, nil
 }
 
 func (git *GithubClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -122,7 +123,7 @@ func (git *GithubClient) updateFile(ingredients map[string]any, userID int) (*IS
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Message, Datas: conv_utils.ConvertToMap[gRPCService.UpdateRepoFile](&updateReq)}, nil
 }
 
 func (git *GithubClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -142,7 +143,7 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, userID int) (*IS
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Message, Datas: conv_utils.ConvertToMap[gRPCService.DeleteRepoFile](&updateReq)}, nil
 }
 
 func (git *GithubClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {

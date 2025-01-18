@@ -10,6 +10,7 @@ package huggingFace_client
 import (
 	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 )
@@ -21,7 +22,7 @@ func (hf *HuggingFaceServiceClient) SendTextGenerationReaction(ingredients map[s
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.GeneratedText}, nil
+	return &IServ.ReactionResponseStatus{Description: res.GeneratedText, Datas: conv_utils.ConvertToMap[gRPCService.TextGenerationRes](res)}, nil
 }
 
 func (hf *HuggingFaceServiceClient) CreateRepositoryReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -41,7 +42,7 @@ func (hf *HuggingFaceServiceClient) CreateRepositoryReaction(ingredients map[str
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.CreateHFRepoReq](res)}, nil
 }
 
 func (hf *HuggingFaceServiceClient) ChangeRepoVisibilityReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -61,7 +62,7 @@ func (hf *HuggingFaceServiceClient) ChangeRepoVisibilityReaction(ingredients map
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Type}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Type, Datas: conv_utils.ConvertToMap[gRPCService.ChangeHFRepoReq](res)}, nil
 }
 
 func (hf *HuggingFaceServiceClient) MoveRepoReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -81,7 +82,7 @@ func (hf *HuggingFaceServiceClient) MoveRepoReaction(ingredients map[string]any,
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.ToRepo}, nil
+	return &IServ.ReactionResponseStatus{Description: res.ToRepo, Datas: conv_utils.ConvertToMap[gRPCService.MoveHFRepoReq](res)}, nil
 }
 
 func (hf *HuggingFaceServiceClient) DeleteRepositoryReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -101,5 +102,5 @@ func (hf *HuggingFaceServiceClient) DeleteRepositoryReaction(ingredients map[str
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.DeleteHFRepoReq](res)}, nil
 }

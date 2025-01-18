@@ -25,6 +25,8 @@ message IsHigherThanTriggerReq {
     string currency = 6; /* currency to check */
 }
 
+///////////////
+
 message IsLowerThanTriggerReq {
     bool activated = 1;
     int32 action_id = 2;
@@ -33,6 +35,8 @@ message IsLowerThanTriggerReq {
     string crypto_currency = 5; /* crypto currency to convert */
     string currency = 6; /* currency to check */
 }
+
+///////////////
 
 message SetActivateCrypto {
     uint32 action_id = 1;

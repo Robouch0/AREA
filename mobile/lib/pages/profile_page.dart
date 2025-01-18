@@ -7,6 +7,7 @@ import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/widgets/auth_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
+import 'package:my_area_flutter/widgets/oauth_connection_button.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 import 'package:my_area_flutter/services/api/auth_service.dart';
 
@@ -28,42 +29,15 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool userInfosLoaded = false;
-  bool showPassword = false;
 
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  final _passwordController = TextEditingController();
   bool isEditing = false;
 
   late UserInfoBody userInfo;
   late OAuthListBody oauthList;
   late UserProviderListBody userProviders;
-
-  void _performOAuth(String service) async {
-    final authService = AuthService.instance;
-    final success = await authService.connectOAuthService(context, service);
-
-    if (!mounted) return;
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-        Text('Success.', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: Colors.green,
-      ));
-      context.go(RouteNames.home);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Login failed. Please double-check your password.',
-            style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: Colors.red,
-      ));
-    }
-  }
-
-  void _unlinkOAuth(String service) async {
-    await AuthService.instance.unlinkOAuthService(service);
-  }
 
   @override
   void initState() {
@@ -105,8 +79,8 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _performUpdate(String firstName, String lastName, String password) async {
-    bool success = await ProfileService.instance.updateUserInfo(firstName, lastName, password);
+  void _performUpdate(String firstName, String lastName) async {
+    bool success = await ProfileService.instance.updateUserInfo(firstName, lastName);
 
     if (!mounted) return;
     if (success) {
@@ -125,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _handleUpdate() {
     if (_formKey.currentState!.validate()) {
-      _performUpdate(_firstNameController.text, _lastNameController.text, _passwordController.text);
+      _performUpdate(_firstNameController.text, _lastNameController.text);
     }
   }
 
@@ -250,7 +224,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 controller: _firstNameController),
             _buildInfoField('Last name', userInfo.lastName,
                 controller: _lastNameController),
-            _buildPasswordField(),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -313,6 +286,12 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: const CircleAvatar(
         radius: 40,
+        backgroundColor: Color(0xffE6E6E6),
+        child: Icon(
+          Icons.person,
+          color: Color(0xffCCCCCC),
+          size: 80,
+        ),
       ),
     );
   }
@@ -370,80 +349,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Password',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(204),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black, width: 4),
-              ),
-              child: isEditing
-                  ? TextFormField(
-                      controller: _passwordController,
-                      obscureText: !showPassword,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password cannot be empty';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    )
-                  : Text(
-                      showPassword
-                          ? userInfo.password
-                          : '•' * userInfo.password.length,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-            ),
-            Positioned(
-              right: 16,
-              top: 12,
-              child: GestureDetector(
-                onTap: () => setState(() => showPassword = !showPassword),
-                child: Icon(
-                  showPassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey[600],
-                  size: 24,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
@@ -531,24 +436,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildConnectionButton(String serviceName) {
-    if (userProviders.providers.contains(serviceName)) {
-      return ElevatedButton(
-        onPressed: () {
-          _unlinkOAuth(serviceName);
-        },
-        child: const Text('Disconnect'),
-      );
-    } else {
-      return ElevatedButton(
-        onPressed: () {
-          _performOAuth(serviceName);
-        },
-        child: const Text('Connect'),
-      );
-    }
-  }
-
   Widget _buildServiceItem(Map<String, dynamic> service) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -566,7 +453,11 @@ class _ProfilePageState extends State<ProfilePage> {
           const Spacer(),
           SizedBox(
             height: 32,
-            child: _buildConnectionButton(service['name'].toString().toLowerCase()),
+            child: OAuthConnectionButton(
+              serviceName: service['name'].toString().toLowerCase(),
+              initialProviders: userProviders.providers,
+              onSuccess: (){},
+            ),
           ),
         ],
       ),
@@ -574,16 +465,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildLogoutButton() {
-    return AuthButton(
-      text: 'Logout',
-      onPressed: () async {
-        final authService = AuthService.instance;
-        await authService.logout();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: AuthButton(
+          text: 'Logout',
+          onPressed: () async {
+            final authService = AuthService.instance;
+            await authService.logout();
 
-        if (context.mounted && mounted) {
-          context.go(RouteNames.login);
-        }
-      }
+            if (context.mounted && mounted) {
+              context.go(RouteNames.login);
+            }
+          }
+      )
     );
   }
 }

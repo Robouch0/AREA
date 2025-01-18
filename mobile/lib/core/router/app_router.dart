@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_area_flutter/pages/create_page.dart';
 import 'package:my_area_flutter/pages/profile_page.dart';
 import 'package:my_area_flutter/pages/register_page.dart';
+import 'package:my_area_flutter/pages/server_config_page.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 
 import 'package:my_area_flutter/services/api/auth_service.dart';
@@ -23,9 +24,10 @@ class AppRouter {
       final isLoggedIn = authService.isLoggedInSync;
       final isLoginPage = state.matchedLocation == RouteNames.login;
       final isSignupPage = state.matchedLocation == RouteNames.signup;
+      final isServerConfigPage = state.matchedLocation == RouteNames.serverConfig;
       final isAuthPage = isLoginPage || isSignupPage;
 
-      if (!isLoggedIn && !isAuthPage) {
+      if (!isLoggedIn && !isAuthPage && !isServerConfigPage) {
         return RouteNames.login;
       }
       return null;
@@ -38,6 +40,10 @@ class AppRouter {
       GoRoute(
         path: RouteNames.signup,
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: RouteNames.serverConfig,
+        builder: (context, state) => const ServerConfigPage(),
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -57,14 +63,18 @@ class AppRouter {
           ),
           GoRoute(
             path: RouteNames.create,
-            builder: (context, state) => CreateAreaPage(services: AreaService.instance.listAreas(), userInfo: ProfileService.instance.getUserInfo()),
+            builder: (context, state) => CreateAreaPage(
+              services: AreaService.instance.listAreas(),
+              userInfo: ProfileService.instance.getUserInfo(),
+              userProviders: ProfileService.instance.getUserProviders(),
+            ),
           ),
           GoRoute(
             path: RouteNames.profile,
             builder: (context, state) => ProfilePage(
-                userInfo: ProfileService.instance.getUserInfo(),
-                oauthList: ProfileService.instance.getOAuthList(),
-                userProviders: ProfileService.instance.getUserProviders()
+              userInfo: ProfileService.instance.getUserInfo(),
+              oauthList: ProfileService.instance.getOAuthList(),
+              userProviders: ProfileService.instance.getUserProviders()
             ),
           ),
         ],

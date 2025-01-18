@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/core/router/app_router.dart';
 import 'package:my_area_flutter/services/api/auth_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +10,6 @@ void main() async {
 }
 
 Future<void> initializeAll() async {
-  await dotenv.load(fileName: '.env');
   await AuthService.instance.initializeAuth();
 }
 
