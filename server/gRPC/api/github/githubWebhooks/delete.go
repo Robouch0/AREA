@@ -27,7 +27,7 @@ func DeletePushWebhook(tokenInfo *models.Token, ctx context.Context, action *mod
 	}
 	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
 	postRequest.Header.Add("Accept", "application/vnd.github+json")
-	_, err = http_utils.SendHttpRequest(postRequest, 200)
+	_, err = http_utils.SendHttpRequest(postRequest, 204)
 	if err != nil {
 		return err
 	}

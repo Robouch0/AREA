@@ -23,7 +23,7 @@ const (
 
 const (
 	Glopen   GlType = "open"
-	Glcreate 		= "create"
+	Glcreate        = "create"
 	GlEmpty         = ""
 )
 
@@ -35,6 +35,7 @@ type Gitlab struct {
 	UserID    uint `bun:"user_id" json:"user_id"`
 	Activated bool `bun:"activated" json:"activated,omitempty"`
 
+	HookID     uint   `bun:"hook_id" json:"hook_id"`
 	RepoID     string   `bun:"repo_owner" json:"repo_id"` /* Name of the owner of the repository */
 	RepoAction GlAction `bun:"repo_action" json:"action"` /* Action to track in the event json on the webhook payload */
 	ActionType GlType   `bun:"action_type" json:"action_type"`
