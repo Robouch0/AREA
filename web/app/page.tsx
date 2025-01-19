@@ -13,7 +13,7 @@ export default async function LoginPage() {
         const isAuthenticated = await checkAuthentification(token);
 
         if (isAuthenticated) {
-            redirect('/services');
+            redirect('/services/myareas');
         }
     }
     return <LoginForm></LoginForm>;

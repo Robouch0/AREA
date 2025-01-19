@@ -6,6 +6,11 @@ import {AreaServices} from "@/api/types/areaStatus";
 import {Switch} from "@/components/ui/switch";
 import {useState} from "react";
 import {activateArea} from "@/api/enableArea";
+import {Button} from "@/components/ui/button";
+import {FaTrash} from "react-icons/fa";
+import {deleteArea} from "@/api/deleteMyArea";
+import {useToast} from "@/hooks/use-toast";
+
 
 export function MyAreaCard({action, reactions, areaID, areaActivate}: {
     action: AreaServices,
@@ -14,6 +19,7 @@ export function MyAreaCard({action, reactions, areaID, areaActivate}: {
     areaActivate: boolean,
 }) {
     const [switchOn, setSwitchOn] = useState<boolean>(areaActivate)
+    const { toast } = useToast()
 
     const handleSwitchToggle = async () => {
         setSwitchOn(!switchOn)
@@ -49,6 +55,30 @@ export function MyAreaCard({action, reactions, areaID, areaActivate}: {
 
                             <ServiceIcon className="text-3xl text-black" tag={reactions?.at(0)?.name}/>
                             <div className="flex items-center ml-auto" >
+                                <Button
+                                    className={"bg-transparent shadow-none ring-0 hover:bg-transparent hover:shadow-none hover:ring-0 duration-200 focus-visible:border-black focus-visible:border-8  focus-visible:ring-0 hover:opacity-90"}
+                                    onClick={(): Promise<void> => (deleteArea(areaID).then(() => {
+                                            toast({
+                                                title: "Sucessfully deleted the Area",
+                                                description: "Your area have been deleted",
+                                                variant: 'default',
+                                                duration: 2000,
+                                            })
+                                            setTimeout((): void => {
+                                                window.location.reload()
+                                            }, 444);
+                                        }
+                                    ).catch(() => {
+                                        toast({
+                                            title: "Delete failed",
+                                            description: "Your new datas have not been updated on our server.",
+                                            variant: 'destructive',
+                                            duration: 2000,
+                                        })
+                                    }))}
+                                >
+                                    <FaTrash className={"!text-black"}></FaTrash>
+                                </Button>
                                 <Switch
                                     className={`transition-colors duration-300 ${switchOn ? '!bg-green-500' : '!bg-red-500'}`}
                                     id={`switch-${areaID}`} onClick={handleSwitchToggle} checked={switchOn}/>
@@ -56,7 +86,7 @@ export function MyAreaCard({action, reactions, areaID, areaActivate}: {
                         </div>
                         <CardHeader className="text-wrap mt-2">
                             <CardTitle
-                                className="text-blue-700 my-2 !text-2xl break-words mb-6"
+                                className="text-blue-500 my-2 !text-2xl break-words mb-6"
                             > {action.microservices?.at(0)?.name} </CardTitle>
                             {mappedReactServices}
 

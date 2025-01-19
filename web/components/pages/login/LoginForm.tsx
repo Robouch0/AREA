@@ -55,7 +55,7 @@ function LoginForm() {
             } else {
                 const connected: boolean = await login(data.email, data.password);
                 console.log(connected);
-                router.push('/services');
+                router.push('/services/myareas');
             }
         } catch (error) {
             setErrorLogin(true);
@@ -69,8 +69,7 @@ function LoginForm() {
                 <div
                     className="text-black bg-red-700 w-full h-24 flex flex-col justify-center items-center animate-pulse ease-in-out"
                 >
-                    <p className="font-mono md:text-4xl text-xl font-bold"> Le mot de passe et l&#39;email ne
-                        correspondent pas </p>
+                    <p className="font-mono md:text-4xl text-xl font-bold"> Password and login does not correspond </p>
                 </div>
                 : <> </>}
             <div className="flex items-center justify-center min-h-screen bg-white">
