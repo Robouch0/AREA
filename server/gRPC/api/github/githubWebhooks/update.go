@@ -39,12 +39,12 @@ func UpdatePushWebhook(tokenInfo *models.Token, ctx context.Context, action *mod
 		return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
 	}
 
-	webHookURL := fmt.Sprintf(updateWebHookURL, action.RepoOwner, action.RepoName)
+	webHookURL := fmt.Sprintf(updateWebHookURL, action.RepoOwner, action.RepoName, action.HookId)
 	postRequest, err := http.NewRequest("PATCH", webHookURL, bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
-	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
+	postRequest.Header.Set("Authorization", "Bearer "+ tokenInfo.AccessToken)
 	postRequest.Header.Add("Accept", "application/vnd.github+json")
 	_, err = http_utils.SendHttpRequest(postRequest, 200)
 	if err != nil {
