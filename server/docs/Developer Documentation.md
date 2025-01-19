@@ -1,6 +1,32 @@
 # Developer Documentation
 
-# Table Of Contents
+## Table Of Contents
+1. [Introduction](#introduction)
+2. [Technical Stack](#technical-stack)
+3. [Backend Architecture](#backend-architecture)
+	1. [Microservices Diagram](#microservices-diagram)
+	2. [Database Schema](#database-schema)
+	3. [File architecture](#file-architecture)
+4. [Tutorials (How to)](#tutorials-how-to)
+	1. [Install Dependencies](#install-dependencies)
+		* [Docker](#docker)
+		* [Golang](#golang)
+		* [gRPC](#gRPC)
+	2. [Generate protogen files](#generate-protogen-files)
+	3. [Create a new service in the server](#create-a-new-service-in-the-server)
+		* [Proto File](#proto-file)
+		* [Create the file architecture](#create-the-file-architecture)
+		* [Service Client and Server](#service-Client-and-Server)
+		* [Link to the core of Area](#link-to-the-core-of-Area)
+		* [OAuth](#OAuth)
+	4. [Implement a new Action (or Reaction) for a service](#Implement-a-new-Action-or-Reaction-for-a-service)
+		* [Create a new action (or reaction)](#Create-a-new-action-or-reaction)
+		* [Handle the actions](#handle-the-actions)
+	5. [Inform the front for the new Area](#Inform-the-front-for-the-new-Area)
+	6. [Activate (or Deactivate) an Area](#Activate-or-Deactivate-an-Area)
+	7. [View Database](#view-database)
+	8. [Use Swagger](#use-swagger)
+	9. [Troubleshooting](#troubleshooting)
 
 # Introduction
 
@@ -227,9 +253,9 @@ You have to add your service in 3 places near the other services:
 
 If a service requires OAuth2, it should be implemented in the `server/api/controllers/oauth`directory. Create a file named `oauth<NAME>` and follow the interface in the `server/api/controllers/oauth/oauthTypes.go` to create the one adapted to your service.
 
-## Implement a new Action/Reaction for a service
+## Implement a new Action (or Reaction) for a service
 
-### Create a new action/reaction
+### Create a new action (or reaction)
 
 - Add a new rpc function in the proto file of the specified service
 
@@ -361,6 +387,7 @@ func (service *<NAME>Client) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"output1", "output2"}
 			},
 		},
 	}
@@ -370,7 +397,7 @@ func (service *<NAME>Client) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 Implementing this function for the client expose your area to the fronts.
 
-## Activate/Deactivate an Area
+## Activate (or Deactivate) an Area
 
 If you want to deactivate an action you can use the route: `/area/activate` that will deactivate an entire area.
 
