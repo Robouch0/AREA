@@ -16,12 +16,12 @@ Aswell as the Category of service his action is coming from (ex: Github)
 
 - You can click the switch on the area card to disable or enable them.
 
-![Image that shows how to enable or disable areas](img.png)
+![How to enable or disable areas](my_area.png)
 
 
 ## Visual overview of the My Areas page
 
-![img_2.png](img_2.png)
+![Full my area page](my_area_page.png)
 
 ---
 
@@ -33,7 +33,7 @@ The Profile page enables users to manage their personal information and link ext
 ### Sections
 - **Update User Data**:
 
-- ![img_3.png](img_3.png)
+- ![How to edit the profile informations](profile_edition.png)
 
     - The top side of the profile page allows user to edit their personnal informations with input fields.
 
@@ -42,7 +42,7 @@ The Profile page enables users to manage their personal information and link ext
 
 - **Link OAuth Accounts**:
 
-![img_4.png](img_4.png)
+![How to link oauth from profile tab](profile_oauth.png)
 
 - The bottom side of the profile page allows you to scroll through services (e.g., GitHub, Google, Spotify).
 - You can click on the Unlink button to make Area forgot about your linked account on the designated service.
@@ -66,7 +66,7 @@ On this page you can choose one actions and add multiple reactions to it.
 
 - After choosing a service, microservices card with description will be displayed. You can click on them to select one.
 
-![img_5.png](img_5.png)
+![Create an action from create tab](create_action.png)
 
 - **Fill out the values**:
 
@@ -76,11 +76,11 @@ On this page you can choose one actions and add multiple reactions to it.
     - If you need more information about an ingredient you can read the brief description of what we are waiting for as the hint text.
     - If there is any variable that you can use on the next reaction, simply provide the variable like this {{.variableName}} inside text inputs.
 
-![img_6.png](img_6.png)
+![How to fill ingredients values](action_ingredients.png)
 
 - After you filled out everything you can click on the create AREA button to finish the process and create your process automation !
 
-![img_7.png](img_7.png)
+![Create button from create tab](create_area_button.png)
 
 - **Add chained reactions**:
 
@@ -88,10 +88,10 @@ In our application you can create area with one action and then add multiple cha
 For this just click on the [**+ Add Reaction**] button
 then fill out the new inputfield needed before creating your area.
 
-![img_8.png](img_8.png)
+![Add a new chained reaction](add_reaction_area.png)
 
 ### Visual overview of the Create page
-![img_9.png](img_9.png)
+![Full create page](create_page.png)
 ---
 
 ## 4. Login Page
@@ -103,7 +103,7 @@ The Login page is where users access their accounts.
 - Or you can connect with Oauth (Discord, GitHub)
 - If you do not own an Area account for the moment, at the bottom of the page you cand find a link to go to the register page, to create an account.
 
-![img_10.png](img_10.png)
+![How to login on the app](login_page.png)
 
 ---
 
@@ -117,9 +117,8 @@ The Register page allows new users to create an account.
 
 We will then take your email on this account as a data on your profile.
 
-![img_11.png](img_11.png)
+![How to register on the app](register_page.png)
 
 ## Conclusion
 
 This documentation act as a user guide / walkthrough to help you naviguate on our application.
-You can download a pdf version of this documentation in the FAQ page, available in the footer of every page of our app.
