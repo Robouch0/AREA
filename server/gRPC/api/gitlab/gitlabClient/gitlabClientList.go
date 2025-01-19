@@ -30,7 +30,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
-				PipelineAvailable: []string{}, // TODO Matthieu
+				PipelineAvailable: []string{"id"},
 			},
 			{
 				Name:    "Triggers at every creation of a new issue on a project",
@@ -45,6 +45,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"id"},
 			},
 			{
 				Name:    "Triggers on every tag event on a project",
@@ -59,6 +60,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"id"},
 			},
 			{
 				Name:    "Triggers on every new release on a project",
@@ -73,6 +75,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"id"},
 			},
 			{
 				Name:    "Trigger every merge request event on a project",
@@ -87,6 +90,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"id"},
 			},
 			{
 				Name:    "Create a file on a repository",
@@ -125,7 +129,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
-				PipelineAvailable: []string{}, // TODO Matthieu
+				PipelineAvailable: []string{"file_path", "id", "branch", "commit_message", "content"},
 			},
 			{
 				Name:    "Update a file on a repository",
@@ -164,7 +168,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
-				PipelineAvailable: []string{}, // TODO Matthieu
+				PipelineAvailable: []string{"file_path", "id", "branch", "commit_message", "content"},
 			},
 			{
 				Name:    "Delete a file on a repository",
@@ -197,7 +201,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
-				PipelineAvailable: []string{}, // TODO Matthieu
+				PipelineAvailable: []string{"file_path", "id", "branch", "commit_message"},
 			},
 			{
 				Name:    "Mark an item of a todo list as done",
@@ -212,7 +216,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
-				PipelineAvailable: []string{}, // TODO Matthieu
+				PipelineAvailable: []string{"id"},
 			},
 			{
 				Name:    "Mark all Items of your todo list as done",
@@ -220,7 +224,7 @@ func (git *GitlabClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				Type:    "reaction",
 
 				Ingredients:       map[string]IServ.IngredientDescriptor{},
-				PipelineAvailable: []string{}, // TODO Matthieu
+				PipelineAvailable: []string{},
 			},
 		},
 	}
