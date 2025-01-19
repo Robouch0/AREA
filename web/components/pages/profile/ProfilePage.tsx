@@ -110,11 +110,15 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                             }}
                         />
                         <div className={"flex flex-row text-white justify-between items-center w-full"}>
-                            <div className={"flex-1"}>
+                            <div
+                                className={"flex-1"}
+                                aria-label={"Tutorial video, how to update your private datas"}
+                            >
                                 <VideoTutorialPopUp description={"How to update your private datas"} videoPath={"/tutoUpdateProfileDatas.mp4"}/>
                             </div>
                             <Button
                                 className="flex justify-center text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
+                                aria-label={"save & update your personnal data"}
                                 onClick={handleDataUpdate}
                             >
                                 Save & Update Profile

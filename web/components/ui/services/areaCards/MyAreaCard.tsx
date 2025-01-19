@@ -57,6 +57,7 @@ export function MyAreaCard({action, reactions, areaID, areaActivate}: {
                             <div className="flex items-center ml-auto" >
                                 <Button
                                     className={"bg-transparent shadow-none ring-0 hover:bg-transparent hover:shadow-none hover:ring-0 duration-200 focus-visible:border-black focus-visible:border-8  focus-visible:ring-0 hover:opacity-90"}
+                                    aria-label={"delete area button"}
                                     onClick={(): Promise<void> => (deleteArea(areaID).then(() => {
                                             toast({
                                                 title: "Sucessfully deleted the Area",
