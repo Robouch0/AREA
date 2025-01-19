@@ -351,7 +351,7 @@ We use the library [robfig](https://pkg.go.dev/github.com/robfig/cron/v3@v3.0.1)
 
 - Handle Webhook
 
-When you send a new action webhook, the callback URI is: [`<HOST>/webhook/<SERVICE-NAME>/<MICROSERVICE-NAME>/<ACTION-ID>`](https://5339-2a01-e0a-d58-380-4af8-6516-9400-6fc.ngrok-free.app/webhook/%25s/%25s/%25v) . It will be forwarded to the serviceClient `TriggerWebhook` function:
+When you send a new action webhook, the callback URI is: `<HOST>/webhook/<SERVICE-NAME>/<MICROSERVICE-NAME>/<ACTION-ID>`. It will be forwarded to the serviceClient `TriggerWebhook` function:
 
 ```go
 TriggerWebhook(webhook *WebhookInfos, microservice string, action_id int) (*WebHookResponseStatus, error)
@@ -362,6 +362,12 @@ So you should forward the webhook call to the following service again with metho
 **IMPORTANT**: The result payload should be forwarded to a new rpc function created, so when you create an action you should provide an ‘actionCreator’ and a ‘webhookHandler’, and the ‘webhookHandler’ should ignore the context.
 
 **IMPORTANT**: In dev environment use ngrok to create a http tunnel to test the webhooks and modify the host’s callback URI.
+
+- Setup ngrok
+
+When using webhook you have to fill the env variable `WEBHOOK_URL`, with a host exposed to the remote apps.
+
+To do this you have to create a new ngrok account and create a new static url, which you will have to copy to the callbackURL
 
 ## Inform the front for the new Area
 
@@ -396,6 +402,8 @@ func (service *<NAME>Client) ListServiceStatus() (*IServ.ServiceStatus, error) {
 ```
 
 Implementing this function for the client expose your area to the fronts.
+
+__NOTE__: `PipelineAvailable` field correspond to all the outputs of the specific area that will be given to the next one.
 
 ## Activate (or Deactivate) an Area
 
