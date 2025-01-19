@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import '../styles/global.css'
 import {NextFontWithVariable} from "next/dist/compiled/@next/font";
-import {Toaster} from "@/components/ui/toaster";
+import {Toaster} from "@/components/ui/utils/thirdPartyComponents/shadcn/toaster";
 
 
 

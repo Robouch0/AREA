@@ -1,10 +1,11 @@
 'use client';
-import {Input} from "@/components/ui/utils/Input";
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
 import Image from "next/image";
 import {AreaServicesWithId} from "@/api/types/areaStatus";
-import {MyAreaCard} from "@/components/ui/services/MyAreaCard";
+import {MyAreaCard} from "@/components/ui/services/areaCards/MyAreaCard";
+import {VideoTutorialPopUp} from "@/components/ui/utils/VideoTutorialPopUp";
 
 export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }) {
     const [searchField, setSearchField] = useState("");
@@ -16,7 +17,9 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
                 searchField.toLowerCase());
             const areaName: boolean | undefined = area.action.microservices?.at(0)?.name.toLowerCase().includes(
                 searchField.toLowerCase());
-            return actionNameMatch || reactionNameMatch || areaName;
+            const firsReactionDescription: boolean = area.reactions?.[0]?.microservices[0].name.toLowerCase().includes(searchField.toLowerCase());
+            const firstActionDescription: boolean = area.action.microservices[0].name.toLowerCase().includes(searchField.toLowerCase());
+            return actionNameMatch || reactionNameMatch || areaName || firsReactionDescription || firstActionDescription;
         })
     }
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +40,14 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
                         />
                     </div>
                     <div className="text-xl lg:w-2/3 space-y-6">
-                        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                            Welcome to Your Areas
-                        </h1>
+                        <div className={"flex flex-row justify-center items-center"}>
+                            <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                                Welcome to Your Areas
+                            </h1>
+                            <div className={"ml-auto"}>
+                                <VideoTutorialPopUp description={"How to search through my areas and disable/enable them"} videoPath={"/tutoMyAreas.mp4"}/>
+                            </div>
+                        </div>
                         <p className="text-xl text-gray-600">
                             Here you can find all the Areas you&#39;ve created for your account. Each Area represents a
                             unique automation you&#39;ve set up.
@@ -65,7 +73,9 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
             </div>
 
             <div className="bg-gray-50 flex flex-col items-center justify-center">
-                <h6 className="my-8 text-5xl text-black font-extrabold"> My Areas </h6>
+                <div className={"flex flex-row"}>
+                    <h6 className="my-8 text-5xl text-black font-extrabold"> My Areas </h6>
+                </div>
                 <div
                     className="sm:1/3 flex focus-within:border-black flex-row items-center justify-center rounded-2xl my-8 font-extrabold focus-visible:border-black border-4 p-4 h-16 bg-slate-300 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                 >
@@ -89,7 +99,7 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
                                 {filteredAreas.map(area => (
                                     <div key={area.id} className="">
                                         <MyAreaCard
-                                            action={area.action} reaction={area.reactions?.at(0)}
+                                            action={area.action} reactions={area.reactions}
                                             areaID={area.id} areaActivate={area.activated}
                                         />
                                     </div>

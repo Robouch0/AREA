@@ -58,6 +58,18 @@ func (action *ActionsDb) InsertNewAction(ActionInfo *models.Action, AreaID uint)
 	return newAction, nil
 }
 
+func (action *ActionsDb) DeleteByActionID(actionID uint) error {
+	data := new(models.Actions)
+	_, err := action.Db.NewDelete().
+		Model(data).
+		Where("id = ?", actionID).
+		Exec(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (action *ActionsDb) GetActionByID(ID uint) (*models.Actions, error) {
 	return GetByID[models.Actions](action.Db, ID)
 }

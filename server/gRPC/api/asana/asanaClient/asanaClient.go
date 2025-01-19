@@ -15,6 +15,8 @@ import (
 	"log"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AsanaClient struct {
@@ -33,11 +35,15 @@ func NewAsanaClient(conn *grpc.ClientConn) *AsanaClient {
 }
 
 func (asana *AsanaClient) SendAction(body models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
-	return nil, nil
+	return nil, status.Errorf(codes.NotFound, "Action are not handled")
 }
 
 func (asana *AsanaClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
-	return nil, nil
+	return nil, status.Errorf(codes.NotFound, "Action are not handled")
+}
+
+func (asana *AsanaClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	return nil, status.Errorf(codes.NotFound, "Action are not handled")
 }
 
 func (asana *AsanaClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {

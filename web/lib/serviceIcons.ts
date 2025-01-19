@@ -7,7 +7,7 @@ import {
     FaYoutube,
     FaMailBulk,
     FaBrain,
-    FaClock, FaSpotify, FaTrello, FaChessBoard, FaGitlab
+    FaClock, FaSpotify, FaTrello, FaChessBoard, FaGitlab, FaCloud, FaCoins
 } from "react-icons/fa";
 import {IconType} from "react-icons";
 
@@ -26,4 +26,6 @@ export const serviceIcons: { [key: string]: IconType } = {
     dt: FaClock,
     asana: FaTrello,
     miro: FaChessBoard,
+    weather: FaCloud,
+    crypto: FaCoins,
 };

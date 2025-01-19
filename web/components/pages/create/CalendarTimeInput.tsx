@@ -1,8 +1,8 @@
 import  {useState, useEffect, useCallback} from "react";
 import {Ingredient} from "@/api/types/areaStatus";
 import {TimePickerDemo} from "@/components/ui/utils/TimePicker";
-import {Calendar} from "@/components/ui/calendar";
-import {Input} from "@/components/ui/utils/Input";
+import {Calendar} from "@/components/ui/utils/thirdPartyComponents/shadcn/calendar";
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 import {usePrevious} from "@radix-ui/react-use-previous";
 
 export function CalendarTimeInput({

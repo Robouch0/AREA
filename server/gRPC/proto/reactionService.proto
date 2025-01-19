@@ -13,6 +13,9 @@ service ReactionService {
 
   // Deactivate an area with the id given
   rpc SetActivate(AreaDeactivator) returns (AreaDeactivator) {}
+
+  // Delete an area
+  rpc DeleteUserArea(DeleteAreaReq) returns (DeleteAreaReq) {}
 }
 
 message Action {
@@ -52,4 +55,10 @@ message LaunchResponse {
 message AreaDeactivator {
   uint32 area_id = 1;
   bool activated = 2;
+}
+
+////
+
+message DeleteAreaReq {
+  uint32 area_id = 1;
 }

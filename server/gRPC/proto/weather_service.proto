@@ -18,8 +18,10 @@ service WeatherService {
   rpc NewSnowTrigger(IsSnowTriggerReq) returns(IsSnowTriggerReq) {}
 
   // Deactivate weather trigger
-  rpc SetActivate(SetActivateWeather)
-    returns (SetActivateWeather) {}
+  rpc SetActivate(SetActivateWeather) returns (SetActivateWeather) {}
+
+  // Delete a Weather trigger
+  rpc DeleteAction(DeleteWeatherActionReq) returns (DeleteWeatherActionReq) {}
 }
 
 message TempTriggerReq {
@@ -60,4 +62,10 @@ message IsSnowTriggerReq {
 message SetActivateWeather {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteWeatherActionReq {
+  uint32 action_id = 1;
 }

@@ -18,18 +18,19 @@ import (
 	"log"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type SpotifyClient struct {
 	MicroservicesLauncher *IServ.ReactionLauncher
+	ActionLauncher        *IServ.ActionLauncher
+
 	cc                    gRPCService.SpotifyServiceClient
 }
 
 func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	micros := &IServ.ReactionLauncher{}
-	spotify := &SpotifyClient{MicroservicesLauncher: micros, cc: gRPCService.NewSpotifyServiceClient(conn)}
+	actions := &IServ.ActionLauncher{}
+	spotify := &SpotifyClient{MicroservicesLauncher: micros, ActionLauncher: actions, cc: gRPCService.NewSpotifyServiceClient(conn)}
 	(*spotify.MicroservicesLauncher)["stopSong"] = spotify.stopSong
 	(*spotify.MicroservicesLauncher)["createPlaylist"] = spotify.createPlaylist
 	(*spotify.MicroservicesLauncher)["nextSong"] = spotify.nextSong
@@ -37,11 +38,21 @@ func NewSpotifyClient(conn *grpc.ClientConn) *SpotifyClient {
 	(*spotify.MicroservicesLauncher)["setPlaybackVolume"] = spotify.setPlaybackVolume
 	(*spotify.MicroservicesLauncher)["launchSong"] = spotify.launchSong
 	(*spotify.MicroservicesLauncher)["addSongToPlaylist"] = spotify.addSongToPlaylist
+
+	(*spotify.ActionLauncher)["checkFollowers"] = spotify.SendCheckFollowersAction
+	(*spotify.ActionLauncher)["checkVolume"] = spotify.SendCheckVolumeAction
+	(*spotify.ActionLauncher)["checkRepeat"] = spotify.SendCheckRepeatAction
+	(*spotify.ActionLauncher)["checkShuffle"] = spotify.SendCheckShuffleAction
+	(*spotify.ActionLauncher)["checkPlaying"] = spotify.SendCheckPlayingAction
+
 	return spotify
 }
 
-func (spot *SpotifyClient) SendAction(_ models.AreaScenario, _, _ int) (*IServ.ActionResponseStatus, error) {
-	return nil, errors.New("No action supported in spotify  service (Next will be things)")
+func (spot *SpotifyClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
+	if micro, ok := (*spot.ActionLauncher)[scenario.Action.Microservice]; ok {
+		return micro(scenario, actionID, userID)
+	}
+	return nil, errors.New("No such microservice")
 }
 
 func (spot *SpotifyClient) stopSong(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
@@ -187,5 +198,27 @@ func (_ *SpotifyClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ 
 }
 
 func (spot *SpotifyClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
-	return nil, status.Errorf(codes.Unavailable, "No action available yet for spotify")
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := spot.cc.SetActivate(ctx, &gRPCService.SetActivateSpotify{
+		ActionId:  uint32(id),
+		Activated: activated,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.SetActivatedResponseStatus{
+		ActionID:    id,
+		Description: "Spotify Deactivated",
+	}, nil
+}
+
+func (spot *SpotifyClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := spot.cc.DeleteAction(ctx, &gRPCService.DeleteSpotifyActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

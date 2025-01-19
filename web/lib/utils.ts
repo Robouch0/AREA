@@ -16,7 +16,7 @@ export function getColorForService(refName: string):string {
         // google: "#E2B800", //  Yellow (from Google)
     };
 
-    return colors[refName] || "grey";
+    return colors[refName] || "#E2E8F0";
 }
 
 export function convertIngredient(ingredient: string | undefined, obj: Ingredient): string | boolean | null | number {

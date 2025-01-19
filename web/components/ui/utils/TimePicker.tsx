@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { Clock } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { TimePickerInput } from "./TimePickerInput";
+import { Label } from "@/components/ui/utils/thirdPartyComponents/shadcn/label";
+import { TimePickerInput } from "./thirdPartyComponents/TimePickerInput";
 
 interface TimePickerDemoProps {
     date: Date | undefined;

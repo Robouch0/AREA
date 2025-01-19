@@ -24,7 +24,11 @@ export interface AreaMicroservices {
     /** Action or Reaction */
     type: string
 
+    /** List of ingredients to fill with values */
     ingredients: Map<string, Ingredient>
+
+    /** All the possible usable ingredients pipeline (from one microservice to another) */
+    pipeline_available: string[]
 }
 
 /**

@@ -18,14 +18,17 @@ const (
 	GDelete         = "delete"
 	GFork           = "fork"
 	GCreate         = "create"
-	GIssue			= "issues"
-	GPullR 			= "pull_request"
+	GIssue          = "issues"
+	GPullR          = "pull_request"
+	GRelease 		= "release"
 )
 
 const (
-	Gopen GType = "opened"
-	GClosed 	= "closed"
-	GEmpty 		= ""
+	Gopen   GType = "opened"
+	GCreated      = "created"
+	GDeleted      = "deleted"
+	GClosed       = "closed"
+	GEmpty        = ""
 )
 
 type Github struct {
@@ -41,4 +44,5 @@ type Github struct {
 
 	RepoAction GAction `bun:"repo_action" json:"action"` /* Action to track in the event json on the webhook payload */
 	ActionType GType   `bun:"action_type" json:"type"`
+	HookId     uint    `bun:"hook_id" json:"hook_id"`
 }

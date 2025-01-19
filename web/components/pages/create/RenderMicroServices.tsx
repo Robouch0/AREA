@@ -1,5 +1,5 @@
 import {AreaMicroservices, AreaServices} from "@/api/types/areaStatus";
-import {MicroServiceCard} from "@/components/ui/services/MicroserviceCard";
+import {MicroServiceCard} from "@/components/ui/services/areaCards/MicroserviceCard";
 import {getColorForService} from "@/lib/utils";
 import * as React from "react";
 

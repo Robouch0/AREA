@@ -1,6 +1,6 @@
 'use client';
-import { AreaCard } from "@/components/ui/services/AreaCard"
-import {Input} from "@/components/ui/utils/Input";
+import { AreaCard } from "@/components/ui/services/areaCards/AreaCard"
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
 import Image from "next/image";
@@ -54,7 +54,7 @@ export default function Explore() {
                         <p className="mx-1 font-bold text-red-500 animate-pulse">
                             REACTION
                         </p>
-                         everything is set up for you
+                        everything is set up for you
                     </h3>
                     <p className="mx-20 mt-4 text-xl font-normal text-gray-600">
                         Choose, customize, and activate with just a few clicks

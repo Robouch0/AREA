@@ -62,6 +62,12 @@ func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 	(*git.ActionsLauncher)["triggerPrClose"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
 		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateDeletePRWebhook)
 	}
+	(*git.ActionsLauncher)["triggerRelease"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateNewReleaseWebhook)
+	}
+	(*git.ActionsLauncher)["triggerReleaseDel"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateDeleteReleaseWebhook)
+	}
 	return git
 }
 
@@ -182,5 +188,27 @@ func (git *GithubClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, a
 }
 
 func (git *GithubClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
-	return nil, nil
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := git.cc.SetActivateAction(ctx, &gRPCService.SetActivateGithub{
+		ActionId:  uint32(id),
+		Activated: activated,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.SetActivatedResponseStatus{
+		ActionID:    id,
+		Description: "Github Deactivated",
+	}, nil
+}
+
+func (git *GithubClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := git.cc.DeleteAction(ctx, &gRPCService.DeleteGithubActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }
