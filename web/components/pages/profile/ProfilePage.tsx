@@ -11,8 +11,7 @@ import {OauthButton} from "@/components/ui/services/OauthButton";
 import {unlinkOauthProvider} from "@/api/unlinkOauth";
 import {updateUserInfos} from "@/api/updateUserInfos";
 import {useToast} from "@/hooks/use-toast";
-
-
+import {VideoTutorialPopUp} from "@/components/ui/utils/VideoTutorialPopUp";
 
 
 export default function ProfilePage({id, email, first_name, last_name, password, usersProviders, possibleProviders}: userInfo) {
@@ -67,10 +66,10 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                 <h1 className="text-6xl font-bold p-8"> Account Settings </h1>
                 <hr className="w-1/3  my-8 bg-slate-800 opacity-20 h-1 border-0 dark:bg-gray-700" />
                 <div
-                    className="w-4/5 h-full bg-slate-900 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between"
+                    className="w-4/5 h-full bg-slate-800 rounded-3xl flex flex-col lg:flex-row p-8 m-2 justify-between"
                 >
                     <div
-                        className="p-6 rounded-3xl w-full lg:w-1/2 bg-slate-700 h-full flex flex-col justify-center items-center gap-4"
+                        className="p-6 rounded-3xl w-full lg:w-1/2 bg-slate-600 h-full flex flex-col justify-center items-center gap-4"
                     >
                         <Image
                             className="border-4 rounded-b-full rounded-t-full border-black my-6"
@@ -110,21 +109,32 @@ export default function ProfilePage({id, email, first_name, last_name, password,
                                 setLastName(e.target.value);
                             }}
                         />
+                        <div className={"flex flex-row text-white justify-between items-center w-full"}>
+                            <div className={"flex-1"}>
+                                <VideoTutorialPopUp description={"How to update your private datas"} videoPath={"/tutoUpdateProfileDatas.mp4"}/>
+                            </div>
                             <Button
-                                className="text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
+                                className="flex justify-center text-xl font-bold duration-200 hover:bg-white hover:text-black focus-visible:border-black focus-visible:bg-white  focus-visible:text-black focus-visible:ring-0 focus-visible:border-8 ring-0"
                                 onClick={handleDataUpdate}
                             >
                                 Save & Update Profile
                             </Button>
+                            <div className={"flex-1"}></div>
+                        </div>
                     </div>
-                    userData
-                    userData
+
 
                     <div
-                        className="rounded-3xl w-full lg:w-1/2 bg-slate-700 flex flex-col justify-center items-center"
+                        className="rounded-3xl w-full lg:w-1/2  flex flex-col justify-center items-center"
                     >
-                        <h3 className="p-4 text-white text-4xl font-bold mb-20"> Linked Accounts</h3>
-                        <p className="text-white text-xl text-wrap font-bold p-4"> You can manage here all your external
+                        <div className={"flex flex-row pb-4 text-white justify-between items-center w-full"}>
+                            <div className={"flex-1"}></div>
+                            <h3 className="flex justify-center text-white text-4xl font-bold"> Linked Accounts</h3>
+                            <div className={"flex-1"}>
+                                <VideoTutorialPopUp description={"How to link another account to Area"} videoPath={"/tutoLinkOauthAccount.mp4"}/>
+                            </div>
+                        </div>
+                        <p className="text-white text-xl text-wrap font-bold p-4"> Manage here all your external
                             accounts linked to AREA</p>
                         <p className="text-white text-xl text-wrap pb-4 mt-2 mb-12"> Scroll through the supported
                             services </p>

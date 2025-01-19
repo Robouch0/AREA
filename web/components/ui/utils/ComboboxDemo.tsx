@@ -37,7 +37,7 @@ export function ComboboxDemo({services, serviceName, setValueAction}: {
                     className="text-white hover:text-slate-200 bg-slate-800 border-2 hover:bg-slate-800 text-xl font-bold w-72 hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-4"
                 >
                     {serviceName !== ""
-                        ? services.find((service: AreaServices): boolean => service.ref_name === serviceName)?.ref_name
+                        ? services.find((service: AreaServices): boolean => service.ref_name === serviceName)?.name
                         : "Select a Service"}
                     <ChevronsUpDown className="text-white h-4 shrink-0 opacity-50"/>
                 </Button>
