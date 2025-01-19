@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -193,7 +194,7 @@ func (git *GitlabService) SetActivateAction(ctx context.Context, req *gRPCServic
 }
 
 func (git *GitlabService) DeleteAction(ctx context.Context, req *gRPCService.DeleteGitlabActionReq) (*gRPCService.DeleteGitlabActionReq, error) {
-	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GithubService", "github")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +202,8 @@ func (git *GitlabService) DeleteAction(ctx context.Context, req *gRPCService.Del
 	if err != nil {
 		return nil, err
 	}
-	webHookURL := fmt.Sprintf(pushWebHookURL, action.RepoID, action.HookID)
+	id := strconv.Itoa(int(action.HookID))
+	webHookURL := fmt.Sprintf(deleteGitlabWebHookURL, action.RepoID, id)
 	postRequest, err := http.NewRequest("DELETE", webHookURL, nil)
 	if err != nil {
 		return nil, err
@@ -210,7 +212,7 @@ func (git *GitlabService) DeleteAction(ctx context.Context, req *gRPCService.Del
 	q := postRequest.URL.Query()
 	q.Set("access_token", tokenInfo.AccessToken)
 	postRequest.URL.RawQuery = q.Encode()
-	_, err = http_utils.SendHttpRequest(postRequest, 201)
+	_, err = http_utils.SendHttpRequest(postRequest, 204)
 	if err != nil {
 		return nil, err
 	}

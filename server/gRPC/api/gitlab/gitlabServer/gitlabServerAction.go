@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -84,7 +83,6 @@ func (git *GitlabService) createWebHook(tokenInfo *models.Token, webhookReq *git
 	if err != nil {
 		return nil, err
 	}
-	log.Println(payload)
 	return &payload, nil
 }
 
