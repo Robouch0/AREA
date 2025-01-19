@@ -212,6 +212,60 @@ func (git *GithubService) CreateDeletePRWebhook(ctx context.Context, req *gRPCSe
 	return req, nil
 }
 
+func (git *GithubService) CreateNewReleaseWebhook(ctx context.Context, req *gRPCService.GitWebHookInfo) (*gRPCService.GitWebHookInfo, error) {
+	if req.Owner == "" || req.Repo == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
+	}
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GithubService", "github")
+	if err != nil {
+		return nil, err
+	}
+	formattedWebhookURL, err := git.formatWebhookCallbackURL("issues", uint32(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+		Event:  []string{"release"},
+		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
+		Active: true,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err := git.storeNewWebHook(tokenInfo, req, models.GRelease, models.GCreated, resp.HookId); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+func (git *GithubService) CreateDeleteReleaseWebhook(ctx context.Context, req *gRPCService.GitWebHookInfo) (*gRPCService.GitWebHookInfo, error) {
+	if req.Owner == "" || req.Repo == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")
+	}
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GithubService", "github")
+	if err != nil {
+		return nil, err
+	}
+	formattedWebhookURL, err := git.formatWebhookCallbackURL("issues", uint32(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := github_webhooks.SendCreateWebHook(tokenInfo, req.Owner, req.Repo, webhookURL, &github_webhooks.GitWebHookRequest{
+		Event:  []string{"release"},
+		Config: github_webhooks.GithubConfig{Url: formattedWebhookURL, Content: "json"},
+		Active: true,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err := git.storeNewWebHook(tokenInfo, req, models.GRelease, models.GDeleted, resp.HookId); err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
 func (git *GithubService) CreateForkRepositoryWebhook(ctx context.Context, req *gRPCService.GitWebHookInfo) (*gRPCService.GitWebHookInfo, error) {
 	if req.Owner == "" || req.Repo == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument for webhook repo")

@@ -31,7 +31,7 @@ func InitGitlabDb() (*GitlabDB, error) {
 
 // If we need to do activation/disactivation do like dateTimeDB
 
-func (git *GitlabDB) StoreNewGithub(newData *models.Gitlab) (*models.Gitlab, error) {
+func (git *GitlabDB) StoreNewGitlab(newData *models.Gitlab) (*models.Gitlab, error) {
 	_, err := git.Db.NewInsert().
 		Model(newData).
 		Exec(context.Background())
@@ -41,7 +41,7 @@ func (git *GitlabDB) StoreNewGithub(newData *models.Gitlab) (*models.Gitlab, err
 	return newData, nil
 }
 
-func (git *GitlabDB) GetGithubByActionID(actionID uint) (*models.Gitlab, error) {
+func (git *GitlabDB) GetGitlabByActionID(actionID uint) (*models.Gitlab, error) {
 	allDatas := new(models.Gitlab)
 	err := git.Db.NewSelect().
 		Model(allDatas).
