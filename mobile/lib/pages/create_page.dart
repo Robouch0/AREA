@@ -558,8 +558,6 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     required Map<String, dynamic> values,
     required ActionData actionData,
   }) {
-    if (ingredients.isEmpty) return const SizedBox.shrink();
-
     List<dynamic> availablePipelines = [];
     if (actionData.serviceName.isNotEmpty && actionData.microServiceName.isNotEmpty) {
       final service = services!.firstWhere((s) => s.refName == actionData.serviceName);
@@ -570,6 +568,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (ingredients.isNotEmpty) ...[
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: _buildIngredientsFormTitle('Parameters', 16),
@@ -614,6 +613,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
             ),
           ),
         ),
+        ],
         if (availablePipelines.isNotEmpty) ...[
           Padding(
             padding: const EdgeInsets.only(top: 10),
