@@ -1,6 +1,6 @@
 import {Ingredient} from "@/api/types/areaStatus";
 import * as React from "react";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/utils/thirdPartyComponents/shadcn/tooltip";
 import {InputFieldComponent} from "@/components/pages/create/InputFieldComponent";
 
 export function renderIngredientsInput(

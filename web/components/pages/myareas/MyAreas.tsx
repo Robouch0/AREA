@@ -1,10 +1,10 @@
 'use client';
-import {Input} from "@/components/ui/utils/Input";
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
 import Image from "next/image";
 import {AreaServicesWithId} from "@/api/types/areaStatus";
-import {MyAreaCard} from "@/components/ui/services/MyAreaCard";
+import {MyAreaCard} from "@/components/ui/services/areaCards/MyAreaCard";
 import {VideoTutorialPopUp} from "@/components/ui/utils/VideoTutorialPopUp";
 
 export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }) {

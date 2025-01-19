@@ -1,7 +1,7 @@
 "use client";
 import {ChangeEvent} from "react";
 import {Ingredient} from "@/api/types/areaStatus";
-import {Input} from "@/components/ui/utils/Input";
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 import {CalendarTimeInput} from "@/components/pages/create/CalendarTimeInput";
 
 export function InputFieldComponent({

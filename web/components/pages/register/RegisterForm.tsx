@@ -6,9 +6,9 @@ import {FaDiscord, FaEye, FaEyeSlash, FaGithub, FaGoogle} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/api/authentification";
-import { OauthButton } from "@/components/ui/services/OauthButton";
+import { OauthButton } from "@/components/ui/services/oauth/OauthButton";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { Button } from "@/components/ui/utils/Button";
+import { Button } from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
 import FormField from "@/components/ui/utils/FormField";
 
 function RegisterForm() {

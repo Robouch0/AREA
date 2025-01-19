@@ -1,7 +1,7 @@
 'use client';
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/services/Card";
-import { Button } from "@/components/ui/utils/Button";
-import { ServiceIcon } from "@/components/ui/services/ServiceIcon";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/services/areaCards/Card";
+import { Button } from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
+import { ServiceIcon } from "@/components/ui/utils/ServiceIcon";
 
 export function MicroServiceCard({ microServicesColor, title, description, setMicroserviceAction, microserviceName }: { microServicesColor: string | undefined; title: string, description: string, setMicroserviceAction: () => void, microserviceName: string }) {
     return (

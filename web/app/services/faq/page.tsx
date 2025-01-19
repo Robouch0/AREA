@@ -1,6 +1,6 @@
 "use client";
 import {FaCircleQuestion} from "react-icons/fa6";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
 import {FaDownload} from "react-icons/fa";
 
 export default function Faq() {
