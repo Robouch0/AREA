@@ -1,5 +1,7 @@
 // lib/pages/create_page.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 import 'package:my_area_flutter/widgets/oauth_connection_button.dart';
@@ -186,6 +188,7 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
             style: TextStyle(fontWeight: FontWeight.w800)),
         backgroundColor: Colors.green,
       ));
+      context.go(RouteNames.home);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Area creation failed.',
