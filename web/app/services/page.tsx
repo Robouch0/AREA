@@ -1,6 +1,6 @@
 'use client';
-import { AreaCard } from "@/components/ui/services/AreaCard"
-import {Input} from "@/components/ui/utils/Input";
+import { AreaCard } from "@/components/ui/services/areaCards/AreaCard"
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 import {FaSearch} from 'react-icons/fa';
 import {useState} from "react";
 import Image from "next/image";

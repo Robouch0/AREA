@@ -1,6 +1,6 @@
 "use client";
 import Navbar, {User} from "@/components/ui/layouts/Navbar";
-import {Button} from "@/components/ui/utils/Button";
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
 import { useRouter } from 'next/navigation';
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import React, { useState } from "react";

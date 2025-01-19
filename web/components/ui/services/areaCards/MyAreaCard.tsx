@@ -1,12 +1,12 @@
 'use client';
-import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/services/Card";
-import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
+import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/services/areaCards/Card";
+import {ServiceIcon} from "@/components/ui/utils/ServiceIcon";
 import {getColorForService} from "@/lib/utils";
 import {AreaServices} from "@/api/types/areaStatus";
-import {Switch} from "@/components/ui/switch";
+import {Switch} from "@/components/ui/utils/thirdPartyComponents/shadcn/switch";
 import {useState} from "react";
 import {activateArea} from "@/api/enableArea";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/button";
 import {FaTrash} from "react-icons/fa";
 import {deleteArea} from "@/api/deleteMyArea";
 import {useToast} from "@/hooks/use-toast";

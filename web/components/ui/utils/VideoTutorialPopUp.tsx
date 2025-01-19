@@ -1,4 +1,4 @@
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/utils/thirdPartyComponents/shadcn/tooltip";
 import * as React from "react";
 import {FaQuestionCircle} from "react-icons/fa";
 

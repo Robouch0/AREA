@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/utils/Input";
+import { Input } from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 
 import { cn } from "@/lib/utils";
 import React from "react";
