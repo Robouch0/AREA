@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import { login } from "@/api/authentification";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { OauthButton } from "@/components/ui/services/OauthButton";
-import { Button } from "@/components/ui/utils/Button";
+import { OauthButton } from "@/components/ui/services/oauth/OauthButton";
+import { Button } from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
 
 function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);

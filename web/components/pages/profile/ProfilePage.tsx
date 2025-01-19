@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import {Input} from "@/components/ui/utils/Input";
-import {Button} from "@/components/ui/utils/Button";
-import {ScrollArea} from "@/components/ui/utils/Scroll-area"
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
+import {ScrollArea} from "@/components/ui/utils/thirdPartyComponents/shadcn/Scroll-area"
 import {ChangeEvent, useState} from "react";
-import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
+import {ServiceIcon} from "@/components/ui/utils/ServiceIcon";
 import {userInfo} from "@/api/getUserInfos";
-import {OauthButton} from "@/components/ui/services/OauthButton";
+import {OauthButton} from "@/components/ui/services/oauth/OauthButton";
 import {unlinkOauthProvider} from "@/api/unlinkOauth";
 import {updateUserInfos} from "@/api/updateUserInfos";
 import {useToast} from "@/hooks/use-toast";

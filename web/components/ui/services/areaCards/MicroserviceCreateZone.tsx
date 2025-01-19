@@ -1,11 +1,11 @@
 "use client";
-import {ComboboxDemo} from "@/components/ui/utils/ComboboxDemo";
+import {ComboboxDemo} from "@/components/pages/create/ComboboxDemo";
 import * as React from "react";
 import {renderMicroservices} from "@/components/pages/create/RenderMicroServices";
 import {AreaMicroservices, AreaServices} from "@/api/types/areaStatus";
 import {renderIngredientsInput} from "@/components/pages/create/RenderInputFields";
 import {TokenState} from "@/app/services/create/page";
-import {OauthButton} from "@/components/ui/services/OauthButton";
+import {OauthButton} from "@/components/ui/services/oauth/OauthButton";
 
 export default function MicroserviceCreateZone({
         services,

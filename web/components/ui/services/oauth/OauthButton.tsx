@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {useRouter} from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import {connectOauth, oauthLogin} from "@/api/authentification";
-import {Button} from '@/components/ui/utils/Button';
+import {Button} from '@/components/ui/utils/thirdPartyComponents/shadcn/Button';
 import redirectURI from '@/lib/redirectUri';
 import {useToast} from "@/hooks/use-toast"
 import * as React from "react";

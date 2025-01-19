@@ -4,7 +4,7 @@ import * as React from "react"
 import {Check, ChevronsUpDown} from "lucide-react"
 
 import {cn} from "@/lib/utils"
-import {Button} from "@/components/ui/utils/Button"
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/Button"
 import {
     Command,
     CommandEmpty,
@@ -12,12 +12,12 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/utils/Command"
+} from "@/components/ui/utils/thirdPartyComponents/shadcn/Command"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/utils/Popover"
+} from "@/components/ui/utils/thirdPartyComponents/shadcn/Popover"
 import {AreaServices} from "@/api/types/areaStatus";
 
 export function ComboboxDemo({services, serviceName, setValueAction}: {

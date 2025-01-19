@@ -1,10 +1,10 @@
 'use client';
 import * as React from "react";
 import {useState, useMemo} from "react";
-import {Button} from "@/components/ui/utils/Button";
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
 import {create} from "@/api/createArea";
 import Form from 'next/form';
-import MicroserviceCreateZone from "@/components/ui/services/MicroserviceCreateZone";
+import MicroserviceCreateZone from "@/components/ui/services/areaCards/MicroserviceCreateZone";
 import {convertIngredient} from "@/lib/utils";
 import {AreaServices, AreaMicroservices} from "@/api/types/areaStatus";
 import {AreaCreateBody} from "@/api/types/areaCreateBody";

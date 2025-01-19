@@ -1,8 +1,8 @@
 'use client';
-import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/services/Card";
-import {Button} from "@/components/ui/utils/Button";
+import {Card, CardHeader, CardTitle, CardDescription} from "@/components/ui/services/areaCards/Card";
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
 import { useRouter } from 'next/navigation';
-import {ServiceIcon} from "@/components/ui/services/ServiceIcon";
+import {ServiceIcon} from "@/components/ui/utils/ServiceIcon";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 export  function AreaCard({areaColor, category, action, reaction, areaTitle}: {areaColor:string; category:string; action:string, reaction:string, areaTitle:string}) {
     const router: AppRouterInstance = useRouter();
