@@ -55,7 +55,7 @@ function LoginForm() {
             } else {
                 const connected: boolean = await login(data.email, data.password);
                 console.log(connected);
-                router.push('/services');
+                router.push('/services/myareas');
             }
         } catch (error) {
             setErrorLogin(true);

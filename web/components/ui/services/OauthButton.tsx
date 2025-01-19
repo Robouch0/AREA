@@ -94,7 +94,7 @@ export function OauthButton({service, className, ServiceIcon, textButton, locati
             askForToken(service, code, location)
                 .then(() => {
                     if (location == "login") {
-                        router.push("/services")
+                        router.push("/services/myareas")
                     } else if (location == "profile") {
                         console.log("ici")
                         router.push("/services/profile")
