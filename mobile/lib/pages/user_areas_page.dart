@@ -111,7 +111,7 @@ class _UserAreasPageState extends State<UserAreasPage> {
       child: Column(
         children: [
           const Text(
-            'Your AREAs',
+            'My Areas',
             style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),

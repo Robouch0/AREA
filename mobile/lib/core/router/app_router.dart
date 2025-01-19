@@ -12,6 +12,7 @@ import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/pages/login_page.dart';
 import 'package:my_area_flutter/pages/user_areas_page.dart';
 import 'package:my_area_flutter/pages/page_not_found.dart';
+import 'package:my_area_flutter/pages/documentation_page.dart';
 import 'package:my_area_flutter/widgets/bottom_navbar.dart';
 
 import 'route_names.dart';
@@ -24,7 +25,8 @@ class AppRouter {
       final isLoggedIn = authService.isLoggedInSync;
       final isLoginPage = state.matchedLocation == RouteNames.login;
       final isSignupPage = state.matchedLocation == RouteNames.signup;
-      final isServerConfigPage = state.matchedLocation == RouteNames.serverConfig;
+      final isServerConfigPage = state.matchedLocation == RouteNames.serverConfig
+          || state.matchedLocation == RouteNames.documentation;
       final isAuthPage = isLoginPage || isSignupPage;
 
       if (!isLoggedIn && !isAuthPage && !isServerConfigPage) {
@@ -44,6 +46,10 @@ class AppRouter {
       GoRoute(
         path: RouteNames.serverConfig,
         builder: (context, state) => const ServerConfigPage(),
+      ),
+      GoRoute(
+        path: RouteNames.documentation,
+        builder: (context, state) => const DocumentationPage(),
       ),
       ShellRoute(
         builder: (context, state, child) {

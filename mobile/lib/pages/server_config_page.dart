@@ -112,6 +112,8 @@ class _ServerConfigPageState extends State<ServerConfigPage> {
             _buildServerUrlField(),
             const SizedBox(height: 25),
             _buildSaveButton(),
+            const SizedBox(height: 20),
+            _buildDocumentationButton()
           ],
         ),
       ),
@@ -138,6 +140,15 @@ class _ServerConfigPageState extends State<ServerConfigPage> {
       onPressed: _saveConfig,
     );
   }
+
+  Widget _buildDocumentationButton() {
+    return AuthButton(
+      text: 'Our User Guide',
+      onPressed: () { context.push(RouteNames.documentation); },
+      borderRadius: 10,
+    );
+  }
+
 
   @override
   void dispose() {
