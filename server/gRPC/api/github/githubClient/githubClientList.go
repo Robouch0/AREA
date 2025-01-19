@@ -165,6 +165,48 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 				PipelineAvailable: []string{"owner", "repo"},
 			},
 			{
+				Name:    "Trigger every time a release is created",
+				RefName: "triggerRelease",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"owner": {
+						Value:       "",
+						Type:        "string",
+						Description: "Owner of the repository",
+						Required:    true,
+					},
+					"repo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the repository",
+						Required:    true,
+					},
+				},
+				PipelineAvailable: []string{"owner", "repo"},
+			},
+			{
+				Name:    "Trigger every time a release is delete",
+				RefName: "triggerReleaseDel",
+				Type:    "action",
+
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"owner": {
+						Value:       "",
+						Type:        "string",
+						Description: "Owner of the repository",
+						Required:    true,
+					},
+					"repo": {
+						Value:       "",
+						Type:        "string",
+						Description: "Name of the repository",
+						Required:    true,
+					},
+				},
+				PipelineAvailable: []string{"owner", "repo"},
+			},
+			{
 				Name:    "Trigger every time the repository is forked",
 				RefName: "triggerFork",
 				Type:    "action",
