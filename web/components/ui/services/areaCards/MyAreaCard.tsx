@@ -6,7 +6,7 @@ import {AreaServices} from "@/api/types/areaStatus";
 import {Switch} from "@/components/ui/utils/thirdPartyComponents/shadcn/switch";
 import {useState} from "react";
 import {activateArea} from "@/api/enableArea";
-import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/button";
+import {Button} from "@/components/ui/utils/thirdPartyComponents/shadcn/Button";
 import {FaTrash} from "react-icons/fa";
 import {deleteArea} from "@/api/deleteMyArea";
 import {useToast} from "@/hooks/use-toast";
