@@ -52,6 +52,14 @@ export default function CreatePage({services, userTokens, uid}: {
             return;
         }
 
+        if (!action.microServiceName) {
+            return;
+        }
+        const emptyReactionMicroservice = reactions.find(r => !r.microServiceName);
+        if (emptyReactionMicroservice) {
+            return;
+        }
+
         const payload: AreaCreateBody = {
             user_id: uid,
             action: {
