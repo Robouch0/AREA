@@ -23,7 +23,12 @@ Aswell as the Category of service his action is coming from (ex: Github)
 - You can click the switch on the area card to disable or enable them.
 
 ![disableArea.png](assets/myAreasPage/disableArea.png)
- 
+
+## **Delete Areas**:
+
+On this page you can also delete areas you created previously, by clicking on the little trashbin right here.
+
+ ![deleteArea.png](assets/myAreasPage/deleteArea.png)
 
 ## Visual overview of the My Areas page
 
