@@ -41,7 +41,11 @@ npm run build --if-present
 *Execute our build script present in the package.json, here it's the *next build* used to build our client web, apply a linter and check for validity types, and generates statics pages, to check if our client compiles.*
 
 
+Here is back-end command to run the server, you may run this command in the **server/** directory.
 
+```bash
+go run .
+```
 
 
 You can also suggest us new features or microservices to add to our project, our contact are down [here](#authors).
@@ -171,12 +175,28 @@ Flutter was chosen for the following reasons:
 
 While Kotlin is a strong option for native Android development, Flutter's cross-platform capabilities and superior performance make it the best choice for our mobile application.
 
+## Launch Instructions
+
+To launch our application, simply use Docker Compose. This will start all the necessary services (frontend, backend, and database) in the correct order with proper configurations:
+```bash
+docker compose up
+```
+This command will build and start all containers defined in our docker-compose.yml file. Once the containers are up and running, you can access the application through your web browser.
 
 ---
 
 
 Our technology choices were driven by a combination of performance, ease of use, community support, and prior experience. Each selected technology aligns with our project goals, in hope that it will ensure a robust and efficient development process.
 
+# See Also
+
+[Backend Service Documentation](./server/docs/Developer%20Documentation.md)
+
+[Mobile Application Documentation](./mobile/documentation/devDocumentation.md)
+
+[Frontend Service Documentation](./web/documentation/developperDocumentation.md)
+
+[Usage of our application](./web/documentation/userDocumentation.md)
 
 # Authors
 
