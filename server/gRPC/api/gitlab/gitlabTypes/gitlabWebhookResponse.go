@@ -26,5 +26,5 @@ type GitlabWebHookResponse struct {
 
 type GitlabPayloadResponse struct {
 	EventName string 	`json:"event_name,omitempty"`
-	ProjectId int 		`json:"project_id,omitempty"`
+	ProjectId int 		`json:"id,omitempty"`
 }
