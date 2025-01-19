@@ -83,6 +83,7 @@ flutter:
     - assets/create_page.png
     - assets/login_page.png
     - assets/register_page.png
+    - assets/network_page.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

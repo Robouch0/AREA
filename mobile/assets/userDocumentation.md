@@ -119,6 +119,17 @@ We will then take your email on this account as a data on your profile.
 
 ![How to register on the app](register_page.png)
 
-## Conclusion
+## 6. Network Configuration Page
+### Description
+The Network Configuration page allows you to set up the connection to the Area server.
 
+### Steps to Configure
+Enter the server URL in the input field (e.g., 10.0.2.2:8080)
+Click on "Save Configuration" to validate and save your server settings
+You will be redirected to the login page after a successful configuration
+You can also access the user guide by clicking on "Our User Guide" button
+
+![How to change network url server](network_page.png)
+
+## Conclusion
 This documentation act as a user guide / walkthrough to help you naviguate on our application.
