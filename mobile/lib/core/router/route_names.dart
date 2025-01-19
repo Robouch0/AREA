@@ -4,6 +4,7 @@ class RouteNames {
   static const login = '/login';
   static const signup = '/signup';
   static const serverConfig = '/server_config';
+  static const documentation = '/documentation';
 
   static const List<String> navigationPaths = [
     '/home',
