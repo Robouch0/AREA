@@ -191,8 +191,11 @@ Our technology choices were driven by a combination of performance, ease of use,
 # See Also
 
 [Backend Service Documentation](./server/docs/Developer%20Documentation.md)
+
 [Mobile Application Documentation](./mobile/documentation/devDocumentation.md)
+
 [Frontend Service Documentation](./web/documentation/developperDocumentation.md)
+
 [Usage of our application](./web/documentation/userDocumentation.md)
 
 # Authors
