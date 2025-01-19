@@ -2,19 +2,23 @@
 import 'package:flutter/material.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
+import 'package:my_area_flutter/widgets/oauth_connection_button.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
+import 'package:my_area_flutter/api/types/user_provider_list_body.dart';
+import 'package:my_area_flutter/widgets/ingredient_input.dart';
 
 class CreateAreaPage extends StatefulWidget {
   final Future<List<AreaServiceData>> services;
   final Future<UserInfoBody> userInfo;
+  final Future<UserProviderListBody> userProviders;
 
-  const CreateAreaPage({
-    super.key,
-    required this.services,
-    required this.userInfo,
-  });
+  const CreateAreaPage(
+      {super.key,
+      required this.services,
+      required this.userInfo,
+      required this.userProviders});
 
   @override
   State<CreateAreaPage> createState() => _CreateAreaPageState();
@@ -42,6 +46,7 @@ class ActionData {
 class _CreateAreaPageState extends State<CreateAreaPage> {
   List<AreaServiceData>? services;
   UserInfoBody? userInfo;
+  UserProviderListBody? userProviders;
   late List<AreaServiceData> actions;
   late List<AreaServiceData> reactions;
 
@@ -58,9 +63,14 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     try {
       final loadedServices = await widget.services;
       final loadedUserInfo = await widget.userInfo;
+      final loadedUserProviders = await widget.userProviders;
       setState(() {
         services = loadedServices;
         userInfo = loadedUserInfo;
+        userProviders = loadedUserProviders;
+        userProviders?.providers.add('crypto');
+        userProviders?.providers.add('dt');
+        userProviders?.providers.add('weather');
         actions = _filterAreaByType(loadedServices, 'action');
         reactions = _filterAreaByType(loadedServices, 'reaction');
       });
@@ -303,18 +313,10 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     );
 
     if (reactionsList.length == 1) {
-      return [
-        const Text(
-          'Reaction',
-          style: textStyle
-        )
-      ];
+      return [const Text('Reaction', style: textStyle)];
     }
     return [
-      Text(
-        'Reaction #${index + 1}',
-        style: textStyle
-      ),
+      Text('Reaction #${index + 1}', style: textStyle),
       IconButton(
         icon: const Icon(Icons.delete, color: Colors.red),
         onPressed: () => _removeReaction(index),
@@ -422,15 +424,46 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
     if (selectedService.isEmpty) return const SizedBox.shrink();
 
+    if (userProviders!.providers.contains(selectedService) == false) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              'Link your $selectedService account',
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            OAuthConnectionButton(
+              serviceName: selectedService,
+              initialProviders: userProviders!.providers,
+              onSuccess: () {
+                setState(() {
+                  userProviders!.providers.add(selectedService);
+                });
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     final service = services.firstWhere((s) => s.refName == selectedService);
     final selectedMicroService =
-        service.microservices.firstWhere((m) => m.refName == selectedMicro,
-            orElse: () => MicroServiceBody(
-                  name: '',
-                  refName: '',
-                  type: '',
-                  ingredients: {},
-                ));
+    service.microservices.firstWhere((m) => m.refName == selectedMicro,
+        orElse: () => MicroServiceBody(
+          name: '',
+          refName: '',
+          type: '',
+          ingredients: {},
+          pipelines: [],
+        ));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -444,13 +477,13 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
               actionData.ingredients.clear();
             });
             final selectedMicroService =
-                service.microservices.firstWhere((m) => m.refName == value);
+            service.microservices.firstWhere((m) => m.refName == value);
             _initializeControllers(
                 actionData, selectedMicroService.ingredients);
           },
         ),
         if (selectedMicro.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           _buildIngredientsForm(
               ingredients: selectedMicroService.ingredients,
               values: actionData.ingredients,
@@ -475,13 +508,13 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
           return InkWell(
             onTap: () => onMicroSelected(micro.refName),
             child: Container(
+              width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected ? Colors.blue[700] : Colors.blue[900],
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     micro.name,
@@ -506,6 +539,17 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
     );
   }
 
+  Widget _buildIngredientsFormTitle(String title, double fontSize) {
+    return Text(
+      title,
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: fontSize,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   Widget _buildIngredientsForm({
     required Map<String, Ingredient> ingredients,
     required Map<String, dynamic> values,
@@ -513,19 +557,19 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
   }) {
     if (ingredients.isEmpty) return const SizedBox.shrink();
 
+    List<dynamic> availablePipelines = [];
+    if (actionData.serviceName.isNotEmpty && actionData.microServiceName.isNotEmpty) {
+      final service = services!.firstWhere((s) => s.refName == actionData.serviceName);
+      final microservice = service.microservices
+          .firstWhere((m) => m.refName == actionData.microServiceName);
+      availablePipelines = microservice.pipelines;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            'Parameters',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: _buildIngredientsFormTitle('Parameters', 16),
         ),
         Card(
           color: Colors.white10,
@@ -548,34 +592,49 @@ class _CreateAreaPageState extends State<CreateAreaPage> {
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: TextField(
+                  child: IngredientInput(
+                    label: entry.key,
+                    hint: ingredient.description,
+                    required: ingredient.required,
+                    type: ingredient.type,
                     controller: controller,
-                    decoration: InputDecoration(
-                      labelText:
-                          '${entry.key}${ingredient.required ? ' *' : ''}',
-                      hintText: ingredient.description,
-                      labelStyle: const TextStyle(color: Colors.white70),
-                      hintStyle: const TextStyle(color: Colors.white30),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white.withAlpha(25),
-                    ),
-                    style: const TextStyle(color: Colors.white),
+                    value: values[entry.key],
                     onChanged: (value) => _handleIngredientChange(
                       actionData,
                       entry.key,
                       value,
                       ingredient,
                     ),
-                    onTapOutside: (event) => FocusScope.of(context).unfocus(),
                   ),
                 );
               }).toList(),
             ),
           ),
         ),
+        if (availablePipelines.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: _buildIngredientsFormTitle('Variables available in next reactions', 15),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white.withAlpha(25),
+              ),
+              child: Text(
+                availablePipelines.map((p) => '{{.$p}}').join(', '),
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+          )
+        ],
       ],
     );
   }

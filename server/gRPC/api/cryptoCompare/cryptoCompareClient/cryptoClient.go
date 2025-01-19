@@ -44,7 +44,6 @@ func (crypto *CryptoClient) SendAction(scenario models.AreaScenario, actionID, u
 func (crypto *CryptoClient) TriggerReaction(
 	ingredients map[string]any,
 	microservice string,
-	prevOutput []byte,
 	userID int,
 ) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No microservice Reaction yet")
@@ -69,3 +68,13 @@ func (crypto *CryptoClient) SetActivate(microservice string, id uint, userID int
 	}, nil
 }
 
+func (crypto *CryptoClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := crypto.cc.DeleteAction(ctx, &gRPCService.DeleteCryptoActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
+}

@@ -41,6 +41,7 @@ func (weather *WeatherClient) ListServiceStatus() (*IServ.ServiceStatus, error) 
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"time", "interval", "temperature_2m", "is_day", "rain", "snowfall"},
 			},
 			{
 				Name:    "Each Hour, when the day condition (night or day changes)",
@@ -60,6 +61,7 @@ func (weather *WeatherClient) ListServiceStatus() (*IServ.ServiceStatus, error) 
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"time", "interval", "temperature_2m", "is_day", "rain", "snowfall"},
 			},
 			{
 				Name:    "Each Hour, when the current weather condition is rain",
@@ -79,6 +81,7 @@ func (weather *WeatherClient) ListServiceStatus() (*IServ.ServiceStatus, error) 
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"time", "interval", "temperature_2m", "is_day", "rain", "snowfall"},
 			},
 			{
 				Name:    "Each Hour, when the current weather condition is snow",
@@ -98,6 +101,7 @@ func (weather *WeatherClient) ListServiceStatus() (*IServ.ServiceStatus, error) 
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"time", "interval", "temperature_2m", "is_day", "rain", "snowfall"},
 			},
 		},
 	}

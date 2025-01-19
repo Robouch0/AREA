@@ -17,9 +17,20 @@ service GitlabService {
 
   rpc CreatePushWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
 
+  rpc CreateIssueWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
+  rpc CreateTagWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
+  rpc CreateReleaseWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
+  rpc CreateMergeEventWebhook(GitlabWebHookInfo) returns(GitlabWebHookInfo) {}
+
   rpc SetActivateAction(SetActivateGitlab) returns (SetActivateGitlab) {}
 
   rpc TriggerWebHook (GitlabWebHookTriggerReq) returns (GitlabWebHookTriggerReq) {}
+
+  // Delete a gitlab trigger
+  rpc DeleteAction(DeleteGitlabActionReq) returns (DeleteGitlabActionReq) {}
 }
 
 message CreateLabRepoFileReq {
@@ -90,4 +101,10 @@ message GitlabWebHookTriggerReq {
 message SetActivateGitlab {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteGitlabActionReq {
+  uint32 action_id = 1;
 }

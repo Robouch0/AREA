@@ -99,7 +99,7 @@ export default function MyAreas({userAreas}: { userAreas: AreaServicesWithId[] }
                                 {filteredAreas.map(area => (
                                     <div key={area.id} className="">
                                         <MyAreaCard
-                                            action={area.action} reaction={area.reactions?.at(0)}
+                                            action={area.action} reactions={area.reactions}
                                             areaID={area.id} areaActivate={area.activated}
                                         />
                                     </div>

@@ -98,6 +98,7 @@ function LoginForm() {
                                     name="password"
                                     register={register}
                                     error={errors.password}
+                                    ariaLabel="password inputfield"
                                     className="!text-2xl rounded-2xl font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
                                 />
                                 <Button
@@ -130,42 +131,43 @@ function LoginForm() {
                             <div className="max-w-md w-full space-y-4">
 
                                 {<OauthButton
-                                    arial-label="Google"
+                                    arial-label="Google Oauth"
                                     service="google"
                                     location="login"
-                                    textButton={"Continuer avec Google"}
+                                    textButton={"Continue with Google"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-red-500 hover:bg-red-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGoogle />}
                                 />}
 
                                 <OauthButton
-                                    arial-label="Discord"
+                                    arial-label="Discord Oauth"
                                     service="discord"
                                     location="login"
-                                    textButton={"Continuer avec Discord"}
+                                    textButton={"Continue with Discord"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-purple-500 hover:bg-purple-500 hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaDiscord />}
                                 />
 
                                 {<OauthButton
-                                    arial-label="Github"
+                                    arial-label="Github Oauth"
                                     service="github"
                                     location="login"
-                                    textButton={"Continuer avec Github"}
+                                    textButton={"Continue with Github"}
                                     className="text-2xl font-bold focus-visible:border-slate-500 focus-visible:border-8 flex items-center justify-start px-6 bg-black hover:bg-black hover:opacity-90 rounded-3xl shadow-none h-20 w-full"
                                     ServiceIcon={<FaGithub />}
                                 />}
 
                                 <div className="flex flex-row font-bold">
                                     <p>
-                                        Vous n&#39;avez pas encore de compte ?
+                                        You still do not have an Area account ?
                                     </p>
                                     <button
                                         className="mx-2 underline-offset-1 underline font-bold hover:cursor-pointer focus-visible:border-4 focus-visible:border-slate-700 focus-visible:outline-none focus-visible:p-2 rounded-3xl"
                                         onClick={(): void => router.push('/register')}
+                                        aria-label={"Link to register page"}
                                         tabIndex={0}
                                     >
-                                        Inscrivez-vous ICI !
+                                       Register HERE !
                                     </button>
                                 </div>
 

@@ -5,7 +5,7 @@
 // reactionClient
 //
 
-package reaction
+package reaction_client
 
 import (
 	IServ "area/gRPC/api/serviceInterface"
@@ -35,7 +35,7 @@ func (react *ReactionServiceClient) ListServiceStatus() (*IServ.ServiceStatus, e
 	return nil, nil
 }
 
-func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (react *ReactionServiceClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }
 
@@ -90,4 +90,15 @@ func (react *ReactionServiceClient) SetActivate(microservice string, id uint, us
 		ActionID:    id,
 		Description: "DateTime Deactivated",
 	}, nil
+}
+
+func (react *ReactionServiceClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := react.DeleteUserArea(ctx, &gRPCService.DeleteAreaReq{
+		AreaId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

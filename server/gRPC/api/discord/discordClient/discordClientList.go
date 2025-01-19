@@ -36,6 +36,7 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Edit a message",
@@ -62,6 +63,7 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Delete a message",
@@ -82,6 +84,7 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Create a reaction on a message",
@@ -108,6 +111,7 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Delete all reactions on a message",
@@ -128,6 +132,7 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Delete selected reactions on a message",
@@ -154,6 +159,7 @@ func (disCli *DiscordClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 		},
 	}

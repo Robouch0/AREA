@@ -36,6 +36,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Trigger every time an issue is created",
@@ -56,6 +57,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Trigger every time an issue is closed",
@@ -76,6 +78,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Trigger every time a pull request is opened",
@@ -96,6 +99,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Trigger every time a pull request is closed",
@@ -116,6 +120,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Trigger every time a branch or a tag is created",
@@ -136,6 +141,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Trigger every time a branch or a tag is deleted",
@@ -156,6 +162,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Trigger every time the repository is forked",
@@ -176,6 +183,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Update Repository Informations",
@@ -208,6 +216,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Update a file in a repository",
@@ -246,6 +255,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 			{
 				Name:    "Delete Repository File",
@@ -278,6 +288,7 @@ func (git *GithubClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{}, // TODO Matthieu
 			},
 		},
 	}

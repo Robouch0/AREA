@@ -42,6 +42,7 @@ func (miro *MiroClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"id", "content", "shape"},
 			},
 			{
 				Name:    "Create a text note in miro board",
@@ -62,6 +63,7 @@ func (miro *MiroClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"id", "content"},
 			},
 			{
 				Name:    "Create a card note in miro board",
@@ -88,6 +90,7 @@ func (miro *MiroClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"id", "description", "title"},
 			},
 		},
 	}

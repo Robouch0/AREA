@@ -10,11 +10,12 @@ package asana_client
 import (
 	IServ "area/gRPC/api/serviceInterface"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 )
 
-func (asana *AsanaClient) createProject(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createProject(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -27,15 +28,15 @@ func (asana *AsanaClient) createProject(ingredients map[string]any, _ []byte, us
 	}
 
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	_, err = asana.cc.CreateProject(ctx, &createReq)
+	res, err := asana.cc.CreateProject(ctx, &createReq)
 	if err != nil {
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Project created"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Project created", Datas: conv_utils.ConvertToMap[gRPCService.CreateProjectResp](res)}, nil
 }
 
-func (asana *AsanaClient) createSection(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createSection(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -48,15 +49,15 @@ func (asana *AsanaClient) createSection(ingredients map[string]any, _ []byte, us
 	}
 
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	_, err = asana.cc.CreateSection(ctx, &createReq)
+	res, err := asana.cc.CreateSection(ctx, &createReq)
 	if err != nil {
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Section created"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Section created", Datas: conv_utils.ConvertToMap[gRPCService.CreateSectionResp](res)}, nil
 }
 
-func (asana *AsanaClient) createTask(ingredients map[string]any, _ []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (asana *AsanaClient) createTask(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -69,10 +70,10 @@ func (asana *AsanaClient) createTask(ingredients map[string]any, _ []byte, userI
 	}
 
 	ctx := grpcutils.CreateContextFromUserID(userID)
-	_, err = asana.cc.CreateTask(ctx, &createReq)
+	res, err := asana.cc.CreateTask(ctx, &createReq)
 	if err != nil {
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Task created"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Task created", Datas: conv_utils.ConvertToMap[gRPCService.CreateTaskResp](res)}, nil
 }

@@ -13,7 +13,16 @@ service SpotifyService {
   rpc LaunchSong(SpotifyLauchSongInfo) returns(SpotifyLauchSongInfo) {}
   rpc AddSongToPlaylist(SpotifyAddSongToPlaylist) returns(SpotifyAddSongToPlaylist) {}
 
+  rpc CheckSongSoundVolume(SpotifyCheckVolume) returns(SpotifyCheckVolume) {}
+  rpc CheckArtistFollowers(SpotifyCheckFollowers) returns(SpotifyCheckFollowers) {}
+  rpc CheckSongRepeat(SpotifyCheckRepeat) returns(SpotifyCheckRepeat) {}
+  rpc CheckPlaylistShuffle(SpotifyCheckShuffle) returns(SpotifyCheckShuffle) {}
+  rpc CheckSongPlaylist(SpotifyCheckPlaying) returns(SpotifyCheckPlaying) {}
+
   rpc SetActivate(SetActivateSpotify) returns (SetActivateSpotify) {}
+
+  // Delete a spotify trigger
+  rpc DeleteAction(DeleteSpotifyActionReq) returns (DeleteSpotifyActionReq) {}
 }
 
 message SpotifyStopInfo {
@@ -34,9 +43,40 @@ message SpotifyPreviousInfo {
 message SpotifySetPlaybackVolumeInfo {
   string volume = 1;
 }
+
 message SpotifyLauchSongInfo {
   string songUrl = 1;
   string millisecondsPosition = 2;
+}
+
+message SpotifyCheckVolume {
+  bool activated = 1;
+  uint32 action_id = 2;
+
+  uint32 volume = 3;
+}
+
+message SpotifyCheckFollowers {
+  bool activated = 1;
+  uint32 action_id = 2;
+
+  string artist_id = 3;
+  uint32 followers = 4;
+}
+
+message SpotifyCheckRepeat {
+  bool activated = 1;
+  uint32 action_id = 2;
+}
+
+message SpotifyCheckShuffle {
+  bool activated = 1;
+  uint32 action_id = 2;
+}
+
+message SpotifyCheckPlaying {
+  bool activated = 1;
+  uint32 action_id = 2;
 }
 
 message SpotifyAddSongToPlaylist {
@@ -47,4 +87,10 @@ message SpotifyAddSongToPlaylist {
 message SetActivateSpotify {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteSpotifyActionReq {
+  uint32 action_id = 1;
 }

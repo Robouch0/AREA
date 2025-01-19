@@ -15,10 +15,11 @@ import (
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log"
 	"strings"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (asana *AsanaService) CreateTask(ctx context.Context, req *gRPCService.CreateTaskReq) (*gRPCService.CreateTaskResp, error) {
@@ -59,5 +60,11 @@ func (asana *AsanaService) CreateTask(ctx context.Context, req *gRPCService.Crea
 	}
 
 	log.Println(res)
-	return &gRPCService.CreateTaskResp{}, nil
+	return &gRPCService.CreateTaskResp{
+		ProjectName:     req.ProjectName,
+		TaskName:        req.TaskName,
+		TaskDescription: req.TaskDescription,
+		Completion:      req.Completion,
+		DueOn:           req.DueOn,
+	}, nil
 }

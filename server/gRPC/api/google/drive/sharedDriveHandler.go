@@ -8,7 +8,7 @@
 package drive
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
 	"encoding/json"
@@ -51,7 +51,7 @@ func ListSharedDriveHandler(accessToken string, useDomainAdminAccess bool) (*Lis
 	if err != nil {
 		return nil, err
 	}
-	list, err := utils.IoReaderToStruct[ListSharedDrive](&resp.Body)
+	list, err := conv_utils.IoReaderToStruct[ListSharedDrive](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func CreateSharedDrive(accessToken string, sharedDrive SharedDrive) (*SharedDriv
 	if err != nil {
 		return nil, err
 	}
-	drive, err := utils.IoReaderToStruct[SharedDrive](&resp.Body)
+	drive, err := conv_utils.IoReaderToStruct[SharedDrive](&resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func UpdateSharedDrive(accessToken, driveName string, putDrive SharedDrive, useD
 			if err != nil {
 				return nil, err
 			}
-			return utils.IoReaderToStruct[SharedDrive](&resp.Body)
+			return conv_utils.IoReaderToStruct[SharedDrive](&resp.Body)
 		}
 	}
 	return nil, status.Errorf(codes.NotFound, "Did not found label named: %v", driveName)

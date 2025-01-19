@@ -41,11 +41,13 @@ service GithubService {
   rpc CreateDeletePRWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 
   // Trigger of github webhook
-  rpc TriggerWebHook (GithubWebHookTriggerReq)
-    returns (GithubWebHookTriggerReq) {}
+  rpc TriggerWebHook (GithubWebHookTriggerReq) returns (GithubWebHookTriggerReq) {}
 
   // Deactivate a webhook github
   rpc SetActivateAction(SetActivateGithub) returns (SetActivateGithub) {}
+
+  // Delete a github trigger
+  rpc DeleteAction(DeleteGithubActionReq) returns (DeleteGithubActionReq) {}
 }
 
 ///////
@@ -110,4 +112,10 @@ message GithubWebHookTriggerReq {
 message SetActivateGithub {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteGithubActionReq {
+  uint32 action_id = 1;
 }

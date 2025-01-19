@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"encoding/json"
 	"errors"
@@ -37,7 +38,7 @@ func NewDiscordClient(conn *grpc.ClientConn) *DiscordClient {
 	return disCli
 }
 
-func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) createMessage(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -54,10 +55,10 @@ func (disCli *DiscordClient) createMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Content, Datas: conv_utils.ConvertToMap[gRPCService.CreateMsg](&updateReq)}, nil
 }
 
-func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) editMessage(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -74,10 +75,10 @@ func (disCli *DiscordClient) editMessage(ingredients map[string]any, prevOutput 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Content}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Content, Datas: conv_utils.ConvertToMap[gRPCService.EditMsg](&updateReq)}, nil
 }
 
-func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -94,10 +95,10 @@ func (disCli *DiscordClient) deleteMessage(ingredients map[string]any, prevOutpu
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.MessageId}, nil
+	return &IServ.ReactionResponseStatus{Description: res.MessageId, Datas: conv_utils.ConvertToMap[gRPCService.DeleteMsg](&updateReq)}, nil
 }
 
-func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) createReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -114,10 +115,10 @@ func (disCli *DiscordClient) createReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Emoji}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Emoji, Datas: conv_utils.ConvertToMap[gRPCService.CreateReact](&updateReq)}, nil
 }
 
-func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -134,10 +135,10 @@ func (disCli *DiscordClient) deleteAllReactions(ingredients map[string]any, prev
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.MessageId}, nil
+	return &IServ.ReactionResponseStatus{Description: res.MessageId, Datas: conv_utils.ConvertToMap[gRPCService.DeleteAllReact](&updateReq)}, nil
 }
 
-func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -154,16 +155,16 @@ func (disCli *DiscordClient) deleteReaction(ingredients map[string]any, prevOutp
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Emoji}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Emoji, Datas: conv_utils.ConvertToMap[gRPCService.DeleteReact](&updateReq)}, nil
 }
 
 func (disCli *DiscordClient) SendAction(scenario models.AreaScenario, actionId int, userID int) (*IServ.ActionResponseStatus, error) {
 	return nil, errors.New("No action supported in Discord service (Next will be Webhooks)")
 }
 
-func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (disCli *DiscordClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*disCli.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }
@@ -173,5 +174,9 @@ func (_ *DiscordClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, _ 
 }
 
 func (disCli *DiscordClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
+	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
+}
+
+func (disCli *DiscordClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
 	return nil, status.Errorf(codes.Unavailable, "No Action for Discord Service yet")
 }

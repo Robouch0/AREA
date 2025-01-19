@@ -2,10 +2,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_area_flutter/api/types/profile_body.dart';
 import 'package:my_area_flutter/api/types/oauth_list_body.dart';
 import 'package:my_area_flutter/api/types/user_provider_list_body.dart';
+import 'package:my_area_flutter/services/api/server_service.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
 
 class ProfileService {
@@ -13,17 +13,16 @@ class ProfileService {
   ProfileService._internal();
   static ProfileService get instance => _instance;
 
-  final _apiUrl = dotenv.get('NEXT_PUBLIC_GATEWAY_URL');
   final _authStorage = AuthStorage.instance;
 
-  Future<bool> updateUserInfo(String firstName, String lastName, String password) async {
+  Future<bool> updateUserInfo(String firstName, String lastName) async {
     final UserEditBody userEditBody = UserEditBody(
-      password: password,
       firstName: firstName,
       lastName: lastName,
     );
 
     try {
+      final apiUrl = await ServerService.getApiUrl();
       final token = _authStorage.getToken();
 
       if (token == null) {
@@ -31,7 +30,7 @@ class ProfileService {
       }
 
       final response = await http.put(
-        Uri.parse('$_apiUrl/user/me'),
+        Uri.parse('$apiUrl/user/me'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-type': 'application/json',
@@ -53,13 +52,14 @@ class ProfileService {
   Future<UserInfoBody> getUserInfo() async {
     try {
       final token = _authStorage.getToken();
+      final apiUrl = await ServerService.getApiUrl();
 
       if (token == null) {
         throw Exception('Token is undefined');
       }
 
       final response = await http.get(
-        Uri.parse('$_apiUrl/user/me'),
+        Uri.parse('$apiUrl/user/me'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -79,9 +79,10 @@ class ProfileService {
   Future<UserProviderListBody> getUserProviders() async {
     try {
       final token = _authStorage.getToken();
+      final apiUrl = await ServerService.getApiUrl();
 
       final response = await http.get(
-        Uri.parse('$_apiUrl/token/'),
+        Uri.parse('$apiUrl/token/'),
         headers: {
           'Authorization': 'Bearer $token',
         }
@@ -99,8 +100,10 @@ class ProfileService {
 
   Future<OAuthListBody> getOAuthList() async {
     try {
+      final apiUrl = await ServerService.getApiUrl();
+
       final response = await http.get(
-        Uri.parse('$_apiUrl/oauth/list'),
+        Uri.parse('$apiUrl/oauth/list'),
         headers: {
           'Content-type': 'application/json',
         }
