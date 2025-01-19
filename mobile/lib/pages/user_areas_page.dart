@@ -25,6 +25,33 @@ class _UserAreasPageState extends State<UserAreasPage> {
     _loadAreas();
   }
 
+  void _showDeleteSuccessStatus(bool success) async {
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Area deleted successfully.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Cannot delete this area.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  void _handleAreaDeletion(int areaId) async {
+    bool success = false;
+
+    success = await AreaService.instance.deleteArea(areaId);
+    if (success) {
+      setState(() {
+        areas.removeWhere((area) => area.id == areaId);
+      });
+    }
+    _showDeleteSuccessStatus(success);
+  }
+
   void _updateAreaActivation(int areaId, bool newValue) async {
     await AreaService.instance.updateAreaActivation(areaId, newValue);
   }
@@ -97,7 +124,8 @@ class _UserAreasPageState extends State<UserAreasPage> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: AreaTile(
                   area: area,
-                  onActivationChanged: (newValue) => _updateAreaActivation(area.id, newValue)
+                  onActivationChanged: (newValue) => _updateAreaActivation(area.id, newValue),
+                  onDeleted: () => _handleAreaDeletion(area.id),
                 ),
               )
             ),
@@ -127,8 +155,14 @@ class EmptyState extends StatelessWidget {
 class AreaTile extends StatefulWidget {
   final UserAreaData area;
   final Function(bool) onActivationChanged;
+  final VoidCallback onDeleted;
 
-  const AreaTile({super.key, required this.area, required this.onActivationChanged});
+  const AreaTile({
+    super.key,
+    required this.area,
+    required this.onActivationChanged,
+    required this.onDeleted
+  });
 
   @override
   State<AreaTile> createState() => _AreaTileState();
@@ -220,8 +254,8 @@ class _AreaTileState extends State<AreaTile> {
           ),
           TextButton(
             onPressed: () {
-              // TODO: Implement delete API call
               Navigator.pop(context);
+              widget.onDeleted();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),

@@ -5,6 +5,7 @@ import 'dart:developer' as developer;
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/api/types/area_create_body.dart';
 import 'package:my_area_flutter/api/types/area_activation_body.dart';
+import 'package:my_area_flutter/api/types/area_delete_body.dart';
 import 'package:my_area_flutter/services/api/server_service.dart';
 import 'package:my_area_flutter/services/storage/auth_storage.dart';
 
@@ -124,6 +125,32 @@ class AreaService {
     } catch (e) {
       developer.log('Failed to update area activation: $e');
       rethrow;
+    }
+  }
+
+  Future<bool> deleteArea(int areaId) async {
+    final areaDelete = AreaDeleteBody(areaId: areaId);
+
+    try {
+      final token = _authStorage.getToken();
+      final apiUrl = await ServerService.getApiUrl();
+
+      final response = await http.delete(
+        Uri.parse('$apiUrl/areas/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-type': 'application/json',
+        },
+        body: json.encode(areaDelete.toJson())
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      developer.log('Failed to delete area: $e');
+      return false;
     }
   }
 }
