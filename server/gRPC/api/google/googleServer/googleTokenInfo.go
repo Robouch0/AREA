@@ -8,7 +8,7 @@
 package google_server
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	http_utils "area/utils/httpUtils"
 	"fmt"
 	"net/http"
@@ -41,7 +41,7 @@ func GetTokenInfo(token string) (*GoogleTokenInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	gTokInfo, err := utils.IoReaderToStruct[GoogleTokenInfo](&resp.Body)
+	gTokInfo, err := conv_utils.IoReaderToStruct[GoogleTokenInfo](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

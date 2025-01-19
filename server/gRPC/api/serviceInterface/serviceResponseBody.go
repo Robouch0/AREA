@@ -15,6 +15,8 @@ type ActionResponseStatus struct {
 type ReactionResponseStatus struct {
 	Description string `json:"description"`
 	ReactionID  int    `json:"reaction_id"`
+
+	Datas map[string]any
 }
 
 type WebHookResponseStatus struct {
@@ -25,4 +27,8 @@ type SetActivatedResponseStatus struct {
 	ActionID    uint   `json:"action_id,omitempty"`
 	Description string `json:"description,omitempty"`
 	Activated   bool   `json:"activated,omitempty"`
+}
+
+type DeleteResponseStatus struct {
+	ID uint `json:"id,omitempty"`
 }

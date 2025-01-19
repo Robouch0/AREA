@@ -8,15 +8,16 @@
 package grpc_routes
 
 import (
+	crypto_service "area/gRPC/api/cryptoCompare/cryptoCompareServer"
 	asana_server "area/gRPC/api/asana/asanaServer"
 	dateTime_server "area/gRPC/api/dateTime/dateTimeServer"
 	discord_server "area/gRPC/api/discord/discordServer"
-	"area/gRPC/api/github/githubServer"
+	github "area/gRPC/api/github/githubServer"
 	gitlab_server "area/gRPC/api/gitlab/gitlabServer"
 	google_server "area/gRPC/api/google/googleServer"
 	huggingFace_server "area/gRPC/api/hugging_face/hugging_faceServer"
 	miro_server "area/gRPC/api/miro/miroServer"
-	"area/gRPC/api/reaction"
+	reaction_server "area/gRPC/api/reaction/reactionServer"
 	spotify_server "area/gRPC/api/spotify/spotifyServer"
 	weather_server "area/gRPC/api/weather/weatherServer"
 	services "area/protogen/gRPC/proto"
@@ -39,7 +40,7 @@ func LaunchServices() {
 	s := grpc.NewServer()
 
 	dtService, errDt := dateTime_server.NewDateTimeService()
-	reactService, errReact := reaction.NewReactionService()
+	reactService, errReact := reaction_server.NewReactionService()
 	huggingFaceService, errHf := huggingFace_server.NewHuggingFaceService()
 	githubService, errGit := github.NewGithubService()
 	gitlabService, errGitlab := gitlab_server.NewGitlabService()
@@ -49,8 +50,9 @@ func LaunchServices() {
 	weatherService, errWeather := weather_server.NewWeatherService()
 	miroService, errMiro := miro_server.NewMiroService()
 	asanaService, errAsana := asana_server.NewAsanaService()
+	cryptoService, errCrypto := crypto_service.NewCryptoService()
 
-	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errAsana, errMiro); err != nil {
+	if err = cmp.Or(errDt, errReact, errGit, errHf, errGoogle, errDiscord, errSpotify, errGitlab, errWeather, errAsana, errMiro, errCrypto); err != nil {
 		log.Println(err)
 		return
 	}
@@ -65,6 +67,7 @@ func LaunchServices() {
 	services.RegisterWeatherServiceServer(s, weatherService)
 	services.RegisterMiroServiceServer(s, miroService)
 	services.RegisterAsanaServiceServer(s, asanaService)
+	services.RegisterCryptoServiceServer(s, cryptoService)
 
 	var wg sync.WaitGroup
 
@@ -91,6 +94,8 @@ func LaunchServices() {
 	weatherService.InitReactClient(conn)
 	githubService.InitReactClient(conn)
 	gitlabService.InitReactClient(conn)
+	cryptoService.InitReactClient(conn)
+	spotifyService.InitReactClient(conn)
 	// Init all services with action
 	wg.Wait()
 }

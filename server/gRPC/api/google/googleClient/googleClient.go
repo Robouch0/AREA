@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
@@ -112,7 +113,7 @@ func (google *GoogleClient) SendAction(scenario models.AreaScenario, actionID, u
 	return nil, errors.New("No such microservice")
 }
 
-func (google *GoogleClient) deleteLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) deleteLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -129,10 +130,10 @@ func (google *GoogleClient) deleteLabel(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.DeleteLabelReq](&labelReq)}, nil
 }
 
-func (google *GoogleClient) updateLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) updateLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -149,10 +150,10 @@ func (google *GoogleClient) updateLabel(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.NewName}, nil
+	return &IServ.ReactionResponseStatus{Description: res.NewName, Datas: conv_utils.ConvertToMap[gRPCService.UpdateLabelReq](&labelReq)}, nil
 }
 
-func (google *GoogleClient) createLabel(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) createLabel(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -169,10 +170,10 @@ func (google *GoogleClient) createLabel(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Name}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Name, Datas: conv_utils.ConvertToMap[gRPCService.CreateLabelReq](&labelReq)}, nil
 }
 
-func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) moveToTrash(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -189,10 +190,10 @@ func (google *GoogleClient) moveToTrash(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Subject, Datas: conv_utils.ConvertToMap[gRPCService.TrashEmailRequestMe](&deleteEmailMe)}, nil
 }
 
-func (google *GoogleClient) moveFromTrash(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) moveFromTrash(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -209,10 +210,10 @@ func (google *GoogleClient) moveFromTrash(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Subject, Datas: conv_utils.ConvertToMap[gRPCService.TrashEmailRequestMe](&deleteEmailMe)}, nil
 }
 
-func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -229,10 +230,10 @@ func (google *GoogleClient) deleteEmailMe(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Subject}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Subject, Datas: conv_utils.ConvertToMap[gRPCService.DeleteEmailRequestMe](&deleteEmailMe)}, nil
 }
 
-func (google *GoogleClient) sendEmailMe(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) sendEmailMe(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -249,12 +250,12 @@ func (google *GoogleClient) sendEmailMe(ingredients map[string]any, prevOutput [
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.BodyMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.BodyMessage, Datas: conv_utils.ConvertToMap[gRPCService.EmailRequestMe](&sendEmailMe)}, nil
 }
 
-func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (google *GoogleClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*google.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }
@@ -269,7 +270,6 @@ func (google *GoogleClient) TriggerWebhook(webhook *IServ.WebhookInfos, microser
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid payload sent")
 	}
-	log.Println(microservice)
 	if microservice == "watchme" {
 		_, err = google.cc.WatchMeTrigger(context.Background(), &gRPCService.GmailTriggerReq{Payload: b, ActionId: uint32(actionID)})
 		if err != nil {
@@ -319,4 +319,15 @@ func (google *GoogleClient) SetActivate(microservice string, id uint, userID int
 		ActionID:    id,
 		Description: "",
 	}, nil
+}
+
+func (google *GoogleClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := google.cc.DeleteAction(ctx, &gRPCService.DeleteGoogleActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

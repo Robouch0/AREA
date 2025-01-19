@@ -80,6 +80,19 @@ func SetActivateByActionID[T any](Db bun.IDB, activated bool, userID, actionID u
 	return data, nil
 }
 
+func DeleteUserActionByActionID[T any](Db bun.IDB, userID, actionID uint) error {
+	data := new(T)
+	_, err := Db.NewDelete().
+		Model(data).
+		Where("user_id = ?", userID).
+		Where("action_id = ?", actionID).
+		Exec(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func initDB() *bun.DB {
 	dsn, err := utils.GetEnvParameter("DATABASE_URL")
 	if err != nil {

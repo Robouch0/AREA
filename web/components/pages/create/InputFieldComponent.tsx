@@ -1,108 +1,108 @@
 "use client";
-import { ChangeEvent, useState, useEffect, useCallback } from "react";
-import { Ingredient } from "@/api/types/areaStatus";
-import { TimePickerDemo } from "@/components/ui/utils/TimePicker";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/utils/Input";
+import {ChangeEvent} from "react";
+import {Ingredient} from "@/api/types/areaStatus";
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
+import {CalendarTimeInput} from "@/components/pages/create/CalendarTimeInput";
 
 export function InputFieldComponent({
     ingredient,
     details,
     index,
     values,
-    setValues
+    setValuesAction,
+    indexService
 }: {
     ingredient: string;
     details: Ingredient;
     index: number;
     values: string[];
-    setValues: React.Dispatch<React.SetStateAction<string[]>>;
+    setValuesAction: (values: string[]) => void;
+    indexService: number;
 }) {
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [selectedTime, setSelectedTime] = useState<Date | undefined>(new Date());
-    const [selectedDayAndMonth, setSelectedDayAndMonth] = useState<Date | undefined>(new Date());
-
-    useEffect(() => {
-        if (details.type === "date" && selectedDate) {
-            setValues(prevValues => {
-                const newValues = [...prevValues];
-                newValues[index] = selectedDate.toISOString();
-                console.log(newValues[index])
-                return newValues;
-            });
-        }
-    }, [selectedDate, details.type, index, setValues])
-
-    const updateDate = useCallback((dateInput: Date) => {
-        const date = new Date(selectedDate);
-        date.setDate(dateInput.getDate());
-        date.setMonth(dateInput.getMonth());
-        date.setFullYear(dateInput.getFullYear());
-
-        setSelectedDate(date)
-    }, [selectedDate, setSelectedDate])
-
-    const updateTime = useCallback((dateInput: Date) => {
-        const time = new Date(selectedDate);
-        time.setUTCHours(dateInput.getUTCHours() + 1);
-        time.setUTCMinutes(dateInput.getUTCMinutes());
-
-        setSelectedDate(time);
-    }, [selectedDate, setSelectedDate])
-
 
     switch (details.type) {
         case "date":
-            return (
-                <div className="bg-white rounded-2xl flex flex-col items-center justify-center">
-                    <Calendar
-                        mode="single"
-                        selected={selectedDayAndMonth}
-                        onSelect={(date) => {
-                            if (date == undefined) {
-                                return
-                            }
-                            setSelectedDayAndMonth(date)
-                            updateDate(date)
-                        }}
-                        className="bg-white text-xl font-bold rounded-md shadow"
-                    />
-                    <div className="mb-8">
-                        <TimePickerDemo date={selectedTime} setDate={(newTime) => {
-                            if (newTime == undefined) {
-                                return
-                            }
-                            setSelectedTime(newTime)
-                            updateTime(newTime)
-                        }} />
-                    </div>
-                    <Input
-                        type="hidden"
-                        name={`${ingredient}`}
-                        id={`text-${index}`}
-                        className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                        aria-label="text"
-                        value={values[index] || ''}
-                        required
-                    />
-                </div>
-            );
-        default:
+            return (<CalendarTimeInput
+                ingredient={ingredient} details={details} index={index} values={values} indexService={indexService}
+                setValuesAction={(data: string) => {
+                    const newValues: string[] = [...values]
+                    newValues[index] = data;
+                    setValuesAction(newValues);
+                }}
+            ></CalendarTimeInput>)
+        case "int":
             return (
                 <Input
-                    type={"text"}
-                    name={`${ingredient}`}
-                    id={`text-${index}`}
-                    className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus:border-black w-2/3 p-4 h-14 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60"
-                    aria-label="text"
+                    type={"number"}
+                    pattern="[0-9]+"
+                    inputMode={"numeric"}
+                    onKeyDown={(e) => {
+                        const key = e.key;
+                        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+                        if (!/[0-9]/.test(key) && !allowedKeys.includes(key)) {
+                            e.preventDefault();
+                        }
+                    }}
+                    name={`${indexService}-${ingredient}`}
+                    id={`${indexService}-${ingredient}`}
+                    className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 focus-visible:!ring-0 shadow-none duration-200"
+                    aria-label="number int input field"
                     value={values[index] || ''}
                     onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                         const newValues: string[] = [...values];
                         newValues[index] = e.target.value;
-                        setValues(newValues);
+                        setValuesAction(newValues);
                     }}
-                    required
+                    required={details.required || undefined}
                 />
+            )
+        case "float":
+            return (
+                <Input
+                    type={"number"}
+                    inputMode={"decimal"}
+                    pattern="[0-9]*\.?[0-9]*"
+                    onKeyDown={(e) => {
+                        const key = e.key;
+                        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+
+                        if (!/[0-9.]/.test(key) && !allowedKeys.includes(key)) {
+                            e.preventDefault();
+                            return;
+                        }
+                    }}
+                    name={`${indexService}-${ingredient}`}
+                    id={`${indexService}-${ingredient}`}
+                    className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 focus-visible:!ring-0 shadow-none duration-200"
+                    aria-label="float number input field"
+                    value={values[index] || ''}
+                    onChange={(e: ChangeEvent<HTMLInputElement>): void => {
+                        const newValues: string[] = [...values];
+                        newValues[index] = e.target.value;
+                        setValuesAction(newValues);
+                    }}
+                    required={details.required || undefined}
+                />
+
+            )
+        default:
+            return (
+                <>
+                    <Input
+                        type={"text"}
+                        name={`${indexService}-${ingredient}`}
+                        id={`${indexService}-${ingredient}`}
+                        className="!text-2xl !opacity-80 rounded-2xl bg-white font-extrabold border-4 focus-visible:border-black w-full p-4 h-16 placeholder:text-2xl placeholder:font-bold placeholder:opacity-60 focus-visible:!ring-0 shadow-none duration-200"
+                        aria-label="basic text input field"
+                        value={values[index] || ''}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
+                            const newValues: string[] = [...values];
+                            newValues[index] = e.target.value;
+                            setValuesAction(newValues);
+                        }}
+                        required={details.required || undefined}
+                    />
+                </>
             )
     }
 }

@@ -14,6 +14,7 @@ import (
 	"area/utils"
 	grpcutils "area/utils/grpcUtils"
 	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -101,7 +102,7 @@ func (google *GoogleService) SendEmailMe(ctx context.Context, req *gRPCService.E
 		return nil, status.Errorf(codes.Aborted, resp.Status)
 	}
 	log.Println(resp.Body)
-	return nil, nil
+	return req, nil
 }
 
 func (google *GoogleService) WatchGmailEmail(ctx context.Context, req *gRPCService.EmailTriggerReq) (*gRPCService.EmailTriggerReq, error) {
@@ -122,6 +123,7 @@ func (google *GoogleService) WatchGmailEmail(ctx context.Context, req *gRPCServi
 		ActionID:    uint(req.ActionId),
 		UserID:      uint(tokenInfo.UserID),
 		Activated:   true,
+		FirstTime:   true,
 		HistoryID:   watchMeResponse.HistoryID,
 		EmailAdress: gTokenInfo.Email,
 	})
@@ -144,18 +146,33 @@ func (google *GoogleService) WatchMeTrigger(ctx context.Context, req *gRPCServic
 	}
 	act, err := google.gmailDb.GetByEmail(data.EmailAddress)
 	if err != nil {
-		log.Println(err)
+		log.Println("No such adress mail: ", data.EmailAddress)
 		return nil, err
 	}
 	if act.Activated {
+		if act.FirstTime {
+			log.Println("First Time request for gmail (On Watch activation)")
+			_, err := google.gmailDb.SetFirstTime(act.ActionID, false)
+			return req, err
+		}
+
+		payload.Message.Data, err = utils.DecodeBase64ToString([]byte(payload.Message.Data))
+		if err != nil {
+			return nil, err
+		}
+		bytesMess, err := json.Marshal(payload.Message)
+		if err != nil {
+			return nil, err
+		}
+
 		log.Println("Action (GmailWatchMe) is activated so redirect to reaction Service")
 		ctx := grpcutils.CreateContextFromUserID(int(act.UserID))
-		_, err := google.reactService.LaunchReaction(
+		_, err = google.reactService.LaunchReaction(
 			ctx,
-			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: []byte(payload.Message.Data)},
+			&gRPCService.LaunchRequest{ActionId: int64(act.ActionID), PrevOutput: bytesMess},
 		)
 		if err != nil {
-			log.Println(err)
+			log.Println("Error ReactionService", err)
 			return nil, err
 		}
 	}
@@ -171,7 +188,9 @@ func (google *GoogleService) SetActivateGmailAction(ctx context.Context, req *gR
 	if !req.Activated {
 		err = gmail.StopPubSub(tokenInfo)
 	} else {
-		_, err = gmail.SendWatchMeRequest(tokenInfo)
+		_, errWatch := gmail.SendWatchMeRequest(tokenInfo)
+		_, errFt := google.gmailDb.SetFirstTime(uint(req.ActionId), true)
+		err = cmp.Or(errFt, errWatch)
 	}
 	if err != nil {
 		return nil, err

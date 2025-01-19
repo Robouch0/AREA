@@ -29,6 +29,8 @@ func NewWeatherClient(conn *grpc.ClientConn) *WeatherClient {
 
 	(*weather.ActionLauncher)["temperatureExceed"] = weather.SendTemperatureAction
 	(*weather.ActionLauncher)["dayChanged"] = weather.SendIsDayAction
+	(*weather.ActionLauncher)["rainWeather"] = weather.SendRainAction
+	(*weather.ActionLauncher)["snowWeather"] = weather.SendSnowAction
 
 	// send a request to create a cron job and every 30min trigger it
 	return weather
@@ -44,7 +46,7 @@ func (weather *WeatherClient) SendAction(scenario models.AreaScenario, actionID,
 func (weather *WeatherClient) TriggerReaction(
 	ingredients map[string]any,
 	microservice string,
-	prevOutput []byte,
+
 	userID int,
 ) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No microservice Reaction yet")
@@ -67,4 +69,15 @@ func (weather *WeatherClient) SetActivate(microservice string, id uint, userID i
 		ActionID:    id,
 		Description: "DateTime Deactivated",
 	}, nil
+}
+
+func (weather *WeatherClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := weather.cc.DeleteAction(ctx, &gRPCService.DeleteWeatherActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

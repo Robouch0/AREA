@@ -25,12 +25,35 @@ service GithubService {
   // Create a fork repository webhook
   rpc CreateForkRepositoryWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
 
+  // Create a new branch repository webhook
+  rpc CreateNewBranchWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a new issue repository webhook
+  rpc CreateNewIssueWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a delete issue repository webhook
+  rpc CreateDeleteIssueWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a new pull request repository webhook
+  rpc CreateNewPRWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a delete pull request repository webhook
+  rpc CreateDeletePRWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a delete pull request repository webhook
+  rpc CreateNewReleaseWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
+  // Create a delete pull request repository webhook
+  rpc CreateDeleteReleaseWebhook(GitWebHookInfo) returns(GitWebHookInfo) {}
+
   // Trigger of github webhook
-  rpc TriggerWebHook (GithubWebHookTriggerReq)
-    returns (GithubWebHookTriggerReq) {}
+  rpc TriggerWebHook (GithubWebHookTriggerReq) returns (GithubWebHookTriggerReq) {}
 
   // Deactivate a webhook github
   rpc SetActivateAction(SetActivateGithub) returns (SetActivateGithub) {}
+
+  // Delete a github trigger
+  rpc DeleteAction(DeleteGithubActionReq) returns (DeleteGithubActionReq) {}
 }
 
 ///////
@@ -95,4 +118,10 @@ message GithubWebHookTriggerReq {
 message SetActivateGithub {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteGithubActionReq {
+  uint32 action_id = 1;
 }

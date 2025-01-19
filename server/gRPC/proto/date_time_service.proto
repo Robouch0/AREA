@@ -10,6 +10,9 @@ service DateTimeService {
 
   // Activate/Deactivate the cron job for the specific action_id given
   rpc SetActivateAction(SetActivateTime) returns (SetActivateTime) {}
+
+  // Delete a dt trigger
+  rpc DeleteAction(DeleteDTActionReq) returns (DeleteDTActionReq) {}
 }
 
 message TriggerTimeRequest {
@@ -23,7 +26,15 @@ message TriggerTimeRequest {
 message TriggerTimeResponse {
 }
 
+///////////////
+
 message SetActivateTime {
   uint32 action_id = 1;
   bool activated = 2;
+}
+
+///////////////
+
+message DeleteDTActionReq {
+  uint32 action_id = 1;
 }

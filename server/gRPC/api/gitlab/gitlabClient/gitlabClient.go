@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
@@ -43,6 +44,18 @@ func NewGitlabClient(conn *grpc.ClientConn) *GitlabClient {
 	(*gitlab.ActionLauncher)["triggerPush"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
 		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreatePushWebhook)
 	}
+	(*gitlab.ActionLauncher)["triggerIssue"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateIssueWebhook)
+	}
+	(*gitlab.ActionLauncher)["triggerTag"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateTagWebhook)
+	}
+	(*gitlab.ActionLauncher)["triggerRelease"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateReleaseWebhook)
+	}
+	(*gitlab.ActionLauncher)["triggerMerge"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return gitlab.sendNewWebHookAction(scenario, actionId, userID, gitlab.cc.CreateMergeEventWebhook)
+	}
 	return gitlab
 }
 
@@ -67,7 +80,7 @@ func (git *GitlabClient) sendNewWebHookAction(
 	return &IServ.ActionResponseStatus{Description: res.Id}, nil
 }
 
-func (git *GitlabClient) createFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) createFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -84,10 +97,10 @@ func (git *GitlabClient) createFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.CommitMessage, Datas: conv_utils.ConvertToMap[gRPCService.CreateLabRepoFileReq](&updateReq)}, nil
 }
 
-func (git *GitlabClient) updateFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -104,10 +117,10 @@ func (git *GitlabClient) updateFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.CommitMessage, Datas: conv_utils.ConvertToMap[gRPCService.UpdateLabRepoFileReq](&updateReq)}, nil
 }
 
-func (git *GitlabClient) deleteFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -124,10 +137,10 @@ func (git *GitlabClient) deleteFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.CommitMessage}, nil
+	return &IServ.ReactionResponseStatus{Description: res.CommitMessage, Datas: conv_utils.ConvertToMap[gRPCService.DeleteLabRepoFileReq](&updateReq)}, nil
 }
 
-func (git *GitlabClient) markItemDone(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) markItemDone(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -144,10 +157,10 @@ func (git *GitlabClient) markItemDone(ingredients map[string]any, prevOutput []b
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Id}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Id, Datas: conv_utils.ConvertToMap[gRPCService.TodoLabItemDoneReq](&updateReq)}, nil
 }
 
-func (git *GitlabClient) markAllItemDone(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GitlabClient) markAllItemDone(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -164,7 +177,7 @@ func (git *GitlabClient) markAllItemDone(ingredients map[string]any, prevOutput 
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: "Done"}, nil
+	return &IServ.ReactionResponseStatus{Description: "Done", Datas: conv_utils.ConvertToMap[gRPCService.AllTodoLabItemDoneReq](&updateReq)}, nil
 }
 
 func (git *GitlabClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
@@ -177,11 +190,10 @@ func (git *GitlabClient) SendAction(scenario models.AreaScenario, actionID, user
 func (git *GitlabClient) TriggerReaction(
 	ingredients map[string]any,
 	microservice string,
-	prevOutput []byte,
 	userID int,
 ) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*git.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }
@@ -198,5 +210,27 @@ func (git *GitlabClient) TriggerWebhook(webhook *IServ.WebhookInfos, microservic
 }
 
 func (git *GitlabClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
-	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := git.cc.SetActivateAction(ctx, &gRPCService.SetActivateGitlab{
+		ActionId:  uint32(id),
+		Activated: activated,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.SetActivatedResponseStatus{
+		ActionID:    id,
+		Description: "Github Deactivated",
+	}, nil
+}
+
+func (git *GitlabClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := git.cc.DeleteAction(ctx, &gRPCService.DeleteGitlabActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

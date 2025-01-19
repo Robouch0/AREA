@@ -8,16 +8,17 @@
 package asana_server
 
 import (
-	"area/gRPC/api/asana/asanaCreate"
+	asana_create "area/gRPC/api/asana/asanaCreate"
 	asana_generics "area/gRPC/api/asana/asanaGenerics"
 	asana_get "area/gRPC/api/asana/asanaGet"
 	gRPCService "area/protogen/gRPC/proto"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"errors"
+	"log"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 func (asana *AsanaService) CreateSection(ctx context.Context, req *gRPCService.CreateSectionReq) (*gRPCService.CreateSectionResp, error) {
@@ -51,5 +52,8 @@ func (asana *AsanaService) CreateSection(ctx context.Context, req *gRPCService.C
 		return nil, status.Errorf(codes.InvalidArgument, "error when calling Create Section: %v", err)
 	}
 	log.Println(res)
-	return &gRPCService.CreateSectionResp{}, nil
+	return &gRPCService.CreateSectionResp{
+		ProjectName: req.ProjectName,
+		SectionName: req.SectionName,
+	}, nil
 }

@@ -6,6 +6,11 @@ definitions:
       area_id:
         type: integer
     type: object
+  areas.areaDeleteRequest:
+    properties:
+      area_id:
+        type: integer
+    type: object
   areas.userArea:
     properties:
       action:
@@ -18,6 +23,37 @@ definitions:
         items:
           $ref: '#/definitions/serviceinterface.ServiceStatus'
         type: array
+    type: object
+  controllers.AboutInfos:
+    properties:
+      client:
+        $ref: '#/definitions/controllers.clientInfos'
+      server:
+        $ref: '#/definitions/controllers.serverInfos'
+    type: object
+  controllers.CreateUserInformations:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
+  controllers.ReadUserInformations:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
     type: object
   controllers.TokenCreateRequest:
     properties:
@@ -35,17 +71,9 @@ definitions:
       user_id:
         type: string
     type: object
-  controllers.UserInformations:
+  controllers.clientInfos:
     properties:
-      email:
-        type: string
-      first_name:
-        type: string
-      id:
-        type: integer
-      last_name:
-        type: string
-      password:
+      host:
         type: string
     type: object
   controllers.credentials:
@@ -54,6 +82,35 @@ definitions:
         type: string
       password:
         type: string
+    type: object
+  controllers.microservice:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  controllers.serverInfos:
+    properties:
+      current_time:
+        type: integer
+      services:
+        items:
+          $ref: '#/definitions/controllers.serverService'
+        type: array
+    type: object
+  controllers.serverService:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/controllers.microservice'
+        type: array
+      name:
+        type: string
+      reactions:
+        items:
+          $ref: '#/definitions/controllers.microservice'
+        type: array
     type: object
   controllers.userSignUp:
     properties:
@@ -87,8 +144,10 @@ definitions:
     properties:
       action:
         $ref: '#/definitions/models.Action'
-      reaction:
-        $ref: '#/definitions/models.Reaction'
+      reactions:
+        items:
+          $ref: '#/definitions/models.Reaction'
+        type: array
     type: object
   models.Reaction:
     properties:
@@ -109,12 +168,24 @@ definitions:
       password:
         type: string
     type: object
+  oauth.Oauthlist:
+    properties:
+      services:
+        items:
+          type: string
+        type: array
+    type: object
   serviceinterface.ActionResponseStatus:
     properties:
       action_id:
         type: integer
       description:
         type: string
+    type: object
+  serviceinterface.DeleteResponseStatus:
+    properties:
+      id:
+        type: integer
     type: object
   serviceinterface.IngredientDescriptor:
     properties:
@@ -137,10 +208,15 @@ definitions:
       name:
         description: Name of the microservice
         type: string
+      pipeline_available:
+        items:
+          type: string
+        type: array
       ref_name:
         description: Reference Name of the microservice as it is named in the server
         type: string
       type:
+        description: Type of service action or reaction
         type: string
     type: object
   serviceinterface.ServiceStatus:
@@ -178,10 +254,44 @@ paths:
       description: json giving the list of handled action-reaction services
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.AboutInfos'
       summary: List of handled services
       tags:
-      - Utils
+      - About
+  /area:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user's area
+      parameters:
+      - description: Informations about the deletion of an area
+        in: body
+        name: area
+        required: true
+        schema:
+          $ref: '#/definitions/areas.areaDeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serviceinterface.DeleteResponseStatus'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an area
+      tags:
+      - Area
   /area/activate:
     put:
       consumes:
@@ -384,6 +494,21 @@ paths:
       summary: Get an oauth url for a service
       tags:
       - Account
+  /oauth/list:
+    get:
+      consumes:
+      - application/json
+      description: List all the current Oauth handled by the server
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/oauth.Oauthlist'
+      summary: List Oauth
+      tags:
+      - Account
   /ping:
     get:
       description: Pong
@@ -426,31 +551,6 @@ paths:
       tags:
       - Account
   /token:
-    get:
-      consumes:
-      - application/json
-      description: Get all the tokens of the current logged user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/controllers.TokenInformations'
-            type: array
-        "400":
-          description: Bad Request
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Get all the tokens from a user
-      tags:
-      - Token
-  /token/:
     delete:
       consumes:
       - application/json
@@ -477,6 +577,59 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Delete a token
+      tags:
+      - Token
+    get:
+      consumes:
+      - application/json
+      description: Get all the tokens of the current logged user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.TokenInformations'
+            type: array
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all the tokens from a user
+      tags:
+      - Token
+    post:
+      consumes:
+      - application/json
+      description: Create a token from a user_id and a provider
+      parameters:
+      - description: Token creation request informations
+        in: body
+        name: tokenCreateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.TokenCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenInformations'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a token
       tags:
       - Token
   /token/{provider}:
@@ -508,55 +661,25 @@ paths:
       summary: Get user's token
       tags:
       - Token
-  /token/create/:
-    post:
-      consumes:
-      - application/json
-      description: Create a token from a user_id and a provider
-      parameters:
-      - description: Token creation request informations
-        in: body
-        name: tokenCreateRequest
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.TokenCreateRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controllers.TokenInformations'
-        "400":
-          description: Bad Request
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Create a token
-      tags:
-      - Token
-  /users/:
+  /user/:
     post:
       consumes:
       - application/json
       description: Create a new user in database
       parameters:
-      - description: User's information
+      - description: Create User's information body
         in: body
         name: userInfos
         required: true
         schema:
-          $ref: '#/definitions/controllers.UserInformations'
+          $ref: '#/definitions/controllers.CreateUserInformations'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.UserInformations'
+            $ref: '#/definitions/controllers.ReadUserInformations'
         "400":
           description: Bad Request
           schema: {}
@@ -568,7 +691,7 @@ paths:
       summary: Create a new user
       tags:
       - User
-  /users/me:
+  /user/me:
     get:
       consumes:
       - application/json
@@ -579,7 +702,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.UserInformations'
+            $ref: '#/definitions/controllers.ReadUserInformations'
         "400":
           description: Bad Request
           schema: {}

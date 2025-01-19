@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_area_flutter/pages/create_page.dart';
 import 'package:my_area_flutter/pages/profile_page.dart';
 import 'package:my_area_flutter/pages/register_page.dart';
+import 'package:my_area_flutter/pages/server_config_page.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
 
 import 'package:my_area_flutter/services/api/auth_service.dart';
@@ -11,6 +12,7 @@ import 'package:my_area_flutter/services/api/profile_service.dart';
 import 'package:my_area_flutter/pages/login_page.dart';
 import 'package:my_area_flutter/pages/user_areas_page.dart';
 import 'package:my_area_flutter/pages/page_not_found.dart';
+import 'package:my_area_flutter/pages/documentation_page.dart';
 import 'package:my_area_flutter/widgets/bottom_navbar.dart';
 
 import 'route_names.dart';
@@ -23,9 +25,11 @@ class AppRouter {
       final isLoggedIn = authService.isLoggedInSync;
       final isLoginPage = state.matchedLocation == RouteNames.login;
       final isSignupPage = state.matchedLocation == RouteNames.signup;
+      final isServerConfigPage = state.matchedLocation == RouteNames.serverConfig
+          || state.matchedLocation == RouteNames.documentation;
       final isAuthPage = isLoginPage || isSignupPage;
 
-      if (!isLoggedIn && !isAuthPage) {
+      if (!isLoggedIn && !isAuthPage && !isServerConfigPage) {
         return RouteNames.login;
       }
       return null;
@@ -38,6 +42,14 @@ class AppRouter {
       GoRoute(
         path: RouteNames.signup,
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: RouteNames.serverConfig,
+        builder: (context, state) => const ServerConfigPage(),
+      ),
+      GoRoute(
+        path: RouteNames.documentation,
+        builder: (context, state) => const DocumentationPage(),
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -57,11 +69,19 @@ class AppRouter {
           ),
           GoRoute(
             path: RouteNames.create,
-            builder: (context, state) => CreateAreaPage(services: AreaService.instance.listAreas(), userInfo: ProfileService.instance.getUserInfo()),
+            builder: (context, state) => CreateAreaPage(
+              services: AreaService.instance.listAreas(),
+              userInfo: ProfileService.instance.getUserInfo(),
+              userProviders: ProfileService.instance.getUserProviders(),
+            ),
           ),
           GoRoute(
             path: RouteNames.profile,
-            builder: (context, state) => ProfilePage(userInfo: ProfileService.instance.getUserInfo()),
+            builder: (context, state) => ProfilePage(
+              userInfo: ProfileService.instance.getUserInfo(),
+              oauthList: ProfileService.instance.getOAuthList(),
+              userProviders: ProfileService.instance.getUserProviders()
+            ),
           ),
         ],
       ),

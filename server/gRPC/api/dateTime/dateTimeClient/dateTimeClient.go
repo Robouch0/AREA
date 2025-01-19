@@ -45,13 +45,16 @@ func (git *DTServiceClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{
+					"timezone", "formatted", "timestamp", "week_day", "day", "month", "year", "hour", "minute",
+				},
 			},
 		},
 	}
 	return status, nil
 }
 
-func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (react *DTServiceClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	return nil, errors.New("No reaction available for this service")
 }
 
@@ -88,4 +91,15 @@ func (dt *DTServiceClient) SetActivate(microservice string, id uint, userID int,
 		ActionID:    id,
 		Description: "DateTime Deactivated",
 	}, nil
+}
+
+func (dt *DTServiceClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := dt.DeleteAction(ctx, &gRPCService.DeleteDTActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

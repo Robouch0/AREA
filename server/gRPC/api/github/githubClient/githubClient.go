@@ -11,6 +11,7 @@ import (
 	IServ "area/gRPC/api/serviceInterface"
 	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	conv_utils "area/utils/convUtils"
 	grpcutils "area/utils/grpcUtils"
 	"context"
 	"encoding/json"
@@ -46,6 +47,27 @@ func NewGithubClient(conn *grpc.ClientConn) *GithubClient {
 	(*git.ActionsLauncher)["triggerFork"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
 		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateForkRepositoryWebhook)
 	}
+	(*git.ActionsLauncher)["triggerCreate"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateNewBranchWebhook)
+	}
+	(*git.ActionsLauncher)["triggerIssue"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateNewIssueWebhook)
+	}
+	(*git.ActionsLauncher)["triggerIssueClose"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateDeleteIssueWebhook)
+	}
+	(*git.ActionsLauncher)["triggerPr"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateNewPRWebhook)
+	}
+	(*git.ActionsLauncher)["triggerPrClose"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateDeletePRWebhook)
+	}
+	(*git.ActionsLauncher)["triggerRelease"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateNewReleaseWebhook)
+	}
+	(*git.ActionsLauncher)["triggerReleaseDel"] = func(scenario models.AreaScenario, actionId, userID int) (*IServ.ActionResponseStatus, error) {
+		return git.sendNewWebHookAction(scenario, actionId, userID, git.cc.CreateDeleteReleaseWebhook)
+	}
 	return git
 }
 
@@ -70,7 +92,7 @@ func (git *GithubClient) sendNewWebHookAction(
 	return &IServ.ActionResponseStatus{Description: res.Repo}, nil
 }
 
-func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) updateRepository(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -87,10 +109,10 @@ func (git *GithubClient) updateRepository(ingredients map[string]any, prevOutput
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Description}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Description, Datas: conv_utils.ConvertToMap[gRPCService.UpdateRepoInfos](&updateReq)}, nil
 }
 
-func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) updateFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -107,10 +129,10 @@ func (git *GithubClient) updateFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Message, Datas: conv_utils.ConvertToMap[gRPCService.UpdateRepoFile](&updateReq)}, nil
 }
 
-func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) deleteFile(ingredients map[string]any, userID int) (*IServ.ReactionResponseStatus, error) {
 	jsonString, err := json.Marshal(ingredients)
 	if err != nil {
 		return nil, err
@@ -127,7 +149,7 @@ func (git *GithubClient) deleteFile(ingredients map[string]any, prevOutput []byt
 		return nil, err
 	}
 
-	return &IServ.ReactionResponseStatus{Description: res.Message}, nil
+	return &IServ.ReactionResponseStatus{Description: res.Message, Datas: conv_utils.ConvertToMap[gRPCService.DeleteRepoFile](&updateReq)}, nil
 }
 
 func (git *GithubClient) SendAction(scenario models.AreaScenario, actionID, userID int) (*IServ.ActionResponseStatus, error) {
@@ -137,9 +159,9 @@ func (git *GithubClient) SendAction(scenario models.AreaScenario, actionID, user
 	return nil, errors.New("No such action microservice")
 }
 
-func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, prevOutput []byte, userID int) (*IServ.ReactionResponseStatus, error) {
+func (git *GithubClient) TriggerReaction(ingredients map[string]any, microservice string, userID int) (*IServ.ReactionResponseStatus, error) {
 	if micro, ok := (*git.MicroservicesLauncher)[microservice]; ok {
-		return micro(ingredients, prevOutput, userID)
+		return micro(ingredients, userID)
 	}
 	return nil, errors.New("No such microservice")
 }
@@ -166,5 +188,27 @@ func (git *GithubClient) TriggerWebhook(webhook *IServ.WebhookInfos, _ string, a
 }
 
 func (git *GithubClient) SetActivate(microservice string, id uint, userID int, activated bool) (*IServ.SetActivatedResponseStatus, error) {
-	return nil, nil
+	ctx := grpcutils.CreateContextFromUserID(userID)
+	_, err := git.cc.SetActivateAction(ctx, &gRPCService.SetActivateGithub{
+		ActionId:  uint32(id),
+		Activated: activated,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.SetActivatedResponseStatus{
+		ActionID:    id,
+		Description: "Github Deactivated",
+	}, nil
+}
+
+func (git *GithubClient) DeleteArea(ID uint, userID uint) (*IServ.DeleteResponseStatus, error) {
+	ctx := grpcutils.CreateContextFromUserID(int(userID))
+	_, err := git.cc.DeleteAction(ctx, &gRPCService.DeleteGithubActionReq{
+		ActionId: uint32(ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &IServ.DeleteResponseStatus{ID: ID}, nil
 }

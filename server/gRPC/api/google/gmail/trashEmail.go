@@ -8,7 +8,7 @@
 package gmail
 
 import (
-	"area/utils"
+	conv_utils "area/utils/convUtils"
 	"fmt"
 	"io"
 	"net/http"
@@ -49,7 +49,7 @@ func MoveEmail(tokenAccess string, googleUserID string, messageID string, trash 
 		io.Copy(os.Stderr, resp.Body)
 		return nil, status.Errorf(codes.Aborted, resp.Status)
 	}
-	message, err := utils.IoReaderToStruct[GmailMessage](&resp.Body)
+	message, err := conv_utils.IoReaderToStruct[GmailMessage](&resp.Body)
 	if err != nil {
 		return nil, err
 	}

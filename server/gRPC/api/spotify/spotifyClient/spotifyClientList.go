@@ -18,11 +18,67 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 
 		Microservices: []IServ.MicroserviceDescriptor{
 			{
+				Name:    "Check every 3 minutes if an artist has a certain number of followers",
+				RefName: "checkFollowers",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"artist_id": {
+						Value:       "",
+						Type:        "string",
+						Description: "Spotify Id of the artist",
+						Required:    true,
+					},
+					"followers": {
+						Value:       "",
+						Type:        "int",
+						Description: "numbers of follow up to check",
+						Required:    true,
+					},
+				},
+				PipelineAvailable: []string{},
+			},
+			{
+				Name:    "Check every 1 minutes if the volume exceed a certain amount",
+				RefName: "checkVolume",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{
+					"volume": {
+						Value:       "",
+						Type:        "int",
+						Description: "volume threshold",
+						Required:    true,
+					},
+				},
+				PipelineAvailable: []string{},
+			},
+			{
+				Name:    "Check every 3 minutes if the song is on repeat",
+				RefName: "checkRepeat",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
+			},
+			{
+				Name:    "Check every 3 minutes if the playlist is shuffle",
+				RefName: "checkShuffle",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
+			},
+			{
+				Name:    "Check every 3 minutes if the song is playing",
+				RefName: "checkPlaying",
+				Type:    "action",
+				Ingredients: map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
+			},
+			{
 				Name:    "Stop the current song playing on the last device connected",
 				RefName: "stopSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]IServ.IngredientDescriptor{},
+				Ingredients:       map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Create a spotify playlist",
@@ -49,20 +105,23 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"playlistName", "playlistDescription", "public"},
 			},
 			{
 				Name:    "Launch the next song",
 				RefName: "nextSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]IServ.IngredientDescriptor{},
+				Ingredients:       map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Launch the previous song",
 				RefName: "previousSong",
 				Type:    "reaction",
 
-				Ingredients: map[string]IServ.IngredientDescriptor{},
+				Ingredients:       map[string]IServ.IngredientDescriptor{},
+				PipelineAvailable: []string{},
 			},
 			{
 				Name:    "Change the playback Volume",
@@ -77,6 +136,7 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"volume"},
 			},
 			{
 				Name:    "Launch a specific track",
@@ -97,6 +157,7 @@ func (spot *SpotifyClient) ListServiceStatus() (*IServ.ServiceStatus, error) {
 						Required:    true,
 					},
 				},
+				PipelineAvailable: []string{"songUrl", "millisecondsPosition"},
 			},
 			//{
 			//	Name:    "Add a song to a playlist",

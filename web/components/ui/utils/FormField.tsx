@@ -1,5 +1,5 @@
 import {FormFieldProps} from "@/lib/typeLogin";
-import {Input} from "@/components/ui/utils/Input";
+import {Input} from "@/components/ui/utils/thirdPartyComponents/shadcn/Input";
 import {Path} from "react-hook-form";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

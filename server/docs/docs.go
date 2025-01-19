@@ -25,10 +25,64 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Utils"
+                    "About"
                 ],
                 "summary": "List of handled services",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AboutInfos"
+                        }
+                    }
+                }
+            }
+        },
+        "/area": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete user's area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "Delete an area",
+                "parameters": [
+                    {
+                        "description": "Informations about the deletion of an area",
+                        "name": "area",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/areas.areaDeleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serviceinterface.DeleteResponseStatus"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
             }
         },
         "/area/activate": {
@@ -291,6 +345,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/oauth/list": {
+            "get": {
+                "description": "List all the current Oauth handled by the server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "List Oauth",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/oauth.Oauthlist"
+                        }
+                    }
+                }
+            }
+        },
         "/oauth/{service}": {
             "get": {
                 "description": "Get the oauth redirect url for a service",
@@ -439,54 +516,7 @@ const docTemplate = `{
                         "schema": {}
                     }
                 }
-            }
-        },
-        "/token/": {
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Delete a token from a user_id and a provider",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Token"
-                ],
-                "summary": "Delete a token",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Remote Service Name",
-                        "name": "provider",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.TokenInformations"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
-        "/token/create/": {
+            },
             "post": {
                 "security": [
                     {
@@ -513,6 +543,49 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.TokenCreateRequest"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenInformations"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a token from a user_id and a provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Token"
+                ],
+                "summary": "Delete a token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Remote Service Name",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -578,7 +651,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/": {
+        "/user/": {
             "post": {
                 "security": [
                     {
@@ -598,12 +671,12 @@ const docTemplate = `{
                 "summary": "Create a new user",
                 "parameters": [
                     {
-                        "description": "User's information",
+                        "description": "Create User's information body",
                         "name": "userInfos",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserInformations"
+                            "$ref": "#/definitions/controllers.CreateUserInformations"
                         }
                     }
                 ],
@@ -611,7 +684,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserInformations"
+                            "$ref": "#/definitions/controllers.ReadUserInformations"
                         }
                     },
                     "400": {
@@ -625,7 +698,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/me": {
+        "/user/me": {
             "get": {
                 "security": [
                     {
@@ -647,7 +720,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.UserInformations"
+                            "$ref": "#/definitions/controllers.ReadUserInformations"
                         }
                     },
                     "400": {
@@ -769,6 +842,14 @@ const docTemplate = `{
                 }
             }
         },
+        "areas.areaDeleteRequest": {
+            "type": "object",
+            "properties": {
+                "area_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "areas.userArea": {
             "type": "object",
             "properties": {
@@ -786,6 +867,54 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/serviceinterface.ServiceStatus"
                     }
+                }
+            }
+        },
+        "controllers.AboutInfos": {
+            "type": "object",
+            "properties": {
+                "client": {
+                    "$ref": "#/definitions/controllers.clientInfos"
+                },
+                "server": {
+                    "$ref": "#/definitions/controllers.serverInfos"
+                }
+            }
+        },
+        "controllers.CreateUserInformations": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.ReadUserInformations": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
                 }
             }
         },
@@ -814,22 +943,10 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.UserInformations": {
+        "controllers.clientInfos": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "password": {
+                "host": {
                     "type": "string"
                 }
             }
@@ -842,6 +959,51 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "controllers.microservice": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.serverInfos": {
+            "type": "object",
+            "properties": {
+                "current_time": {
+                    "type": "integer"
+                },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.serverService"
+                    }
+                }
+            }
+        },
+        "controllers.serverService": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.microservice"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.microservice"
+                    }
                 }
             }
         },
@@ -894,8 +1056,11 @@ const docTemplate = `{
                 "action": {
                     "$ref": "#/definitions/models.Action"
                 },
-                "reaction": {
-                    "$ref": "#/definitions/models.Reaction"
+                "reactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Reaction"
+                    }
                 }
             }
         },
@@ -928,6 +1093,17 @@ const docTemplate = `{
                 }
             }
         },
+        "oauth.Oauthlist": {
+            "type": "object",
+            "properties": {
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "serviceinterface.ActionResponseStatus": {
             "type": "object",
             "properties": {
@@ -936,6 +1112,14 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
+                }
+            }
+        },
+        "serviceinterface.DeleteResponseStatus": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -970,11 +1154,18 @@ const docTemplate = `{
                     "description": "Name of the microservice",
                     "type": "string"
                 },
+                "pipeline_available": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "ref_name": {
                     "description": "Reference Name of the microservice as it is named in the server",
                     "type": "string"
                 },
                 "type": {
+                    "description": "Type of service action or reaction",
                     "type": "string"
                 }
             }

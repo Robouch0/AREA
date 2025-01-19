@@ -13,6 +13,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -30,28 +31,41 @@ type GitWebHookRequest struct {
 	Config GithubConfig `json:"config"`
 }
 
+type GithubWebhookPayload struct {
+	HookId int32 `json:"id"`
+}
+
 func SendCreateWebHook(
 	tokenInfo *models.Token,
 	owner string,
 	repo string,
 	url string,
 	webhookReq *GitWebHookRequest,
-) error {
+) (*GithubWebhookPayload, error) {
 	b, err := json.Marshal(webhookReq)
 	if err != nil {
-		return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to convert the content to bytes"))
 	}
 
 	webHookURL := fmt.Sprintf(url, owner, repo)
 	postRequest, err := http.NewRequest("POST", webHookURL, bytes.NewBuffer(b))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	postRequest.Header.Set("Authorization", "Bearer "+tokenInfo.AccessToken)
 	postRequest.Header.Add("Accept", "application/vnd.github+json")
-	_, err = http_utils.SendHttpRequest(postRequest, 201)
+	resp, err := http_utils.SendHttpRequest(postRequest, 201)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	bytesBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var gitpayload GithubWebhookPayload
+	err = json.Unmarshal(bytesBody, &gitpayload)
+	if err != nil {
+		return nil, err
+	}
+	return &gitpayload, err
 }

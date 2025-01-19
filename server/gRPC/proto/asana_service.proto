@@ -20,32 +20,39 @@ message CreateProjectReq {
 }
 
 message CreateProjectResp {
-
+  string projectName = 1;
+  string color = 2;
+  string workspaceName = 3;
 }
 
 ///////////////
 
 message CreateSectionReq {
-    string projectName = 1;
-    string sectionName = 2;
+  string projectName = 1;
+  string sectionName = 2;
 }
 
 
 message CreateSectionResp {
-
+  string projectName = 1;
+  string sectionName = 2;
 }
 
 //////////////
 
 message CreateTaskReq {
-    string projectName = 1;
-    string taskName = 2;
-    string taskDescription = 3;
-    bool completion = 4;
-    string dueOn = 5;
+  string projectName = 1;
+  string taskName = 2;
+  string taskDescription = 3;
+  bool completion = 4;
+  string dueOn = 5;
 }
 
 
 message CreateTaskResp {
-
+  string projectName = 1;
+  string taskName = 2;
+  string taskDescription = 3;
+  bool completion = 4;
+  string dueOn = 5;
 }

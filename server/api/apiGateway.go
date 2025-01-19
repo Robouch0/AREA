@@ -9,6 +9,7 @@ package api
 
 import (
 	areaMiddleware "area/api/middleware"
+	crypto_client "area/gRPC/api/cryptoCompare/cryptoCompareClient"
 	asana_client "area/gRPC/api/asana/asanaClient"
 	dateTime_client "area/gRPC/api/dateTime/dateTimeClient"
 	discord_client "area/gRPC/api/discord/discordClient"
@@ -17,7 +18,7 @@ import (
 	google_client "area/gRPC/api/google/googleClient"
 	huggingFace_client "area/gRPC/api/hugging_face/hugging_faceClient"
 	miro_client "area/gRPC/api/miro/miroClient"
-	"area/gRPC/api/reaction"
+	reaction_client "area/gRPC/api/reaction/reactionClient"
 	IServ "area/gRPC/api/serviceInterface"
 	spotify_client "area/gRPC/api/spotify/spotifyClient"
 	weather_client "area/gRPC/api/weather/weatherClient"
@@ -50,10 +51,11 @@ func CreateApiGateway() (*ApiGateway, error) {
 	m["gitlab"] = gitlab_client.NewGitlabClient(conn)
 	m["google"] = google_client.NewGoogleClient(conn)
 	m["discord"] = discord_client.NewDiscordClient(conn)
-	m["react"] = reaction.NewReactionServiceClient(conn)
+	m["react"] = reaction_client.NewReactionServiceClient(conn)
 	m["spotify"] = spotify_client.NewSpotifyClient(conn)
 	m["weather"] = weather_client.NewWeatherClient(conn)
 	m["miro"] = miro_client.NewMiroClient(conn)
+	m["crypto"] = crypto_client.NewCryptoClient(conn)
 	m["asana"] = asana_client.NewAsanaClient(conn)
 	return &ApiGateway{
 		Router:  chi.NewRouter(),

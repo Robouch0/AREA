@@ -9,7 +9,10 @@ package gitlab_server
 
 import (
 	"area/db"
+	gitlabtypes "area/gRPC/api/gitlab/gitlabTypes"
+	"area/models"
 	gRPCService "area/protogen/gRPC/proto"
+	"area/utils"
 	grpcutils "area/utils/grpcUtils"
 	http_utils "area/utils/httpUtils"
 	"bytes"
@@ -19,10 +22,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type GitlabService struct {
@@ -32,6 +34,10 @@ type GitlabService struct {
 
 	gRPCService.UnimplementedGitlabServiceServer
 }
+
+const (
+	deleteGitlabWebHookURL = "https://www.gitlab.com/api/v4/projects/%v/hooks/%v"
+)
 
 func NewGitlabService() (*GitlabService, error) {
 	tokenDb, err := db.InitTokenDb()
@@ -177,14 +183,94 @@ func (git *GitlabService) MarkAllItemAsDone(ctx context.Context, req *gRPCServic
 	q.Set("access_token", tokenInfo.AccessToken)
 	pathRequest.URL.RawQuery = q.Encode()
 
-	resp, err := http_utils.SendHttpRequest(pathRequest, 204)
+	_, err = http_utils.SendHttpRequest(pathRequest, 204)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(resp.Body)
 	return req, nil
 }
 
 func (git *GitlabService) SetActivateAction(ctx context.Context, req *gRPCService.SetActivateGitlab) (*gRPCService.SetActivateGitlab, error) {
-	return nil, status.Errorf(codes.Unavailable, "No Action Gitlab yet")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
+	if err != nil {
+		return nil, err
+	}
+	action, err := git.gitlabDb.GetGitlabByActionID(uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	if !req.Activated {
+		id := strconv.Itoa(int(action.HookID))
+		webHookURL := fmt.Sprintf(deleteGitlabWebHookURL, action.RepoID, id)
+		postRequest, err := http.NewRequest("DELETE", webHookURL, nil)
+		if err != nil {
+			return nil, err
+		}
+		postRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+		q := postRequest.URL.Query()
+		q.Set("access_token", tokenInfo.AccessToken)
+		postRequest.URL.RawQuery = q.Encode()
+		_, err = http_utils.SendHttpRequest(postRequest, 204)
+	} else {
+		envWebhookUrl, err := utils.GetEnvParameter("WEBHOOK_URL")
+		if err != nil {
+			return nil, err
+		}
+		var info gitlabtypes.GitlabWebHookRequest
+		if action.RepoAction == models.GlPush {
+			info.Url = fmt.Sprintf(envWebhookUrl, "gitlab", models.GlPush, req.ActionId)
+			info.PushEvent = true
+		}
+		if action.RepoAction == models.GIssue {
+			info.Url = fmt.Sprintf(envWebhookUrl, "gitlab", models.GIssue, req.ActionId)
+			info.IssuesEvent = true
+		}
+		if action.RepoAction == models.GlTag {
+			info.Url = fmt.Sprintf(envWebhookUrl, "gitlab", models.GlTag, req.ActionId)
+			info.TagEvent = true
+		}
+		if action.RepoAction == models.GlRelease {
+			info.Url = fmt.Sprintf(envWebhookUrl, "gitlab", models.GlRelease, req.ActionId)
+			info.ReleaseEvent = true
+		}
+		if action.RepoAction == models.GlMergeR {
+			info.Url = fmt.Sprintf(envWebhookUrl, "gitlab", models.GlMergeR, req.ActionId)
+			info.MergeEvent = true
+		}
+		_, err = git.createWebHook(tokenInfo, &info, action.RepoID)
+	}
+	if err != nil {
+		return nil, err
+	}
+	_, err = git.gitlabDb.SetActivateByActionID(req.Activated, uint(tokenInfo.UserID), uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+func (git *GitlabService) DeleteAction(ctx context.Context, req *gRPCService.DeleteGitlabActionReq) (*gRPCService.DeleteGitlabActionReq, error) {
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GitlabService", "gitlab")
+	if err != nil {
+		return nil, err
+	}
+	action, err := git.gitlabDb.GetGitlabByActionID(uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	id := strconv.Itoa(int(action.HookID))
+	webHookURL := fmt.Sprintf(deleteGitlabWebHookURL, action.RepoID, id)
+	postRequest, err := http.NewRequest("DELETE", webHookURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	postRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	q := postRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	postRequest.URL.RawQuery = q.Encode()
+	_, err = http_utils.SendHttpRequest(postRequest, 204)
+	if err != nil {
+		return nil, err
+	}
+	return req, git.gitlabDb.DeleteByActionID(uint(tokenInfo.UserID), uint(req.ActionId))
 }

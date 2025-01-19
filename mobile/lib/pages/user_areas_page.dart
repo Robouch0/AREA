@@ -1,7 +1,6 @@
 // lib/pages/user_areas_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_area_flutter/core/router/route_names.dart';
 import 'package:my_area_flutter/widgets/main_app_scaffold.dart';
 import 'package:my_area_flutter/api/types/area_body.dart';
 import 'package:my_area_flutter/services/api/area_service.dart';
@@ -24,6 +23,33 @@ class _UserAreasPageState extends State<UserAreasPage> {
   void initState() {
     super.initState();
     _loadAreas();
+  }
+
+  void _showDeleteSuccessStatus(bool success) async {
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Area deleted successfully.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Cannot delete this area.', style: TextStyle(fontWeight: FontWeight.w800)),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  void _handleAreaDeletion(int areaId) async {
+    bool success = false;
+
+    success = await AreaService.instance.deleteArea(areaId);
+    if (success) {
+      setState(() {
+        areas.removeWhere((area) => area.id == areaId);
+      });
+    }
+    _showDeleteSuccessStatus(success);
   }
 
   void _updateAreaActivation(int areaId, bool newValue) async {
@@ -85,7 +111,7 @@ class _UserAreasPageState extends State<UserAreasPage> {
       child: Column(
         children: [
           const Text(
-            'Your AREAs',
+            'My Areas',
             style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -98,7 +124,8 @@ class _UserAreasPageState extends State<UserAreasPage> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: AreaTile(
                   area: area,
-                  onActivationChanged: (newValue) => _updateAreaActivation(area.id, newValue)
+                  onActivationChanged: (newValue) => _updateAreaActivation(area.id, newValue),
+                  onDeleted: () => _handleAreaDeletion(area.id),
                 ),
               )
             ),
@@ -128,8 +155,14 @@ class EmptyState extends StatelessWidget {
 class AreaTile extends StatefulWidget {
   final UserAreaData area;
   final Function(bool) onActivationChanged;
+  final VoidCallback onDeleted;
 
-  const AreaTile({super.key, required this.area, required this.onActivationChanged});
+  const AreaTile({
+    super.key,
+    required this.area,
+    required this.onActivationChanged,
+    required this.onDeleted
+  });
 
   @override
   State<AreaTile> createState() => _AreaTileState();
@@ -221,8 +254,8 @@ class _AreaTileState extends State<AreaTile> {
           ),
           TextButton(
             onPressed: () {
-              // TODO: Implement delete API call
               Navigator.pop(context);
+              widget.onDeleted();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
@@ -251,10 +284,10 @@ class ServiceInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${isAction ? "If" : "Then"}: ${service.microservices.map((m) => m.name).join(", ")}',
+            service.microservices.map((m) => m.name).join(", "),
             style: TextStyle(
               color: isAction ? Colors.blue : Colors.red,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w800
             ),
           ),
         ],
