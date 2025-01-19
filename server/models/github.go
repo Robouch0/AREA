@@ -20,10 +20,13 @@ const (
 	GCreate         = "create"
 	GIssue          = "issues"
 	GPullR          = "pull_request"
+	GRelease 		= "release"
 )
 
 const (
 	Gopen   GType = "opened"
+	GCreated      = "created"
+	GDeleted      = "deleted"
 	GClosed       = "closed"
 	GEmpty        = ""
 )
