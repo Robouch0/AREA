@@ -48,6 +48,18 @@ Reusable UI components:
 
 ## Key Information for Developers
 
+### Project Configuration (pubspec.yaml)
+- Dependencies management (external packages)
+- Assets declaration (images, fonts, files)
+- Version and environment configuration
+- Flutter-specific settings
+
+### Assets Management
+- Place all resources in the assets/ directory
+- Declare assets in pubspec.yaml before usage
+- Access images using Image.asset('assets/[...].png')
+- Load files using rootBundle.loadString('assets/...')
+
 ### Service Architecture
 - API-oriented service architecture
 - Clear separation between business logic (services) and user interface (pages/widgets)
