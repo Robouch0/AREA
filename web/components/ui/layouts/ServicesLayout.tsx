@@ -19,7 +19,7 @@ export default function ServicesLayout({children,}: Readonly<{
                 <div>
                     <Button
                         className="hidden sm:block sm:text-slate-800 hover:bg-transparent shadow-none bg-transparent absolute left-0 mx-6 text-4xl my-6 font-bold "
-                        onClick={(): void => (router.push("/services/"))}
+                        onClick={(): void => (router.push("/services/myareas/"))}
                     >
                         AREA
                     </Button>
@@ -40,12 +40,12 @@ export default function ServicesLayout({children,}: Readonly<{
                     >
                         Create
                     </Button>
-                    <Button
-                        className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-36 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
-                        onClick={(): void => (router.push("/services/"))}
-                    >
-                        Explore
-                    </Button>
+                    {/*<Button*/}
+                    {/*    className="p-4 my-5 mx-6 bg-black text-2xl text-white font-bold rounded-3xl h-12 w-36 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"*/}
+                    {/*    onClick={(): void => (router.push("/services/"))}*/}
+                    {/*>*/}
+                    {/*    Explore*/}
+                    {/*</Button>*/}
                     <Navbar
                         prop={user}
                     />
@@ -87,15 +87,15 @@ export default function ServicesLayout({children,}: Readonly<{
                             >
                                 Create
                             </Button>
-                            <Button
-                                className="p-4 my-1 bg-black text-xl text-white font-bold rounded-3xl h-12 w-36 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
-                                onClick={(): void => {
-                                    router.push("/services/");
-                                    setMobileMenuOpen(false);
-                                }}
-                            >
-                                Explore
-                            </Button>
+                            {/*<Button*/}
+                            {/*    className="p-4 my-1 bg-black text-xl text-white font-bold rounded-3xl h-12 w-36 hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"*/}
+                            {/*    onClick={(): void => {*/}
+                            {/*        router.push("/services/");*/}
+                            {/*        setMobileMenuOpen(false);*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    Explore*/}
+                            {/*</Button>*/}
                         </div>
                     </div>
                 )}
