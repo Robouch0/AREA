@@ -26,7 +26,7 @@ function RegisterForm() {
         if (accountCreated) {
             setTimeout((): void => {
                 setAccountCreated(false);
-                router.push('/services')
+                router.push('/services/myareas')
             }, 0);
         }
     }, [accountCreated, router]);

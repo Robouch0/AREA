@@ -17,7 +17,7 @@ export function MicroServiceCard({ microServicesColor, title, description, setMi
 
                     <CardHeader className="text-wrap text-center">
                         <ServiceIcon className="text-2xl text-white mb-8 mt-2" tag={microserviceName} />
-                        <CardTitle className="my-2 !text-2xl break-words text-white">{title}</CardTitle>
+                        <CardTitle className="my-2 !text-2xl break-words text-black">{title}</CardTitle>
                     </CardHeader>
                     <CardDescription className="px-6 py-4 text-black text-xl text-wrap">
                         {description}

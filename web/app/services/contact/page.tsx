@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Page() {
+export default function Contact() {
     return (
         <div className="pt-16 flex flex-col items-center justify-center mt-16">
             <h1 className="mt-16 font-semibold text-3xl text-black"> An idea of new feature ? </h1>
