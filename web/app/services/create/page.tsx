@@ -12,16 +12,18 @@ export interface TokenState {
     isTokenPresent: boolean;
 }
 
-function createTokenProviderState(existingProvider:string [], userTokens: string[] ) : TokenState[] {
+function createTokenProviderState(existingProvider:string [], userTokens: string[]) : TokenState[] {
     const oauthTokenStates: TokenState[] = []
     existingProvider.forEach((provider) => {
         let found: boolean = false;
-        userTokens.forEach((token) => {
-            if (token == provider) {
-                found = true;
-                oauthTokenStates.push({providerName: provider, isTokenPresent: found})
-            }
-        })
+        if (userTokens !== null) {
+            userTokens.forEach((token) => {
+                if (token == provider) {
+                    found = true;
+                    oauthTokenStates.push({providerName: provider, isTokenPresent: found})
+                }
+            })
+        }
         if (!found) {
             oauthTokenStates.push({providerName: provider, isTokenPresent: false})
         }
