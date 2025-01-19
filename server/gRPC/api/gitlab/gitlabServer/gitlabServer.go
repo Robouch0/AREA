@@ -33,6 +33,10 @@ type GitlabService struct {
 	gRPCService.UnimplementedGitlabServiceServer
 }
 
+const (
+	deleteGitlabWebHookURL = "https://www.gitlab.com/api/v4/projects/%v/hooks/%v"
+)
+
 func NewGitlabService() (*GitlabService, error) {
 	tokenDb, err := db.InitTokenDb()
 	if err != nil {
@@ -189,9 +193,26 @@ func (git *GitlabService) SetActivateAction(ctx context.Context, req *gRPCServic
 }
 
 func (git *GitlabService) DeleteAction(ctx context.Context, req *gRPCService.DeleteGitlabActionReq) (*gRPCService.DeleteGitlabActionReq, error) {
-	userID, err := grpcutils.GetUserIdFromContext(ctx, "gitlab")
+	tokenInfo, err := grpcutils.GetTokenByContext(ctx, git.tokenDb, "GithubService", "github")
 	if err != nil {
 		return nil, err
-	} // TODO Matthieu
-	return req, git.gitlabDb.DeleteByActionID(userID, uint(req.ActionId))
+	}
+	action, err := git.gitlabDb.GetGitlabByActionID(uint(req.ActionId))
+	if err != nil {
+		return nil, err
+	}
+	webHookURL := fmt.Sprintf(pushWebHookURL, action.RepoID, action.HookID)
+	postRequest, err := http.NewRequest("DELETE", webHookURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	postRequest.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	q := postRequest.URL.Query()
+	q.Set("access_token", tokenInfo.AccessToken)
+	postRequest.URL.RawQuery = q.Encode()
+	_, err = http_utils.SendHttpRequest(postRequest, 201)
+	if err != nil {
+		return nil, err
+	}
+	return req, git.gitlabDb.DeleteByActionID(uint(tokenInfo.UserID), uint(req.ActionId))
 }
