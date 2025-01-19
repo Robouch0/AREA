@@ -130,7 +130,8 @@ export default function CreatePage({services, userTokens, uid}: {
                             }
                             }
                             ingredientsValues={action.ingredientValues}
-                            setIngredientValuesAction={(values) => setAction(prev => ({...prev, ingredientValues: values}))}
+                            setIngredientValuesAction={(values) => setAction(
+                                prev => ({...prev, ingredientValues: values}))}
                             microServiceType={"action"}
                             textColor={"text-blue-500"}
                             tokens={userTokens}
@@ -205,15 +206,16 @@ export default function CreatePage({services, userTokens, uid}: {
                         Add Reaction
                     </Button>
 
-                <Button
-                    type="submit"
-                    className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
-                    disabled={action.microServiceName === "" || reactions.some(
-                        r => r.microServiceName === "") || !userTokens || !userTokens.every((token) => token)}
-                >
-                    Create AREA
-                </Button>
-            </div>
-        </Form>
+                    <Button
+                        type="submit"
+                        className="mt-8 px-6 py-3 bg-green-500 text-white rounded-lg text-3xl font-bold hover:text-white hover:border-4 hover:border-black focus-visible:border-slate-500 focus-visible:border-8"
+                        disabled={action.microServiceName === "" || reactions.some(
+                            r => r.microServiceName === "") || !userTokens || !userTokens.every((token) => token)}
+                    >
+                        Create AREA
+                    </Button>
+                </div>
+            </Form>
+        </>
     );
 }
