@@ -175,6 +175,26 @@ Flutter was chosen for the following reasons:
 
 While Kotlin is a strong option for native Android development, Flutter's cross-platform capabilities and superior performance make it the best choice for our mobile application.
 
+## What accessibility possibilities are offered by those technologies ?
+
+Our comparative study wich contains frotend technologies :  Next.js (based on React) for the web front-end and Flutter for the mobile front-end, both offering accessibility features crucial for inclusive design.
+Next.js and React facilitate coding with accessibility in mind, providing tools and best practices for creating accessible web applications. 
+
+Similarly, Flutter offers robust accessibility support, including the automatic generation of an accessibility tree, customizable semantic nodes, and text descriptions to aid screen readers. 
+Flutter also allows developers to adjust application designs, such as increasing button sizes for larger touch targets, to meet accessibility recommendations. 
+
+Both frameworks prioritize keyboard navigation, sufficient text contrast, and semantic HTML to enhance the user experience for individuals with disabilities.
+ Flutter also provides the Accessibility Guideline API to test and ensure the app's UI meets accessibility recommendations covering text contrast, target size, and labels.
+
+Next.js enhances web accessibility through several built-in features: the `<Link>` component for accessible navigation, route announcements to inform users of page transitions, and linting tools that check for forgotten ARIA labels.
+The Next.js team aims to make the web more inclusive by focusing on framework accessibility for developers and end-users. 
+
+The `<Link>` component includes accessibility features like keyboard navigation and screen reader support. It supports the `tabIndex` attribute, allowing control over the order in which elements receive focus during keyboard navigation.
+A route announcer is included by default to ensure client-side transitions are announced to assistive technology. 
+
+It identifies the page name by inspecting `document.title`, then the `<h1>` element, and finally the URL pathname. 
+Next.js offers integrated ESLint with custom rules and includes `eslint-plugin-jsx-a11y` to catch accessibility issues early, such as warnings on missing `aria-*` and `role` attributes.
+
 ## Launch Instructions
 
 To launch our application, simply use Docker Compose. This will start all the necessary services (frontend, backend, and database) in the correct order with proper configurations:
